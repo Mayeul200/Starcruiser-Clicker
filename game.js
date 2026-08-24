@@ -109,7 +109,6 @@ let clickPDGTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
-let chickens = []; // Tableau pour stocker les coqs
 
 // ===== INITIALISATION =====
 function init() {
@@ -117,9 +116,22 @@ function init() {
     renderBuildings();
     renderUpgrades();
     updateDisplay();
-    renderChickens(); // Initialiser les coqs
+    renderChickens();
     setInterval(gameLoop, 100);
     setInterval(spawnRandomBonus, 60000);
+}
+
+// ===== FORMATAGE DES NOMBRES (4 chiffres max, 1 décimale) =====
+function formatNumber(num) {
+    if (num < 1000) {
+        return Math.floor(num).toLocaleString('fr-FR');
+    } else if (num < 1000000) {
+        return (num / 1000).toFixed(1) + "K";
+    } else if (num < 1000000000) {
+        return (num / 1000000).toFixed(1) + "M";
+    } else {
+        return (num / 1000000000).toFixed(1) + "B";
+    }
 }
 
 // ===== FONCTIONS PRINCIPALES =====
@@ -131,9 +143,7 @@ function addScore(points) {
     score += totalPoints;
     clickPDGTotal += basePoints;
 
-    // Afficher +X
     showClickEffect(Math.round(totalPoints));
-
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
@@ -224,23 +234,6 @@ function gameLoop() {
     updateBuildingsButtons();
 }
 
-// ===== FORMATAGE DES NOMBRES =====
-function formatNumber(num) {
-    if (num < 1000) return Math.floor(num).toLocaleString('fr-FR');
-    if (num >= 1000 && num < 1000000) {
-        const thousands = Math.floor(num / 1000);
-        const remainder = num % 1000;
-        if (remainder === 0) return `${thousands.toLocaleString('fr-FR')} 000`;
-        return `${thousands.toLocaleString('fr-FR')} ${remainder.toString().padStart(3, '0')}`;
-    }
-    if (num >= 1000000 && num < 1000000000) {
-        const millions = Math.floor(num / 1000000);
-        const thousands = Math.floor((num % 1000000) / 1000);
-        return `${millions.toLocaleString('fr-FR')} ${thousands.toString().padStart(3, '0')} K`;
-    }
-    return (num / 1000000000).toFixed(1) + " B";
-}
-
 function updateDisplay() {
     document.getElementById('score-value').textContent = formatNumber(score);
     document.getElementById('gain-value').textContent = formatNumber(autoGain);
@@ -251,34 +244,36 @@ function renderChickens() {
     const container = document.getElementById('chickens-container');
     if (!container) return;
 
-    // Supprimer les anciens coqs
     container.innerHTML = '';
 
-    // Créer les coqs pour les Coqs Gaulois achetés
     const coqGaulois = ERA.buildings.find(b => b.id === "coq-gaulois");
-    if (coqGaulois && coqGaulois.count > 0) {
-        const medal = document.getElementById('medal');
-        if (!medal) return;
+    if (!coqGaulois || coqGaulois.count === 0) return;
 
-        const medalRect = medal.getBoundingClientRect();
-        const centerX = medalRect.left + medalRect.width / 2;
-        const centerY = medalRect.top + medalRect.height / 2;
-        const radius = 150; // Rayon du cercle autour du médaillon
+    const medal = document.getElementById('medal');
+    if (!medal) return;
 
-        for (let i = 0; i < coqGaulois.count; i++) {
-            const angle = (i * (360 / Math.min(coqGaulois.count, 12))) * (Math.PI / 180);
-            const x = centerX + Math.cos(angle) * radius - 20;
-            const y = centerY + Math.sin(angle) * radius - 20;
+    const medalRect = medal.getBoundingClientRect();
+    const centerX = medalRect.left + medalRect.width / 2;
+    const centerY = medalRect.top + medalRect.height / 2;
+    const radius = 140;
 
-            const chicken = document.createElement('div');
-            chicken.className = 'chicken';
-            chicken.innerHTML = '🐓';
-            chicken.style.left = `${x}px`;
-            chicken.style.top = `${y}px`;
-            chicken.style.animationDelay = `${Math.random() * 2}s`;
+    const maxChickens = 12;
+    const chickensToShow = Math.min(coqGaulois.count, maxChickens);
 
-            container.appendChild(chicken);
-        }
+    for (let i = 0; i < chickensToShow; i++) {
+        const angle = (i * (360 / chickensToShow)) * (Math.PI / 180);
+        const x = centerX + Math.cos(angle) * radius - 20;
+        const y = centerY + Math.sin(angle) * radius - 20;
+
+        const chicken = document.createElement('div');
+        chicken.className = 'chicken';
+        chicken.innerHTML = '🐓';
+        chicken.style.left = `${x}px`;
+        chicken.style.top = `${y}px`;
+        chicken.style.transform = `translate(-50%, -50%) rotate(${i * (360 / chickensToShow)}deg)`;
+        chicken.style.animationDelay = `${i * 0.5}s`;
+
+        container.appendChild(chicken);
     }
 }
 
@@ -306,7 +301,6 @@ function updateBuildingsButtons() {
         if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
     });
 
-    // Mettre à jour les coqs après un achat
     renderChickens();
 }
 
@@ -404,7 +398,6 @@ function buyBuilding(buildingId) {
         saveGame();
         updateBuildingsButtons();
         renderUpgrades();
-        renderChickens(); // Mettre à jour les coqs
     }
 }
 
@@ -492,41 +485,45 @@ function exportSave() {
     const saveData = localStorage.getItem('gloryOfFranceSave');
     if (saveData) {
         navigator.clipboard.writeText(saveData)
-            .then(() => showToast("✅ Copié !"))
+            .then(() => showToast("✅ Sauvegarde copiée !"))
             .catch(() => {
-                prompt("Copiez :", saveData);
-                showToast("✅ Copié manuellement");
+                prompt("Copiez cette sauvegarde :", saveData);
+                showToast("✅ Sauvegarde copiée manuellement.");
             });
     } else {
-        showToast("❌ Aucune sauvegarde");
+        showToast("❌ Aucune sauvegarde trouvée.");
     }
 }
 
 function importSaveFromTextarea() {
     const importText = document.getElementById('import-textarea').value.trim();
     if (!importText) {
-        showToast("❌ Rien à importer");
+        showToast("❌ Aucune sauvegarde à importer.");
         return;
     }
 
     try {
         JSON.parse(importText);
         localStorage.setItem('gloryOfFranceSave', importText);
-        showToast("✅ Importé ! Rechargement...");
+        showToast("✅ Sauvegarde importée ! Rechargement en cours...");
         setTimeout(() => location.reload(), 1000);
     } catch (e) {
-        showToast("❌ Format invalide");
+        showToast("❌ Format invalide. Collez une sauvegarde valide.");
     }
 }
 
 function confirmDeleteSave() {
-    if (confirm("⚠️ Supprimer la sauvegarde ?")) deleteSave();
+    if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer votre sauvegarde ? Tous vos progrès seront perdus !")) {
+        deleteSave();
+    }
 }
 
 function deleteSave() {
     localStorage.removeItem('gloryOfFranceSave');
-    showToast("🗑️ Supprimé !");
-    setTimeout(() => location.reload(), 1000);
+    showToast("🗑️ Sauvegarde supprimée avec succès !");
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
 }
 
 function showToast(message) {
@@ -534,7 +531,9 @@ function showToast(message) {
     if (toast) {
         toast.textContent = message;
         toast.style.display = 'block';
-        setTimeout(() => toast.style.display = 'none', 3000);
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
     }
 }
 
