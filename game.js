@@ -10,7 +10,14 @@ const ERA = {
             gain: 0.1,
             count: 0,
             costMultiplier: 1.15,
-            image: "🐓"
+            image: "🐓",
+            upgrades: [
+                { requiredCount: 10, multiplier: 2, name: "Élevage de Coqs", description: "×2 production" },
+                { requiredCount: 25, multiplier: 2, name: "Fermes Gauloises", description: "×2 production" },
+                { requiredCount: 50, multiplier: 2, name: "Royaume des Coqs", description: "×2 production" },
+                { requiredCount: 75, multiplier: 2, name: "Empire des Coqs", description: "×2 production" },
+                { requiredCount: 100, multiplier: 2, name: "Légion des Coqs", description: "×2 production" }
+            ]
         },
         {
             id: "vercingetorix",
@@ -20,7 +27,14 @@ const ERA = {
             gain: 1,
             count: 0,
             costMultiplier: 1.15,
-            image: "🛡️"
+            image: "🛡️",
+            upgrades: [
+                { requiredCount: 10, multiplier: 2, name: "Armée Gauloise", description: "×2 production" },
+                { requiredCount: 25, multiplier: 2, name: "Légion Gauloise", description: "×2 production" },
+                { requiredCount: 50, multiplier: 2, name: "Grand Armée", description: "×2 production" },
+                { requiredCount: 75, multiplier: 2, name: "Armées Unifiées", description: "×2 production" },
+                { requiredCount: 100, multiplier: 2, name: "Empire Gaulois", description: "×2 production" }
+            ]
         },
         {
             id: "charlemagne",
@@ -30,7 +44,14 @@ const ERA = {
             gain: 10,
             count: 0,
             costMultiplier: 1.15,
-            image: "👑"
+            image: "👑",
+            upgrades: [
+                { requiredCount: 10, multiplier: 2, name: "Cour Impériale", description: "×2 production" },
+                { requiredCount: 25, multiplier: 2, name: "Empire Carolingien", description: "×2 production" },
+                { requiredCount: 50, multiplier: 2, name: "Royaume Unifié", description: "×2 production" },
+                { requiredCount: 75, multiplier: 2, name: "Hégémonie Franque", description: "×2 production" },
+                { requiredCount: 100, multiplier: 2, name: "Légende de Charlemagne", description: "×2 production" }
+            ]
         },
         {
             id: "notre-dame",
@@ -40,7 +61,14 @@ const ERA = {
             gain: 100,
             count: 0,
             costMultiplier: 1.15,
-            image: "⛪"
+            image: "⛪",
+            upgrades: [
+                { requiredCount: 10, multiplier: 2, name: "Architecture Gothique", description: "×2 production" },
+                { requiredCount: 25, multiplier: 2, name: "Vitraux Sacrés", description: "×2 production" },
+                { requiredCount: 50, multiplier: 2, name: "Rosace Céleste", description: "×2 production" },
+                { requiredCount: 75, multiplier: 2, name: "Cathédrale Majestueuse", description: "×2 production" },
+                { requiredCount: 100, multiplier: 2, name: "Chef-d'Œuvre Éternel", description: "×2 production" }
+            ]
         },
         {
             id: "fleur-de-lys",
@@ -50,31 +78,14 @@ const ERA = {
             gain: 1000,
             count: 0,
             costMultiplier: 1.15,
-            image: "🌸"
-        }
-    ],
-    upgrades: [
-        {
-            id: "bonus-click",
-            name: "Bénédiction des Druides",
-            description: "×2 PDG/clic pendant 30s",
-            cost: 100,
-            type: "click",
-            multiplier: 2,
-            duration: 30,
-            active: false,
-            endTime: 0
-        },
-        {
-            id: "bonus-auto",
-            name: "Alliance des Tribus",
-            description: "×2 PDG/s pendant 30s",
-            cost: 200,
-            type: "auto",
-            multiplier: 2,
-            duration: 30,
-            active: false,
-            endTime: 0
+            image: "🌸",
+            upgrades: [
+                { requiredCount: 10, multiplier: 2, name: "Blason Royal", description: "×2 production" },
+                { requiredCount: 25, multiplier: 2, name: "Héraldique Sacrée", description: "×2 production" },
+                { requiredCount: 50, multiplier: 2, name: "Symboles du Pouvoir", description: "×2 production" },
+                { requiredCount: 75, multiplier: 2, name: "Dynastie Royale", description: "×2 production" },
+                { requiredCount: 100, multiplier: 2, name: "Héritage Éternel", description: "×2 production" }
+            ]
         }
     ]
 };
@@ -87,7 +98,7 @@ const RANDOM_BONUSES = [
         name: "Druide Sacré",
         effect: "auto",
         multiplier: 5,
-        duration: 30000, // 30 secondes
+        duration: 30000,
         tooltip: "×5 PDG/s pendant 30s",
         colorClass: "druide"
     },
@@ -97,7 +108,7 @@ const RANDOM_BONUSES = [
         name: "Alliance Sacrée",
         effect: "click",
         multiplier: 10,
-        duration: 30000, // 30 secondes
+        duration: 30000,
         tooltip: "×10 PDG/clic pendant 30s",
         colorClass: "alliance"
     }
@@ -108,8 +119,14 @@ let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
 let autoMultiplier = 1;
-let activeRandomBonuses = []; // Bonus aléatoires actifs
-let bonusTimers = []; // Timers pour les bonus aléatoires
+let activeRandomBonuses = [];
+let buildingMultipliers = {
+    "coq-gaulois": 1,
+    "vercingetorix": 1,
+    "charlemagne": 1,
+    "notre-dame": 1,
+    "fleur-de-lys": 1
+};
 
 // ===== FONCTIONS DE BASE =====
 function addScore(points) {
@@ -134,13 +151,13 @@ function formatNumber(num) {
 // ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
 function updateBuildingsButtons() {
     const buildingElements = document.querySelectorAll('.building-item');
-    
+
     buildingElements.forEach((element, index) => {
         const building = ERA.buildings[index];
         if (!building) return;
 
         const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
-        const currentGain = building.gain * building.count * autoMultiplier;
+        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
         const button = element.querySelector('button');
@@ -153,30 +170,37 @@ function updateBuildingsButtons() {
     });
 }
 
-// ===== FONCTION POUR METTRE À JOUR LES BONUS ACHETABLES =====
-function updateUpgradesButtons() {
-    ERA.upgrades.forEach(upgrade => {
-        const element = document.getElementById(upgrade.id);
-        if (!element) return;
+// ===== FONCTION POUR METTRE À JOUR LES AMÉLIORATIONS =====
+function renderUpgrades() {
+    const container = document.getElementById('upgrades-list');
+    container.innerHTML = '';
 
-        const button = element.querySelector('button');
-        const costSpan = element.querySelector('.cost span');
-        const isAffordable = score >= upgrade.cost;
-        const isActive = upgrade.active;
+    ERA.buildings.forEach(building => {
+        // Trouver la prochaine amélioration disponible pour ce bâtiment
+        const nextUpgrade = building.upgrades.find(upgrade =>
+            building.count >= upgrade.requiredCount &&
+            buildingMultipliers[building.id] < (2 ** building.upgrades.indexOf(upgrade) + 1)
+        );
 
-        button.disabled = !isAffordable || isActive;
-        costSpan.textContent = formatNumber(upgrade.cost);
-
-        if (isActive) {
-            button.textContent = "Actif !";
-            button.style.background = "#4CAF50";
-            button.style.color = "white";
-        } else {
-            button.textContent = "Acheter";
-            button.style.background = "#ffd700";
-            button.style.color = "#0055a4";
+        if (nextUpgrade) {
+            const upgradeElement = document.createElement('div');
+            upgradeElement.className = 'upgrade-item';
+            upgradeElement.innerHTML = `
+                <h3>${building.name}</h3>
+                <p>${nextUpgrade.description}</p>
+                <p class="cost">Niveau : ${nextUpgrade.requiredCount} ${building.name}</p>
+                <button onclick="buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})">
+                    Activer
+                </button>
+            `;
+            container.appendChild(upgradeElement);
         }
     });
+
+    // Si aucune amélioration disponible, afficher un message
+    if (container.innerHTML === '') {
+        container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: rgba(255,255,255,0.7);">Achetez des bâtiments pour débloquer des améliorations !</p>';
+    }
 }
 
 // ===== ACHAT DES BÂTIMENTS =====
@@ -191,60 +215,29 @@ function buyBuilding(buildingId) {
         updateDisplay();
         saveGame();
         updateBuildingsButtons();
+        renderUpgrades();
     }
 }
 
-// ===== ACHAT DES BONUS ACHETABLES =====
-function buyUpgrade(upgradeId) {
-    const upgrade = ERA.upgrades.find(u => u.id === upgradeId);
+// ===== ACHAT DES AMÉLIORATIONS DE BÂTIMENTS =====
+function buyBuildingUpgrade(buildingId, requiredCount) {
+    const building = ERA.buildings.find(b => b.id === buildingId);
+    if (!building) return;
+
+    const upgrade = building.upgrades.find(u => u.requiredCount === requiredCount);
     if (!upgrade) return;
 
-    if (score >= upgrade.cost && !upgrade.active) {
-        score -= upgrade.cost;
-        upgrade.active = true;
-        upgrade.endTime = Date.now() + upgrade.duration * 1000;
+    // Appliquer le multiplicateur
+    buildingMultipliers[building.id] *= upgrade.multiplier;
 
-        if (upgrade.type === "click") {
-            clickMultiplier = upgrade.multiplier;
-        } else if (upgrade.type === "auto") {
-            autoMultiplier = upgrade.multiplier;
-        }
-
-        updateDisplay();
-        saveGame();
-        updateUpgradesButtons();
-        updateBuildingsButtons();
-        startUpgradeTimer(upgradeId);
-    }
-}
-
-function startUpgradeTimer(upgradeId) {
-    const upgrade = ERA.upgrades.find(u => u.id === upgradeId);
-    if (!upgrade) return;
-
-    const timerElement = document.getElementById(`${upgradeId}-timer`);
-    const interval = setInterval(() => {
-        const remaining = Math.ceil((upgrade.endTime - Date.now()) / 1000);
-        if (remaining <= 0) {
-            clearInterval(interval);
-            upgrade.active = false;
-            if (upgrade.type === "click") clickMultiplier = 1;
-            if (upgrade.type === "auto") autoMultiplier = 1;
-            updateDisplay();
-            saveGame();
-            updateUpgradesButtons();
-            updateBuildingsButtons();
-            timerElement.textContent = "";
-        } else {
-            timerElement.textContent = `⏳ ${remaining}s`;
-        }
-    }, 1000);
+    updateDisplay();
+    saveGame();
+    updateBuildingsButtons();
+    renderUpgrades();
 }
 
 // ===== BONUS ALÉATOIRES =====
-// Crée un bonus aléatoire à l'écran
 function spawnRandomBonus() {
-    // Choix aléatoire entre druide et alliance
     const bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
     const bonus = RANDOM_BONUSES[bonusIndex];
 
@@ -273,7 +266,7 @@ function spawnRandomBonus() {
         bonusElement.classList.add('clicked');
         setTimeout(() => {
             bonusElement.remove();
-        }, 500); // Temps pour l'animation de disparition
+        }, 500);
     }, 10000);
 
     // Gérer le clic
@@ -318,7 +311,7 @@ function renderBuildings() {
 
     ERA.buildings.forEach(building => {
         const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
-        const currentGain = building.gain * building.count * autoMultiplier;
+        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
         const buildingElement = document.createElement('div');
@@ -347,49 +340,21 @@ function renderBuildings() {
     });
 }
 
-function renderUpgrades() {
-    ERA.upgrades.forEach(upgrade => {
-        const element = document.getElementById(upgrade.id);
-        if (!element) return;
-
-        const button = element.querySelector('button');
-        const costSpan = element.querySelector('.cost span');
-
-        const isAffordable = score >= upgrade.cost;
-        const isActive = upgrade.active;
-
-        button.disabled = !isAffordable || isActive;
-        costSpan.textContent = formatNumber(upgrade.cost);
-
-        if (isActive) {
-            button.textContent = "Actif !";
-            button.style.background = "#4CAF50";
-            button.style.color = "white";
-        } else {
-            button.textContent = "Acheter";
-            button.style.background = "#ffd700";
-            button.style.color = "#0055a4";
-        }
-    });
-}
-
 // ===== BOUCLE PRINCIPALE =====
 function gameLoop() {
     let totalGain = 0;
     ERA.buildings.forEach(building => {
-        totalGain += building.gain * building.count;
+        totalGain += building.gain * building.count * buildingMultipliers[building.id];
     });
     autoGain = totalGain * autoMultiplier;
     score += autoGain / 10;
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
-    updateUpgradesButtons();
 }
 
 // ===== TIMERS =====
-// Faire apparaître un bonus aléatoire toutes les 60 secondes
-setInterval(spawnRandomBonus, 60000); // 60 000 ms = 1 minute
+setInterval(spawnRandomBonus, 60000); // Bonus aléatoires toutes les 60 secondes
 setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
