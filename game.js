@@ -134,17 +134,98 @@ let buildingMultipliers = {
 let clickPDGTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
+let lastMedalRainTime = 0;
 
 // ===== FONCTIONS DE BASE =====
 function addScore(points) {
     const basePoints = points * clickMultiplier;
     const bonusPoints = autoGain * clickBonus;
-    score += basePoints + bonusPoints;
+    const totalPoints = basePoints + bonusPoints;
+
+    score += totalPoints;
     clickPDGTotal += basePoints;
+
+    // Afficher le +X au-dessus de la médaille
+    showClickEffect(Math.round(totalPoints));
+
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
     renderUpgrades();
+}
+
+function showClickEffect(value) {
+    const container = document.getElementById('click-effects');
+    const medal = document.getElementById('medal');
+    const medalRect = medal.getBoundingClientRect();
+    const centerX = medalRect.left + medalRect.width / 2;
+    const centerY = medalRect.top + medalRect.height / 2;
+
+    // Générer une position aléatoire autour de la médaille
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 80 + Math.random() * 40; // 80-120px de distance
+    const offsetX = Math.cos(angle) * distance;
+    const offsetY = Math.sin(angle) * distance;
+
+    // Créer l'élément +X
+    const effect = document.createElement('div');
+    effect.className = 'click-effect';
+    effect.textContent = `+${value}`;
+    effect.style.left = `${centerX + offsetX}px`;
+    effect.style.top = `${centerY + offsetY}px`;
+
+    // Définir la position finale de l'animation
+    const endAngle = angle + (Math.random() - 0.5) * 0.5; // Légère variation
+    const endDistance = distance + 50;
+    const endX = Math.cos(endAngle) * endDistance;
+    const endY = Math.sin(endAngle) * endDistance - 100; // Monter un peu
+
+    effect.style.setProperty('--end-x', `${endX}px`);
+    effect.style.setProperty('--end-y', `${endY}px`);
+
+    container.appendChild(effect);
+
+    // Supprimer après l'animation
+    setTimeout(() => effect.remove(), 1000);
+}
+
+// ===== PLUIE DE MÉDAILLONS =====
+function spawnMedalRain() {
+    const now = Date.now();
+
+    // Calculer combien de médaillons à faire tomber (basé sur autoGain)
+    const medalCount = Math.min(Math.floor(autoGain / 5), 5);
+
+    if (medalCount <= 0) return;
+
+    const container = document.getElementById('medal-rain');
+    const medal = document.getElementById('medal');
+    const medalRect = medal.getBoundingClientRect();
+
+    for (let i = 0; i < medalCount; i++) {
+        // Position aléatoire au-dessus de la zone de clic
+        const startX = medalRect.left + Math.random() * medalRect.width;
+        const startY = medalRect.top - 20;
+
+        // Position finale aléatoire dans la zone de clic
+        const endX = medalRect.left + Math.random() * medalRect.width - medalRect.width / 2;
+        const endY = medalRect.top + Math.random() * medalRect.height - 20;
+
+        const medalRain = document.createElement('div');
+        medalRain.className = 'medal-rain';
+        medalRain.innerHTML = '🏅';
+        medalRain.style.left = `${startX}px`;
+        medalRain.style.top = `${startY}px`;
+        medalRain.style.setProperty('--fall-x', `${endX}px`);
+        medalRain.style.setProperty('--fall-y', `${endY}px`);
+
+        container.appendChild(medalRain);
+
+        // Supprimer après l'animation
+        setTimeout(() => medalRain.remove(), 2000);
+    }
+
+    lastMedalRainTime = now;
 }
 
 function updateDisplay() {
@@ -176,6 +257,24 @@ function exportSave() {
             });
     } else {
         showToast("❌ Aucune sauvegarde trouvée.");
+    }
+}
+
+function importSave() {
+    const importText = document.getElementById('import-textarea').value.trim();
+    if (!importText) {
+        showToast("❌ Aucune sauvegarde à importer.");
+        return;
+    }
+
+    try {
+        // Vérifier que c'est un JSON valide
+        JSON.parse(importText);
+        localStorage.setItem('gloryOfFranceSave', importText);
+        showToast("✅ Sauvegarde importée ! Rechargement en cours...");
+        setTimeout(() => location.reload(), 1000);
+    } catch (e) {
+        showToast("❌ Format invalide. Collez une sauvegarde valide.");
     }
 }
 
@@ -429,6 +528,12 @@ function gameLoop() {
     });
     autoGain = totalGain * autoMultiplier;
     score += autoGain / 10;
+
+    // Faire pleuvoir des médaillons si autoGain > 0
+    if (autoGain > 0 && Date.now() - lastMedalRainTime > 500) {
+        spawnMedalRain();
+    }
+
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
