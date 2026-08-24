@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇫🇷 Glory of France Clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇫🇷 Glory of France Clicker</h1>
+            <p class="subtitle">Accumulez des Points de Gloire en explorant l'histoire de France !</p>
+        </header>
 
+        <main>
+            <!-- Zone de clic -->
+            <div class="click-zone">
+                <img id="flag" src="assets/images/drapeau-france.png" alt="Drapeau Français - Cliquez pour gagner des points !" onclick="addScore(1)">
+                <div id="score">Points de Gloire : <span id="score-value">0</span> (<span id="auto-gain">0</span>/s)</div>
+            </div>
+            <!-- Ères (générées par JS) -->
+            <div id="eras"></div>
+        </main>
+
+        <footer>
+            <p>Made with ❤️ for France</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="game.js"></script>
+    <script src="save.js"></script>
+</body>
+</html>
