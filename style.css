@@ -399,3 +399,118 @@ body {
         min-width: 180px;
     }
 }
+
+/* ===== BONUS ALÉATOIRES (Druide & Alliance) ===== */
+.random-bonuses-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none; /* Permet de cliquer à travers */
+    z-index: 200;
+    overflow: hidden;
+}
+
+.random-bonus {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+    pointer-events: auto; /* Active le clic sur cet élément */
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    animation: pulse-glow 1.5s infinite alternate, fadeIn 0.5s ease-out;
+    border: 3px solid #0055a4;
+    transition: all 0.3s ease;
+    z-index: 201;
+}
+
+.random-bonus:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+}
+
+.random-bonus.druide {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    border-color: #2E7D32;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
+}
+
+.random-bonus.druide:hover {
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.9);
+}
+
+.random-bonus.alliance {
+    background: linear-gradient(135deg, #2196F3, #64B5F6);
+    border-color: #0D47A1;
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.7);
+}
+
+.random-bonus.alliance:hover {
+    box-shadow: 0 0 30px rgba(33, 150, 243, 0.9);
+}
+
+.random-bonus.clicked {
+    animation: fadeOut 0.5s ease-out forwards;
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.5);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+/* Tooltip pour les bonus aléatoires */
+.random-bonus::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.random-bonus:hover::after {
+    opacity: 1;
+}
