@@ -12,6 +12,29 @@
     <div class="upgrades-bar" id="upgrades-bar">
         <h2>Améliorations Disponibles</h2>
         <div class="upgrades-list" id="upgrades-list"></div>
+        <!-- Bouton Paramètres -->
+        <button class="settings-button" onclick="toggleSettings()" title="Paramètres">
+            ⚙️
+        </button>
+    </div>
+
+    <!-- Modal Paramètres -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-content">
+            <span class="close-button" onclick="toggleSettings()">&times;</span>
+            <h2>Paramètres</h2>
+            <div class="settings-options">
+                <button class="settings-option-button" onclick="exportSave()">
+                    📤 Exporter la sauvegarde
+                </button>
+                <p class="settings-hint">Copie votre sauvegarde dans le presse-papiers.</p>
+
+                <button class="settings-option-button delete" onclick="confirmDeleteSave()">
+                    🗑️ Supprimer la sauvegarde
+                </button>
+                <p class="settings-hint">Efface votre progression locale.</p>
+            </div>
+        </div>
     </div>
 
     <!-- Conteneur principal -->
@@ -37,6 +60,9 @@
 
     <!-- Conteneur pour les bonus aléatoires (Druide & Alliance) -->
     <div class="random-bonuses-container" id="random-bonuses"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
 
     <script src="game.js"></script>
     <script src="save.js"></script>
