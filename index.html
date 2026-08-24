@@ -8,22 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Barre des bonus achetables (en haut) -->
-    <div class="upgrades-bar">
-        <div class="upgrade-item" id="bonus-click">
-            <h3>Bénédiction des Druides</h3>
-            <p>×2 PDG/clic pendant 30s</p>
-            <p class="cost">Coût : <span>100</span> PDG</p>
-            <button onclick="buyUpgrade('bonus-click')">Acheter</button>
-            <div class="timer" id="bonus-click-timer"></div>
-        </div>
-        <div class="upgrade-item" id="bonus-auto">
-            <h3>Alliance des Tribus</h3>
-            <p>×2 PDG/s pendant 30s</p>
-            <p class="cost">Coût : <span>200</span> PDG</p>
-            <button onclick="buyUpgrade('bonus-auto')">Acheter</button>
-            <div class="timer" id="bonus-auto-timer"></div>
-        </div>
+    <!-- Barre des améliorations (en haut) -->
+    <div class="upgrades-bar" id="upgrades-bar">
+        <h2>Améliorations Disponibles</h2>
+        <div class="upgrades-list" id="upgrades-list"></div>
     </div>
 
     <!-- Conteneur principal -->
