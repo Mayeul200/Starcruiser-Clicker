@@ -26,12 +26,12 @@
         </div>
     </div>
 
-    <!-- Conteneur principal -->
+    <!-- Zone principale -->
     <div class="main-container">
         <!-- Zone de clic (centre) -->
-        <div class="click-container">
+        <div class="click-zone">
             <div class="medal" id="medal" onclick="addScore(1)">
-                <div class="medal-emoji">🏅</div>
+                🏅
                 <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
             </div>
             <div class="score-display">
@@ -40,10 +40,12 @@
             </div>
         </div>
 
-        <!-- Panneau des bâtiments (droite) -->
+        <!-- Zone des bâtiments (droite) -->
         <div class="buildings-panel">
             <h2>L'Aube de la France</h2>
-            <div class="buildings-list" id="buildings-list"></div>
+            <div class="buildings-list" id="buildings-list">
+                <!-- Les bâtiments seront générés par JS -->
+            </div>
         </div>
     </div>
 
