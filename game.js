@@ -86,16 +86,16 @@ const ERA = {
 };
 
 const CLICK_UPGRADES = [
-    { threshold: 100, bonus: 0.01, name: "Maîtrise", description: "+1% PDG/s par clic" },
-    { threshold: 200, bonus: 0.01, name: "Précis", description: "+1% PDG/s par clic" },
-    { threshold: 500, bonus: 0.01, name: "Puissant", description: "+1% PDG/s par clic" },
-    { threshold: 1000, bonus: 0.01, name: "Expert", description: "+1% PDG/s par clic" },
-    { threshold: 2000, bonus: 0.01, name: "Légendaire", description: "+1% PDG/s par clic" }
+    { threshold: 100, bonus: 0.01, name: "Maîtrise", description: "+1% Points De Gloire/s par clic" },
+    { threshold: 200, bonus: 0.01, name: "Précis", description: "+1% Points De Gloire/s par clic" },
+    { threshold: 500, bonus: 0.01, name: "Puissant", description: "+1% Points De Gloire/s par clic" },
+    { threshold: 1000, bonus: 0.01, name: "Expert", description: "+1% Points De Gloire/s par clic" },
+    { threshold: 2000, bonus: 0.01, name: "Légendaire", description: "+1% Points De Gloire/s par clic" }
 ];
 
 const RANDOM_BONUSES = [
-    { id: "druide", symbol: "🌿", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 PDG/s", colorClass: "druide" },
-    { id: "alliance", symbol: "🤝", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 PDG/clic", colorClass: "alliance" }
+    { id: "druide", symbol: "🌿", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 Points De Gloire/s", colorClass: "druide" },
+    { id: "alliance", symbol: "🤝", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 Points De Gloire/clic", colorClass: "alliance" }
 ];
 
 // ===== VARIABLES =====
@@ -109,6 +109,7 @@ let clickPDGTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
+let chickens = []; // Tableau pour stocker les coqs
 
 // ===== INITIALISATION =====
 function init() {
@@ -116,6 +117,7 @@ function init() {
     renderBuildings();
     renderUpgrades();
     updateDisplay();
+    renderChickens(); // Initialiser les coqs
     setInterval(gameLoop, 100);
     setInterval(spawnRandomBonus, 60000);
 }
@@ -140,7 +142,7 @@ function addScore(points) {
 
 function showClickEffect(value) {
     const container = document.getElementById('click-effects');
-    if (!container) return; // Sécurité
+    if (!container) return;
 
     const medal = document.getElementById('medal');
     if (!medal) return;
@@ -222,16 +224,90 @@ function gameLoop() {
     updateBuildingsButtons();
 }
 
+// ===== FORMATAGE DES NOMBRES =====
+function formatNumber(num) {
+    if (num < 1000) return Math.floor(num).toLocaleString('fr-FR');
+    if (num >= 1000 && num < 1000000) {
+        const thousands = Math.floor(num / 1000);
+        const remainder = num % 1000;
+        if (remainder === 0) return `${thousands.toLocaleString('fr-FR')} 000`;
+        return `${thousands.toLocaleString('fr-FR')} ${remainder.toString().padStart(3, '0')}`;
+    }
+    if (num >= 1000000 && num < 1000000000) {
+        const millions = Math.floor(num / 1000000);
+        const thousands = Math.floor((num % 1000000) / 1000);
+        return `${millions.toLocaleString('fr-FR')} ${thousands.toString().padStart(3, '0')} K`;
+    }
+    return (num / 1000000000).toFixed(1) + " B";
+}
+
 function updateDisplay() {
     document.getElementById('score-value').textContent = formatNumber(score);
     document.getElementById('gain-value').textContent = formatNumber(autoGain);
 }
 
-function formatNumber(num) {
-    if (num < 1000) return num.toFixed(num % 1 === 0 ? 0 : 1);
-    if (num < 1000000) return (num / 1000).toFixed(1) + "K";
-    if (num < 1000000000) return (num / 1000000).toFixed(1) + "M";
-    return (num / 1000000000).toFixed(1) + "B";
+// ===== GESTION DES COQS =====
+function renderChickens() {
+    const container = document.getElementById('chickens-container');
+    if (!container) return;
+
+    // Supprimer les anciens coqs
+    container.innerHTML = '';
+
+    // Créer les coqs pour les Coqs Gaulois achetés
+    const coqGaulois = ERA.buildings.find(b => b.id === "coq-gaulois");
+    if (coqGaulois && coqGaulois.count > 0) {
+        const medal = document.getElementById('medal');
+        if (!medal) return;
+
+        const medalRect = medal.getBoundingClientRect();
+        const centerX = medalRect.left + medalRect.width / 2;
+        const centerY = medalRect.top + medalRect.height / 2;
+        const radius = 150; // Rayon du cercle autour du médaillon
+
+        for (let i = 0; i < coqGaulois.count; i++) {
+            const angle = (i * (360 / Math.min(coqGaulois.count, 12))) * (Math.PI / 180);
+            const x = centerX + Math.cos(angle) * radius - 20;
+            const y = centerY + Math.sin(angle) * radius - 20;
+
+            const chicken = document.createElement('div');
+            chicken.className = 'chicken';
+            chicken.innerHTML = '🐓';
+            chicken.style.left = `${x}px`;
+            chicken.style.top = `${y}px`;
+            chicken.style.animationDelay = `${Math.random() * 2}s`;
+
+            container.appendChild(chicken);
+        }
+    }
+}
+
+// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
+function updateBuildingsButtons() {
+    document.querySelectorAll('.building-item').forEach((el, i) => {
+        const building = ERA.buildings[i];
+        if (!building) return;
+
+        const currentCost = building.count === 0
+            ? building.baseCost
+            : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
+
+        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
+        const isAffordable = score >= currentCost;
+
+        const btn = el.querySelector('button');
+        if (btn) {
+            btn.textContent = `Acheter (${formatNumber(currentCost)} Points De Gloire)`;
+            btn.disabled = !isAffordable;
+        }
+
+        const stats = el.querySelectorAll('.stats span');
+        if (stats[0]) stats[0].textContent = `+${formatNumber(currentGain)}/s`;
+        if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
+    });
+
+    // Mettre à jour les coqs après un achat
+    renderChickens();
 }
 
 // ===== AMÉLIORATIONS =====
@@ -265,7 +341,7 @@ function renderUpgrades() {
             el.innerHTML = `
                 <h3>Clic</h3>
                 <p>${upgrade.description}</p>
-                <p class="cost">Seuil : ${upgrade.threshold}</p>
+                <p class="cost">Seuil : ${formatNumber(upgrade.threshold)}</p>
                 <button onclick="buyClickUpgrade(${upgrade.threshold})">Activer</button>
             `;
             container.appendChild(el);
@@ -275,30 +351,6 @@ function renderUpgrades() {
     if (container.innerHTML === '') {
         container.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.7)">Achetez des bâtiments pour débloquer !</p>';
     }
-}
-
-function updateBuildingsButtons() {
-    document.querySelectorAll('.building-item').forEach((el, i) => {
-        const building = ERA.buildings[i];
-        if (!building) return;
-
-        const currentCost = building.count === 0
-            ? building.baseCost
-            : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
-
-        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
-        const isAffordable = score >= currentCost;
-
-        const btn = el.querySelector('button');
-        if (btn) {
-            btn.textContent = `Acheter (${formatNumber(currentCost)} PDG)`;
-            btn.disabled = !isAffordable;
-        }
-
-        const stats = el.querySelectorAll('.stats span');
-        if (stats[0]) stats[0].textContent = `+${formatNumber(currentGain)}/s`;
-        if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
-    });
 }
 
 function renderBuildings() {
@@ -329,7 +381,7 @@ function renderBuildings() {
                 <span>Possédés : ${building.count}</span>
             </div>
             <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-                Acheter (${formatNumber(currentCost)} PDG)
+                Acheter (${formatNumber(currentCost)} Points De Gloire)
             </button>
         `;
         container.appendChild(el);
@@ -352,6 +404,7 @@ function buyBuilding(buildingId) {
         saveGame();
         updateBuildingsButtons();
         renderUpgrades();
+        renderChickens(); // Mettre à jour les coqs
     }
 }
 
