@@ -9,7 +9,6 @@ const ERA = {
             baseCost: 10,
             gain: 0.1,
             count: 0,
-            costMultiplier: 1.15,
             image: "🐓",
             upgrades: [
                 { requiredCount: 10, multiplier: 2, name: "Élevage de Coqs", description: "×2 production" },
@@ -26,7 +25,6 @@ const ERA = {
             baseCost: 100,
             gain: 1,
             count: 0,
-            costMultiplier: 1.15,
             image: "🛡️",
             upgrades: [
                 { requiredCount: 10, multiplier: 2, name: "Armée Gauloise", description: "×2 production" },
@@ -43,7 +41,6 @@ const ERA = {
             baseCost: 1000,
             gain: 10,
             count: 0,
-            costMultiplier: 1.15,
             image: "👑",
             upgrades: [
                 { requiredCount: 10, multiplier: 2, name: "Cour Impériale", description: "×2 production" },
@@ -60,7 +57,6 @@ const ERA = {
             baseCost: 10000,
             gain: 100,
             count: 0,
-            costMultiplier: 1.15,
             image: "⛪",
             upgrades: [
                 { requiredCount: 10, multiplier: 2, name: "Architecture Gothique", description: "×2 production" },
@@ -77,7 +73,6 @@ const ERA = {
             baseCost: 100000,
             gain: 1000,
             count: 0,
-            costMultiplier: 1.15,
             image: "🌸",
             upgrades: [
                 { requiredCount: 10, multiplier: 2, name: "Blason Royal", description: "×2 production" },
@@ -89,6 +84,15 @@ const ERA = {
         }
     ]
 };
+
+// ===== AMÉLIORATIONS DE CLIQUE =====
+const CLICK_UPGRADES = [
+    { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic", description: "+1% des PDG/s par clic" },
+    { threshold: 200, bonus: 0.01, name: "Clic Précis", description: "+1% des PDG/s par clic" },
+    { threshold: 500, bonus: 0.01, name: "Clic Puissant", description: "+1% des PDG/s par clic" },
+    { threshold: 1000, bonus: 0.01, name: "Clic Expert", description: "+1% des PDG/s par clic" },
+    { threshold: 2000, bonus: 0.01, name: "Clic Légendaire", description: "+1% des PDG/s par clic" }
+];
 
 // ===== BONUS ALÉATOIRES =====
 const RANDOM_BONUSES = [
@@ -127,13 +131,20 @@ let buildingMultipliers = {
     "notre-dame": 1,
     "fleur-de-lys": 1
 };
+let clickPDGTotal = 0; // Total des PDG obtenus par clics
+let clickBonus = 0; // Bonus en % des PDG/s ajoutés par clic
+let activatedClickUpgrades = []; // Améliorations de clic activées
 
 // ===== FONCTIONS DE BASE =====
 function addScore(points) {
-    score += points * clickMultiplier;
+    const basePoints = points * clickMultiplier;
+    const bonusPoints = autoGain * clickBonus; // Bonus = % des PDG/s
+    score += basePoints + bonusPoints;
+    clickPDGTotal += basePoints; // On compte seulement les PDG de base (sans bonus)
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
+    renderUpgrades(); // Rafraîchir les améliorations disponibles
 }
 
 function updateDisplay() {
@@ -156,7 +167,8 @@ function updateBuildingsButtons() {
         const building = ERA.buildings[index];
         if (!building) return;
 
-        const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
+        // NOUVELLE FORMULE : 15.6 * e^(0.12 * n)
+        const currentCost = Math.floor(15.6 * Math.exp(0.12 * building.count));
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
@@ -175,11 +187,11 @@ function renderUpgrades() {
     const container = document.getElementById('upgrades-list');
     container.innerHTML = '';
 
+    // Améliorations de bâtiments
     ERA.buildings.forEach(building => {
-        // Trouver la prochaine amélioration disponible pour ce bâtiment
         const nextUpgrade = building.upgrades.find(upgrade =>
             building.count >= upgrade.requiredCount &&
-            buildingMultipliers[building.id] < (2 ** building.upgrades.indexOf(upgrade) + 1)
+            buildingMultipliers[building.id] < (2 ** (building.upgrades.indexOf(upgrade) + 1))
         );
 
         if (nextUpgrade) {
@@ -189,7 +201,7 @@ function renderUpgrades() {
                 <h3>${building.name}</h3>
                 <p>${nextUpgrade.description}</p>
                 <p class="cost">Niveau : ${nextUpgrade.requiredCount} ${building.name}</p>
-                <button onclick="buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})">
+                <button onclick=\"buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})\">
                     Activer
                 </button>
             `;
@@ -197,9 +209,26 @@ function renderUpgrades() {
         }
     });
 
-    // Si aucune amélioration disponible, afficher un message
+    // Améliorations de clic
+    CLICK_UPGRADES.forEach(upgrade => {
+        if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+            const upgradeElement = document.createElement('div');
+            upgradeElement.className = 'upgrade-item';
+            upgradeElement.innerHTML = `
+                <h3>Amélioration de Clic</h3>
+                <p>${upgrade.description}</p>
+                <p class=\"cost\">Seuil : ${upgrade.threshold} PDG par clics</p>
+                <button onclick=\"buyClickUpgrade(${upgrade.threshold})\">
+                    Activer
+                </button>
+            `;
+            container.appendChild(upgradeElement);
+        }
+    });
+
+    // Si aucune amélioration disponible
     if (container.innerHTML === '') {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: rgba(255,255,255,0.7);">Achetez des bâtiments pour débloquer des améliorations !</p>';
+        container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: rgba(255,255,255,0.7);">Achetez des bâtiments ou cliquez pour débloquer des améliorations !</p>';
     }
 }
 
@@ -208,7 +237,8 @@ function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
 
-    const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
+    // NOUVELLE FORMULE : 15.6 * e^(0.12 * n)
+    const currentCost = Math.floor(15.6 * Math.exp(0.12 * building.count));
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
@@ -227,12 +257,24 @@ function buyBuildingUpgrade(buildingId, requiredCount) {
     const upgrade = building.upgrades.find(u => u.requiredCount === requiredCount);
     if (!upgrade) return;
 
-    // Appliquer le multiplicateur
     buildingMultipliers[building.id] *= upgrade.multiplier;
-
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
+    renderUpgrades();
+}
+
+// ===== ACHAT DES AMÉLIORATIONS DE CLIQUE =====
+function buyClickUpgrade(threshold) {
+    const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
+    if (!upgrade) return;
+
+    // Ajouter le bonus
+    clickBonus += upgrade.bonus;
+    activatedClickUpgrades.push(threshold);
+
+    updateDisplay();
+    saveGame();
     renderUpgrades();
 }
 
@@ -241,15 +283,12 @@ function spawnRandomBonus() {
     const bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
     const bonus = RANDOM_BONUSES[bonusIndex];
 
-    // Vérifier qu'un bonus du même type n'est pas déjà actif
     const isActive = activeRandomBonuses.some(b => b.id === bonus.id);
     if (isActive) return;
 
-    // Position aléatoire (éviter les bords)
     const x = Math.random() * (window.innerWidth - 150) + 50;
     const y = Math.random() * (window.innerHeight - 200) + 100;
 
-    // Créer l'élément
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus ${bonus.colorClass}`;
     bonusElement.innerHTML = bonus.symbol;
@@ -258,10 +297,8 @@ function spawnRandomBonus() {
     bonusElement.setAttribute('data-tooltip', bonus.tooltip);
     bonusElement.setAttribute('data-id', bonus.id);
 
-    // Ajouter au conteneur
     document.getElementById('random-bonuses').appendChild(bonusElement);
 
-    // Supprimer après 10 secondes si non cliqué
     const timeout = setTimeout(() => {
         bonusElement.classList.add('clicked');
         setTimeout(() => {
@@ -269,19 +306,16 @@ function spawnRandomBonus() {
         }, 500);
     }, 10000);
 
-    // Gérer le clic
     bonusElement.onclick = () => {
         clearTimeout(timeout);
         bonusElement.classList.add('clicked');
 
-        // Appliquer l'effet
         if (bonus.effect === "auto") {
             autoMultiplier = bonus.multiplier;
         } else if (bonus.effect === "click") {
             clickMultiplier = bonus.multiplier;
         }
 
-        // Ajouter au tableau des bonus actifs
         activeRandomBonuses.push({
             id: bonus.id,
             effect: bonus.effect,
@@ -289,12 +323,10 @@ function spawnRandomBonus() {
             endTime: Date.now() + bonus.duration
         });
 
-        // Supprimer le bonus après l'animation
         setTimeout(() => {
             bonusElement.remove();
         }, 500);
 
-        // Planifier la fin de l'effet
         setTimeout(() => {
             activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
             if (bonus.effect === "auto") autoMultiplier = 1;
@@ -310,7 +342,7 @@ function renderBuildings() {
     container.innerHTML = '';
 
     ERA.buildings.forEach(building => {
-        const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
+        const currentCost = Math.floor(15.6 * Math.exp(0.12 * building.count));
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
@@ -354,7 +386,7 @@ function gameLoop() {
 }
 
 // ===== TIMERS =====
-setInterval(spawnRandomBonus, 60000); // Bonus aléatoires toutes les 60 secondes
+setInterval(spawnRandomBonus, 60000);
 setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
