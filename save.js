@@ -1,4 +1,3 @@
-// ===== SAUVEGARDE & CHARGEMENT =====
 function saveGame() {
     const saveData = {
         score: score,
@@ -9,15 +8,9 @@ function saveGame() {
         clickPDGTotal: clickPDGTotal,
         clickBonus: clickBonus,
         activatedClickUpgrades: [...activatedClickUpgrades],
-        buildings: ERA.buildings.map(building => ({
-            id: building.id,
-            count: building.count
-        })),
-        activeRandomBonuses: activeRandomBonuses.map(bonus => ({
-            id: bonus.id,
-            effect: bonus.effect,
-            multiplier: bonus.multiplier,
-            endTime: bonus.endTime
+        buildings: ERA.buildings.map(b => ({ id: b.id, count: b.count })),
+        activeRandomBonuses: activeRandomBonuses.map(b => ({
+            id: b.id, effect: b.effect, multiplier: b.multiplier, endTime: b.endTime
         }))
     };
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
@@ -29,7 +22,6 @@ function loadGame() {
 
     try {
         const parsed = JSON.parse(saveData);
-
         score = parsed.score || 0;
         autoGain = parsed.autoGain || 0;
         clickMultiplier = parsed.clickMultiplier || 1;
@@ -48,9 +40,7 @@ function loadGame() {
         if (parsed.buildings) {
             parsed.buildings.forEach(savedBuilding => {
                 const building = ERA.buildings.find(b => b.id === savedBuilding.id);
-                if (building) {
-                    building.count = savedBuilding.count || 0;
-                }
+                if (building) building.count = savedBuilding.count || 0;
             });
         }
 
@@ -62,7 +52,7 @@ function loadGame() {
             });
         }
     } catch (e) {
-        console.error("Erreur de chargement de la sauvegarde :", e);
+        console.error("Erreur chargement :", e);
         localStorage.removeItem('gloryOfFranceSave');
     }
 }
