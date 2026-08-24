@@ -4,9 +4,9 @@ function saveGame() {
         score: score,
         clickMultiplier: clickMultiplier,
         autoMultiplier: autoMultiplier,
-        clickPDGTotal: clickPDGTotal,
-        clickBonus: clickBonus,
-        activatedClickUpgrades: activatedClickUpgrades,
+        clickPDGTotal: clickPDGTotal, 
+        clickBonus: clickBonus,   
+        activatedClickUpgrades: activatedClickUpgrades, 
         buildings: ERA.buildings.map(b => ({
             id: b.id,
             count: b.count
@@ -31,8 +31,8 @@ function loadGame() {
             score = data.score || 0;
             clickMultiplier = data.clickMultiplier || 1;
             autoMultiplier = data.autoMultiplier || 1;
-            clickPDGTotal = data.clickPDGTotal || 0;
-            clickBonus = data.clickBonus || 0;
+            clickPDGTotal = data.clickPDGTotal || 0;  
+            clickBonus = data.clickBonus || 0;      
             activatedClickUpgrades = data.activatedClickUpgrades || [];
 
             if (data.buildings) {
