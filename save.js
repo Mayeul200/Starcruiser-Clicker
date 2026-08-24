@@ -8,11 +8,7 @@ function saveGame() {
             id: b.id,
             count: b.count
         })),
-        upgrades: ERA.upgrades.map(u => ({
-            id: u.id,
-            active: u.active,
-            endTime: u.endTime
-        })),
+        buildingMultipliers: buildingMultipliers,
         randomBonuses: activeRandomBonuses.map(b => ({
             id: b.id,
             effect: b.effect,
@@ -40,14 +36,8 @@ function loadGame() {
                 });
             }
 
-            if (data.upgrades) {
-                data.upgrades.forEach(savedUpgrade => {
-                    const upgrade = ERA.upgrades.find(u => u.id === savedUpgrade.id);
-                    if (upgrade) {
-                        upgrade.active = savedUpgrade.active || false;
-                        upgrade.endTime = savedUpgrade.endTime || 0;
-                    }
-                });
+            if (data.buildingMultipliers) {
+                buildingMultipliers = data.buildingMultipliers;
             }
 
             if (data.randomBonuses) {
