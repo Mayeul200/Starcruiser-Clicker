@@ -267,7 +267,7 @@ body {
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ===== EFFETS DE CLIQUE (+1) ===== */
+/* ===== EFFETS DE CLIQUE (+X) ===== */
 .click-effects-container {
     position: fixed;
     top: 0;
@@ -276,29 +276,22 @@ body {
     bottom: 0;
     pointer-events: none;
     z-index: 300;
-    overflow: hidden;
 }
 
 .click-effect {
     position: absolute;
     color: #0055a4;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    text-shadow: 0 0 5px rgba(0, 85, 164, 0.5);
-    animation: floatUp 1s ease-out forwards;
+    text-shadow: 0 0 8px rgba(0, 85, 164, 0.7);
+    animation: floatUp 1.2s ease-out forwards;
     pointer-events: none;
     z-index: 301;
 }
 
 @keyframes floatUp {
-    0% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(var(--end-x), var(--end-y)) scale(1.2);
-    }
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--end-x), var(--end-y)) scale(1.3); }
 }
 
 /* ===== PLUIE DE MÉDAILLONS ===== */
@@ -310,27 +303,26 @@ body {
     bottom: 0;
     pointer-events: none;
     z-index: 250;
-    overflow: hidden;
 }
 
 .medal-rain {
     position: absolute;
-    color: #ffd700;
-    font-size: 1.2rem;
-    animation: fallDown 2s linear forwards;
+    font-size: 1.5rem;
+    animation: fallDown 2.5s linear forwards;
     pointer-events: none;
     z-index: 251;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+    opacity: 0;
 }
 
 @keyframes fallDown {
-    0% {
-        opacity: 1;
-        transform: translate(0, -50px) rotate(0deg);
+    0% { 
+        opacity: 1; 
+        transform: translate(0, -100px) rotate(0deg) scale(1.2); 
     }
-    100% {
-        opacity: 0;
-        transform: translate(var(--fall-x), var(--fall-y)) rotate(360deg);
+    100% { 
+        opacity: 0; 
+        transform: translate(var(--fall-x), var(--fall-y)) rotate(720deg) scale(0.8); 
     }
 }
 
