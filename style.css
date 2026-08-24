@@ -13,11 +13,11 @@ body {
     overflow-x: hidden;
 }
 
-/* ===== BARRE DES BONUS (HAUT) ===== */
+/* ===== BARRE DES AMÉLIORATIONS (HAUT) ===== */
 .upgrades-bar {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-direction: column;
+    align-items: center;
     padding: 15px 20px;
     background: linear-gradient(135deg, #0055a4, #1e88e5);
     color: white;
@@ -25,6 +25,21 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    min-height: 100px;
+}
+
+.upgrades-bar h2 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.upgrades-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    max-width: 1200px;
 }
 
 .upgrade-item {
@@ -32,11 +47,12 @@ body {
     border-radius: 10px;
     padding: 12px 18px;
     text-align: center;
-    min-width: 220px;
+    min-width: 200px;
     max-width: 250px;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.2s ease;
+    cursor: default;
 }
 
 .upgrade-item:hover {
@@ -89,13 +105,6 @@ body {
     transform: none;
 }
 
-.timer {
-    margin-top: 6px;
-    font-size: 0.75rem;
-    color: #ffd700;
-    font-weight: 500;
-}
-
 /* ===== MAIN CONTAINER ===== */
 .main-container {
     display: flex;
@@ -105,7 +114,7 @@ body {
     gap: 25px;
     max-width: 1400px;
     margin: 0 auto;
-    min-height: calc(100vh - 100px);
+    min-height: calc(100vh - 150px);
 }
 
 /* ===== ZONE DE CLIQUE (CENTRE) ===== */
@@ -323,83 +332,6 @@ body {
     transform: none;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-    .main-container {
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
-    .buildings-panel {
-        width: 100%;
-        max-width: 600px;
-        margin-top: 20px;
-    }
-
-    .upgrades-bar {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-    }
-
-    .upgrade-item {
-        min-width: 200px;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .medal {
-        width: 180px;
-        height: 180px;
-    }
-
-    .medal-emoji {
-        font-size: 2.8rem;
-    }
-
-    .score-display {
-        padding: 12px 20px;
-    }
-
-    .score-display #score {
-        font-size: 1.8rem;
-    }
-
-    .buildings-panel {
-        max-width: 100%;
-    }
-
-    .upgrades-bar {
-        padding: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .main-container {
-        padding: 15px;
-    }
-
-    .medal {
-        width: 150px;
-        height: 150px;
-    }
-
-    .medal-emoji {
-        font-size: 2.3rem;
-    }
-
-    .medal-text {
-        font-size: 0.75rem;
-    }
-
-    .upgrade-item {
-        min-width: 180px;
-    }
-}
-
 /* ===== BONUS ALÉATOIRES (Druide & Alliance) ===== */
 .random-bonuses-container {
     position: fixed;
@@ -407,7 +339,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    pointer-events: none; /* Permet de cliquer à travers */
+    pointer-events: none;
     z-index: 200;
     overflow: hidden;
 }
@@ -423,7 +355,7 @@ body {
     justify-content: center;
     font-size: 2.5rem;
     cursor: pointer;
-    pointer-events: auto; /* Active le clic sur cet élément */
+    pointer-events: auto;
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
     animation: pulse-glow 1.5s infinite alternate, fadeIn 0.5s ease-out;
     border: 3px solid #0055a4;
@@ -513,4 +445,95 @@ body {
 
 .random-bonus:hover::after {
     opacity: 1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .main-container {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .buildings-panel {
+        width: 100%;
+        max-width: 600px;
+        margin-top: 20px;
+    }
+
+    .upgrades-bar {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+
+    .upgrades-list {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .upgrade-item {
+        min-width: 200px;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .medal {
+        width: 180px;
+        height: 180px;
+    }
+
+    .medal-emoji {
+        font-size: 2.8rem;
+    }
+
+    .score-display {
+        padding: 12px 20px;
+    }
+
+    .score-display #score {
+        font-size: 1.8rem;
+    }
+
+    .buildings-panel {
+        max-width: 100%;
+    }
+
+    .upgrades-bar {
+        padding: 10px;
+    }
+
+    .upgrades-list {
+        gap: 8px;
+    }
+
+    .upgrade-item {
+        min-width: 180px;
+        padding: 10px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding: 15px;
+    }
+
+    .medal {
+        width: 150px;
+        height: 150px;
+    }
+
+    .medal-emoji {
+        font-size: 2.3rem;
+    }
+
+    .medal-text {
+        font-size: 0.75rem;
+    }
+
+    .upgrade-item {
+        min-width: 160px;
+    }
 }
