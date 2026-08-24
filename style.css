@@ -18,37 +18,30 @@ body {
     display: flex;
     justify-content: center;
     gap: 20px;
-    padding: 15px 20px;
+    padding: 15px 0;
     background: linear-gradient(135deg, #0055a4, #1e88e5);
     color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .upgrade-item {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    padding: 12px 18px;
+    padding: 10px 15px;
     text-align: center;
-    min-width: 220px;
-    max-width: 250px;
+    min-width: 200px;
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.2s ease;
+    transition: transform 0.2s, background 0.2s;
 }
 
 .upgrade-item:hover {
-    transform: translateY(-3px);
-    background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .upgrade-item h3 {
     font-size: 1rem;
     margin-bottom: 5px;
-    font-weight: 500;
 }
 
 .upgrade-item p {
@@ -58,169 +51,124 @@ body {
 }
 
 .upgrade-item .cost {
-    font-weight: 600;
+    font-weight: bold;
     margin-bottom: 10px;
-    font-size: 0.9rem;
 }
 
 .upgrade-item button {
     background: #ffd700;
     color: #0055a4;
     border: none;
-    border-radius: 6px;
+    border-radius: 5px;
     padding: 8px 15px;
-    font-weight: 600;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
     width: 100%;
-    font-size: 0.9rem;
 }
 
-.upgrade-item button:hover:not(:disabled) {
+.upgrade-item button:hover {
     background: #ffed4e;
-    transform: scale(1.03);
-    color: #003d7a;
+    transform: scale(1.05);
 }
 
 .upgrade-item button:disabled {
-    background: rgba(255, 255, 255, 0.3);
-    color: #aaa;
+    background: #666;
+    color: #ccc;
     cursor: not-allowed;
     transform: none;
 }
 
 .timer {
-    margin-top: 6px;
+    margin-top: 5px;
     font-size: 0.75rem;
     color: #ffd700;
-    font-weight: 500;
 }
 
 /* ===== MAIN CONTAINER ===== */
 .main-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: flex-start;
-    padding: 25px;
-    gap: 25px;
+    padding: 20px;
+    gap: 20px;
     max-width: 1400px;
     margin: 0 auto;
-    min-height: calc(100vh - 100px);
 }
 
 /* ===== ZONE DE CLIQUE (CENTRE) ===== */
-.click-container {
+.click-zone {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex: 1;
-    max-width: 50%;
-    padding: 20px;
+    max-width: 60%;
 }
 
 .medal {
-    width: 220px;
-    height: 220px;
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow:
-        0 0 0 8px rgba(255, 215, 0, 0.3),
-        0 15px 40px rgba(255, 215, 0, 0.4);
-    transition: all 0.15s ease;
-    border: 3px solid #0055a4;
-    position: relative;
-    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+    transition: transform 0.1s, box-shadow 0.2s;
+    border: 5px solid #0055a4;
+    font-size: 3rem;
+    user-select: none;
 }
 
 .medal:hover {
-    transform: scale(1.03);
-    box-shadow:
-        0 0 0 10px rgba(255, 215, 0, 0.4),
-        0 20px 50px rgba(255, 215, 0, 0.5);
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.7);
 }
 
 .medal:active {
-    transform: scale(0.97);
-    box-shadow:
-        0 0 0 6px rgba(255, 215, 0, 0.3),
-        0 10px 30px rgba(255, 215, 0, 0.4);
-}
-
-.medal-emoji {
-    font-size: 3.5rem;
-    margin-bottom: -5px;
+    transform: scale(0.95);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
 }
 
 .medal-text {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     text-align: center;
     color: #0055a4;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: -3px;
+    font-weight: bold;
+    margin-top: -5px;
 }
 
 .score-display {
-    margin-top: 25px;
+    margin-top: 20px;
     text-align: center;
-    background: white;
-    padding: 15px 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .score-display #score {
-    font-size: 2.2rem;
+    font-size: 2rem;
     color: #0055a4;
-    font-weight: 700;
-    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .score-display #auto-gain {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #666;
-    font-weight: 500;
+    margin-top: 5px;
 }
 
 /* ===== PANEL DES BÂTIMENTS (DROITE) ===== */
 .buildings-panel {
     width: 25%;
-    min-width: 320px;
-    max-width: 350px;
+    min-width: 300px;
     background: white;
     border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e0e0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     height: fit-content;
-    max-height: 85vh;
+    max-height: 80vh;
     overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.buildings-panel::-webkit-scrollbar {
-    width: 8px;
-}
-
-.buildings-panel::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.buildings-panel::-webkit-scrollbar-thumb {
-    background: #0055a4;
-    border-radius: 10px;
-}
-
-.buildings-panel::-webkit-scrollbar-thumb:hover {
-    background: #003d7a;
 }
 
 .buildings-panel h2 {
@@ -228,107 +176,85 @@ body {
     text-align: center;
     margin-bottom: 15px;
     font-size: 1.3rem;
-    font-weight: 700;
     border-bottom: 2px solid #0055a4;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
 }
 
 .buildings-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
 .building-item {
     background: #f8f9fa;
     border-radius: 10px;
-    padding: 14px;
+    padding: 12px;
     border: 2px solid #e0e0e0;
-    transition: all 0.2s ease;
-    cursor: default;
+    transition: all 0.2s;
+    cursor: pointer;
 }
 
 .building-item:hover {
     border-color: #0055a4;
     background: #e6f7ff;
     transform: translateX(5px);
-    box-shadow: 0 3px 10px rgba(0, 85, 164, 0.15);
-}
-
-.building-item .building-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-}
-
-.building-item .building-icon {
-    font-size: 1.8rem;
-    width: 40px;
-    text-align: center;
 }
 
 .building-item h3 {
     color: #0055a4;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     font-size: 1rem;
-    font-weight: 600;
 }
 
 .building-item p {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: #666;
-    margin-bottom: 10px;
-    line-height: 1.4;
+    margin-bottom: 8px;
 }
 
 .building-item .stats {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 0.85rem;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
 }
 
 .building-item .stats span:first-child {
     color: #0055a4;
-    font-weight: 600;
+    font-weight: bold;
 }
 
 .building-item .stats span:last-child {
-    color: #555;
+    color: #666;
 }
 
 .building-item button {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     background: #0055a4;
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: 5px;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
+    transition: background 0.2s;
 }
 
 .building-item button:hover:not(:disabled) {
     background: #003d7a;
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0, 85, 164, 0.3);
 }
 
 .building-item button:disabled {
     background: #cccccc;
-    color: #777;
     cursor: not-allowed;
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
     .main-container {
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
     }
 
     .buildings-panel {
@@ -341,61 +267,21 @@ body {
         flex-direction: column;
         align-items: center;
         gap: 15px;
-        padding: 15px;
-    }
-
-    .upgrade-item {
-        min-width: 200px;
-        max-width: 100%;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
     .medal {
-        width: 180px;
-        height: 180px;
-    }
-
-    .medal-emoji {
-        font-size: 2.8rem;
-    }
-
-    .score-display {
-        padding: 12px 20px;
-    }
-
-    .score-display #score {
-        font-size: 1.8rem;
-    }
-
-    .buildings-panel {
-        max-width: 100%;
+        width: 150px;
+        height: 150px;
+        font-size: 2.5rem;
     }
 
     .upgrades-bar {
         padding: 10px;
     }
-}
-
-@media (max-width: 480px) {
-    .main-container {
-        padding: 15px;
-    }
-
-    .medal {
-        width: 150px;
-        height: 150px;
-    }
-
-    .medal-emoji {
-        font-size: 2.3rem;
-    }
-
-    .medal-text {
-        font-size: 0.75rem;
-    }
 
     .upgrade-item {
-        min-width: 180px;
+        min-width: 150px;
     }
 }
