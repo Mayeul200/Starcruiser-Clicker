@@ -90,7 +90,7 @@ function addScore(points) {
     score += points * clickMultiplier;
     updateDisplay();
     saveGame();
-    renderBuildings(); // ✅ Rafraîchit les boutons après un clic
+    renderAll(); // Rafraîchit tout après un clic
 }
 
 function updateDisplay() {
@@ -105,6 +105,12 @@ function formatNumber(num) {
     return (num / 1000000000).toFixed(1) + "B";
 }
 
+// ===== FONCTION POUR RAFRAÎCHIR TOUT =====
+function renderAll() {
+    renderBuildings();
+    renderUpgrades();
+}
+
 // ===== ACHAT DES BÂTIMENTS =====
 function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
@@ -116,7 +122,7 @@ function buyBuilding(buildingId) {
         building.count++;
         updateDisplay();
         saveGame();
-        renderBuildings(); // ✅ Rafraîchit immédiatement après achat
+        renderAll(); // Rafraîchit tout après achat
     }
 }
 
@@ -138,8 +144,7 @@ function buyUpgrade(upgradeId) {
 
         updateDisplay();
         saveGame();
-        renderUpgrades();
-        renderBuildings(); // ✅ Rafraîchit aussi les bâtiments
+        renderAll();
         startUpgradeTimer(upgradeId);
     }
 }
@@ -158,8 +163,7 @@ function startUpgradeTimer(upgradeId) {
             if (upgrade.type === "auto") autoMultiplier = 1;
             updateDisplay();
             saveGame();
-            renderUpgrades();
-            renderBuildings(); // ✅ Rafraîchit les bâtiments à la fin du timer
+            renderAll();
             timerElement.textContent = "";
         } else {
             timerElement.textContent = `⏳ ${remaining}s`;
@@ -237,20 +241,19 @@ function gameLoop() {
         totalGain += building.gain * building.count;
     });
     autoGain = totalGain * autoMultiplier;
-    score += autoGain / 10;
+    score += autoGain / 10; // Gain fluide
     updateDisplay();
     saveGame();
-    // Pas besoin de renderBuildings() ici, c'est géré après chaque action
+    renderAll(); // ✅ RAFRAÎCHIT TOUT À CHAQUE ITÉRATION
 }
 
-setInterval(gameLoop, 100);
+setInterval(gameLoop, 100); // Toutes les 100ms
 
 // ===== INITIALISATION =====
 function init() {
     loadGame();
     updateDisplay();
-    renderBuildings();
-    renderUpgrades();
+    renderAll();
 }
 
 window.onload = init;
