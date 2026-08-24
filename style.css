@@ -16,8 +16,9 @@ body {
 /* ===== BARRE DES AMÉLIORATIONS (HAUT) ===== */
 .upgrades-bar {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    gap: 20px;
     padding: 15px 20px;
     background: linear-gradient(135deg, #0055a4, #1e88e5);
     color: white;
@@ -25,13 +26,34 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    min-height: 100px;
+    min-height: 80px;
 }
 
 .upgrades-bar h2 {
     font-size: 1.3rem;
-    margin-bottom: 10px;
+    margin: 0;
     text-align: center;
+    flex: 1;
+}
+
+.settings-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
 }
 
 .upgrades-list {
@@ -40,6 +62,7 @@ body {
     justify-content: center;
     gap: 15px;
     max-width: 1200px;
+    margin-top: 10px;
 }
 
 .upgrade-item {
@@ -103,439 +126,6 @@ body {
     color: #aaa;
     cursor: not-allowed;
     transform: none;
-}
-
-/* ===== MAIN CONTAINER ===== */
-.main-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 25px;
-    gap: 25px;
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: calc(100vh - 150px);
-}
-
-/* ===== ZONE DE CLIQUE (CENTRE) ===== */
-.click-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    max-width: 50%;
-    padding: 20px;
-}
-
-.medal {
-    width: 220px;
-    height: 220px;
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow:
-        0 0 0 8px rgba(255, 215, 0, 0.3),
-        0 15px 40px rgba(255, 215, 0, 0.4);
-    transition: all 0.15s ease;
-    border: 3px solid #0055a4;
-    position: relative;
-    overflow: hidden;
-}
-
-.medal:hover {
-    transform: scale(1.03);
-    box-shadow:
-        0 0 0 10px rgba(255, 215, 0, 0.4),
-        0 20px 50px rgba(255, 215, 0, 0.5);
-}
-
-.medal:active {
-    transform: scale(0.97);
-    box-shadow:
-        0 0 0 6px rgba(255, 215, 0, 0.3),
-        0 10px 30px rgba(255, 215, 0, 0.4);
-}
-
-.medal-emoji {
-    font-size: 3.5rem;
-    margin-bottom: -5px;
-}
-
-.medal-text {
-    font-size: 0.9rem;
-    text-align: center;
-    color: #0055a4;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: -3px;
-}
-
-.score-display {
-    margin-top: 25px;
-    text-align: center;
-    background: white;
-    padding: 15px 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.score-display #score {
-    font-size: 2.2rem;
-    color: #0055a4;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.score-display #auto-gain {
-    font-size: 1.1rem;
-    color: #666;
-    font-weight: 500;
-}
-
-/* ===== PANEL DES BÂTIMENTS (DROITE) ===== */
-.buildings-panel {
-    width: 25%;
-    min-width: 320px;
-    max-width: 350px;
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e0e0;
-    height: fit-content;
-    max-height: 85vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.buildings-panel::-webkit-scrollbar {
-    width: 8px;
-}
-
-.buildings-panel::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.buildings-panel::-webkit-scrollbar-thumb {
-    background: #0055a4;
-    border-radius: 10px;
-}
-
-.buildings-panel::-webkit-scrollbar-thumb:hover {
-    background: #003d7a;
-}
-
-.buildings-panel h2 {
-    color: #0055a4;
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 1.3rem;
-    font-weight: 700;
-    border-bottom: 2px solid #0055a4;
-    padding-bottom: 12px;
-}
-
-.buildings-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.building-item {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 14px;
-    border: 2px solid #e0e0e0;
-    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-    cursor: default;
-}
-
-.building-item:hover {
-    border-color: #0055a4;
-    background: #e6f7ff;
-    box-shadow: 0 3px 10px rgba(0, 85, 164, 0.15);
-}
-
-.building-item .building-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-}
-
-.building-item .building-icon {
-    font-size: 1.8rem;
-    width: 40px;
-    text-align: center;
-}
-
-.building-item h3 {
-    color: #0055a4;
-    margin-bottom: 4px;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.building-item p {
-    font-size: 0.8rem;
-    color: #666;
-    margin-bottom: 10px;
-    line-height: 1.4;
-}
-
-.building-item .stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 0.85rem;
-}
-
-.building-item .stats span:first-child {
-    color: #0055a4;
-    font-weight: 600;
-}
-
-.building-item .stats span:last-child {
-    color: #555;
-}
-
-.building-item button {
-    width: 100%;
-    padding: 10px;
-    background: #0055a4;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9rem;
-}
-
-.building-item button:hover:not(:disabled) {
-    background: #003d7a;
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0, 85, 164, 0.3);
-}
-
-.building-item button:disabled {
-    background: #cccccc;
-    color: #777;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* ===== BONUS ALÉATOIRES (Druide & Alliance) ===== */
-.random-bonuses-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 200;
-    overflow: hidden;
-}
-
-.random-bonus {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    cursor: pointer;
-    pointer-events: auto;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-    animation: pulse-glow 1.5s infinite alternate, fadeIn 0.5s ease-out;
-    border: 3px solid #0055a4;
-    transition: all 0.3s ease;
-    z-index: 201;
-}
-
-.random-bonus:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
-}
-
-.random-bonus.druide {
-    background: linear-gradient(135deg, #4CAF50, #66BB6A);
-    border-color: #2E7D32;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
-}
-
-.random-bonus.druide:hover {
-    box-shadow: 0 0 30px rgba(76, 175, 80, 0.9);
-}
-
-.random-bonus.alliance {
-    background: linear-gradient(135deg, #2196F3, #64B5F6);
-    border-color: #0D47A1;
-    box-shadow: 0 0 20px rgba(33, 150, 243, 0.7);
-}
-
-.random-bonus.alliance:hover {
-    box-shadow: 0 0 30px rgba(33, 150, 243, 0.9);
-}
-
-.random-bonus.clicked {
-    animation: fadeOut 0.5s ease-out forwards;
-    pointer-events: none;
-}
-
-/* Animations */
-@keyframes pulse-glow {
-    0% {
-        box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-    }
-    100% {
-        box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.5);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(1.5);
-    }
-}
-
-/* Tooltip pour les bonus aléatoires */
-.random-bonus::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: -35px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-}
-
-.random-bonus:hover::after {
-    opacity: 1;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-    .main-container {
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
-    .buildings-panel {
-        width: 100%;
-        max-width: 600px;
-        margin-top: 20px;
-    }
-
-    .upgrades-bar {
-        flex-direction: column;
-        align-items: center;
-        padding: 15px;
-    }
-
-    .upgrades-list {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .upgrade-item {
-        min-width: 200px;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .medal {
-        width: 180px;
-        height: 180px;
-    }
-
-    .medal-emoji {
-        font-size: 2.8rem;
-    }
-
-    .score-display {
-        padding: 12px 20px;
-    }
-
-    .score-display #score {
-        font-size: 1.8rem;
-    }
-
-    .buildings-panel {
-        max-width: 100%;
-    }
-
-    .upgrades-bar {
-        padding: 10px;
-    }
-
-    .upgrades-list {
-        gap: 8px;
-    }
-
-    .upgrade-item {
-        min-width: 180px;
-        padding: 10px 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .main-container {
-        padding: 15px;
-    }
-
-    .medal {
-        width: 150px;
-        height: 150px;
-    }
-
-    .medal-emoji {
-        font-size: 2.3rem;
-    }
-
-    .medal-text {
-        font-size: 0.75rem;
-    }
-
-    .upgrade-item {
-        min-width: 160px;
-    }
 }
 
 /* ===== MODAL PARAMÈTRES ===== */
@@ -653,38 +243,70 @@ body {
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ===== BOUTON PARAMÈTRES DANS LA BARRE ===== */
-.settings-button {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* ===== MAIN CONTAINER ===== */
+.main-container {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 25px;
+    gap: 25px;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 100px);
+}
+
+/* ===== ZONE DE CLIQUE (CENTRE) ===== */
+.click-container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex: 1;
+    max-width: 50%;
+    padding: 20px;
 }
 
-.settings-button:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-}
-
-/* ===== MODIFICATION DE LA BARRE DES AMÉLIORATIONS ===== */
-.upgrades-bar {
+.medal {
+    width: 220px;
+    height: 220px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    border-radius: 50%;
     display: flex;
-    align-items: center;  /* Ajoutez cette ligne */
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 20px;
-    padding: 15px 20px;
-    min-height: 80px;  /* Ajoutez cette ligne */
+    cursor: pointer;
+    box-shadow: 0 0 0 8px rgba(255, 215, 0, 0.3), 0 15px 40px rgba(255, 215, 0, 0.4);
+    transition: all 0.15s ease;
+    border: 3px solid #0055a4;
+    position: relative;
+    overflow: hidden;
 }
 
-.upgrades-bar h2 {
-    margin: 0;  /* Modifiez cette ligne */
-    flex: 1;  /* Ajoutez cette ligne */
+.medal:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 10px rgba(255, 215, 0, 0.4), 0 20px 50px rgba(255, 215, 0, 0.5);
 }
+
+.medal:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 0 6px rgba(255, 215, 0, 0.3), 0 10px 30px rgba(255, 215, 0, 0.4);
+}
+
+.medal-emoji {
+    font-size: 3.5rem;
+    margin-bottom: -5px;
+}
+
+.medal-text {
+    font-size: 0.9rem;
+    text-align: center;
+    color: #0055a4;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: -3px;
+}
+
+.score-display {
+    margin-top:
