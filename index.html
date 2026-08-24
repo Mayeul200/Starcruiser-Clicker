@@ -5,30 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🇫🇷 Glory of France Clicker</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🇫🇷 Glory of France Clicker</h1>
-            <p class="subtitle">Accumulez des Points de Gloire en explorant l'histoire de France !</p>
-        </header>
-
-        <main>
-            <!-- Zone de clic -->
-            <div class="click-zone">
-                <img id="flag" src="assets/images/drapeau-france.png" alt="Drapeau Français - Cliquez pour gagner des points !" onclick="addScore(1)">
-                <div id="score">Points de Gloire : <span id="score-value">0</span> (<span id="auto-gain">0</span>/s)</div>
-            </div>
-            <!-- Ères (générées par JS) -->
-            <div id="eras"></div>
-        </main>
-
-        <footer>
-            <p>Made with ❤️ for France</p>
-        </footer>
+    <!-- Barre des bonus temporaires (en haut) -->
+    <div class="upgrades-bar">
+        <div class="upgrade-item" id="bonus-click">
+            <h3>Bénédiction des Druides</h3>
+            <p>×2 PDG/clic pendant 30s</p>
+            <p class="cost">Coût : <span>100</span> PDG</p>
+            <button onclick="buyUpgrade('bonus-click')">Acheter</button>
+            <div class="timer" id="bonus-click-timer"></div>
+        </div>
+        <div class="upgrade-item" id="bonus-auto">
+            <h3>Alliance des Tribus</h3>
+            <p>×2 PDG/s pendant 30s</p>
+            <p class="cost">Coût : <span>200</span> PDG</p>
+            <button onclick="buyUpgrade('bonus-auto')">Acheter</button>
+            <div class="timer" id="bonus-auto-timer"></div>
+        </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Zone principale -->
+    <div class="main-container">
+        <!-- Zone de clic (centre) -->
+        <div class="click-zone">
+            <div class="medal" id="medal" onclick="addScore(1)">
+                🏅
+                <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
+            </div>
+            <div class="score-display">
+                <div id="score">PDG : <span id="score-value">0</span></div>
+                <div id="auto-gain">+<span id="gain-value">0</span>/s</div>
+            </div>
+        </div>
+
+        <!-- Zone des bâtiments (droite) -->
+        <div class="buildings-panel">
+            <h2>L'Aube de la France</h2>
+            <div class="buildings-list" id="buildings-list">
+                <!-- Les bâtiments seront générés par JS -->
+            </div>
+        </div>
+    </div>
+
     <script src="game.js"></script>
     <script src="save.js"></script>
 </body>
