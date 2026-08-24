@@ -7,7 +7,7 @@ const ERA = {
             name: "Coq Gaulois",
             description: "Symbole de la Gaule. Génère des PDG automatiquement.",
             baseCost: 10,
-            gain: 0.1, // PDG par seconde
+            gain: 0.1,
             count: 0,
             costMultiplier: 1.15,
             image: "🐓"
@@ -90,6 +90,7 @@ function addScore(points) {
     score += points * clickMultiplier;
     updateDisplay();
     saveGame();
+    renderBuildings(); // ✅ Rafraîchit les boutons après un clic
 }
 
 function updateDisplay() {
@@ -115,9 +116,7 @@ function buyBuilding(buildingId) {
         building.count++;
         updateDisplay();
         saveGame();
-        renderBuildings();
-    } else {
-        alert(`Il vous manque ${formatNumber(currentCost - score)} PDG !`);
+        renderBuildings(); // ✅ Rafraîchit immédiatement après achat
     }
 }
 
@@ -140,11 +139,8 @@ function buyUpgrade(upgradeId) {
         updateDisplay();
         saveGame();
         renderUpgrades();
+        renderBuildings(); // ✅ Rafraîchit aussi les bâtiments
         startUpgradeTimer(upgradeId);
-    } else if (upgrade.active) {
-        alert("Ce bonus est déjà actif !");
-    } else {
-        alert(`Il vous manque ${formatNumber(upgrade.cost - score)} PDG !`);
     }
 }
 
@@ -163,6 +159,7 @@ function startUpgradeTimer(upgradeId) {
             updateDisplay();
             saveGame();
             renderUpgrades();
+            renderBuildings(); // ✅ Rafraîchit les bâtiments à la fin du timer
             timerElement.textContent = "";
         } else {
             timerElement.textContent = `⏳ ${remaining}s`;
@@ -177,10 +174,13 @@ function renderBuildings() {
 
     ERA.buildings.forEach(building => {
         const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
-        const currentGain = building.gain * building.count;
+        const currentGain = building.gain * building.count * autoMultiplier;
 
         const buildingElement = document.createElement('div');
         buildingElement.className = 'building-item';
+
+        const isAffordable = score >= currentCost;
+
         buildingElement.innerHTML = `
             <div class="building-header">
                 <span class="building-icon">${building.image}</span>
@@ -193,7 +193,10 @@ function renderBuildings() {
                 <span>+${formatNumber(currentGain)}/s</span>
                 <span>Possédés : ${building.count}</span>
             </div>
-            <button onclick="buyBuilding('${building.id}')" ${score < currentCost ? 'disabled' : ''}>
+            <button
+                onclick="buyBuilding('${building.id}')"
+                ${!isAffordable ? 'disabled' : ''}
+            >
                 Acheter (${formatNumber(currentCost)} PDG)
             </button>
         `;
@@ -204,18 +207,25 @@ function renderBuildings() {
 function renderUpgrades() {
     ERA.upgrades.forEach(upgrade => {
         const element = document.getElementById(upgrade.id);
+        if (!element) return;
+
         const button = element.querySelector('button');
         const costSpan = element.querySelector('.cost span');
 
-        button.disabled = score < upgrade.cost || upgrade.active;
+        const isAffordable = score >= upgrade.cost;
+        const isActive = upgrade.active;
+
+        button.disabled = !isAffordable || isActive;
         costSpan.textContent = formatNumber(upgrade.cost);
 
-        if (upgrade.active) {
+        if (isActive) {
             button.textContent = "Actif !";
             button.style.background = "#4CAF50";
+            button.style.color = "white";
         } else {
             button.textContent = "Acheter";
             button.style.background = "#ffd700";
+            button.style.color = "#0055a4";
         }
     });
 }
@@ -227,12 +237,13 @@ function gameLoop() {
         totalGain += building.gain * building.count;
     });
     autoGain = totalGain * autoMultiplier;
-    score += autoGain / 10; // On divise par 10 pour avoir un gain fluide (10 updates/seconde)
+    score += autoGain / 10;
     updateDisplay();
     saveGame();
+    // Pas besoin de renderBuildings() ici, c'est géré après chaque action
 }
 
-setInterval(gameLoop, 100); // 10 fois par seconde
+setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
 function init() {
