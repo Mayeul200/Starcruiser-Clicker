@@ -5,142 +5,122 @@ const ERA = {
         {
             id: "coq-gaulois",
             name: "Coq Gaulois",
-            description: "Symbole de la Gaule. Génère des PDG automatiquement.",
+            description: "Symbole de la Gaule.",
             baseCost: 10,
             gain: 0.1,
             count: 0,
             image: "🐓",
             upgrades: [
-                { requiredCount: 10, multiplier: 2, name: "Élevage de Coqs", description: "×2 production" },
-                { requiredCount: 25, multiplier: 2, name: "Fermes Gauloises", description: "×2 production" },
-                { requiredCount: 50, multiplier: 2, name: "Royaume des Coqs", description: "×2 production" },
-                { requiredCount: 75, multiplier: 2, name: "Empire des Coqs", description: "×2 production" },
-                { requiredCount: 100, multiplier: 2, name: "Légion des Coqs", description: "×2 production" }
+                { requiredCount: 10, multiplier: 2, name: "Élevage", description: "×2" },
+                { requiredCount: 25, multiplier: 2, name: "Fermes", description: "×2" },
+                { requiredCount: 50, multiplier: 2, name: "Royaume", description: "×2" },
+                { requiredCount: 75, multiplier: 2, name: "Empire", description: "×2" },
+                { requiredCount: 100, multiplier: 2, name: "Légion", description: "×2" }
             ]
         },
         {
             id: "vercingetorix",
             name: "Vercingétorix",
-            description: "Chef gaulois contre Rome. Génère plus de PDG.",
+            description: "Chef gaulois.",
             baseCost: 100,
             gain: 1,
             count: 0,
             image: "🛡️",
             upgrades: [
-                { requiredCount: 10, multiplier: 2, name: "Armée Gauloise", description: "×2 production" },
-                { requiredCount: 25, multiplier: 2, name: "Légion Gauloise", description: "×2 production" },
-                { requiredCount: 50, multiplier: 2, name: "Grand Armée", description: "×2 production" },
-                { requiredCount: 75, multiplier: 2, name: "Armées Unifiées", description: "×2 production" },
-                { requiredCount: 100, multiplier: 2, name: "Empire Gaulois", description: "×2 production" }
+                { requiredCount: 10, multiplier: 2, name: "Armée", description: "×2" },
+                { requiredCount: 25, multiplier: 2, name: "Légion", description: "×2" },
+                { requiredCount: 50, multiplier: 2, name: "Grand Armée", description: "×2" },
+                { requiredCount: 75, multiplier: 2, name: "Unifiées", description: "×2" },
+                { requiredCount: 100, multiplier: 2, name: "Empire", description: "×2" }
             ]
         },
         {
             id: "charlemagne",
             name: "Charlemagne",
-            description: "Empereur des Francs. Génère encore plus de PDG.",
+            description: "Empereur des Francs.",
             baseCost: 1000,
             gain: 10,
             count: 0,
             image: "👑",
             upgrades: [
-                { requiredCount: 10, multiplier: 2, name: "Cour Impériale", description: "×2 production" },
-                { requiredCount: 25, multiplier: 2, name: "Empire Carolingien", description: "×2 production" },
-                { requiredCount: 50, multiplier: 2, name: "Royaume Unifié", description: "×2 production" },
-                { requiredCount: 75, multiplier: 2, name: "Hégémonie Franque", description: "×2 production" },
-                { requiredCount: 100, multiplier: 2, name: "Légende de Charlemagne", description: "×2 production" }
+                { requiredCount: 10, multiplier: 2, name: "Cour", description: "×2" },
+                { requiredCount: 25, multiplier: 2, name: "Empire", description: "×2" },
+                { requiredCount: 50, multiplier: 2, name: "Royaume", description: "×2" },
+                { requiredCount: 75, multiplier: 2, name: "Hégémonie", description: "×2" },
+                { requiredCount: 100, multiplier: 2, name: "Légende", description: "×2" }
             ]
         },
         {
             id: "notre-dame",
-            name: "Cathédrale Notre-Dame",
-            description: "Chef-d'œuvre gothique. Génère un flux constant de PDG.",
+            name: "Notre-Dame",
+            description: "Cathédrale gothique.",
             baseCost: 10000,
             gain: 100,
             count: 0,
             image: "⛪",
             upgrades: [
-                { requiredCount: 10, multiplier: 2, name: "Architecture Gothique", description: "×2 production" },
-                { requiredCount: 25, multiplier: 2, name: "Vitraux Sacrés", description: "×2 production" },
-                { requiredCount: 50, multiplier: 2, name: "Rosace Céleste", description: "×2 production" },
-                { requiredCount: 75, multiplier: 2, name: "Cathédrale Majestueuse", description: "×2 production" },
-                { requiredCount: 100, multiplier: 2, name: "Chef-d'Œuvre Éternel", description: "×2 production" }
+                { requiredCount: 10, multiplier: 2, name: "Architecture", description: "×2" },
+                { requiredCount: 25, multiplier: 2, name: "Vitraux", description: "×2" },
+                { requiredCount: 50, multiplier: 2, name: "Rosace", description: "×2" },
+                { requiredCount: 75, multiplier: 2, name: "Majestueuse", description: "×2" },
+                { requiredCount: 100, multiplier: 2, name: "Chef-d'Œuvre", description: "×2" }
             ]
         },
         {
             id: "fleur-de-lys",
             name: "Fleur de Lys",
-            description: "Symbole royal. Génère des PDG avec élégance.",
+            description: "Symbole royal.",
             baseCost: 100000,
             gain: 1000,
             count: 0,
             image: "🌸",
             upgrades: [
-                { requiredCount: 10, multiplier: 2, name: "Blason Royal", description: "×2 production" },
-                { requiredCount: 25, multiplier: 2, name: "Héraldique Sacrée", description: "×2 production" },
-                { requiredCount: 50, multiplier: 2, name: "Symboles du Pouvoir", description: "×2 production" },
-                { requiredCount: 75, multiplier: 2, name: "Dynastie Royale", description: "×2 production" },
-                { requiredCount: 100, multiplier: 2, name: "Héritage Éternel", description: "×2 production" }
+                { requiredCount: 10, multiplier: 2, name: "Blason", description: "×2" },
+                { requiredCount: 25, multiplier: 2, name: "Héraldique", description: "×2" },
+                { requiredCount: 50, multiplier: 2, name: "Symboles", description: "×2" },
+                { requiredCount: 75, multiplier: 2, name: "Dynastie", description: "×2" },
+                { requiredCount: 100, multiplier: 2, name: "Héritage", description: "×2" }
             ]
         }
     ]
 };
 
-// ===== AMÉLIORATIONS DE CLIQUE =====
 const CLICK_UPGRADES = [
-    { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic", description: "+1% des PDG/s par clic" },
-    { threshold: 200, bonus: 0.01, name: "Clic Précis", description: "+1% des PDG/s par clic" },
-    { threshold: 500, bonus: 0.01, name: "Clic Puissant", description: "+1% des PDG/s par clic" },
-    { threshold: 1000, bonus: 0.01, name: "Clic Expert", description: "+1% des PDG/s par clic" },
-    { threshold: 2000, bonus: 0.01, name: "Clic Légendaire", description: "+1% des PDG/s par clic" }
+    { threshold: 100, bonus: 0.01, name: "Maîtrise", description: "+1% PDG/s par clic" },
+    { threshold: 200, bonus: 0.01, name: "Précis", description: "+1% PDG/s par clic" },
+    { threshold: 500, bonus: 0.01, name: "Puissant", description: "+1% PDG/s par clic" },
+    { threshold: 1000, bonus: 0.01, name: "Expert", description: "+1% PDG/s par clic" },
+    { threshold: 2000, bonus: 0.01, name: "Légendaire", description: "+1% PDG/s par clic" }
 ];
 
-// ===== BONUS ALÉATOIRES =====
 const RANDOM_BONUSES = [
-    {
-        id: "druide",
-        symbol: "🌿",
-        name: "Druide Sacré",
-        effect: "auto",
-        multiplier: 5,
-        duration: 30000,
-        tooltip: "×5 PDG/s pendant 30s",
-        colorClass: "druide"
-    },
-    {
-        id: "alliance",
-        symbol: "🤝",
-        name: "Alliance Sacrée",
-        effect: "click",
-        multiplier: 10,
-        duration: 30000,
-        tooltip: "×10 PDG/clic pendant 30s",
-        colorClass: "alliance"
-    }
+    { id: "druide", symbol: "🌿", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 PDG/s", colorClass: "druide" },
+    { id: "alliance", symbol: "🤝", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 PDG/clic", colorClass: "alliance" }
 ];
 
-// ===== VARIABLES GLOBALES =====
+// ===== VARIABLES =====
 let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
 let autoMultiplier = 1;
 let activeRandomBonuses = [];
-let buildingMultipliers = {
-    "coq-gaulois": 1,
-    "vercingetorix": 1,
-    "charlemagne": 1,
-    "notre-dame": 1,
-    "fleur-de-lys": 1
-};
+let buildingMultipliers = { "coq-gaulois": 1, "vercingetorix": 1, "charlemagne": 1, "notre-dame": 1, "fleur-de-lys": 1 };
 let clickPDGTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
 
-// ===== FONCTIONS DE BASE =====
-function handleMedalClick() {
-    addScore(1);
+// ===== INITIALISATION =====
+function init() {
+    loadGame();
+    renderBuildings();
+    renderUpgrades();
+    updateDisplay();
+    setInterval(gameLoop, 100);
+    setInterval(spawnRandomBonus, 60000);
 }
 
+// ===== FONCTIONS PRINCIPALES =====
 function addScore(points) {
     const basePoints = points * clickMultiplier;
     const bonusPoints = autoGain * clickBonus;
@@ -149,7 +129,7 @@ function addScore(points) {
     score += totalPoints;
     clickPDGTotal += basePoints;
 
-    // Afficher le +X autour de la médaille
+    // Afficher +X
     showClickEffect(Math.round(totalPoints));
 
     updateDisplay();
@@ -160,25 +140,26 @@ function addScore(points) {
 
 function showClickEffect(value) {
     const container = document.getElementById('click-effects');
+    if (!container) return; // Sécurité
+
     const medal = document.getElementById('medal');
+    if (!medal) return;
+
     const medalRect = medal.getBoundingClientRect();
     const centerX = medalRect.left + medalRect.width / 2;
     const centerY = medalRect.top + medalRect.height / 2;
 
-    // Générer une position aléatoire autour de la médaille
     const angle = Math.random() * Math.PI * 2;
-    const distance = 60 + Math.random() * 60; // 60-120px de distance
+    const distance = 60 + Math.random() * 60;
     const offsetX = Math.cos(angle) * distance;
     const offsetY = Math.sin(angle) * distance;
 
-    // Créer l'élément +X
     const effect = document.createElement('div');
     effect.className = 'click-effect';
     effect.textContent = `+${value}`;
     effect.style.left = `${centerX + offsetX}px`;
     effect.style.top = `${centerY + offsetY}px`;
 
-    // Définir la position finale de l'animation
     const endAngle = angle + (Math.random() - 0.5) * 0.3;
     const endDistance = distance + 30;
     const endX = Math.cos(endAngle) * endDistance;
@@ -188,25 +169,24 @@ function showClickEffect(value) {
     effect.style.setProperty('--end-y', `${endY}px`);
 
     container.appendChild(effect);
-
-    // Supprimer après l'animation
     setTimeout(() => effect.remove(), 1200);
 }
 
-// ===== PLUIE DE MÉDAILLONS =====
 function spawnMedalRain() {
-    const medalCount = Math.min(Math.max(1, Math.floor(autoGain / 2)), 8);
+    if (autoGain <= 0) return;
 
+    const medalCount = Math.min(Math.max(1, Math.floor(autoGain / 2)), 8);
     const container = document.getElementById('medal-rain');
+    if (!container) return;
+
     const medal = document.getElementById('medal');
+    if (!medal) return;
+
     const medalRect = medal.getBoundingClientRect();
 
     for (let i = 0; i < medalCount; i++) {
-        // Position de départ aléatoire au-dessus de la zone de clic
         const startX = medalRect.left + Math.random() * medalRect.width;
         const startY = medalRect.top - 50 - Math.random() * 50;
-
-        // Position finale aléatoire dans la zone de clic
         const endX = medalRect.left + Math.random() * medalRect.width - medalRect.width / 2;
         const endY = medalRect.top + Math.random() * medalRect.height;
 
@@ -219,12 +199,27 @@ function spawnMedalRain() {
         medalRain.style.setProperty('--fall-y', `${endY - startY}px`);
 
         container.appendChild(medalRain);
-
-        // Supprimer après l'animation
         setTimeout(() => medalRain.remove(), 2500);
     }
 
     lastMedalRainTime = Date.now();
+}
+
+function gameLoop() {
+    let totalGain = 0;
+    ERA.buildings.forEach(building => {
+        totalGain += building.gain * building.count * buildingMultipliers[building.id];
+    });
+    autoGain = totalGain * autoMultiplier;
+    score += autoGain / 10;
+
+    if (autoGain > 0 && Date.now() - lastMedalRainTime > 300) {
+        spawnMedalRain();
+    }
+
+    updateDisplay();
+    saveGame();
+    updateBuildingsButtons();
 }
 
 function updateDisplay() {
@@ -234,75 +229,57 @@ function updateDisplay() {
 
 function formatNumber(num) {
     if (num < 1000) return num.toFixed(num % 1 === 0 ? 0 : 1);
-    if (num >= 1000 && num < 1000000) return (num / 1000).toFixed(1) + "K";
-    if (num >= 1000000 && num < 1000000000) return (num / 1000000).toFixed(1) + "M";
+    if (num < 1000000) return (num / 1000).toFixed(1) + "K";
+    if (num < 1000000000) return (num / 1000000).toFixed(1) + "M";
     return (num / 1000000000).toFixed(1) + "B";
 }
 
-// ===== FONCTIONS DE PARAMÈTRES =====
-function toggleSettings() {
-    const modal = document.getElementById('settings-modal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
+// ===== AMÉLIORATIONS =====
+function renderUpgrades() {
+    const container = document.getElementById('upgrades-list');
+    if (!container) return;
+    container.innerHTML = '';
 
-function exportSave() {
-    const saveData = localStorage.getItem('gloryOfFranceSave');
-    if (saveData) {
-        navigator.clipboard.writeText(saveData)
-            .then(() => showToast("✅ Sauvegarde copiée dans le presse-papiers !"))
-            .catch(() => {
-                prompt("Copiez cette sauvegarde :", saveData);
-                showToast("✅ Sauvegarde affichée, copiez-la manuellement.");
-            });
-    } else {
-        showToast("❌ Aucune sauvegarde trouvée.");
+    ERA.buildings.forEach(building => {
+        const nextUpgrade = building.upgrades.find(upgrade =>
+            building.count >= upgrade.requiredCount &&
+            buildingMultipliers[building.id] < (2 ** (building.upgrades.indexOf(upgrade) + 1))
+        );
+        if (nextUpgrade) {
+            const el = document.createElement('div');
+            el.className = 'upgrade-item';
+            el.innerHTML = `
+                <h3>${building.name}</h3>
+                <p>${nextUpgrade.description}</p>
+                <p class="cost">Niveau : ${nextUpgrade.requiredCount}</p>
+                <button onclick="buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})">Activer</button>
+            `;
+            container.appendChild(el);
+        }
+    });
+
+    CLICK_UPGRADES.forEach(upgrade => {
+        if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+            const el = document.createElement('div');
+            el.className = 'upgrade-item';
+            el.innerHTML = `
+                <h3>Clic</h3>
+                <p>${upgrade.description}</p>
+                <p class="cost">Seuil : ${upgrade.threshold}</p>
+                <button onclick="buyClickUpgrade(${upgrade.threshold})">Activer</button>
+            `;
+            container.appendChild(el);
+        }
+    });
+
+    if (container.innerHTML === '') {
+        container.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.7)">Achetez des bâtiments pour débloquer !</p>';
     }
 }
 
-function importSaveFromTextarea() {
-    const importText = document.getElementById('import-textarea').value.trim();
-    if (!importText) {
-        showToast("❌ Aucune sauvegarde à importer.");
-        return;
-    }
-
-    try {
-        JSON.parse(importText);
-        localStorage.setItem('gloryOfFranceSave', importText);
-        showToast("✅ Sauvegarde importée ! Rechargement en cours...");
-        setTimeout(() => location.reload(), 1000);
-    } catch (e) {
-        showToast("❌ Format invalide. Collez une sauvegarde valide.");
-    }
-}
-
-function confirmDeleteSave() {
-    if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer votre sauvegarde ? Tous vos progrès seront perdus !")) {
-        deleteSave();
-    }
-}
-
-function deleteSave() {
-    localStorage.removeItem('gloryOfFranceSave');
-    showToast("🗑️ Sauvegarde supprimée !");
-    setTimeout(() => location.reload(), 1000);
-}
-
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.style.display = 'block';
-    setTimeout(() => {
-        toast.style.display = 'none';
-    }, 3000);
-}
-
-// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
 function updateBuildingsButtons() {
-    const buildingElements = document.querySelectorAll('.building-item');
-
-    buildingElements.forEach((element, index) => {
-        const building = ERA.buildings[index];
+    document.querySelectorAll('.building-item').forEach((el, i) => {
+        const building = ERA.buildings[i];
         if (!building) return;
 
         const currentCost = building.count === 0
@@ -312,64 +289,54 @@ function updateBuildingsButtons() {
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
-        const button = element.querySelector('button');
-        button.textContent = `Acheter (${formatNumber(currentCost)} PDG)`;
-        button.disabled = !isAffordable;
+        const btn = el.querySelector('button');
+        if (btn) {
+            btn.textContent = `Acheter (${formatNumber(currentCost)} PDG)`;
+            btn.disabled = !isAffordable;
+        }
 
-        const stats = element.querySelectorAll('.stats span');
+        const stats = el.querySelectorAll('.stats span');
         if (stats[0]) stats[0].textContent = `+${formatNumber(currentGain)}/s`;
         if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
     });
 }
 
-// ===== FONCTION POUR METTRE À JOUR LES AMÉLIORATIONS =====
-function renderUpgrades() {
-    const container = document.getElementById('upgrades-list');
+function renderBuildings() {
+    const container = document.getElementById('buildings-list');
+    if (!container) return;
     container.innerHTML = '';
 
     ERA.buildings.forEach(building => {
-        const nextUpgrade = building.upgrades.find(upgrade =>
-            building.count >= upgrade.requiredCount &&
-            buildingMultipliers[building.id] < (2 ** (building.upgrades.indexOf(upgrade) + 1))
-        );
+        const currentCost = building.count === 0
+            ? building.baseCost
+            : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
 
-        if (nextUpgrade) {
-            const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-item';
-            upgradeElement.innerHTML = `
-                <h3>${building.name}</h3>
-                <p>${nextUpgrade.description}</p>
-                <p class="cost">Niveau : ${nextUpgrade.requiredCount} ${building.name}</p>
-                <button onclick="buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})">
-                    Activer
-                </button>
-            `;
-            container.appendChild(upgradeElement);
-        }
+        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
+        const isAffordable = score >= currentCost;
+
+        const el = document.createElement('div');
+        el.className = 'building-item';
+        el.innerHTML = `
+            <div class="building-header">
+                <span class="building-icon">${building.image}</span>
+                <div>
+                    <h3>${building.name}</h3>
+                    <p>${building.description}</p>
+                </div>
+            </div>
+            <div class="stats">
+                <span>+${formatNumber(currentGain)}/s</span>
+                <span>Possédés : ${building.count}</span>
+            </div>
+            <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
+                Acheter (${formatNumber(currentCost)} PDG)
+            </button>
+        `;
+        container.appendChild(el);
     });
-
-    CLICK_UPGRADES.forEach(upgrade => {
-        if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
-            const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-item';
-            upgradeElement.innerHTML = `
-                <h3>Amélioration de Clic</h3>
-                <p>${upgrade.description}</p>
-                <p class="cost">Seuil : ${upgrade.threshold} PDG par clics</p>
-                <button onclick="buyClickUpgrade(${upgrade.threshold})">
-                    Activer
-                </button>
-            `;
-            container.appendChild(upgradeElement);
-        }
-    });
-
-    if (container.innerHTML === '') {
-        container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: rgba(255,255,255,0.7);">Achetez des bâtiments ou cliquez pour débloquer des améliorations !</p>';
-    }
 }
 
-// ===== ACHAT DES BÂTIMENTS =====
+// ===== ACHATS =====
 function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
@@ -388,7 +355,6 @@ function buyBuilding(buildingId) {
     }
 }
 
-// ===== ACHAT DES AMÉLIORATIONS DE BÂTIMENTS =====
 function buyBuildingUpgrade(buildingId, requiredCount) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
@@ -403,7 +369,6 @@ function buyBuildingUpgrade(buildingId, requiredCount) {
     renderUpgrades();
 }
 
-// ===== ACHAT DES AMÉLIORATIONS DE CLIQUE =====
 function buyClickUpgrade(threshold) {
     const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
     if (!upgrade) return;
@@ -416,35 +381,32 @@ function buyClickUpgrade(threshold) {
     showToast(`✅ ${upgrade.name} activée !`);
 }
 
-// ===== BONUS ALÉATOIRES =====
+// ===== BONUS =====
 function spawnRandomBonus() {
-    const bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
-    const bonus = RANDOM_BONUSES[bonusIndex];
-
-    const isActive = activeRandomBonuses.some(b => b.id === bonus.id);
-    if (isActive) return;
+    const bonus = RANDOM_BONUSES[Math.floor(Math.random() * RANDOM_BONUSES.length)];
+    if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
 
     const x = Math.random() * (window.innerWidth - 150) + 50;
     const y = Math.random() * (window.innerHeight - 200) + 100;
 
-    const bonusElement = document.createElement('div');
-    bonusElement.className = `random-bonus ${bonus.colorClass}`;
-    bonusElement.innerHTML = bonus.symbol;
-    bonusElement.style.left = `${x}px`;
-    bonusElement.style.top = `${y}px`;
-    bonusElement.setAttribute('data-tooltip', bonus.tooltip);
-    bonusElement.setAttribute('data-id', bonus.id);
+    const el = document.createElement('div');
+    el.className = `random-bonus ${bonus.colorClass}`;
+    el.innerHTML = bonus.symbol;
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    el.setAttribute('data-tooltip', bonus.tooltip);
+    el.setAttribute('data-id', bonus.id);
 
-    document.getElementById('random-bonuses').appendChild(bonusElement);
+    document.getElementById('random-bonuses').appendChild(el);
 
     const timeout = setTimeout(() => {
-        bonusElement.classList.add('clicked');
-        setTimeout(() => bonusElement.remove(), 500);
+        el.classList.add('clicked');
+        setTimeout(() => el.remove(), 500);
     }, 10000);
 
-    bonusElement.onclick = () => {
+    el.onclick = () => {
         clearTimeout(timeout);
-        bonusElement.classList.add('clicked');
+        el.classList.add('clicked');
 
         if (bonus.effect === "auto") autoMultiplier = bonus.multiplier;
         else if (bonus.effect === "click") clickMultiplier = bonus.multiplier;
@@ -456,7 +418,7 @@ function spawnRandomBonus() {
             endTime: Date.now() + bonus.duration
         });
 
-        setTimeout(() => bonusElement.remove(), 500);
+        setTimeout(() => el.remove(), 500);
 
         setTimeout(() => {
             activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
@@ -467,74 +429,61 @@ function spawnRandomBonus() {
     };
 }
 
-// ===== AFFICHAGE INITIAL =====
-function renderBuildings() {
-    const container = document.getElementById('buildings-list');
-    container.innerHTML = '';
-
-    ERA.buildings.forEach(building => {
-        const currentCost = building.count === 0
-            ? building.baseCost
-            : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
-
-        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
-        const isAffordable = score >= currentCost;
-
-        const buildingElement = document.createElement('div');
-        buildingElement.className = 'building-item';
-
-        buildingElement.innerHTML = `
-            <div class="building-header">
-                <span class="building-icon">${building.image}</span>
-                <div>
-                    <h3>${building.name}</h3>
-                    <p>${building.description}</p>
-                </div>
-            </div>
-            <div class="stats">
-                <span>+${formatNumber(currentGain)}/s</span>
-                <span>Possédés : ${building.count}</span>
-            </div>
-            <button
-                onclick="buyBuilding('${building.id}')"
-                ${!isAffordable ? 'disabled' : ''}
-            >
-                Acheter (${formatNumber(currentCost)} PDG)
-            </button>
-        `;
-        container.appendChild(buildingElement);
-    });
+// ===== PARAMÈTRES =====
+function toggleSettings() {
+    const modal = document.getElementById('settings-modal');
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
 }
 
-// ===== BOUCLE PRINCIPALE =====
-function gameLoop() {
-    let totalGain = 0;
-    ERA.buildings.forEach(building => {
-        totalGain += building.gain * building.count * buildingMultipliers[building.id];
-    });
-    autoGain = totalGain * autoMultiplier;
-    score += autoGain / 10;
+function exportSave() {
+    const saveData = localStorage.getItem('gloryOfFranceSave');
+    if (saveData) {
+        navigator.clipboard.writeText(saveData)
+            .then(() => showToast("✅ Copié !"))
+            .catch(() => {
+                prompt("Copiez :", saveData);
+                showToast("✅ Copié manuellement");
+            });
+    } else {
+        showToast("❌ Aucune sauvegarde");
+    }
+}
 
-    // Faire pleuvoir des médaillons si autoGain > 0
-    if (autoGain > 0 && Date.now() - lastMedalRainTime > 300) {
-        spawnMedalRain();
+function importSaveFromTextarea() {
+    const importText = document.getElementById('import-textarea').value.trim();
+    if (!importText) {
+        showToast("❌ Rien à importer");
+        return;
     }
 
-    updateDisplay();
-    saveGame();
-    updateBuildingsButtons();
+    try {
+        JSON.parse(importText);
+        localStorage.setItem('gloryOfFranceSave', importText);
+        showToast("✅ Importé ! Rechargement...");
+        setTimeout(() => location.reload(), 1000);
+    } catch (e) {
+        showToast("❌ Format invalide");
+    }
 }
 
-// ===== TIMERS =====
-setInterval(spawnRandomBonus, 60000);
-setInterval(gameLoop, 100);
-
-// ===== INITIALISATION =====
-function init() {
-    loadGame();
-    updateDisplay();
-    renderBuildings();
-    renderUpgrades();
+function confirmDeleteSave() {
+    if (confirm("⚠️ Supprimer la sauvegarde ?")) deleteSave();
 }
 
+function deleteSave() {
+    localStorage.removeItem('gloryOfFranceSave');
+    showToast("🗑️ Supprimé !");
+    setTimeout(() => location.reload(), 1000);
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    }
+}
+
+// ===== DÉMARRAGE =====
 window.onload = init;
