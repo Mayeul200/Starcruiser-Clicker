@@ -137,6 +137,10 @@ let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
 
 // ===== FONCTIONS DE BASE =====
+function handleMedalClick() {
+    addScore(1);
+}
+
 function addScore(points) {
     const basePoints = points * clickMultiplier;
     const bonusPoints = autoGain * clickBonus;
@@ -145,7 +149,7 @@ function addScore(points) {
     score += totalPoints;
     clickPDGTotal += basePoints;
 
-    // Afficher le +X au-dessus de la médaille
+    // Afficher le +X autour de la médaille
     showClickEffect(Math.round(totalPoints));
 
     updateDisplay();
@@ -163,7 +167,7 @@ function showClickEffect(value) {
 
     // Générer une position aléatoire autour de la médaille
     const angle = Math.random() * Math.PI * 2;
-    const distance = 80 + Math.random() * 40; // 80-120px de distance
+    const distance = 60 + Math.random() * 60; // 60-120px de distance
     const offsetX = Math.cos(angle) * distance;
     const offsetY = Math.sin(angle) * distance;
 
@@ -175,10 +179,10 @@ function showClickEffect(value) {
     effect.style.top = `${centerY + offsetY}px`;
 
     // Définir la position finale de l'animation
-    const endAngle = angle + (Math.random() - 0.5) * 0.5; // Légère variation
-    const endDistance = distance + 50;
+    const endAngle = angle + (Math.random() - 0.5) * 0.3;
+    const endDistance = distance + 30;
     const endX = Math.cos(endAngle) * endDistance;
-    const endY = Math.sin(endAngle) * endDistance - 100; // Monter un peu
+    const endY = Math.sin(endAngle) * endDistance - 80;
 
     effect.style.setProperty('--end-x', `${endX}px`);
     effect.style.setProperty('--end-y', `${endY}px`);
@@ -186,46 +190,41 @@ function showClickEffect(value) {
     container.appendChild(effect);
 
     // Supprimer après l'animation
-    setTimeout(() => effect.remove(), 1000);
+    setTimeout(() => effect.remove(), 1200);
 }
 
 // ===== PLUIE DE MÉDAILLONS =====
 function spawnMedalRain() {
-    const now = Date.now();
-
-    // Calculer combien de médaillons à faire tomber (basé sur autoGain)
-    const medalCount = Math.min(Math.floor(autoGain / 5), 5);
-
-    if (medalCount <= 0) return;
+    const medalCount = Math.min(Math.max(1, Math.floor(autoGain / 2)), 8);
 
     const container = document.getElementById('medal-rain');
     const medal = document.getElementById('medal');
     const medalRect = medal.getBoundingClientRect();
 
     for (let i = 0; i < medalCount; i++) {
-        // Position aléatoire au-dessus de la zone de clic
+        // Position de départ aléatoire au-dessus de la zone de clic
         const startX = medalRect.left + Math.random() * medalRect.width;
-        const startY = medalRect.top - 20;
+        const startY = medalRect.top - 50 - Math.random() * 50;
 
         // Position finale aléatoire dans la zone de clic
         const endX = medalRect.left + Math.random() * medalRect.width - medalRect.width / 2;
-        const endY = medalRect.top + Math.random() * medalRect.height - 20;
+        const endY = medalRect.top + Math.random() * medalRect.height;
 
         const medalRain = document.createElement('div');
         medalRain.className = 'medal-rain';
         medalRain.innerHTML = '🏅';
         medalRain.style.left = `${startX}px`;
         medalRain.style.top = `${startY}px`;
-        medalRain.style.setProperty('--fall-x', `${endX}px`);
-        medalRain.style.setProperty('--fall-y', `${endY}px`);
+        medalRain.style.setProperty('--fall-x', `${endX - startX}px`);
+        medalRain.style.setProperty('--fall-y', `${endY - startY}px`);
 
         container.appendChild(medalRain);
 
         // Supprimer après l'animation
-        setTimeout(() => medalRain.remove(), 2000);
+        setTimeout(() => medalRain.remove(), 2500);
     }
 
-    lastMedalRainTime = now;
+    lastMedalRainTime = Date.now();
 }
 
 function updateDisplay() {
@@ -260,7 +259,7 @@ function exportSave() {
     }
 }
 
-function importSave() {
+function importSaveFromTextarea() {
     const importText = document.getElementById('import-textarea').value.trim();
     if (!importText) {
         showToast("❌ Aucune sauvegarde à importer.");
@@ -268,7 +267,6 @@ function importSave() {
     }
 
     try {
-        // Vérifier que c'est un JSON valide
         JSON.parse(importText);
         localStorage.setItem('gloryOfFranceSave', importText);
         showToast("✅ Sauvegarde importée ! Rechargement en cours...");
@@ -307,7 +305,6 @@ function updateBuildingsButtons() {
         const building = ERA.buildings[index];
         if (!building) return;
 
-        // Formule corrigée : baseCost pour le premier achat, puis baseCost * e^(0.12 * count)
         const currentCost = building.count === 0
             ? building.baseCost
             : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
@@ -330,7 +327,6 @@ function renderUpgrades() {
     const container = document.getElementById('upgrades-list');
     container.innerHTML = '';
 
-    // Améliorations de bâtiments
     ERA.buildings.forEach(building => {
         const nextUpgrade = building.upgrades.find(upgrade =>
             building.count >= upgrade.requiredCount &&
@@ -352,7 +348,6 @@ function renderUpgrades() {
         }
     });
 
-    // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeElement = document.createElement('div');
@@ -369,7 +364,6 @@ function renderUpgrades() {
         }
     });
 
-    // Si aucune amélioration disponible
     if (container.innerHTML === '') {
         container.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: rgba(255,255,255,0.7);">Achetez des bâtiments ou cliquez pour débloquer des améliorations !</p>';
     }
@@ -380,7 +374,6 @@ function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
 
-    // Formule corrigée
     const currentCost = building.count === 0
         ? building.baseCost
         : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
@@ -446,20 +439,15 @@ function spawnRandomBonus() {
 
     const timeout = setTimeout(() => {
         bonusElement.classList.add('clicked');
-        setTimeout(() => {
-            bonusElement.remove();
-        }, 500);
+        setTimeout(() => bonusElement.remove(), 500);
     }, 10000);
 
     bonusElement.onclick = () => {
         clearTimeout(timeout);
         bonusElement.classList.add('clicked');
 
-        if (bonus.effect === "auto") {
-            autoMultiplier = bonus.multiplier;
-        } else if (bonus.effect === "click") {
-            clickMultiplier = bonus.multiplier;
-        }
+        if (bonus.effect === "auto") autoMultiplier = bonus.multiplier;
+        else if (bonus.effect === "click") clickMultiplier = bonus.multiplier;
 
         activeRandomBonuses.push({
             id: bonus.id,
@@ -468,9 +456,7 @@ function spawnRandomBonus() {
             endTime: Date.now() + bonus.duration
         });
 
-        setTimeout(() => {
-            bonusElement.remove();
-        }, 500);
+        setTimeout(() => bonusElement.remove(), 500);
 
         setTimeout(() => {
             activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
@@ -530,7 +516,7 @@ function gameLoop() {
     score += autoGain / 10;
 
     // Faire pleuvoir des médaillons si autoGain > 0
-    if (autoGain > 0 && Date.now() - lastMedalRainTime > 500) {
+    if (autoGain > 0 && Date.now() - lastMedalRainTime > 300) {
         spawnMedalRain();
     }
 
@@ -540,7 +526,7 @@ function gameLoop() {
 }
 
 // ===== TIMERS =====
-setInterval(spawnRandomBonus, 60000); // Bonus aléatoires toutes les 60 secondes
+setInterval(spawnRandomBonus, 60000);
 setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
