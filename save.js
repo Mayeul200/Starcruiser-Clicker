@@ -53,7 +53,7 @@ function loadGame() {
             });
         }
     } catch (e) {
-        console.error("Erreur chargement :", e);
+        console.error("Erreur de chargement de la sauvegarde :", e);
         localStorage.removeItem('gloryOfFranceSave');
     }
 }
