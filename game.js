@@ -85,7 +85,6 @@ const ERA = {
     ]
 };
 
-
 // ===== AMÉLIORATIONS DE CLIQUE =====
 const CLICK_UPGRADES = [
     { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic", description: "+1% des PDG/s par clic" },
@@ -124,9 +123,6 @@ let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
 let autoMultiplier = 1;
-let clickPDGTotal = 0; // Total des PDG obtenus par clics
-let clickBonus = 0; // Bonus en % des PDG/s ajoutés par clic
-let activatedClickUpgrades = []; // Améliorations de clic activées
 let activeRandomBonuses = [];
 let buildingMultipliers = {
     "coq-gaulois": 1,
@@ -135,20 +131,20 @@ let buildingMultipliers = {
     "notre-dame": 1,
     "fleur-de-lys": 1
 };
-let clickPDGTotal = 0; // Total des PDG obtenus par clics
-let clickBonus = 0; // Bonus en % des PDG/s ajoutés par clic
-let activatedClickUpgrades = []; // Améliorations de clic activées
+let clickPDGTotal = 0;
+let clickBonus = 0;
+let activatedClickUpgrades = [];
 
 // ===== FONCTIONS DE BASE =====
 function addScore(points) {
     const basePoints = points * clickMultiplier;
     const bonusPoints = autoGain * clickBonus;
     score += basePoints + bonusPoints;
-    clickPDGTotal += basePoints; // On compte seulement les PDG de base (sans bonus)
+    clickPDGTotal += basePoints;
     updateDisplay();
     saveGame();
     updateBuildingsButtons();
-    renderUpgrades(); // Rafraîchir les améliorations disponibles
+    renderUpgrades();
 }
 
 function updateDisplay() {
@@ -163,6 +159,47 @@ function formatNumber(num) {
     return (num / 1000000000).toFixed(1) + "B";
 }
 
+// ===== FONCTIONS DE PARAMÈTRES =====
+function toggleSettings() {
+    const modal = document.getElementById('settings-modal');
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
+function exportSave() {
+    const saveData = localStorage.getItem('gloryOfFranceSave');
+    if (saveData) {
+        navigator.clipboard.writeText(saveData)
+            .then(() => showToast("✅ Sauvegarde copiée dans le presse-papiers !"))
+            .catch(() => {
+                prompt("Copiez cette sauvegarde :", saveData);
+                showToast("✅ Sauvegarde affichée, copiez-la manuellement.");
+            });
+    } else {
+        showToast("❌ Aucune sauvegarde trouvée.");
+    }
+}
+
+function confirmDeleteSave() {
+    if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer votre sauvegarde ? Tous vos progrès seront perdus !")) {
+        deleteSave();
+    }
+}
+
+function deleteSave() {
+    localStorage.removeItem('gloryOfFranceSave');
+    showToast("🗑️ Sauvegarde supprimée !");
+    setTimeout(() => location.reload(), 1000);
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
+}
+
 // ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
 function updateBuildingsButtons() {
     const buildingElements = document.querySelectorAll('.building-item');
@@ -171,10 +208,11 @@ function updateBuildingsButtons() {
         const building = ERA.buildings[index];
         if (!building) return;
 
-        // NOUVELLE FORMULE : baseCost * e^(0.12 * n) pour n >= 1
+        // Formule corrigée : baseCost pour le premier achat, puis baseCost * e^(0.12 * count)
         const currentCost = building.count === 0
             ? building.baseCost
             : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
+
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
@@ -243,10 +281,11 @@ function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
 
-    // NOUVELLE FORMULE
+    // Formule corrigée
     const currentCost = building.count === 0
         ? building.baseCost
         : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
+
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
@@ -255,6 +294,21 @@ function buyBuilding(buildingId) {
         updateBuildingsButtons();
         renderUpgrades();
     }
+}
+
+// ===== ACHAT DES AMÉLIORATIONS DE BÂTIMENTS =====
+function buyBuildingUpgrade(buildingId, requiredCount) {
+    const building = ERA.buildings.find(b => b.id === buildingId);
+    if (!building) return;
+
+    const upgrade = building.upgrades.find(u => u.requiredCount === requiredCount);
+    if (!upgrade) return;
+
+    buildingMultipliers[building.id] *= upgrade.multiplier;
+    updateDisplay();
+    saveGame();
+    updateBuildingsButtons();
+    renderUpgrades();
 }
 
 // ===== ACHAT DES AMÉLIORATIONS DE CLIQUE =====
@@ -268,21 +322,6 @@ function buyClickUpgrade(threshold) {
     saveGame();
     renderUpgrades();
     showToast(`✅ ${upgrade.name} activée !`);
-}
-
-
-// ===== ACHAT DES AMÉLIORATIONS DE CLIQUE =====
-function buyClickUpgrade(threshold) {
-    const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
-    if (!upgrade) return;
-
-    // Ajouter le bonus
-    clickBonus += upgrade.bonus;
-    activatedClickUpgrades.push(threshold);
-
-    updateDisplay();
-    saveGame();
-    renderUpgrades();
 }
 
 // ===== BONUS ALÉATOIRES =====
@@ -349,7 +388,10 @@ function renderBuildings() {
     container.innerHTML = '';
 
     ERA.buildings.forEach(building => {
-        const currentCost = Math.floor(15.6 * Math.exp(0.12 * building.count));
+        const currentCost = building.count === 0
+            ? building.baseCost
+            : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
+
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
@@ -393,7 +435,7 @@ function gameLoop() {
 }
 
 // ===== TIMERS =====
-setInterval(spawnRandomBonus, 60000);
+setInterval(spawnRandomBonus, 60000); // Bonus aléatoires toutes les 60 secondes
 setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
@@ -402,47 +444,6 @@ function init() {
     updateDisplay();
     renderBuildings();
     renderUpgrades();
-}
-
-// ===== FONCTIONS DE PARAMÈTRES =====
-function toggleSettings() {
-    const modal = document.getElementById('settings-modal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
-
-function exportSave() {
-    const saveData = localStorage.getItem('gloryOfFranceSave');
-    if (saveData) {
-        navigator.clipboard.writeText(saveData)
-            .then(() => showToast("✅ Sauvegarde copiée dans le presse-papiers !"))
-            .catch(() => {
-                prompt("Copiez cette sauvegarde :", saveData);
-                showToast("✅ Sauvegarde affichée, copiez-la manuellement.");
-            });
-    } else {
-        showToast("❌ Aucune sauvegarde trouvée.");
-    }
-}
-
-function confirmDeleteSave() {
-    if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer votre sauvegarde ? Tous vos progrès seront perdus !")) {
-        deleteSave();
-    }
-}
-
-function deleteSave() {
-    localStorage.removeItem('gloryOfFranceSave');
-    showToast("🗑️ Sauvegarde supprimée !");
-    setTimeout(() => location.reload(), 1000);
-}
-
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.style.display = 'block';
-    setTimeout(() => {
-        toast.style.display = 'none';
-    }, 3000);
 }
 
 window.onload = init;
