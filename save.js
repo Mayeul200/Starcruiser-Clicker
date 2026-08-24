@@ -1,3 +1,4 @@
+// ===== SAUVEGARDE & CHARGEMENT =====
 function saveGame() {
     const saveData = {
         score: score,
