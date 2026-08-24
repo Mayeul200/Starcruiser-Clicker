@@ -512,18 +512,31 @@ function importSaveFromTextarea() {
     }
 }
 
+// ===== SUPPRESSION DE SAUVEGARDE (CORRIGÉ) =====
 function confirmDeleteSave() {
-    if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer votre sauvegarde ? Tous vos progrès seront perdus !")) {
+    const userConfirmed = confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !");
+    if (userConfirmed) {
         deleteSave();
     }
 }
 
 function deleteSave() {
-    localStorage.removeItem('gloryOfFranceSave');
-    showToast("🗑️ Sauvegarde supprimée avec succès !");
-    setTimeout(() => {
-        location.reload();
-    }, 1000);
+    try {
+        // Vérifier que localStorage est disponible
+        if (typeof localStorage !== 'undefined') {
+            localStorage.removeItem('gloryOfFranceSave');
+            showToast("🗑️ Sauvegarde supprimée ! La page va recharger...");
+            // Forcer le rechargement après un délai
+            setTimeout(() => {
+                window.location.href = window.location.href + '?t=' + Date.now(); // Cache busting
+            }, 1500);
+        } else {
+            showToast("❌ localStorage n'est pas disponible. Utilisez un navigateur moderne.");
+        }
+    } catch (e) {
+        console.error("Erreur suppression sauvegarde:", e);
+        showToast("❌ Erreur: " + e.message);
+    }
 }
 
 function showToast(message) {
