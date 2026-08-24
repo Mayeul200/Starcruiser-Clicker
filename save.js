@@ -1,4 +1,4 @@
-// Sauvegarde
+// ===== SAUVEGARDE =====
 function saveGame() {
     const saveData = {
         score: score,
@@ -12,12 +12,18 @@ function saveGame() {
             id: u.id,
             active: u.active,
             endTime: u.endTime
+        })),
+        randomBonuses: activeRandomBonuses.map(b => ({
+            id: b.id,
+            effect: b.effect,
+            multiplier: b.multiplier,
+            endTime: b.endTime
         }))
     };
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
 }
 
-// Chargement
+// ===== CHARGEMENT =====
 function loadGame() {
     const saveData = localStorage.getItem('gloryOfFranceSave');
     if (saveData) {
@@ -41,6 +47,15 @@ function loadGame() {
                         upgrade.active = savedUpgrade.active || false;
                         upgrade.endTime = savedUpgrade.endTime || 0;
                     }
+                });
+            }
+
+            if (data.randomBonuses) {
+                activeRandomBonuses = data.randomBonuses;
+                // Réappliquer les multiplicateurs si des bonus étaient actifs
+                activeRandomBonuses.forEach(bonus => {
+                    if (bonus.effect === "auto") autoMultiplier = bonus.multiplier;
+                    if (bonus.effect === "click") clickMultiplier = bonus.multiplier;
                 });
             }
         } catch (e) {
