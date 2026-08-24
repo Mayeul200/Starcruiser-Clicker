@@ -521,26 +521,36 @@ function confirmDeleteSave() {
 
 function deleteSave() {
     try {
-        // 1. Supprimer la sauvegarde
+        // Méthode 1: Suppression normale
         localStorage.removeItem('gloryOfFranceSave');
 
-        // 2. Vérifier que c'est bien supprimé
-        if (localStorage.getItem('gloryOfFranceSave') !== null) {
-            // Si ça n'a pas marché, forcer la suppression
-            localStorage.clear();
+        // Méthode 2: Vérification
+        if (localStorage.getItem('gloryOfFranceSave')) {
+            localStorage.clear(); // Supprime TOUT
         }
 
-        // 3. Afficher le toast
-        showToast("🗑️ Sauvegarde supprimée ! Rechargement...");
+        // Méthode 3: Forcer la suppression via une boucle
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.includes('gloryOfFrance')) {
+                localStorage.removeItem(key);
+            }
+        }
 
-        // 4. Recharger la page AVEC cache-busting pour éviter la restauration
+        // Afficher le toast
+        showToast("🗑️ Sauvegarde SUPPRIMÉE !");
+
+        // Rechargement avec cache-busting AGRESSIF
         setTimeout(() => {
-            window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+            window.location.href = window.location.pathname + '?forceReset=' + Date.now() + '&' + Math.random();
         }, 1000);
 
     } catch (e) {
-        console.error("Erreur critique suppression:", e);
-        showToast("❌ Erreur: Impossible de supprimer. Essayez avec un autre navigateur.");
+        // Solution ultime: Rediriger vers une page vide
+        showToast("❌ Erreur critique. Redirection...");
+        setTimeout(() => {
+            window.location.href = 'about:blank';
+        }, 2000);
     }
 }
 
