@@ -79,18 +79,44 @@ const ERA = {
     ]
 };
 
+// ===== BONUS ALÉATOIRES =====
+const RANDOM_BONUSES = [
+    {
+        id: "druide",
+        symbol: "🌿",
+        name: "Druide Sacré",
+        effect: "auto",
+        multiplier: 5,
+        duration: 30000, // 30 secondes
+        tooltip: "×5 PDG/s pendant 30s",
+        colorClass: "druide"
+    },
+    {
+        id: "alliance",
+        symbol: "🤝",
+        name: "Alliance Sacrée",
+        effect: "click",
+        multiplier: 10,
+        duration: 30000, // 30 secondes
+        tooltip: "×10 PDG/clic pendant 30s",
+        colorClass: "alliance"
+    }
+];
+
 // ===== VARIABLES GLOBALES =====
 let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
 let autoMultiplier = 1;
+let activeRandomBonuses = []; // Bonus aléatoires actifs
+let bonusTimers = []; // Timers pour les bonus aléatoires
 
 // ===== FONCTIONS DE BASE =====
 function addScore(points) {
     score += points * clickMultiplier;
     updateDisplay();
     saveGame();
-    updateBuildingsButtons(); // Met à jour uniquement les boutons
+    updateBuildingsButtons();
 }
 
 function updateDisplay() {
@@ -105,31 +131,29 @@ function formatNumber(num) {
     return (num / 1000000000).toFixed(1) + "B";
 }
 
-// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS (sans recréer le DOM) =====
+// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
 function updateBuildingsButtons() {
     const buildingElements = document.querySelectorAll('.building-item');
     
     buildingElements.forEach((element, index) => {
         const building = ERA.buildings[index];
         if (!building) return;
-        
+
         const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
         const currentGain = building.gain * building.count * autoMultiplier;
         const isAffordable = score >= currentCost;
-        
-        // Met à jour le texte du bouton
+
         const button = element.querySelector('button');
         button.textContent = `Acheter (${formatNumber(currentCost)} PDG)`;
         button.disabled = !isAffordable;
-        
-        // Met à jour les stats
+
         const stats = element.querySelectorAll('.stats span');
         if (stats[0]) stats[0].textContent = `+${formatNumber(currentGain)}/s`;
         if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
     });
 }
 
-// ===== FONCTION POUR METTRE À JOUR LES BONUS (sans recréer le DOM) =====
+// ===== FONCTION POUR METTRE À JOUR LES BONUS ACHETABLES =====
 function updateUpgradesButtons() {
     ERA.upgrades.forEach(upgrade => {
         const element = document.getElementById(upgrade.id);
@@ -139,7 +163,7 @@ function updateUpgradesButtons() {
         const costSpan = element.querySelector('.cost span');
         const isAffordable = score >= upgrade.cost;
         const isActive = upgrade.active;
-        
+
         button.disabled = !isAffordable || isActive;
         costSpan.textContent = formatNumber(upgrade.cost);
 
@@ -170,7 +194,7 @@ function buyBuilding(buildingId) {
     }
 }
 
-// ===== ACHAT DES BONUS =====
+// ===== ACHAT DES BONUS ACHETABLES =====
 function buyUpgrade(upgradeId) {
     const upgrade = ERA.upgrades.find(u => u.id === upgradeId);
     if (!upgrade) return;
@@ -215,6 +239,76 @@ function startUpgradeTimer(upgradeId) {
             timerElement.textContent = `⏳ ${remaining}s`;
         }
     }, 1000);
+}
+
+// ===== BONUS ALÉATOIRES =====
+// Crée un bonus aléatoire à l'écran
+function spawnRandomBonus() {
+    // Choix aléatoire entre druide et alliance
+    const bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
+    const bonus = RANDOM_BONUSES[bonusIndex];
+
+    // Vérifier qu'un bonus du même type n'est pas déjà actif
+    const isActive = activeRandomBonuses.some(b => b.id === bonus.id);
+    if (isActive) return;
+
+    // Position aléatoire (éviter les bords)
+    const x = Math.random() * (window.innerWidth - 150) + 50;
+    const y = Math.random() * (window.innerHeight - 200) + 100;
+
+    // Créer l'élément
+    const bonusElement = document.createElement('div');
+    bonusElement.className = `random-bonus ${bonus.colorClass}`;
+    bonusElement.innerHTML = bonus.symbol;
+    bonusElement.style.left = `${x}px`;
+    bonusElement.style.top = `${y}px`;
+    bonusElement.setAttribute('data-tooltip', bonus.tooltip);
+    bonusElement.setAttribute('data-id', bonus.id);
+
+    // Ajouter au conteneur
+    document.getElementById('random-bonuses').appendChild(bonusElement);
+
+    // Supprimer après 10 secondes si non cliqué
+    const timeout = setTimeout(() => {
+        bonusElement.classList.add('clicked');
+        setTimeout(() => {
+            bonusElement.remove();
+        }, 500); // Temps pour l'animation de disparition
+    }, 10000);
+
+    // Gérer le clic
+    bonusElement.onclick = () => {
+        clearTimeout(timeout);
+        bonusElement.classList.add('clicked');
+
+        // Appliquer l'effet
+        if (bonus.effect === "auto") {
+            autoMultiplier = bonus.multiplier;
+        } else if (bonus.effect === "click") {
+            clickMultiplier = bonus.multiplier;
+        }
+
+        // Ajouter au tableau des bonus actifs
+        activeRandomBonuses.push({
+            id: bonus.id,
+            effect: bonus.effect,
+            multiplier: bonus.multiplier,
+            endTime: Date.now() + bonus.duration
+        });
+
+        // Supprimer le bonus après l'animation
+        setTimeout(() => {
+            bonusElement.remove();
+        }, 500);
+
+        // Planifier la fin de l'effet
+        setTimeout(() => {
+            activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
+            if (bonus.effect === "auto") autoMultiplier = 1;
+            if (bonus.effect === "click") clickMultiplier = 1;
+            updateDisplay();
+        }, bonus.duration);
+    };
 }
 
 // ===== AFFICHAGE INITIAL =====
@@ -289,10 +383,13 @@ function gameLoop() {
     score += autoGain / 10;
     updateDisplay();
     saveGame();
-    updateBuildingsButtons(); // ✅ Met à jour uniquement les boutons (pas de recréation de DOM)
-    updateUpgradesButtons(); // ✅ Met à jour uniquement les boutons des bonus
+    updateBuildingsButtons();
+    updateUpgradesButtons();
 }
 
+// ===== TIMERS =====
+// Faire apparaître un bonus aléatoire toutes les 60 secondes
+setInterval(spawnRandomBonus, 60000); // 60 000 ms = 1 minute
 setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
