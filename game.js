@@ -90,7 +90,7 @@ function addScore(points) {
     score += points * clickMultiplier;
     updateDisplay();
     saveGame();
-    renderAll(); // Rafraîchit tout après un clic
+    updateBuildingsButtons(); // Met à jour uniquement les boutons
 }
 
 function updateDisplay() {
@@ -105,10 +105,54 @@ function formatNumber(num) {
     return (num / 1000000000).toFixed(1) + "B";
 }
 
-// ===== FONCTION POUR RAFRAÎCHIR TOUT =====
-function renderAll() {
-    renderBuildings();
-    renderUpgrades();
+// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS (sans recréer le DOM) =====
+function updateBuildingsButtons() {
+    const buildingElements = document.querySelectorAll('.building-item');
+    
+    buildingElements.forEach((element, index) => {
+        const building = ERA.buildings[index];
+        if (!building) return;
+        
+        const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
+        const currentGain = building.gain * building.count * autoMultiplier;
+        const isAffordable = score >= currentCost;
+        
+        // Met à jour le texte du bouton
+        const button = element.querySelector('button');
+        button.textContent = `Acheter (${formatNumber(currentCost)} PDG)`;
+        button.disabled = !isAffordable;
+        
+        // Met à jour les stats
+        const stats = element.querySelectorAll('.stats span');
+        if (stats[0]) stats[0].textContent = `+${formatNumber(currentGain)}/s`;
+        if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
+    });
+}
+
+// ===== FONCTION POUR METTRE À JOUR LES BONUS (sans recréer le DOM) =====
+function updateUpgradesButtons() {
+    ERA.upgrades.forEach(upgrade => {
+        const element = document.getElementById(upgrade.id);
+        if (!element) return;
+
+        const button = element.querySelector('button');
+        const costSpan = element.querySelector('.cost span');
+        const isAffordable = score >= upgrade.cost;
+        const isActive = upgrade.active;
+        
+        button.disabled = !isAffordable || isActive;
+        costSpan.textContent = formatNumber(upgrade.cost);
+
+        if (isActive) {
+            button.textContent = "Actif !";
+            button.style.background = "#4CAF50";
+            button.style.color = "white";
+        } else {
+            button.textContent = "Acheter";
+            button.style.background = "#ffd700";
+            button.style.color = "#0055a4";
+        }
+    });
 }
 
 // ===== ACHAT DES BÂTIMENTS =====
@@ -122,7 +166,7 @@ function buyBuilding(buildingId) {
         building.count++;
         updateDisplay();
         saveGame();
-        renderAll(); // Rafraîchit tout après achat
+        updateBuildingsButtons();
     }
 }
 
@@ -144,7 +188,8 @@ function buyUpgrade(upgradeId) {
 
         updateDisplay();
         saveGame();
-        renderAll();
+        updateUpgradesButtons();
+        updateBuildingsButtons();
         startUpgradeTimer(upgradeId);
     }
 }
@@ -163,7 +208,8 @@ function startUpgradeTimer(upgradeId) {
             if (upgrade.type === "auto") autoMultiplier = 1;
             updateDisplay();
             saveGame();
-            renderAll();
+            updateUpgradesButtons();
+            updateBuildingsButtons();
             timerElement.textContent = "";
         } else {
             timerElement.textContent = `⏳ ${remaining}s`;
@@ -171,7 +217,7 @@ function startUpgradeTimer(upgradeId) {
     }, 1000);
 }
 
-// ===== AFFICHAGE =====
+// ===== AFFICHAGE INITIAL =====
 function renderBuildings() {
     const container = document.getElementById('buildings-list');
     container.innerHTML = '';
@@ -179,11 +225,10 @@ function renderBuildings() {
     ERA.buildings.forEach(building => {
         const currentCost = Math.floor(building.baseCost * Math.pow(building.costMultiplier, building.count));
         const currentGain = building.gain * building.count * autoMultiplier;
+        const isAffordable = score >= currentCost;
 
         const buildingElement = document.createElement('div');
         buildingElement.className = 'building-item';
-
-        const isAffordable = score >= currentCost;
 
         buildingElement.innerHTML = `
             <div class="building-header">
@@ -241,19 +286,21 @@ function gameLoop() {
         totalGain += building.gain * building.count;
     });
     autoGain = totalGain * autoMultiplier;
-    score += autoGain / 10; // Gain fluide
+    score += autoGain / 10;
     updateDisplay();
     saveGame();
-    renderAll(); // ✅ RAFRAÎCHIT TOUT À CHAQUE ITÉRATION
+    updateBuildingsButtons(); // ✅ Met à jour uniquement les boutons (pas de recréation de DOM)
+    updateUpgradesButtons(); // ✅ Met à jour uniquement les boutons des bonus
 }
 
-setInterval(gameLoop, 100); // Toutes les 100ms
+setInterval(gameLoop, 100);
 
 // ===== INITIALISATION =====
 function init() {
     loadGame();
     updateDisplay();
-    renderAll();
+    renderBuildings();
+    renderUpgrades();
 }
 
 window.onload = init;
