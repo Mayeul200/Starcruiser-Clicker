@@ -512,30 +512,35 @@ function importSaveFromTextarea() {
     }
 }
 
-// ===== SUPPRESSION DE SAUVEGARDE (CORRIGÉ) =====
+// ===== SUPPRESSION DE SAUVEGARDE (VERSION ULTRA-ROBUSTE) =====
 function confirmDeleteSave() {
-    const userConfirmed = confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !");
-    if (userConfirmed) {
+    if (confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !\n\nCette action est IRRÉVERSIBLE.")) {
         deleteSave();
     }
 }
 
 function deleteSave() {
     try {
-        // Vérifier que localStorage est disponible
-        if (typeof localStorage !== 'undefined') {
-            localStorage.removeItem('gloryOfFranceSave');
-            showToast("🗑️ Sauvegarde supprimée ! La page va recharger...");
-            // Forcer le rechargement après un délai
-            setTimeout(() => {
-                window.location.href = window.location.href + '?t=' + Date.now(); // Cache busting
-            }, 1500);
-        } else {
-            showToast("❌ localStorage n'est pas disponible. Utilisez un navigateur moderne.");
+        // 1. Supprimer la sauvegarde
+        localStorage.removeItem('gloryOfFranceSave');
+
+        // 2. Vérifier que c'est bien supprimé
+        if (localStorage.getItem('gloryOfFranceSave') !== null) {
+            // Si ça n'a pas marché, forcer la suppression
+            localStorage.clear();
         }
+
+        // 3. Afficher le toast
+        showToast("🗑️ Sauvegarde supprimée ! Rechargement...");
+
+        // 4. Recharger la page AVEC cache-busting pour éviter la restauration
+        setTimeout(() => {
+            window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+        }, 1000);
+
     } catch (e) {
-        console.error("Erreur suppression sauvegarde:", e);
-        showToast("❌ Erreur: " + e.message);
+        console.error("Erreur critique suppression:", e);
+        showToast("❌ Erreur: Impossible de supprimer. Essayez avec un autre navigateur.");
     }
 }
 
@@ -547,6 +552,18 @@ function showToast(message) {
         setTimeout(() => {
             toast.style.display = 'none';
         }, 3000);
+    }
+}
+
+// ===== VÉRIFICATION DE LA SAUVEGARDE (pour débogage) =====
+function checkSaveStatus() {
+    const save = localStorage.getItem('gloryOfFranceSave');
+    if (save) {
+        console.log("✅ Sauvegarde existe:", save.substring(0, 100) + "...");
+        return true;
+    } else {
+        console.log("❌ Aucune sauvegarde trouvée");
+        return false;
     }
 }
 
