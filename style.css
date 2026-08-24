@@ -220,7 +220,6 @@ body {
     margin-top: -10px;
 }
 
-/* ===== IMPORT SECTION ===== */
 .import-section {
     display: flex;
     flex-direction: column;
@@ -316,14 +315,8 @@ body {
 }
 
 @keyframes fallDown {
-    0% { 
-        opacity: 1; 
-        transform: translate(0, -100px) rotate(0deg) scale(1.2); 
-    }
-    100% { 
-        opacity: 0; 
-        transform: translate(var(--fall-x), var(--fall-y)) rotate(720deg) scale(0.8); 
-    }
+    0% { opacity: 1; transform: translate(0, -100px) rotate(0deg) scale(1.2); }
+    100% { opacity: 0; transform: translate(var(--fall-x), var(--fall-y)) rotate(720deg) scale(0.8); }
 }
 
 /* ===== MAIN CONTAINER ===== */
@@ -386,12 +379,13 @@ body {
 
 @keyframes glowPulse {
     0%, 100% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0.3), 0 20px 50px rgba(255, 215, 0, 0.4); }
-    50% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0.5), 0 25px 60px rgba(255, 215, 0, 0.6); }
+    50% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.6); }
 }
 
 .medal:hover {
     transform: scale(1.03) !important;
     box-shadow: 0 0 0 12px rgba(255, 215, 0, 0.4), 0 25px 60px rgba(255, 215, 0, 0.5) !important;
+    animation: none !important;
 }
 
 .medal:active {
@@ -431,15 +425,16 @@ body {
 .chicken {
     position: absolute;
     font-size: 2rem;
-    animation: chickenFloat 5s ease-in-out infinite;
     pointer-events: none;
     z-index: 6;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transform-origin: center;
+    animation: rotateChicken 20s linear infinite;
 }
 
-@keyframes chickenFloat {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(5deg); }
+@keyframes rotateChicken {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .score-display {
@@ -659,7 +654,6 @@ body {
     pointer-events: none;
 }
 
-/* Animations pour les bonus */
 @keyframes pulse-glow {
     0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); }
     100% { box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.5); }
@@ -675,7 +669,6 @@ body {
     to { opacity: 0; transform: scale(1.5); }
 }
 
-/* Tooltip pour les bonus aléatoires */
 .random-bonus::after {
     content: attr(data-tooltip);
     position: absolute;
