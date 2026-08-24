@@ -85,6 +85,7 @@ const ERA = {
     ]
 };
 
+
 // ===== AMÉLIORATIONS DE CLIQUE =====
 const CLICK_UPGRADES = [
     { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic", description: "+1% des PDG/s par clic" },
@@ -123,6 +124,9 @@ let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
 let autoMultiplier = 1;
+let clickPDGTotal = 0; // Total des PDG obtenus par clics
+let clickBonus = 0; // Bonus en % des PDG/s ajoutés par clic
+let activatedClickUpgrades = []; // Améliorations de clic activées
 let activeRandomBonuses = [];
 let buildingMultipliers = {
     "coq-gaulois": 1,
@@ -138,7 +142,7 @@ let activatedClickUpgrades = []; // Améliorations de clic activées
 // ===== FONCTIONS DE BASE =====
 function addScore(points) {
     const basePoints = points * clickMultiplier;
-    const bonusPoints = autoGain * clickBonus; // Bonus = % des PDG/s
+    const bonusPoints = autoGain * clickBonus;
     score += basePoints + bonusPoints;
     clickPDGTotal += basePoints; // On compte seulement les PDG de base (sans bonus)
     updateDisplay();
@@ -167,8 +171,10 @@ function updateBuildingsButtons() {
         const building = ERA.buildings[index];
         if (!building) return;
 
-        // NOUVELLE FORMULE : 15.6 * e^(0.12 * n)
-        const currentCost = Math.floor(15.6 * Math.exp(0.12 * building.count));
+        // NOUVELLE FORMULE : baseCost * e^(0.12 * n) pour n >= 1
+        const currentCost = building.count === 0
+            ? building.baseCost
+            : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
@@ -201,7 +207,7 @@ function renderUpgrades() {
                 <h3>${building.name}</h3>
                 <p>${nextUpgrade.description}</p>
                 <p class="cost">Niveau : ${nextUpgrade.requiredCount} ${building.name}</p>
-                <button onclick=\"buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})\">
+                <button onclick="buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})">
                     Activer
                 </button>
             `;
@@ -217,8 +223,8 @@ function renderUpgrades() {
             upgradeElement.innerHTML = `
                 <h3>Amélioration de Clic</h3>
                 <p>${upgrade.description}</p>
-                <p class=\"cost\">Seuil : ${upgrade.threshold} PDG par clics</p>
-                <button onclick=\"buyClickUpgrade(${upgrade.threshold})\">
+                <p class="cost">Seuil : ${upgrade.threshold} PDG par clics</p>
+                <button onclick="buyClickUpgrade(${upgrade.threshold})">
                     Activer
                 </button>
             `;
@@ -237,8 +243,10 @@ function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
 
-    // NOUVELLE FORMULE : 15.6 * e^(0.12 * n)
-    const currentCost = Math.floor(15.6 * Math.exp(0.12 * building.count));
+    // NOUVELLE FORMULE
+    const currentCost = building.count === 0
+        ? building.baseCost
+        : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
@@ -249,20 +257,19 @@ function buyBuilding(buildingId) {
     }
 }
 
-// ===== ACHAT DES AMÉLIORATIONS DE BÂTIMENTS =====
-function buyBuildingUpgrade(buildingId, requiredCount) {
-    const building = ERA.buildings.find(b => b.id === buildingId);
-    if (!building) return;
-
-    const upgrade = building.upgrades.find(u => u.requiredCount === requiredCount);
+// ===== ACHAT DES AMÉLIORATIONS DE CLIQUE =====
+function buyClickUpgrade(threshold) {
+    const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
     if (!upgrade) return;
 
-    buildingMultipliers[building.id] *= upgrade.multiplier;
+    clickBonus += upgrade.bonus;
+    activatedClickUpgrades.push(threshold);
     updateDisplay();
     saveGame();
-    updateBuildingsButtons();
     renderUpgrades();
+    showToast(`✅ ${upgrade.name} activée !`);
 }
+
 
 // ===== ACHAT DES AMÉLIORATIONS DE CLIQUE =====
 function buyClickUpgrade(threshold) {
@@ -395,6 +402,47 @@ function init() {
     updateDisplay();
     renderBuildings();
     renderUpgrades();
+}
+
+// ===== FONCTIONS DE PARAMÈTRES =====
+function toggleSettings() {
+    const modal = document.getElementById('settings-modal');
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
+function exportSave() {
+    const saveData = localStorage.getItem('gloryOfFranceSave');
+    if (saveData) {
+        navigator.clipboard.writeText(saveData)
+            .then(() => showToast("✅ Sauvegarde copiée dans le presse-papiers !"))
+            .catch(() => {
+                prompt("Copiez cette sauvegarde :", saveData);
+                showToast("✅ Sauvegarde affichée, copiez-la manuellement.");
+            });
+    } else {
+        showToast("❌ Aucune sauvegarde trouvée.");
+    }
+}
+
+function confirmDeleteSave() {
+    if (confirm("⚠️ Êtes-vous sûr de vouloir supprimer votre sauvegarde ? Tous vos progrès seront perdus !")) {
+        deleteSave();
+    }
+}
+
+function deleteSave() {
+    localStorage.removeItem('gloryOfFranceSave');
+    showToast("🗑️ Sauvegarde supprimée !");
+    setTimeout(() => location.reload(), 1000);
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
 }
 
 window.onload = init;
