@@ -1,48 +1,50 @@
-// Sauvegarde la partie dans le localStorage
+// Sauvegarde
 function saveGame() {
     const saveData = {
         score: score,
-        multipliers: multipliers,
-        eras: ERAS.map(era => ({
-            name: era.name,
-            requiredScore: era.requiredScore,
-            items: era.items.map(item => ({
-                id: item.id,
-                count: item.count,
-                globalUpgrade: item.globalUpgrade ? {
-                    unlocked: item.globalUpgrade.unlocked
-                } : null
-            }))
+        clickMultiplier: clickMultiplier,
+        autoMultiplier: autoMultiplier,
+        buildings: ERA.buildings.map(b => ({
+            id: b.id,
+            count: b.count
+        })),
+        upgrades: ERA.upgrades.map(u => ({
+            id: u.id,
+            active: u.active,
+            endTime: u.endTime
         }))
     };
-    localStorage.setItem('gloryOfFranceClicker', JSON.stringify(saveData));
+    localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
 }
 
-// Charge la partie depuis le localStorage
+// Chargement
 function loadGame() {
-    const saveData = localStorage.getItem('gloryOfFranceClicker');
+    const saveData = localStorage.getItem('gloryOfFranceSave');
     if (saveData) {
         try {
-            const parsedData = JSON.parse(saveData);
-            score = parsedData.score || 0;
-            multipliers = parsedData.multipliers || {};
+            const data = JSON.parse(saveData);
+            score = data.score || 0;
+            clickMultiplier = data.clickMultiplier || 1;
+            autoMultiplier = data.autoMultiplier || 1;
 
-            if (parsedData.eras) {
-                parsedData.eras.forEach((savedEra, eraIndex) => {
-                    if (ERAS[eraIndex]) {
-                        savedEra.items.forEach((savedItem, itemIndex) => {
-                            if (ERAS[eraIndex].items[itemIndex]) {
-                                ERAS[eraIndex].items[itemIndex].count = savedItem.count || 0;
-                                if (ERAS[eraIndex].items[itemIndex].globalUpgrade && savedItem.globalUpgrade) {
-                                    ERAS[eraIndex].items[itemIndex].globalUpgrade.unlocked = savedItem.globalUpgrade.unlocked || false;
-                                }
-                            }
-                        });
+            if (data.buildings) {
+                data.buildings.forEach(savedBuilding => {
+                    const building = ERA.buildings.find(b => b.id === savedBuilding.id);
+                    if (building) building.count = savedBuilding.count || 0;
+                });
+            }
+
+            if (data.upgrades) {
+                data.upgrades.forEach(savedUpgrade => {
+                    const upgrade = ERA.upgrades.find(u => u.id === savedUpgrade.id);
+                    if (upgrade) {
+                        upgrade.active = savedUpgrade.active || false;
+                        upgrade.endTime = savedUpgrade.endTime || 0;
                     }
                 });
             }
         } catch (e) {
-            console.error("Erreur lors du chargement de la sauvegarde :", e);
+            console.error("Erreur de chargement :", e);
         }
     }
 }
