@@ -67,3 +67,27 @@ function loadGame() {
         localStorage.removeItem('gloryOfFranceSave');
     }
 }
+
+// ===== IMPORT DE SAUVEGARDE =====
+function importSave() {
+    const importText = document.getElementById('import-textarea').value.trim();
+    if (!importText) {
+        showToast("❌ Aucune sauvegarde à importer.");
+        return;
+    }
+
+    try {
+        // Vérifier que c'est un JSON valide
+        JSON.parse(importText);
+        localStorage.setItem('gloryOfFranceSave', importText);
+        showToast("✅ Sauvegarde importée ! Rechargement en cours...");
+
+        // Recharger la page après un court délai
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    } catch (e) {
+        console.error("Erreur lors de l'import :", e);
+        showToast("❌ Format invalide. Collez une sauvegarde valide.");
+    }
+}
