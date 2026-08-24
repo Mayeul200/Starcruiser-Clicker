@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Barre des bonus temporaires (en haut) -->
+    <!-- Barre des bonus achetables (en haut) -->
     <div class="upgrades-bar">
         <div class="upgrade-item" id="bonus-click">
             <h3>Bénédiction des Druides</h3>
@@ -26,12 +26,12 @@
         </div>
     </div>
 
-    <!-- Zone principale -->
+    <!-- Conteneur principal -->
     <div class="main-container">
         <!-- Zone de clic (centre) -->
-        <div class="click-zone">
+        <div class="click-container">
             <div class="medal" id="medal" onclick="addScore(1)">
-                🏅
+                <div class="medal-emoji">🏅</div>
                 <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
             </div>
             <div class="score-display">
@@ -40,14 +40,15 @@
             </div>
         </div>
 
-        <!-- Zone des bâtiments (droite) -->
+        <!-- Panneau des bâtiments (droite) -->
         <div class="buildings-panel">
             <h2>L'Aube de la France</h2>
-            <div class="buildings-list" id="buildings-list">
-                <!-- Les bâtiments seront générés par JS -->
-            </div>
+            <div class="buildings-list" id="buildings-list"></div>
         </div>
     </div>
+
+    <!-- Conteneur pour les bonus aléatoires (Druide & Alliance) -->
+    <div class="random-bonuses-container" id="random-bonuses"></div>
 
     <script src="game.js"></script>
     <script src="save.js"></script>
