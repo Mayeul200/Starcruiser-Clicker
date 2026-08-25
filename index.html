@@ -28,7 +28,7 @@
 
                 <div class="import-section">
                     <textarea id="import-textarea" placeholder="Collez votre sauvegarde ici..." rows="4"></textarea>
-                    <button class="settings-option-button" onclick="importSaveFromTextarea()">
+                    <button class="settings-option-button" onclick="importSave()">
                         📥 Importer la sauvegarde
                     </button>
                 </div>
@@ -46,13 +46,11 @@
     <div class="main-container">
         <!-- Zone de clic -->
         <div class="click-container">
-            <!-- Conteneur central pour le médaillon et les coqs -->
             <div class="medal-center-container" id="medal-center-container">
                 <div class="medal" id="medal" onclick="addScore(1)">
                     <div class="medal-emoji">🏅</div>
                     <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
                 </div>
-                <!-- Conteneur pour les coqs autour du médaillon -->
                 <div class="chickens-container" id="chickens-container"></div>
             </div>
             <div class="score-display">
@@ -76,7 +74,8 @@
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <script src="game.js"></script>
+    <!-- ORDRE CORRIGÉ : save.js AVANT game.js -->
     <script src="save.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
