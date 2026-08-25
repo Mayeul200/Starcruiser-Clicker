@@ -516,7 +516,6 @@ function gameLoop() {
     }
 
     updateDisplay();
-    saveGame();
     updateBuildingsButtons();
 }
 
