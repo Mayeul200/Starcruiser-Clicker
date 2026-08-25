@@ -532,5 +532,4 @@ function init() {
 // Timers
 setInterval(spawnRandomBonus, 60000);
 setInterval(gameLoop, 100);
-setInterval(saveGame, 1000);
 window.onload = init;
