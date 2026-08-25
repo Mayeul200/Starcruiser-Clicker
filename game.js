@@ -319,8 +319,6 @@ function updateBuildingsButtons() {
         if (stats[0]) stats[0].textContent = `+${formatNumber(currentGain)}/s`;
         if (stats[1]) stats[1].textContent = `Possédés : ${building.count}`;
     });
-
-    renderChickens();
 }
 
 // ===== AMÉLIORATIONS =====
