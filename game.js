@@ -1,8 +1,3 @@
-// ============================================
-// GLORY OF FRANCE CLICKER - MAIN GAME LOGIC
-// Version sobre et moderne
-// ============================================
-
 // DONNÉES DU JEU (5 ÈRES)
 const ERAS = [
     {
@@ -534,9 +529,7 @@ function init() {
     checkEraUnlocks();
 }
 
-// ⚡ MODIFICATION : Ajout de l'auto-sauvegarde toutes les 1 seconde
 // Timers
 setInterval(spawnRandomBonus, 60000);
 setInterval(gameLoop, 100);
-setInterval(saveGame, 1000); // <-- NOUVELLE LIGNE : Sauvegarde auto toutes les 1s
 window.onload = init;
