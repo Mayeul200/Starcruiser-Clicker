@@ -1,95 +1,51 @@
-// ===== SAUVEGARDE & CHARGEMENT =====
-
+// ===== SAUVEGARDE =====
 function saveGame() {
     const saveData = {
-        score: score,
-        autoGain: autoGain,
-        clickMultiplier: clickMultiplier,
-        autoMultiplier: autoMultiplier,
+        score: score, autoGain: autoGain, clickMultiplier: clickMultiplier, autoMultiplier: autoMultiplier,
+        clickPDGTotal: clickPDGTotal, clickBonus: clickBonus, lastMedalRainTime: lastMedalRainTime, currentEraIndex: currentEraIndex,
         buildingMultipliers: { ...buildingMultipliers },
-        clickPDGTotal: clickPDGTotal,
-        clickBonus: clickBonus,
         activatedClickUpgrades: [...activatedClickUpgrades],
-        buildings: ERA.buildings.map(building => ({
-            id: building.id,
-            count: building.count
-        })),
-        activeRandomBonuses: activeRandomBonuses.map(bonus => ({
-            id: bonus.id,
-            effect: bonus.effect,
-            multiplier: bonus.multiplier,
-            endTime: bonus.endTime
-        }))
+        activeRandomBonuses: activeRandomBonuses.map(bonus => ({ id: bonus.id, effect: bonus.effect, multiplier: bonus.multiplier, endTime: bonus.endTime })),
+        eras: ERAS.map(era => ({ id: era.id, buildings: era.buildings.map(building => ({ id: building.id, count: building.count })) })),
+        lastSave: Date.now(), version: "1.0.0"
     };
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
 }
 
+// ===== CHARGEMENT =====
 function loadGame() {
-    const saveData = localStorage.getItem('gloryOfFranceSave');
-    if (!saveData) return;
-
+    const saveData = localStorage.getItem('gloryOfFranceSave'); if (!saveData) return;
     try {
         const parsed = JSON.parse(saveData);
-
-        score = parsed.score || 0;
-        autoGain = parsed.autoGain || 0;
-        clickMultiplier = parsed.clickMultiplier || 1;
-        autoMultiplier = parsed.autoMultiplier || 1;
-
-        if (parsed.buildingMultipliers) {
-            Object.keys(buildingMultipliers).forEach(key => {
-                buildingMultipliers[key] = parsed.buildingMultipliers[key] || 1;
-            });
-        }
-
-        clickPDGTotal = parsed.clickPDGTotal || 0;
-        clickBonus = parsed.clickBonus || 0;
+        score = parsed.score || 0; autoGain = parsed.autoGain || 0; clickMultiplier = parsed.clickMultiplier || 1;
+        autoMultiplier = parsed.autoMultiplier || 1; clickPDGTotal = parsed.clickPDGTotal || 0; clickBonus = parsed.clickBonus || 0;
+        lastMedalRainTime = parsed.lastMedalRainTime || 0; currentEraIndex = parsed.currentEraIndex || 0;
+        if (parsed.buildingMultipliers) Object.keys(buildingMultipliers).forEach(key => buildingMultipliers[key] = parsed.buildingMultipliers[key] || 1);
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
-
-        if (parsed.buildings) {
-            parsed.buildings.forEach(savedBuilding => {
-                const building = ERA.buildings.find(b => b.id === savedBuilding.id);
-                if (building) {
-                    building.count = savedBuilding.count || 0;
-                }
-            });
-        }
-
         if (parsed.activeRandomBonuses) {
             activeRandomBonuses = parsed.activeRandomBonuses;
-            activeRandomBonuses.forEach(bonus => {
-                if (bonus.effect === "auto") autoMultiplier = bonus.multiplier;
-                if (bonus.effect === "click") clickMultiplier = bonus.multiplier;
-            });
+            activeRandomBonuses.forEach(bonus => { if (bonus.effect === "auto" || bonus.effect === "both") autoMultiplier = bonus.multiplier; if (bonus.effect === "click" || bonus.effect === "both") clickMultiplier = bonus.multiplier; });
         }
-    } catch (e) {
-        console.error("Erreur de chargement de la sauvegarde :", e);
-        localStorage.removeItem('gloryOfFranceSave');
-    }
+        if (parsed.eras) parsed.eras.forEach(savedEra => {
+            const era = ERAS.find(e => e.id === savedEra.id);
+            if (era) savedEra.buildings.forEach(savedBuilding => { const building = era.buildings.find(b => b.id === savedBuilding.id); if (building) building.count = savedBuilding.count || 0; });
+        });
+        const now = Date.now(); activeRandomBonuses = activeRandomBonuses.filter(bonus => bonus.endTime >= now);
+        if (activeRandomBonuses.length === 0) { autoMultiplier = 1; clickMultiplier = 1; }
+    } catch (e) { console.error("Erreur de chargement :", e); localStorage.removeItem('gloryOfFranceSave'); showToast("⚠️ Sauvegarde corrompue. Nouvelle partie."); }
 }
 
-// ===== IMPORT DE SAUVEGARDE =====
+// ===== IMPORT/EXPORT =====
+function exportSave() {
+    const saveData = localStorage.getItem('gloryOfFranceSave');
+    if (saveData) navigator.clipboard.writeText(saveData).then(() => showToast("✅ Copié !")).catch(() => { prompt("Copiez :", saveData); showToast("✅ Copié manuellement."); });
+    else showToast("❌ Aucune sauvegarde.");
+}
 function importSave() {
     const importText = document.getElementById('import-textarea').value.trim();
-    if (!importText) {
-        showToast("❌ Aucune sauvegarde à importer.");
-        return;
-    }
-
-    try {
-        // Sauvegarder la sauvegarde actuelle au cas où
-        const currentSave = localStorage.getItem('gloryOfFranceSave');
-
-        // Appliquer la nouvelle sauvegarde
-        localStorage.setItem('gloryOfFranceSave', importText);
-        showToast("✅ Sauvegarde importée ! Rechargement en cours...");
-
-        // Recharger la page après un court délai
-        setTimeout(() => {
-            window.location.reload();
-        }, 1000);
-    } catch (e) {
-        console.error("Erreur lors de l'import :", e);
-        showToast("❌ Erreur lors de l'import. Vérifiez le format de la sauvegarde.");
-    }
+    if (!importText) { showToast("❌ Rien à importer."); return; }
+    try { const testParse = JSON.parse(importText); if (testParse.version && testParse.eras) { localStorage.setItem('gloryOfFranceSave', importText); showToast("✅ Importé ! Redémarrage..."); setTimeout(() => window.location.reload(), 1000); } else showToast("❌ Format invalide."); }
+    catch (e) { showToast("❌ Format invalide."); }
 }
+function confirmDeleteSave() { if (confirm("⚠️ Supprimer la sauvegarde ? Tous vos progrès seront PERDUS !")) deleteSave(); }
+function deleteSave() { localStorage.removeItem('gloryOfFranceSave'); showToast("🗑️ Supprimé !"); setTimeout(() => window.location.reload(), 1000); }
