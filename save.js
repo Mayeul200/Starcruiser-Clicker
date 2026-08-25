@@ -1,4 +1,9 @@
-// SAUVEGARDE
+// ============================================
+// GLORY OF FRANCE CLICKER - SAVE SYSTEM
+// Version sobre et moderne
+// ============================================
+
+// Sauvegarde
 function saveGame() {
     const saveData = {
         score: score,
@@ -32,7 +37,7 @@ function saveGame() {
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
 }
 
-// CHARGEMENT
+// Chargement
 function loadGame() {
     const saveData = localStorage.getItem('gloryOfFranceSave');
     if (!saveData) return;
@@ -99,7 +104,7 @@ function loadGame() {
     }
 }
 
-// EXPORT/IMPORT/DELETE
+// Export
 function exportSave() {
     const saveData = localStorage.getItem('gloryOfFranceSave');
     if (saveData) {
@@ -119,6 +124,7 @@ function exportSave() {
     }
 }
 
+// Import
 function importSave() {
     const importText = document.getElementById('import-textarea').value.trim();
     if (!importText) { showToast("❌ Rien à importer."); return; }
@@ -136,6 +142,7 @@ function importSave() {
     }
 }
 
+// Suppression
 function confirmDeleteSave() {
     if (confirm("⚠️ Supprimer la sauvegarde ? Tous vos progrès seront PERDUS !")) {
         deleteSave();
@@ -145,5 +152,5 @@ function confirmDeleteSave() {
 function deleteSave() {
     localStorage.removeItem('gloryOfFranceSave');
     showToast("🗑️ Supprimé !");
-    window.location.reload(); // Rechargement immédiat
+    window.location.reload();
 }
