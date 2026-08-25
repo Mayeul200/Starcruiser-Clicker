@@ -1,4 +1,26 @@
-// ===== SAUVEGARDE AVEC COOKIES (Alternative à localStorage) =====
+// ===== GESTION DE SAUVEGARDE AVEC COOKIES =====
+// (Alternative à localStorage qui est bloqué par les extensions)
+
+function getSaveCookie() {
+    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        acc[key] = value;
+        return acc;
+    }, {});
+    return cookies.gloryOfFranceSave;
+}
+
+function setSaveCookie(data) {
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1); // Valable 1 an
+    document.cookie = `gloryOfFranceSave=${data}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+}
+
+function deleteSaveCookie() {
+    document.cookie = "gloryOfFranceSave=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+}
+
+// ===== SAUVEGARDE =====
 function saveGame() {
     const saveData = {
         score: score,
@@ -14,22 +36,12 @@ function saveGame() {
             id: b.id, effect: b.effect, multiplier: b.multiplier, endTime: b.endTime
         }))
     };
-
-    // Sauvegarder dans un cookie (valable 1 an)
-    const expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 1);
-    document.cookie = `gloryOfFranceSave=${JSON.stringify(saveData)}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+    setSaveCookie(JSON.stringify(saveData));
 }
 
+// ===== CHARGEMENT =====
 function loadGame() {
-    // Récupérer depuis le cookie
-    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-        const [key, value] = cookie.trim().split('=');
-        acc[key] = value;
-        return acc;
-    }, {});
-
-    const saveData = cookies.gloryOfFranceSave;
+    const saveData = getSaveCookie();
     if (!saveData) return;
 
     try {
@@ -65,21 +77,51 @@ function loadGame() {
             });
         }
     } catch (e) {
-        console.error("Erreur chargement cookie :", e);
-        // Supprimer le cookie corrompu
-        document.cookie = "gloryOfFranceSave=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        console.error("Erreur chargement :", e);
+        deleteSaveCookie(); // Supprimer le cookie corrompu
     }
 }
 
-// ===== SUPPRESSION AVEC COOKIES =====
+// ===== SUPPRESSION =====
 function deleteSave() {
+    deleteSaveCookie();
+    showToast("🗑️ Sauvegarde supprimée ! Rechargement...");
+    setTimeout(() => {
+        window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+    }, 1000);
+}
+
+// ===== EXPORT =====
+function exportSave() {
+    const saveData = getSaveCookie();
+    if (saveData) {
+        navigator.clipboard.writeText(saveData)
+            .then(() => showToast("✅ Sauvegarde copiée !"))
+            .catch(() => {
+                prompt("Copiez cette sauvegarde :", saveData);
+                showToast("✅ Sauvegarde copiée manuellement.");
+            });
+    } else {
+        showToast("❌ Aucune sauvegarde trouvée.");
+    }
+}
+
+// ===== IMPORT =====
+function importSaveFromTextarea() {
+    const importText = document.getElementById('import-textarea').value.trim();
+    if (!importText) {
+        showToast("❌ Aucune sauvegarde à importer.");
+        return;
+    }
+
     try {
-        document.cookie = "gloryOfFranceSave=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        showToast("🗑️ Sauvegarde supprimée !");
+        JSON.parse(importText); // Vérifier que c'est un JSON valide
+        setSaveCookie(importText);
+        showToast("✅ Sauvegarde importée ! Rechargement...");
         setTimeout(() => {
             window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
         }, 1000);
     } catch (e) {
-        showToast("❌ Erreur suppression cookie");
+        showToast("❌ Format invalide. Collez une sauvegarde valide.");
     }
 }
