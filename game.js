@@ -351,6 +351,7 @@ function renderBuilding(building) {
     buildingElement.innerHTML = `
         <div class="building-info">
             <span class="building-name">${building.name}</span>
+            <span class="building-count">x${building.count}</span>
             <span class="building-icon">${building.image}</span>
         </div>
         <span class="building-cost">${formatNumber(currentCost)} PDG</span>
@@ -378,9 +379,11 @@ function updateBuildingsButtons() {
 
         const button = element.querySelector('button');
         const costSpan = element.querySelector('.building-cost');
+        const countSpan = element.querySelector('.building-count');
 
         if (button) button.disabled = !isAffordable;
         if (costSpan) costSpan.textContent = `${formatNumber(currentCost)} PDG`;
+        if (countSpan) countSpan.textContent = `x${building.count}`;
 
         const tooltip = building.description
             .replace('{gain}', formatNumber(currentGain))
