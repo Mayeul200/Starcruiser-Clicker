@@ -65,7 +65,7 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    white-space: nowrap;
+    white-space: pre-line;
     transition: all 0.2s;
 }
 
@@ -319,7 +319,7 @@ body {
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--text);
-    white-space: nowrap;
+    white-space: pre-line;
 }
 
 .building-icon {
@@ -377,7 +377,7 @@ body {
     transition: all 0.2s;
     z-index: 9999;
     pointer-events: none;
-    white-space: nowrap;
+    white-space: pre-line;
     line-height: 1.5;
 }
 
