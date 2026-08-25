@@ -291,7 +291,7 @@ body {
     justify-content: space-between;
     cursor: pointer;
     transition: all 0.2s;
-    min-height: 50px;
+    min-height: 70px;
     position: relative;
 }
 
@@ -302,9 +302,15 @@ body {
 
 .building-info {
     display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
+}
+
+.building-name-icon {
+    display: flex;
     align-items: center;
     gap: 12px;
-    flex: 1;
 }
 
 .building-name {
@@ -314,21 +320,19 @@ body {
     white-space: nowrap;
 }
 
-.building-count {
-    font-size: 0.85rem;
-    color: var(--text-light);
-    font-weight: 400;
-    white-space: nowrap;
-}
-
-
 .building-icon {
     font-size: 1.5rem;
 }
 
-.building-cost {
-    font-size: 0.9rem;
+.building-ownership {
+    font-size: 0.85rem;
     color: var(--text-light);
+}
+
+.building-production {
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 600;
     margin-right: 8px;
 }
 
@@ -341,6 +345,7 @@ body {
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s;
+    min-width: 80px;
 }
 
 .building-item button:hover:not(:disabled) {
