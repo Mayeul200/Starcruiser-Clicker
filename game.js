@@ -111,6 +111,11 @@ let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
 let lastSaveTime = 0;
 
+// ===== STATISTIQUES =====
+let totalClicks = 0;
+let totalBuildingsBought = 0;
+let totalPDGAllTime = 0;
+
 // ===== FORMATAGE DES NOMBRES (version finale et testée) =====
 function formatNumber(num) {
     if (num < 1000) {
@@ -164,6 +169,8 @@ function addScore(points) {
 
     score += totalPoints;
     clickPDGTotal += basePoints;
+    totalClicks++;
+    totalPDGAllTime += totalPoints;
 
     showClickEffect(Math.round(totalPoints));
     updateDisplay();
@@ -287,12 +294,12 @@ function updateBuildingsButtons() {
     });
 }
 
-// ===== AMÉLIORATIONS =====
 function renderUpgrades() {
-    const container = document.getElementById('upgrades-list');
+    const container = document.getElementById('upgrades-container');
     if (!container) return;
     container.innerHTML = '';
 
+    // Améliorations de bâtiments
     ERA.buildings.forEach(building => {
         const nextUpgrade = building.upgrades.find(upgrade =>
             building.count >= upgrade.requiredCount &&
@@ -300,38 +307,31 @@ function renderUpgrades() {
         );
         if (nextUpgrade) {
             const el = document.createElement('div');
-            el.className = 'upgrade-item';
+            el.className = 'upgrade-item-top';
             el.innerHTML = `
-                <h3>${building.name}</h3>
-                <p>${nextUpgrade.description}</p>
-                <p class="cost">Niveau : ${nextUpgrade.requiredCount}</p>
-                <button onclick="buyBuildingUpgrade('${building.id}', ${nextUpgrade.requiredCount})">Activer</button>
+                <span>${building.name} (${nextUpgrade.name})</span>
             `;
+            el.onclick = () => buyBuildingUpgrade(building.id, nextUpgrade.requiredCount);
             container.appendChild(el);
         }
     });
 
+    // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const el = document.createElement('div');
-            el.className = 'upgrade-item';
+            el.className = 'upgrade-item-top';
             el.innerHTML = `
-                <h3>Clic</h3>
-                <p>${upgrade.description}</p>
-                <p class="cost">Seuil : ${formatNumber(upgrade.threshold)}</p>
-                <button onclick="buyClickUpgrade(${upgrade.threshold})">Activer</button>
+                <span>Clic (${upgrade.name})</span>
             `;
+            el.onclick = () => buyClickUpgrade(upgrade.threshold);
             container.appendChild(el);
         }
     });
-
-    if (container.innerHTML === '') {
-        container.innerHTML = '<p style="text-align:center;color:rgba(255,255,255,0.7)">Achetez des bâtiments pour débloquer !</p>';
-    }
 }
 
 function renderBuildings() {
-    const container = document.getElementById('buildings-list');
+    const container = document.getElementById('buildings-container');
     if (!container) return;
     container.innerHTML = '';
 
@@ -343,22 +343,54 @@ function renderBuildings() {
         const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
         const isAffordable = score >= currentCost;
 
+        // Calculer le % de production totale
+        let totalProduction = 0;
+        ERA.buildings.forEach(b => {
+            totalProduction += b.gain * b.count * buildingMultipliers[b.id] * autoMultiplier;
+        });
+        const productionPercent = totalProduction > 0
+            ? ((currentGain / totalProduction) * 100).toFixed(1)
+            : 0;
+
+        // Calculer les PDG totaux produits par ce bâtiment
+        const totalPDGByBuilding = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * (Date.now() / 1000);
+
         const el = document.createElement('div');
         el.className = 'building-item';
+
+        // Tooltip
         el.innerHTML = `
             <div class="building-header">
-                <span class="building-icon">${building.image}</span>
-                <div>
+                <div class="building-info">
                     <h3>${building.name}</h3>
                     <p>${building.description}</p>
                 </div>
+                <div class="building-icon">${building.image}</div>
             </div>
-            <div class="stats">
-                <span>+${formatNumber(currentGain)}/s</span>
-                <span>Possédés : ${building.count}</span>
+            <div class="building-cost">${formatNumber(currentCost)} PDG</div>
+
+            <!-- Tooltip -->
+            <div class="building-tooltip">
+                <div class="tooltip-row">
+                    <span class="tooltip-label">PDG/s :</span>
+                    <span class="tooltip-value">${formatNumber(currentGain)}/s</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Possédés :</span>
+                    <span class="tooltip-value">${building.count}</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">Production :</span>
+                    <span class="tooltip-value">${productionPercent}%</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">PDG totaux :</span>
+                    <span class="tooltip-value">${formatNumber(currentGain * (Date.now() / 1000))}</span>
+                </div>
             </div>
+
             <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-                Acheter (${formatNumber(currentCost)} Points De Gloire)
+                Acheter
             </button>
         `;
         container.appendChild(el);
@@ -377,6 +409,7 @@ function buyBuilding(buildingId) {
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
+        totalBuildingsBought++;
         updateDisplay();
         saveGame();
         updateBuildingsButtons();
@@ -460,6 +493,31 @@ function spawnRandomBonus() {
 }
 
 // ===== PARAMÈTRES =====
+function toggleSettings() {
+    const modal = document.getElementById('settings-modal');
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
+// ===== FONCTIONS MODALS =====
+function toggleStats() {
+    const modal = document.getElementById('stats-modal');
+    const totalScore = document.getElementById('total-score');
+    const currentGain = document.getElementById('current-gain');
+    const totalClicksEl = document.getElementById('total-clicks');
+    const totalBuildingsEl = document.getElementById('total-buildings');
+
+    if (totalScore) totalScore.textContent = formatNumber(totalPDGAllTime);
+    if (currentGain) currentGain.textContent = formatNumber(autoGain);
+    if (totalClicksEl) totalClicksEl.textContent = formatNumber(totalClicks);
+    if (totalBuildingsEl) {
+        let count = 0;
+        ERA.buildings.forEach(b => count += b.count);
+        totalBuildingsEl.textContent = formatNumber(count);
+    }
+
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
 function toggleSettings() {
     const modal = document.getElementById('settings-modal');
     modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
