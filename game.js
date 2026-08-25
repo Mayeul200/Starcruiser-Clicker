@@ -139,35 +139,16 @@ function formatNumber(num) {
     if (num < 1000) {
         // Nombres < 1000 : 1 chiffre après la virgule (ex: 0,3 / 45,8 / 567,9)
         return num.toFixed(1).replace('.', ',');
+    } else if (num < 1000000) {
+        // Nombres >= 1000 et < 1M : 3 chiffres après la virgule (ex: 1,023K / 10,345K / 100,500K)
+        return (num / 1000).toFixed(3).replace('.', ',') + 'K';
+    } else if (num < 1000000000) {
+        // Nombres >= 1M et < 1B : 3 chiffres après la virgule (ex: 1,023M)
+        return (num / 1000000).toFixed(3).replace('.', ',') + 'M';
+    } else {
+        // Nombres >= 1B : 3 chiffres après la virgule (ex: 1,023B)
+        return (num / 1000000000).toFixed(3).replace('.', ',') + 'B';
     }
-
-    // Déterminer le suffixe et le diviseur
-    let suffix = '';
-    let divisor = 1;
-    if (num >= 1000000000) {
-        suffix = 'B';
-        divisor = 1000000000;
-    } else if (num >= 1000000) {
-        suffix = 'M';
-        divisor = 1000000;
-    } else if (num >= 1000) {
-        suffix = 'K';
-        divisor = 1000;
-    }
-
-    const value = num / divisor;
-
-    // Compter les chiffres avant la virgule
-    const integerPart = Math.floor(value);
-    const integerDigits = integerPart.toString().length;
-
-    // Calculer les décimales pour garder max 4 chiffres au total
-    const decimals = Math.max(0, 4 - integerDigits);
-
-    // Formater avec le bon nombre de décimales
-    const formatted = value.toFixed(decimals).replace('.', ',');
-
-    return formatted + suffix;
 }
 
 // ===== FONCTIONS PRINCIPALES =====
