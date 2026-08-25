@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🇫🇷 Glory of France Clicker</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght=300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- ===== BARRE DES AMÉLIORATIONS (en haut) ==== -->
+    <!-- Barre des améliorations -->
     <div class="upgrades-bar" id="upgrades-bar">
-        <h2>✨ Améliorations Disponibles</h2>
+        <h2>Améliorations Disponibles</h2>
         <div class="upgrades-list" id="upgrades-list"></div>
         <button class="settings-button" onclick="toggleSettings()" title="Paramètres">⚙️</button>
     </div>
 
-    <!-- ===== MODAL PARAMÈTRES ==== -->
+    <!-- Modal Paramètres -->
     <div class="settings-modal" id="settings-modal">
         <div class="settings-content">
             <span class="close-button" onclick="toggleSettings()">&times;</span>
-            <h2>⚙️ Paramètres</h2>
+            <h2>Paramètres</h2>
             <div class="settings-options">
                 <button class="settings-option-button" onclick="exportSave()">
                     📤 Exporter la sauvegarde
                 </button>
-                <p class="settings-hint">Copie votre sauvegarde dans le presse-papiers.</p>
+                <p class="settings-hint">Copie dans le presse-papiers.</p>
 
                 <div class="import-section">
                     <textarea id="import-textarea" placeholder="Collez votre sauvegarde ici..." rows="4"></textarea>
@@ -32,66 +32,46 @@
                         📥 Importer la sauvegarde
                     </button>
                 </div>
-                <p class="settings-hint">Remplace votre progression actuelle.</p>
+                <p class="settings-hint">Remplace votre progression.</p>
 
                 <button class="settings-option-button delete" onclick="confirmDeleteSave()">
                     🗑️ Supprimer la sauvegarde
                 </button>
-                <p class="settings-hint">Efface votre progression locale.</p>
+                <p class="settings-hint">Efface tout.</p>
             </div>
         </div>
     </div>
 
-    <!-- ===== CONTAINER PRINCIPAL ==== -->
+    <!-- Conteneur principal -->
     <div class="main-container">
-
-        <!-- ===== ZONE DE CLIQUE (centre) ==== -->
+       <!-- Zone de clic (centre) -->
         <div class="click-container">
             <div class="medal" id="medal" onclick="addScore(1)">
                 <div class="medal-emoji">🏅</div>
                 <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
-                <div class="medal-ring"></div>
-                <div class="medal-ring ring-2"></div>
-                <div class="medal-ring ring-3"></div>
             </div>
-
             <div class="score-display">
-                <div id="score">
-                    <span class="score-label">PDG : </span>
-                    <span id="score-value">0</span>
-                </div>
-                <div id="auto-gain">
-                    <span class="gain-label">Gain automatique : +</span>
-                    <span id="gain-value">0</span>
-                    <span class="gain-unit">/s</span>
-                </div>
+                <div id="score">Points De Gloire : <span id="score-value">0</span></div>
+                <div id="auto-gain">+<span id="gain-value">0</span>/s</div>
             </div>
         </div>
-
-        <!-- ===== PANNEAU DES BÂTIMENTS (droite) ==== -->
+        <!-- Panneau des bâtiments -->
         <div class="buildings-panel">
-            <div class="panel-header">
-                <h2>🏛️ L'Aube de la France</h2>
-                <div class="panel-decoration"></div>
-            </div>
+            <h2>L'Aube de la France</h2>
             <div class="buildings-list" id="buildings-list"></div>
         </div>
     </div>
 
-    <!-- ===== CONTAINER POUR LES BONUS ALÉATOIRES ==== -->
+    <!-- Conteneurs pour les effets -->
     <div class="random-bonuses-container" id="random-bonuses"></div>
-
-    <!-- ===== CONTAINER POUR LES +1 DE CLIQUE ==== -->
     <div class="click-effects-container" id="click-effects"></div>
-
-    <!-- ===== CONTAINER POUR LA PLUIE DE MÉDAILLONS ==== -->
     <div class="medal-rain-container" id="medal-rain"></div>
 
-    <!-- ===== TOAST NOTIFICATION ==== -->
+    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== SCRIPTS ==== -->
-    <script src="game.js"></script>
+    <!-- ORDRE CORRIGÉ : save.js AVANT game.js -->
     <script src="save.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
