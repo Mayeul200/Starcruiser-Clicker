@@ -314,6 +314,14 @@ body {
     white-space: nowrap;
 }
 
+.building-count {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+
 .building-icon {
     font-size: 1.5rem;
 }
