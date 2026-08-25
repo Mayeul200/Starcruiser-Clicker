@@ -109,23 +109,29 @@ let clickPDGTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
+let lastSaveTime = 0; // Pour limiter la fréquence des sauvegardes
 
 // ===== INITIALISATION =====
 function init() {
-    // Charger la sauvegarde AVANT de rendre les bâtiments
     loadGame();
-
-    // Initialiser l'affichage
     renderBuildings();
     renderUpgrades();
     updateDisplay();
     renderChickens();
 
-    // Démarrer les boucles
+    // Boucle principale (sans sauvegarde à chaque itération)
     setInterval(gameLoop, 100);
     setInterval(spawnRandomBonus, 60000);
 
-    console.log("✅ Jeu initialisé - score:", score);
+    // Sauvegarde périodique (toutes les 5 secondes)
+    setInterval(() => {
+        if (Date.now() - lastSaveTime > 5000) {
+            saveGame();
+            lastSaveTime = Date.now();
+        }
+    }, 1000);
+
+    console.log("✅ Jeu initialisé");
 }
 
 // ===== FORMATAGE DES NOMBRES =====
@@ -152,7 +158,7 @@ function addScore(points) {
 
     showClickEffect(Math.round(totalPoints));
     updateDisplay();
-    saveGame();
+    saveGame(); // Sauvegarde après un clic
     updateBuildingsButtons();
     renderUpgrades();
 }
@@ -224,6 +230,7 @@ function spawnMedalRain() {
     lastMedalRainTime = Date.now();
 }
 
+// ===== BOUCLE PRINCIPALE (SANS SAUVEGARDE) =====
 function gameLoop() {
     let totalGain = 0;
     ERA.buildings.forEach(building => {
@@ -237,7 +244,6 @@ function gameLoop() {
     }
 
     updateDisplay();
-    saveGame();
     updateBuildingsButtons();
 }
 
@@ -286,7 +292,7 @@ function renderChickens() {
     }
 }
 
-// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
+// ===== FONCTION POUR METTRE À JOUR LES BOUTONS =====
 function updateBuildingsButtons() {
     document.querySelectorAll('.building-item').forEach((el, i) => {
         const building = ERA.buildings[i];
@@ -391,7 +397,7 @@ function renderBuildings() {
     });
 }
 
-// ===== ACHATS =====
+// ===== ACHATS (avec sauvegarde) =====
 function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
@@ -404,7 +410,7 @@ function buyBuilding(buildingId) {
         score -= currentCost;
         building.count++;
         updateDisplay();
-        saveGame();
+        saveGame(); // Sauvegarde après achat
         updateBuildingsButtons();
         renderUpgrades();
     }
@@ -419,7 +425,7 @@ function buyBuildingUpgrade(buildingId, requiredCount) {
 
     buildingMultipliers[building.id] *= upgrade.multiplier;
     updateDisplay();
-    saveGame();
+    saveGame(); // Sauvegarde après amélioration
     updateBuildingsButtons();
     renderUpgrades();
 }
@@ -431,7 +437,7 @@ function buyClickUpgrade(threshold) {
     clickBonus += upgrade.bonus;
     activatedClickUpgrades.push(threshold);
     updateDisplay();
-    saveGame();
+    saveGame(); // Sauvegarde après amélioration de clic
     renderUpgrades();
     showToast(`✅ ${upgrade.name} activée !`);
 }
@@ -473,6 +479,7 @@ function spawnRandomBonus() {
             endTime: Date.now() + bonus.duration
         });
 
+        saveGame(); // Sauvegarde après activation de bonus
         setTimeout(() => el.remove(), 500);
 
         setTimeout(() => {
@@ -484,7 +491,7 @@ function spawnRandomBonus() {
     };
 }
 
-// ===== PARAMÈTRES (appellent save.js) =====
+// ===== PARAMÈTRES =====
 function toggleSettings() {
     const modal = document.getElementById('settings-modal');
     modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
