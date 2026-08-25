@@ -1,27 +1,35 @@
-// ===== GESTION DE SAUVEGARDE AVEC COOKIES =====
-// (Alternative à localStorage qui est bloqué par les extensions)
+// ===== GESTION COMPLÈTE DE SAUVEGARDE AVEC COOKIES =====
 
-function getSaveCookie() {
-    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
-        const [key, value] = cookie.trim().split('=');
-        acc[key] = value;
-        return acc;
-    }, {});
-    return cookies.gloryOfFranceSave;
+// ===== FONCTIONS DE COOKIES =====
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.trim().split('=');
+        if (cookieName === name) {
+            return decodeURIComponent(cookieValue);
+        }
+    }
+    return null;
 }
 
-function setSaveCookie(data) {
-    const expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 1); // Valable 1 an
-    document.cookie = `gloryOfFranceSave=${data}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+function setCookie(name, value, days = 365) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; ${expires}; path=/; SameSite=Lax`;
 }
 
-function deleteSaveCookie() {
-    document.cookie = "gloryOfFranceSave=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+function deleteCookie(name) {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 }
 
 // ===== SAUVEGARDE =====
 function saveGame() {
+    if (typeof score === 'undefined' || typeof ERA === 'undefined') {
+        console.error("saveGame appelé trop tôt - variables non définies");
+        return;
+    }
+
     const saveData = {
         score: score,
         autoGain: autoGain,
@@ -36,17 +44,29 @@ function saveGame() {
             id: b.id, effect: b.effect, multiplier: b.multiplier, endTime: b.endTime
         }))
     };
-    setSaveCookie(JSON.stringify(saveData));
+    setCookie('gloryOfFranceSave', JSON.stringify(saveData));
+    console.log("✅ Sauvegarde enregistrée dans cookie");
 }
 
 // ===== CHARGEMENT =====
 function loadGame() {
-    const saveData = getSaveCookie();
-    if (!saveData) return;
+    const saveData = getCookie('gloryOfFranceSave');
+    if (!saveData) {
+        console.log("Aucune sauvegarde trouvée");
+        return;
+    }
 
     try {
         const parsed = JSON.parse(saveData);
 
+        // Vérifier que ERA est défini
+        if (typeof ERA === 'undefined') {
+            console.error("ERA non défini - chargement reporté");
+            setTimeout(loadGame, 100);
+            return;
+        }
+
+        // Récupérer les données
         score = parsed.score || 0;
         autoGain = parsed.autoGain || 0;
         clickMultiplier = parsed.clickMultiplier || 1;
@@ -76,24 +96,17 @@ function loadGame() {
                 if (bonus.effect === "click") clickMultiplier = bonus.multiplier;
             });
         }
+
+        console.log("✅ Sauvegarde chargée depuis cookie");
     } catch (e) {
-        console.error("Erreur chargement :", e);
-        deleteSaveCookie(); // Supprimer le cookie corrompu
+        console.error("❌ Erreur chargement :", e);
+        deleteCookie('gloryOfFranceSave');
     }
 }
 
-// ===== SUPPRESSION =====
-function deleteSave() {
-    deleteSaveCookie();
-    showToast("🗑️ Sauvegarde supprimée ! Rechargement...");
-    setTimeout(() => {
-        window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
-    }, 1000);
-}
-
-// ===== EXPORT =====
+// ===== FONCTIONS PUBLIQUES (accessibles depuis game.js) =====
 function exportSave() {
-    const saveData = getSaveCookie();
+    const saveData = getCookie('gloryOfFranceSave');
     if (saveData) {
         navigator.clipboard.writeText(saveData)
             .then(() => showToast("✅ Sauvegarde copiée !"))
@@ -106,8 +119,7 @@ function exportSave() {
     }
 }
 
-// ===== IMPORT =====
-function importSaveFromTextarea() {
+function importSave() {
     const importText = document.getElementById('import-textarea').value.trim();
     if (!importText) {
         showToast("❌ Aucune sauvegarde à importer.");
@@ -115,13 +127,39 @@ function importSaveFromTextarea() {
     }
 
     try {
-        JSON.parse(importText); // Vérifier que c'est un JSON valide
-        setSaveCookie(importText);
+        JSON.parse(importText);
+        setCookie('gloryOfFranceSave', importText);
         showToast("✅ Sauvegarde importée ! Rechargement...");
         setTimeout(() => {
             window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
         }, 1000);
     } catch (e) {
         showToast("❌ Format invalide. Collez une sauvegarde valide.");
+    }
+}
+
+function confirmDeleteSave() {
+    if (confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !")) {
+        deleteSave();
+    }
+}
+
+function deleteSave() {
+    deleteCookie('gloryOfFranceSave');
+    showToast("🗑️ Sauvegarde supprimée ! Rechargement...");
+    setTimeout(() => {
+        window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+    }, 1000);
+}
+
+// ===== TOAST (déplacée ici pour être accessible) =====
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
     }
 }
