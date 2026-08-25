@@ -40,7 +40,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 0 16px;
-    z-index: 100;
+    z-index: 200;
 }
 
 .upgrades-container {
@@ -273,6 +273,8 @@ body {
     border-left: 1px solid var(--border);
     padding: 16px;
     overflow-y: auto;
+    position: relative;
+    z-index: 1;
 }
 
 .buildings-list {
@@ -373,7 +375,7 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s;
-    z-index: 100;
+    z-index: 200;
     pointer-events: none;
     white-space: pre-line;
     max-width: 300px;
