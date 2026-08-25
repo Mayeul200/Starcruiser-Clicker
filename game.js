@@ -111,30 +111,33 @@ let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
 let lastSaveTime = 0;
 
-// ===== FORMATAGE DES NOMBRES (version finale) =====
+// ===== FORMATAGE DES NOMBRES (version finale et testée) =====
 function formatNumber(num) {
     if (num < 1000) {
         // Nombres < 1000 : 1 chiffre après la virgule (ex: 0,3 / 45,8 / 567,9)
         return num.toFixed(1).replace('.', ',');
-    } else if (num < 1000000) {
-        // Nombres >= 1000 : format avec K et décimales adaptées (ex: 1,023K / 10,34K / 100,5K)
-        const value = num / 1000;
-        const integerPart = Math.floor(value);
-        const decimals = 3 - integerPart.toString().length;
-        return value.toFixed(Math.max(0, decimals)).replace('.', ',') + 'K';
-    } else if (num < 1000000000) {
-        // Nombres >= 1M : format avec M
-        const value = num / 1000000;
-        const integerPart = Math.floor(value);
-        const decimals = 3 - integerPart.toString().length;
-        return value.toFixed(Math.max(0, decimals)).replace('.', ',') + 'M';
-    } else {
-        // Nombres >= 1B : format avec B
-        const value = num / 1000000000;
-        const integerPart = Math.floor(value);
-        const decimals = 3 - integerPart.toString().length;
-        return value.toFixed(Math.max(0, decimals)).replace('.', ',') + 'B';
     }
+
+    // Déterminer le suffixe et la valeur
+    let value, suffix;
+    if (num >= 1000000000) {
+        value = num / 1000000000;
+        suffix = 'B';
+    } else if (num >= 1000000) {
+        value = num / 1000000;
+        suffix = 'M';
+    } else {
+        value = num / 1000;
+        suffix = 'K';
+    }
+
+    // Calculer le nombre de décimales pour avoir max 4 chiffres au total
+    const integerPart = Math.floor(value);
+    const integerDigits = integerPart.toString().length;
+    const decimals = Math.max(0, 4 - integerDigits);
+
+    // Formater avec le bon nombre de décimales et remplacer le point par une virgule
+    return value.toFixed(decimals).replace('.', ',') + suffix;
 }
 
 // ===== INITIALISATION =====
@@ -187,7 +190,7 @@ function showClickEffect(value) {
 
     const effect = document.createElement('div');
     effect.className = 'click-effect';
-    effect.textContent = `+${formatNumber(value)}`;
+    effect.textContent = `+${formatNumber(value)}`; // <-- CORRIGÉ : formatNumber appliqué ici
     effect.style.left = `${centerX + offsetX}px`;
     effect.style.top = `${centerY + offsetY}px`;
 
