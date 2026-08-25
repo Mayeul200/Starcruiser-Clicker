@@ -1,8 +1,3 @@
-// ============================================
-// GLORY OF FRANCE CLICKER - MAIN GAME LOGIC
-// Version sobre et moderne
-// ============================================
-
 // DONNÉES DU JEU (5 ÈRES)
 const ERAS = [
     {
@@ -198,6 +193,48 @@ function toggleStats() {
     if (modal.classList.contains('active')) {
         renderStats();
     }
+}
+
+// Export/Import/Delete
+function exportSave() {
+    const saveData = localStorage.getItem('gloryOfFranceSave');
+    if (saveData) {
+        navigator.clipboard.writeText(saveData)
+            .then(() => showToast("✅ Sauvegarde copiée !"))
+            .catch(() => { prompt("Copiez :", saveData); showToast("✅ Copié manuellement."); });
+    } else {
+        showToast("❌ Aucune sauvegarde.");
+    }
+}
+
+function importSave() {
+    const importText = document.getElementById('import-textarea').value.trim();
+    if (!importText) { showToast("❌ Rien à importer."); return; }
+    try {
+        JSON.parse(importText);
+        localStorage.setItem('gloryOfFranceSave', importText);
+        showToast("✅ Importé ! Redémarrage...");
+        setTimeout(() => window.location.reload(), 1000);
+    } catch (e) { showToast("❌ Format invalide."); }
+}
+
+function confirmDeleteSave() {
+    if (confirm("⚠️ Supprimer la sauvegarde ? Tous vos progrès seront PERDUS !")) {
+        deleteSave();
+    }
+}
+
+function deleteSave() {
+    localStorage.removeItem('gloryOfFranceSave');
+    showToast("🗑️ Supprimé !");
+    setTimeout(() => window.location.reload(), 1000);
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('active');
+    setTimeout(() => toast.classList.remove('active'), 3000);
 }
 
 // Statistiques
@@ -471,7 +508,6 @@ function gameLoop() {
         });
     });
 
-    // ⚡ CORRECTION : autoGain est calculé AVANT d'être utilisé
     autoGain = totalGain * autoMultiplier;
     score += autoGain / 10;
 
@@ -496,5 +532,4 @@ function init() {
 // Timers
 setInterval(spawnRandomBonus, 60000);
 setInterval(gameLoop, 100);
-setInterval(saveGame, 1000); // ⚡ Sauvegarde auto toutes les 1 seconde
 window.onload = init;
