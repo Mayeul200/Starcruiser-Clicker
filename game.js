@@ -481,79 +481,20 @@ function toggleSettings() {
     modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
 }
 
-function exportSave() {
-    const saveData = localStorage.getItem('gloryOfFranceSave');
-    if (saveData) {
-        navigator.clipboard.writeText(saveData)
-            .then(() => showToast("✅ Sauvegarde copiée !"))
-            .catch(() => {
-                prompt("Copiez cette sauvegarde :", saveData);
-                showToast("✅ Sauvegarde copiée manuellement.");
-            });
-    } else {
-        showToast("❌ Aucune sauvegarde trouvée.");
-    }
+
+// ===== FONCTIONS DE PARAMÈTRES (appellent save.js) =====
+function toggleSettings() {
+    const modal = document.getElementById('settings-modal');
+    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
 }
 
-function importSaveFromTextarea() {
-    const importText = document.getElementById('import-textarea').value.trim();
-    if (!importText) {
-        showToast("❌ Aucune sauvegarde à importer.");
-        return;
-    }
-
-    try {
-        JSON.parse(importText);
-        localStorage.setItem('gloryOfFranceSave', importText);
-        showToast("✅ Sauvegarde importée ! Rechargement en cours...");
-        setTimeout(() => location.reload(), 1000);
-    } catch (e) {
-        showToast("❌ Format invalide. Collez une sauvegarde valide.");
-    }
-}
-
-// ===== SUPPRESSION DE SAUVEGARDE (VERSION ULTRA-ROBUSTE) =====
 function confirmDeleteSave() {
-    if (confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !\n\nCette action est IRRÉVERSIBLE.")) {
-        deleteSave();
+    if (confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !")) {
+        deleteSave(); // Appelle la fonction de save.js
     }
 }
 
-function deleteSave() {
-    try {
-        // Méthode 1: Suppression normale
-        localStorage.removeItem('gloryOfFranceSave');
-
-        // Méthode 2: Vérification
-        if (localStorage.getItem('gloryOfFranceSave')) {
-            localStorage.clear(); // Supprime TOUT
-        }
-
-        // Méthode 3: Forcer la suppression via une boucle
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.includes('gloryOfFrance')) {
-                localStorage.removeItem(key);
-            }
-        }
-
-        // Afficher le toast
-        showToast("🗑️ Sauvegarde SUPPRIMÉE !");
-
-        // Rechargement avec cache-busting AGRESSIF
-        setTimeout(() => {
-            window.location.href = window.location.pathname + '?forceReset=' + Date.now() + '&' + Math.random();
-        }, 1000);
-
-    } catch (e) {
-        // Solution ultime: Rediriger vers une page vide
-        showToast("❌ Erreur critique. Redirection...");
-        setTimeout(() => {
-            window.location.href = 'about:blank';
-        }, 2000);
-    }
-}
-
+// ===== TOAST =====
 function showToast(message) {
     const toast = document.getElementById('toast');
     if (toast) {
