@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- BARRE DU HAUT (10% hauteur max) -->
+    <!-- ==================== PARTIE 1 : BARRE DU HAUT (max 10% hauteur) ==================== -->
     <div class="top-bar">
         <div class="upgrades-container" id="upgrades-list"></div>
         <div class="top-bar-controls">
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <!-- MODAL STATISTIQUES -->
+    <!-- ==================== MODAL STATISTIQUES ==================== -->
     <div class="modal" id="stats-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <!-- MODAL PARAMÈTRES -->
+    <!-- ==================== MODAL PARAMÈTRES ==================== -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -36,46 +36,58 @@
                 <span class="close-button" onclick="toggleSettings()">&times;</span>
             </div>
             <div class="modal-body">
-                <button class="modal-button" onclick="exportSave()">📤 Exporter</button>
-                <textarea id="import-textarea" placeholder="Collez votre sauvegarde..."></textarea>
-                <button class="modal-button" onclick="importSave()">📥 Importer</button>
-                <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ Supprimer</button>
+                <div class="settings-section">
+                    <button onclick="exportSave()" class="settings-button">⬆️ Exporter la sauvegarde</button>
+                    <textarea id="import-textarea" placeholder="Coller votre sauvegarde ici..."></textarea>
+                    <button onclick="importSave()" class="settings-button">⬇️ Importer la sauvegarde</button>
+                    <button onclick="confirmDeleteSave()" class="settings-button delete">🗑️ Supprimer la sauvegarde</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- GRID PRINCIPAL (3 colonnes) -->
+    <!-- ==================== PARTIE 2-4 : GRID PRINCIPAL ==================== -->
     <div class="main-grid">
-        <!-- COLONNE GAUCHE (20%) - Mini-jeux -->
+        <!-- Left Panel (20%) - Réservé pour mini-jeux -->
         <div class="left-panel">
-            <h3>Mini-Jeux</h3>
-            <p>Réservé pour les mini-jeux</p>
+            <h3>Mini-jeux</h3>
+            <p style="color: #64748b; font-size: 0.9rem;">Bientôt disponibles...</p>
         </div>
 
-        <!-- COLONNE CENTRALE (60%) - Zone de clic -->
+        <!-- Center Panel (60%) - Médaillon + Compteurs -->
         <div class="center-panel">
-            <div class="medal" id="medal" onclick="addScore(1)">
-                <div class="medal-emoji">🏅</div>
+            <div class="medal-container" id="medal-container">
+                <div class="medal" id="medal" onclick="addScore(1)">🏅</div>
+                <div class="counters">
+                    <div class="counter">
+                        <span class="counter-label">PDG:</span>
+                        <span class="counter-value" id="score-value">0</span>
+                    </div>
+                    <div class="counter">
+                        <span class="counter-label">/s:</span>
+                        <span class="counter-value" id="gain-value">0</span>
+                    </div>
+                </div>
             </div>
-            <div class="counters">
-                <div class="counter">PDG: <span id="score-value">0</span></div>
-                <div class="counter">+<span id="gain-value">0</span>/s</div>
-            </div>
+            <div class="click-effects" id="click-effects"></div>
+            <div class="medal-rain" id="medal-rain"></div>
         </div>
 
-        <!-- COLONNE DROITE (20%) - Bâtiments -->
+        <!-- Right Panel (20%) - Bâtiments -->
         <div class="right-panel">
+            <h3>Bâtiments</h3>
             <div class="buildings-list" id="buildings-list"></div>
         </div>
     </div>
 
-    <!-- EFFETS VISUELS -->
-    <div class="bonuses-container" id="random-bonuses"></div>
-    <div class="click-effects" id="click-effects"></div>
-    <div class="medal-rain" id="medal-rain"></div>
+    <!-- Bonus aléatoires -->
+    <div class="random-bonuses" id="random-bonuses"></div>
+
+    <!-- Toast notifications -->
     <div class="toast" id="toast"></div>
 
-    <script src="game.js"></script>
+    <!-- ⚡ ORDRE CORRIGÉ : save.js AVANT game.js -->
     <script src="save.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
