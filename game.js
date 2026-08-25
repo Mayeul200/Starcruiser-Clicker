@@ -94,6 +94,10 @@ function initGlobals() {
             totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
         });
     });
+    // Initialiser unlockedBuildings si vide
+    if (!unlockedBuildings) {
+        unlockedBuildings = new Set();
+    }
 }
 
 // Ajoute des points
@@ -422,6 +426,8 @@ function buyBuilding(buildingId) {
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
+        // Marquer le bâtiment comme débloqué
+        unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
         updateBuildingsButtons();
