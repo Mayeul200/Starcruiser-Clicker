@@ -364,7 +364,7 @@ body {
 .building-item::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%; left: 0;
+    top: 100%; left: 0;
     background: white;
     border: 1px solid var(--border);
     border-radius: var(--radius);
