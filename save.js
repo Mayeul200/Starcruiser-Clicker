@@ -1,4 +1,4 @@
-// ===== SAUVEGARDE & CHARGEMENT =====
+// ===== SAUVEGARDE AVEC COOKIES (Alternative à localStorage) =====
 function saveGame() {
     const saveData = {
         score: score,
@@ -14,15 +14,27 @@ function saveGame() {
             id: b.id, effect: b.effect, multiplier: b.multiplier, endTime: b.endTime
         }))
     };
-    localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
+
+    // Sauvegarder dans un cookie (valable 1 an)
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1);
+    document.cookie = `gloryOfFranceSave=${JSON.stringify(saveData)}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
 }
 
 function loadGame() {
-    const saveData = localStorage.getItem('gloryOfFranceSave');
+    // Récupérer depuis le cookie
+    const cookies = document.cookie.split(';').reduce((acc, cookie) => {
+        const [key, value] = cookie.trim().split('=');
+        acc[key] = value;
+        return acc;
+    }, {});
+
+    const saveData = cookies.gloryOfFranceSave;
     if (!saveData) return;
 
     try {
         const parsed = JSON.parse(saveData);
+
         score = parsed.score || 0;
         autoGain = parsed.autoGain || 0;
         clickMultiplier = parsed.clickMultiplier || 1;
@@ -53,7 +65,21 @@ function loadGame() {
             });
         }
     } catch (e) {
-        console.error("Erreur de chargement de la sauvegarde :", e);
-        localStorage.removeItem('gloryOfFranceSave');
+        console.error("Erreur chargement cookie :", e);
+        // Supprimer le cookie corrompu
+        document.cookie = "gloryOfFranceSave=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
+
+// ===== SUPPRESSION AVEC COOKIES =====
+function deleteSave() {
+    try {
+        document.cookie = "gloryOfFranceSave=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        showToast("🗑️ Sauvegarde supprimée !");
+        setTimeout(() => {
+            window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
+        }, 1000);
+    } catch (e) {
+        showToast("❌ Erreur suppression cookie");
     }
 }
