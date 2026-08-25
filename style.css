@@ -364,7 +364,7 @@ body {
 .building-item::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 100%; left: 0;
+    top: 0; left: 100%;
     background: white;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -380,12 +380,13 @@ body {
     white-space: pre-line;
     max-width: 300px;
     line-height: 1.5;
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 .building-item:hover::after {
     opacity: 1;
     visibility: visible;
-    transform: translateY(-8px);
 }
 
 /* EFFETS VISUELS */
