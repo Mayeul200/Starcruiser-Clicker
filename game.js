@@ -1,9 +1,3 @@
-// ============================================
-// GLORY OF FRANCE CLICKER - MAIN GAME LOGIC
-// Structure inspirée de Cookie Clicker
-// ============================================
-
-// ============================================
 // DONNÉES DU JEU (5 ÈRES)
 const ERAS = [
     {
@@ -11,61 +5,11 @@ const ERAS = [
         name: "L'Aube de la France",
         requiredScore: 0,
         buildings: [
-            {
-                id: "coq-gaulois",
-                name: "Coq Gaulois",
-                description: "Symbole de la Gaule. Génère des PDG automatiquement.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 10,
-                gain: 0.1,
-                count: 0,
-                image: "🐓",
-                unlockCondition: () => true,
-                totalGenerated: 0
-            },
-            {
-                id: "vercingetorix",
-                name: "Vercingétorix",
-                description: "Chef gaulois contre Rome. Génère plus de PDG.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 100,
-                gain: 1,
-                count: 0,
-                image: "🗡️",
-                unlockCondition: () => score >= 20,
-                totalGenerated: 0
-            },
-            {
-                id: "charlemagne",
-                name: "Charlemagne",
-                description: "Premier empereur des Francs. Génère encore plus de PDG.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 1000,
-                gain: 10,
-                count: 0,
-                image: "👑",
-                unlockCondition: () => score >= 500,
-                totalGenerated: 0
-            },
-            {
-                id: "notre-dame",
-                name: "Cathédrale Notre-Dame",
-                description: "Chef-d'œuvre gothique. Génère un flux constant de PDG.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 10000,
-                gain: 100,
-                count: 0,
-                image: "⛪",
-                unlockCondition: () => score >= 5000,
-                totalGenerated: 0
-            },
-            {
-                id: "fleur-de-lys",
-                name: "Fleur de Lys",
-                description: "Symbole royal. Génère des PDG avec élégance.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 100000,
-                gain: 1000,
-                count: 0,
-                image: "🌸",
-                unlockCondition: () => score >= 25000,
-                totalGenerated: 0
-            }
+            { id: "coq-gaulois", name: "Coq Gaulois", description: "Symbole de la Gaule.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
+            { id: "vercingetorix", name: "Vercingétorix", description: "Chef gaulois contre Rome.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
+            { id: "charlemagne", name: "Charlemagne", description: "Premier empereur des Francs.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
+            { id: "notre-dame", name: "Notre-Dame", description: "Cathédrale gothique.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
+            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Symbole royal.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
         ]
     },
     {
@@ -73,28 +17,8 @@ const ERAS = [
         name: "La Construction de la France",
         requiredScore: 50000,
         buildings: [
-            {
-                id: "saint-louis",
-                name: "Saint Louis",
-                description: "Roi juste et pieux. Génère des PDG avec sagesse.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 50000,
-                gain: 500,
-                count: 0,
-                image: "👨‍⚖️",
-                unlockCondition: () => score >= 50000,
-                totalGenerated: 0
-            },
-            {
-                id: "joan-of-arc",
-                name: "Jeanne d'Arc",
-                description: "Héroïne nationale. Génère des PDG avec courage.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 200000,
-                gain: 2000,
-                count: 0,
-                image: "🛡️",
-                unlockCondition: () => score >= 100000,
-                totalGenerated: 0
-            }
+            { id: "saint-louis", name: "Saint Louis", description: "Roi juste et pieux.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Héroïne nationale.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
         ]
     },
     {
@@ -102,28 +26,8 @@ const ERAS = [
         name: "L'Expansion et la Révolution",
         requiredScore: 1000000,
         buildings: [
-            {
-                id: "louis-xiv",
-                name: "Louis XIV",
-                description: "Le Roi-Soleil. Génère des PDG avec magnificence.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 1000000,
-                gain: 10000,
-                count: 0,
-                image: "☀️",
-                unlockCondition: () => score >= 1000000,
-                totalGenerated: 0
-            },
-            {
-                id: "revolution",
-                name: "Révolution Française",
-                description: "Liberté, Égalité, Fraternité. Génère des PDG avec passion.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 5000000,
-                gain: 50000,
-                count: 0,
-                image: "🎭",
-                unlockCondition: () => score >= 2000000,
-                totalGenerated: 0
-            }
+            { id: "louis-xiv", name: "Louis XIV", description: "Le Roi-Soleil.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+            { id: "revolution", name: "Révolution", description: "Liberté, Égalité, Fraternité.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
         ]
     },
     {
@@ -131,28 +35,8 @@ const ERAS = [
         name: "L'Ère Moderne",
         requiredScore: 50000000,
         buildings: [
-            {
-                id: "napoleon",
-                name: "Napoléon Bonaparte",
-                description: "Empereur des Français. Génère des PDG avec stratégie.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 50000000,
-                gain: 500000,
-                count: 0,
-                image: "🎖️",
-                unlockCondition: () => score >= 50000000,
-                totalGenerated: 0
-            },
-            {
-                id: "tour-eiffel",
-                name: "Tour Eiffel",
-                description: "Symbole de Paris. Génère des PDG avec élégance.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 200000000,
-                gain: 2000000,
-                count: 0,
-                image: "🗼",
-                unlockCondition: () => score >= 100000000,
-                totalGenerated: 0
-            }
+            { id: "napoleon", name: "Napoléon", description: "Empereur des Français.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 50000000, gain: 500000, count: 0, image: "🎖️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
+            { id: "tour-eiffel", name: "Tour Eiffel", description: "Symbole de Paris.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
         ]
     },
     {
@@ -160,44 +44,24 @@ const ERAS = [
         name: "La France Contemporaine",
         requiredScore: 1000000000,
         buildings: [
-            {
-                id: "de-gaulle",
-                name: "Charles de Gaulle",
-                description: "Fondateur de la Ve République. Génère des PDG avec autorité.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 1000000000,
-                gain: 10000000,
-                count: 0,
-                image: "🕊️",
-                unlockCondition: () => score >= 1000000000,
-                totalGenerated: 0
-            },
-            {
-                id: "macron",
-                name: "Emmanuel Macron",
-                description: "Président moderne. Génère des PDG avec innovation.\n\nProduction actuelle: +{gain}/s\nNombre possédé: {count}\nPourcentage de production: {percent}%\nPDG total généré: {total}",
-                baseCost: 5000000000,
-                gain: 50000000,
-                count: 0,
-                image: "💼",
-                unlockCondition: () => score >= 2000000000,
-                totalGenerated: 0
-            }
+            { id: "de-gaulle", name: "De Gaulle", description: "Fondateur de la Ve République.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000000000, gain: 10000000, count: 0, image: "🕊️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+            { id: "macron", name: "Macron", description: "Président moderne.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
         ]
     }
 ];
 
-// Améliorations de clic (pour la barre du haut)
+// Améliorations de clic (barre du haut)
 const CLICK_UPGRADES = [
-    { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic", description: "+1% PDG/s par clic" },
-    { threshold: 200, bonus: 0.01, name: "Clic Précis", description: "+1% PDG/s par clic" },
-    { threshold: 500, bonus: 0.01, name: "Clic Puissant", description: "+1% PDG/s par clic" },
-    { threshold: 1000, bonus: 0.01, name: "Clic Expert", description: "+1% PDG/s par clic" },
-    { threshold: 2000, bonus: 0.01, name: "Clic Légendaire", description: "+1% PDG/s par clic" },
-    { threshold: 5000, bonus: 0.02, name: "Clic Divin", description: "+2% PDG/s par clic" },
-    { threshold: 10000, bonus: 0.03, name: "Clic Impérial", description: "+3% PDG/s par clic" },
-    { threshold: 20000, bonus: 0.05, name: "Clic Suprême", description: "+5% PDG/s par clic" },
-    { threshold: 50000, bonus: 0.1, name: "Clic Ultime", description: "+10% PDG/s par clic" },
-    { threshold: 100000, bonus: 0.2, name: "Clic Mythique", description: "+20% PDG/s par clic" }
+    { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic" },
+    { threshold: 200, bonus: 0.01, name: "Clic Précis" },
+    { threshold: 500, bonus: 0.01, name: "Clic Puissant" },
+    { threshold: 1000, bonus: 0.01, name: "Clic Expert" },
+    { threshold: 2000, bonus: 0.01, name: "Clic Légendaire" },
+    { threshold: 5000, bonus: 0.02, name: "Clic Divin" },
+    { threshold: 10000, bonus: 0.03, name: "Clic Impérial" },
+    { threshold: 20000, bonus: 0.05, name: "Clic Suprême" },
+    { threshold: 50000, bonus: 0.1, name: "Clic Ultime" },
+    { threshold: 100000, bonus: 0.2, name: "Clic Mythique" }
 ];
 
 // Bonus aléatoires
@@ -244,8 +108,8 @@ function addScore(points) {
     showClickEffect(Math.round(totalPoints));
 
     const medal = document.getElementById('medal');
-    medal.classList.add('clicked');
-    setTimeout(() => medal.classList.remove('clicked'), 300);
+    medal.style.transform = 'scale(0.95)';
+    setTimeout(() => { medal.style.transform = 'scale(1)'; }, 100);
 
     updateDisplay();
     saveGame();
@@ -263,7 +127,7 @@ function showClickEffect(value) {
     const centerY = medalRect.top + medalRect.height / 2;
 
     const angle = Math.random() * Math.PI * 2;
-    const distance = 80 + Math.random() * 40;
+    const distance = 60 + Math.random() * 30;
     const offsetX = Math.cos(angle) * distance;
     const offsetY = Math.sin(angle) * distance;
 
@@ -290,16 +154,12 @@ function spawnMedalRain() {
     for (let i = 0; i < medalCount; i++) {
         const startX = medalRect.left + Math.random() * medalRect.width;
         const startY = medalRect.top - 20;
-        const endX = medalRect.left + Math.random() * medalRect.width - medalRect.width / 2;
-        const endY = medalRect.top + Math.random() * medalRect.height - 20;
 
         const medalRain = document.createElement('div');
         medalRain.className = 'medal-rain';
         medalRain.innerHTML = '🏅';
         medalRain.style.left = `${startX}px`;
         medalRain.style.top = `${startY}px`;
-        medalRain.style.setProperty('--fall-x', `${endX}px`);
-        medalRain.style.setProperty('--fall-y', `${endY}px`);
 
         container.appendChild(medalRain);
         setTimeout(() => medalRain.remove(), 2000);
@@ -382,7 +242,6 @@ function renderStats() {
     const container = document.getElementById('stats-body');
     container.innerHTML = '';
 
-    // Statistiques globales
     const globalStats = [
         { label: "Score total", value: formatNumber(score) },
         { label: "PDG par seconde", value: formatNumber(autoGain) },
@@ -390,28 +249,20 @@ function renderStats() {
         { label: "PDG total généré", value: formatNumber(calculateTotalGenerated()) }
     ];
 
-    const globalStatsElement = document.createElement('div');
-    globalStatsElement.className = 'stats-grid';
-
     globalStats.forEach(stat => {
         const statElement = document.createElement('div');
-        statElement.className = 'stat-item';
+        statElement.style.display = 'flex';
+        statElement.style.justifyContent = 'space-between';
+        statElement.style.padding = '8px 0';
+        statElement.style.borderBottom = '1px solid #e2e8f0';
         statElement.innerHTML = `
-            <span class="stat-label">${stat.label}</span>
-            <span class="stat-value">${stat.value}</span>
+            <span style="color: #64748b; font-size: 0.9rem;">${stat.label}</span>
+            <span style="color: #2563eb; font-weight: 600;">${stat.value}</span>
         `;
-        globalStatsElement.appendChild(statElement);
+        container.appendChild(statElement);
     });
 
-    container.appendChild(globalStatsElement);
-
-    // Statistiques par bâtiment
-    const statsByBuilding = document.createElement('div');
-    statsByBuilding.className = 'building-stats';
-    statsByBuilding.innerHTML = '<h4 style="color: var(--bleu-france); margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">Statistiques par bâtiment</h4>';
-
-    const statsList = document.createElement('div');
-    statsList.className = 'stats-list';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1rem;">Par bâtiment</h4>';
 
     ERAS.forEach(era => {
         era.buildings.forEach(building => {
@@ -420,38 +271,18 @@ function renderStats() {
                 const percent = autoGain > 0 ? ((buildingGain / autoGain) * 100).toFixed(2) : 0;
 
                 const buildingStatElement = document.createElement('div');
-                buildingStatElement.className = 'building-stat-item';
+                buildingStatElement.style.display = 'flex';
+                buildingStatElement.style.justifyContent = 'space-between';
+                buildingStatElement.style.padding = '6px 0';
+                buildingStatElement.style.fontSize = '0.9rem';
                 buildingStatElement.innerHTML = `
-                    <div class="building-stat-header">
-                        <span class="building-stat-icon">${building.image}</span>
-                        <span class="building-stat-name">${building.name}</span>
-                    </div>
-                    <div class="building-stat-details">
-                        <div class="stat-detail">
-                            <span class="detail-label">Possédés:</span>
-                            <span class="detail-value">${building.count}</span>
-                        </div>
-                        <div class="stat-detail">
-                            <span class="detail-label">Production:</span>
-                            <span class="detail-value">${formatNumber(buildingGain)}/s</span>
-                        </div>
-                        <div class="stat-detail">
-                            <span class="detail-label">Pourcentage:</span>
-                            <span class="detail-value">${percent}%</span>
-                        </div>
-                        <div class="stat-detail">
-                            <span class="detail-label">Total généré:</span>
-                            <span class="detail-value">${formatNumber(totalGeneratedByBuilding[building.id] || 0)}</span>
-                        </div>
-                    </div>
+                    <span>${building.image} ${building.name}</span>
+                    <span style="color: #64748b;">+${formatNumber(buildingGain)}/s (${percent}%)</span>
                 `;
-                statsList.appendChild(buildingStatElement);
+                container.appendChild(buildingStatElement);
             }
         });
     });
-
-    statsByBuilding.appendChild(statsList);
-    container.appendChild(statsByBuilding);
 }
 
 function calculateTotalGenerated() {
@@ -471,7 +302,7 @@ function renderUpgrades() {
         if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeElement = document.createElement('div');
             upgradeElement.className = 'upgrade-item';
-            upgradeElement.innerHTML = `<span class="upgrade-name">${upgrade.name}</span>`;
+            upgradeElement.textContent = upgrade.name;
             upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
             container.appendChild(upgradeElement);
         }
@@ -503,7 +334,6 @@ function renderBuilding(building) {
 
     const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
     const percent = autoGain > 0 ? ((currentGain / autoGain) * 100).toFixed(2) : 0;
-
     const isAffordable = score >= currentCost;
 
     const buildingElement = document.createElement('div');
@@ -519,7 +349,7 @@ function renderBuilding(building) {
     buildingElement.setAttribute('data-tooltip', tooltip);
 
     buildingElement.innerHTML = `
-        <div class="building-content">
+        <div class="building-info">
             <span class="building-name">${building.name}</span>
             <span class="building-icon">${building.image}</span>
         </div>
@@ -591,9 +421,9 @@ function buyBuilding(buildingId) {
         updateBuildingsButtons();
         renderUpgrades();
         checkEraUnlocks();
-        showToast(`✅ +1 ${building.name} acheté !`);
+        showToast(`✅ +1 ${building.name}`);
     } else {
-        showToast("❌ Pas assez de PDG !");
+        showToast("❌ Pas assez de PDG");
     }
 }
 
@@ -605,7 +435,7 @@ function buyClickUpgrade(threshold) {
     updateDisplay();
     saveGame();
     renderUpgrades();
-    showToast(`✅ ${upgrade.name} activée !`);
+    showToast(`✅ ${upgrade.name} activée`);
 }
 
 // Bonus aléatoires
@@ -614,8 +444,8 @@ function spawnRandomBonus() {
     const bonus = RANDOM_BONUSES[bonusIndex];
     if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
 
-    const x = Math.random() * (window.innerWidth - 150) + 50;
-    const y = Math.random() * (window.innerHeight - 200) + 100;
+    const x = Math.random() * (window.innerWidth - 100) + 50;
+    const y = Math.random() * (window.innerHeight - 150) + 50;
 
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus ${bonus.colorClass}`;
@@ -656,10 +486,10 @@ function spawnRandomBonus() {
             if (bonus.effect === "auto" || bonus.effect === "both") autoMultiplier = 1;
             if (bonus.effect === "click" || bonus.effect === "both") clickMultiplier = 1;
             updateDisplay();
-            showToast(`⏰ ${bonus.name} a expiré !`);
+            showToast(`⏰ ${bonus.name} expiré`);
         }, bonus.duration);
 
-        showToast(`✅ ${bonus.name} activé !`);
+        showToast(`✅ ${bonus.name} activé`);
     };
 }
 
