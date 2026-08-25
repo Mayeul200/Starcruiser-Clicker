@@ -98,7 +98,7 @@ const RANDOM_BONUSES = [
     { id: "alliance", symbol: "🤝", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 Points De Gloire/clic", colorClass: "alliance" }
 ];
 
-// ===== VARIABLES GLOBALES =====
+// ===== VARIABLES =====
 let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
@@ -109,7 +109,33 @@ let clickPDGTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
-let lastSaveTime = 0; // Pour limiter la fréquence des sauvegardes
+let lastSaveTime = 0;
+
+// ===== FORMATAGE DES NOMBRES (version finale) =====
+function formatNumber(num) {
+    if (num < 1000) {
+        // Nombres < 1000 : 1 chiffre après la virgule (ex: 0,3 / 45,8 / 567,9)
+        return num.toFixed(1).replace('.', ',');
+    } else if (num < 1000000) {
+        // Nombres >= 1000 : format avec K et décimales adaptées (ex: 1,023K / 10,34K / 100,5K)
+        const value = num / 1000;
+        const integerPart = Math.floor(value);
+        const decimals = 3 - integerPart.toString().length;
+        return value.toFixed(Math.max(0, decimals)).replace('.', ',') + 'K';
+    } else if (num < 1000000000) {
+        // Nombres >= 1M : format avec M
+        const value = num / 1000000;
+        const integerPart = Math.floor(value);
+        const decimals = 3 - integerPart.toString().length;
+        return value.toFixed(Math.max(0, decimals)).replace('.', ',') + 'M';
+    } else {
+        // Nombres >= 1B : format avec B
+        const value = num / 1000000000;
+        const integerPart = Math.floor(value);
+        const decimals = 3 - integerPart.toString().length;
+        return value.toFixed(Math.max(0, decimals)).replace('.', ',') + 'B';
+    }
+}
 
 // ===== INITIALISATION =====
 function init() {
@@ -117,38 +143,14 @@ function init() {
     renderBuildings();
     renderUpgrades();
     updateDisplay();
-    renderChickens();
-
-    // Boucle principale (sans sauvegarde à chaque itération)
     setInterval(gameLoop, 100);
     setInterval(spawnRandomBonus, 60000);
-
-    // Sauvegarde périodique (toutes les 5 secondes)
     setInterval(() => {
         if (Date.now() - lastSaveTime > 5000) {
             saveGame();
             lastSaveTime = Date.now();
         }
     }, 1000);
-
-    console.log("✅ Jeu initialisé");
-}
-
-// ===== FORMATAGE DES NOMBRES (version finale) =====
-function formatNumber(num) {
-    if (num < 1000) {
-        // 1 chiffre après la virgule pour < 1000 (ex: 0,3 / 45,8 / 567,9)
-        return num.toFixed(1).replace('.', ',');
-    } else if (num < 1000000) {
-        // 3 chiffres après la virgule pour K (ex: 1,023K / 10,345K)
-        return (num / 1000).toFixed(3).replace('.', ',') + 'K';
-    } else if (num < 1000000000) {
-        // 3 chiffres après la virgule pour M (ex: 1,023M)
-        return (num / 1000000).toFixed(3).replace('.', ',') + 'M';
-    } else {
-        // 3 chiffres après la virgule pour B (ex: 1,023B)
-        return (num / 1000000000).toFixed(3).replace('.', ',') + 'B';
-    }
 }
 
 // ===== FONCTIONS PRINCIPALES =====
@@ -162,7 +164,7 @@ function addScore(points) {
 
     showClickEffect(Math.round(totalPoints));
     updateDisplay();
-    saveGame(); // Sauvegarde après un clic
+    saveGame();
     updateBuildingsButtons();
     renderUpgrades();
 }
@@ -185,7 +187,7 @@ function showClickEffect(value) {
 
     const effect = document.createElement('div');
     effect.className = 'click-effect';
-    effect.textContent = `+${value}`;
+    effect.textContent = `+${formatNumber(value)}`;
     effect.style.left = `${centerX + offsetX}px`;
     effect.style.top = `${centerY + offsetY}px`;
 
@@ -234,7 +236,6 @@ function spawnMedalRain() {
     lastMedalRainTime = Date.now();
 }
 
-// ===== BOUCLE PRINCIPALE (SANS SAUVEGARDE) =====
 function gameLoop() {
     let totalGain = 0;
     ERA.buildings.forEach(building => {
@@ -258,45 +259,7 @@ function updateDisplay() {
     if (gainElement) gainElement.textContent = formatNumber(autoGain);
 }
 
-// ===== GESTION DES COQS =====
-function renderChickens() {
-    const container = document.getElementById('chickens-container');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    const coqGaulois = ERA.buildings.find(b => b.id === "coq-gaulois");
-    if (!coqGaulois || coqGaulois.count === 0) return;
-
-    const medal = document.getElementById('medal');
-    if (!medal) return;
-
-    const medalRect = medal.getBoundingClientRect();
-    const centerX = medalRect.left + medalRect.width / 2;
-    const centerY = medalRect.top + medalRect.height / 2;
-    const radius = 140;
-
-    const maxChickens = 12;
-    const chickensToShow = Math.min(coqGaulois.count, maxChickens);
-
-    for (let i = 0; i < chickensToShow; i++) {
-        const angle = (i * (360 / chickensToShow)) * (Math.PI / 180);
-        const x = centerX + Math.cos(angle) * radius - 20;
-        const y = centerY + Math.sin(angle) * radius - 20;
-
-        const chicken = document.createElement('div');
-        chicken.className = 'chicken';
-        chicken.innerHTML = '🐓';
-        chicken.style.left = `${x}px`;
-        chicken.style.top = `${y}px`;
-        chicken.style.transform = `translate(-50%, -50%) rotate(${i * (360 / chickensToShow)}deg)`;
-        chicken.style.animationDelay = `${i * 0.5}s`;
-
-        container.appendChild(chicken);
-    }
-}
-
-// ===== FONCTION POUR METTRE À JOUR LES BOUTONS =====
+// ===== FONCTION POUR METTRE À JOUR LES BOUTONS DES BÂTIMENTS =====
 function updateBuildingsButtons() {
     document.querySelectorAll('.building-item').forEach((el, i) => {
         const building = ERA.buildings[i];
@@ -399,7 +362,7 @@ function renderBuildings() {
     });
 }
 
-// ===== ACHATS (avec sauvegarde) =====
+// ===== ACHATS =====
 function buyBuilding(buildingId) {
     const building = ERA.buildings.find(b => b.id === buildingId);
     if (!building) return;
@@ -412,7 +375,7 @@ function buyBuilding(buildingId) {
         score -= currentCost;
         building.count++;
         updateDisplay();
-        saveGame(); // Sauvegarde après achat
+        saveGame();
         updateBuildingsButtons();
         renderUpgrades();
     }
@@ -427,7 +390,7 @@ function buyBuildingUpgrade(buildingId, requiredCount) {
 
     buildingMultipliers[building.id] *= upgrade.multiplier;
     updateDisplay();
-    saveGame(); // Sauvegarde après amélioration
+    saveGame();
     updateBuildingsButtons();
     renderUpgrades();
 }
@@ -439,7 +402,7 @@ function buyClickUpgrade(threshold) {
     clickBonus += upgrade.bonus;
     activatedClickUpgrades.push(threshold);
     updateDisplay();
-    saveGame(); // Sauvegarde après amélioration de clic
+    saveGame();
     renderUpgrades();
     showToast(`✅ ${upgrade.name} activée !`);
 }
@@ -481,7 +444,7 @@ function spawnRandomBonus() {
             endTime: Date.now() + bonus.duration
         });
 
-        saveGame(); // Sauvegarde après activation de bonus
+        saveGame();
         setTimeout(() => el.remove(), 500);
 
         setTimeout(() => {
