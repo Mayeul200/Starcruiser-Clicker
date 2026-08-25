@@ -5,17 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🇫🇷 Glory of France Clicker</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght=300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Barre des améliorations -->
-    <div class="upgrades-bar" id="upgrades-bar">
-        <h2>Améliorations Disponibles</h2>
-        <div class="upgrades-list" id="upgrades-list"></div>
-        <button class="settings-button" onclick="toggleSettings()" title="Paramètres">⚙️</button>
+    <!-- ===== BARRE DU HAUT (10% hauteur max) ===== -->
+    <div class="top-bar">
+        <div class="upgrades-container" id="upgrades-container"></div>
+        <div class="top-bar-buttons">
+            <button class="stats-button" onclick="toggleStats()" title="Statistiques">📊</button>
+            <button class="settings-button" onclick="toggleSettings()" title="Paramètres">⚙️</button>
+        </div>
     </div>
 
-    <!-- Modal Paramètres -->
+    <!-- ===== CONTEUR PRINCIPAL (3 colonnes) ===== -->
+    <div class="main-grid">
+        <!-- ===== COLONNE GAUCHE (réservée pour mini-jeux) ===== -->
+        <div class="left-panel">
+            <div class="left-content">
+                <!-- Contenu futur ici -->
+            </div>
+        </div>
+
+        <!-- ===== COLONNE CENTRALE (médaillon + compteurs) ===== -->
+        <div class="center-panel">
+            <div class="medal-container">
+                <div class="medal" id="medal" onclick="addScore(1)">
+                    <div class="medal-emoji">🏅</div>
+                    <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
+                </div>
+            </div>
+            <div class="counters-container">
+                <div class="counter">Points De Gloire : <span id="score-value">0</span></div>
+                <div class="counter">PDG/s : <span id="gain-value">0</span></div>
+            </div>
+        </div>
+
+        <!-- ===== COLONNE DROITE (bâtiments) ===== -->
+        <div class="right-panel">
+            <div class="buildings-container" id="buildings-container"></div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL STATISTIQUES ===== -->
+    <div class="stats-modal" id="stats-modal">
+        <div class="stats-content">
+            <span class="close-button" onclick="toggleStats()">&times;</span>
+            <h2>Statistiques</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Points De Gloire totaux :</span>
+                    <span class="stat-value" id="total-score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">PDG/s actuel :</span>
+                    <span class="stat-value" id="current-gain">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Cliques totaux :</span>
+                    <span class="stat-value" id="total-clicks">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Bâtiments achetés :</span>
+                    <span class="stat-value" id="total-buildings">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL PARAMÈTRES (inchangé) ===== -->
     <div class="settings-modal" id="settings-modal">
         <div class="settings-content">
             <span class="close-button" onclick="toggleSettings()">&times;</span>
@@ -25,7 +82,6 @@
                     📤 Exporter la sauvegarde
                 </button>
                 <p class="settings-hint">Copie dans le presse-papiers.</p>
-
                 <div class="import-section">
                     <textarea id="import-textarea" placeholder="Collez votre sauvegarde ici..." rows="4"></textarea>
                     <button class="settings-option-button" onclick="importSave()">
@@ -33,7 +89,6 @@
                     </button>
                 </div>
                 <p class="settings-hint">Remplace votre progression.</p>
-
                 <button class="settings-option-button delete" onclick="confirmDeleteSave()">
                     🗑️ Supprimer la sauvegarde
                 </button>
@@ -42,35 +97,12 @@
         </div>
     </div>
 
-    <!-- Conteneur principal -->
-    <div class="main-container">
-       <!-- Zone de clic (centre) -->
-        <div class="click-container">
-            <div class="medal" id="medal" onclick="addScore(1)">
-                <div class="medal-emoji">🏅</div>
-                <div class="medal-text">MÉDAILLE<br>DE GLOIRE</div>
-            </div>
-            <div class="score-display">
-                <div id="score">Points De Gloire : <span id="score-value">0</span></div>
-                <div id="auto-gain">+<span id="gain-value">0</span>/s</div>
-            </div>
-        </div>
-        <!-- Panneau des bâtiments -->
-        <div class="buildings-panel">
-            <h2>L'Aube de la France</h2>
-            <div class="buildings-list" id="buildings-list"></div>
-        </div>
-    </div>
-
-    <!-- Conteneurs pour les effets -->
+    <!-- ===== EFFETS (inchangés) ===== -->
     <div class="random-bonuses-container" id="random-bonuses"></div>
     <div class="click-effects-container" id="click-effects"></div>
     <div class="medal-rain-container" id="medal-rain"></div>
-
-    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
-    <!-- ORDRE CORRIGÉ : save.js AVANT game.js -->
     <script src="save.js"></script>
     <script src="game.js"></script>
 </body>
