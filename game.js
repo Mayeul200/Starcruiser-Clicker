@@ -134,19 +134,19 @@ function init() {
     console.log("✅ Jeu initialisé");
 }
 
-// ===== FORMATAGE DES NOMBRES (version finale et testée) =====
+// ===== FORMATAGE DES NOMBRES (version finale) =====
 function formatNumber(num) {
     if (num < 1000) {
-        // 1 chiffre après la virgule pour les nombres < 1000
+        // 1 chiffre après la virgule pour < 1000 (ex: 0,3 / 45,8 / 567,9)
         return num.toFixed(1).replace('.', ',');
     } else if (num < 1000000) {
-        // 3 chiffres après la virgule pour les K (ex: 1,023K)
+        // 3 chiffres après la virgule pour K (ex: 1,023K / 10,345K)
         return (num / 1000).toFixed(3).replace('.', ',') + 'K';
     } else if (num < 1000000000) {
-        // 3 chiffres après la virgule pour les M
+        // 3 chiffres après la virgule pour M (ex: 1,023M)
         return (num / 1000000).toFixed(3).replace('.', ',') + 'M';
     } else {
-        // 3 chiffres après la virgule pour les B
+        // 3 chiffres après la virgule pour B (ex: 1,023B)
         return (num / 1000000000).toFixed(3).replace('.', ',') + 'B';
     }
 }
