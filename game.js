@@ -350,13 +350,17 @@ function renderBuilding(building) {
 
     buildingElement.innerHTML = `
         <div class="building-info">
-            <span class="building-name">${building.name}</span>
-            <span class="building-count">x${building.count}</span>
-            <span class="building-icon">${building.image}</span>
+            <div class="building-name-icon">
+                <span class="building-name">${building.name}</span>
+                <span class="building-icon">${building.image}</span>
+            </div>
+            <div class="building-ownership">
+                <span>Possédé : ${building.count}</span>
+            </div>
         </div>
-        <span class="building-cost">${formatNumber(currentCost)} PDG</span>
+        <span class="building-production">${formatNumber(currentGain)}/s</span>
         <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-            Acheter
+            ${formatNumber(currentCost)} PDG
         </button>
     `;
 
@@ -378,12 +382,15 @@ function updateBuildingsButtons() {
         const isAffordable = score >= currentCost;
 
         const button = element.querySelector('button');
-        const costSpan = element.querySelector('.building-cost');
-        const countSpan = element.querySelector('.building-count');
+        const productionSpan = element.querySelector('.building-production');
+        const ownershipSpan = element.querySelector('.building-ownership span');
 
-        if (button) button.disabled = !isAffordable;
-        if (costSpan) costSpan.textContent = `${formatNumber(currentCost)} PDG`;
-        if (countSpan) countSpan.textContent = `x${building.count}`;
+        if (button) {
+            button.disabled = !isAffordable;
+            button.textContent = `${formatNumber(currentCost)} PDG`;
+        }
+        if (productionSpan) productionSpan.textContent = `${formatNumber(currentGain)}/s`;
+        if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
         const tooltip = building.description
             .replace('{gain}', formatNumber(currentGain))
