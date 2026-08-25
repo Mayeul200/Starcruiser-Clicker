@@ -145,5 +145,5 @@ function confirmDeleteSave() {
 function deleteSave() {
     localStorage.removeItem('gloryOfFranceSave');
     showToast("🗑️ Supprimé !");
-    setTimeout(() => window.location.reload(), 1000);
+    window.location.reload(); // Rechargement immédiat
 }
