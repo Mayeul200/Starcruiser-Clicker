@@ -54,7 +54,7 @@ body {
 }
 
 .upgrade-item {
-    min-width: 120px;
+    min-width: 100px;
     height: calc(var(--top-height) - 8px);
     background: var(--secondary);
     border: 1px solid var(--border);
