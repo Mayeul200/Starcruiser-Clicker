@@ -98,7 +98,7 @@ const RANDOM_BONUSES = [
     { id: "alliance", symbol: "🤝", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 Points De Gloire/clic", colorClass: "alliance" }
 ];
 
-// ===== VARIABLES =====
+// ===== VARIABLES GLOBALES =====
 let score = 0;
 let autoGain = 0;
 let clickMultiplier = 1;
@@ -112,16 +112,23 @@ let lastMedalRainTime = 0;
 
 // ===== INITIALISATION =====
 function init() {
+    // Charger la sauvegarde AVANT de rendre les bâtiments
     loadGame();
+
+    // Initialiser l'affichage
     renderBuildings();
     renderUpgrades();
     updateDisplay();
     renderChickens();
+
+    // Démarrer les boucles
     setInterval(gameLoop, 100);
     setInterval(spawnRandomBonus, 60000);
+
+    console.log("✅ Jeu initialisé - score:", score);
 }
 
-// ===== FORMATAGE DES NOMBRES (4 chiffres max, 1 décimale) =====
+// ===== FORMATAGE DES NOMBRES =====
 function formatNumber(num) {
     if (num < 1000) {
         return Math.floor(num).toLocaleString('fr-FR');
@@ -235,8 +242,10 @@ function gameLoop() {
 }
 
 function updateDisplay() {
-    document.getElementById('score-value').textContent = formatNumber(score);
-    document.getElementById('gain-value').textContent = formatNumber(autoGain);
+    const scoreElement = document.getElementById('score-value');
+    const gainElement = document.getElementById('gain-value');
+    if (scoreElement) scoreElement.textContent = formatNumber(score);
+    if (gainElement) gainElement.textContent = formatNumber(autoGain);
 }
 
 // ===== GESTION DES COQS =====
@@ -475,47 +484,10 @@ function spawnRandomBonus() {
     };
 }
 
-// ===== PARAMÈTRES =====
+// ===== PARAMÈTRES (appellent save.js) =====
 function toggleSettings() {
     const modal = document.getElementById('settings-modal');
     modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
-
-
-// ===== FONCTIONS DE PARAMÈTRES (appellent save.js) =====
-function toggleSettings() {
-    const modal = document.getElementById('settings-modal');
-    modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-}
-
-function confirmDeleteSave() {
-    if (confirm("⚠️ ATTENTION !\n\nVoulez-vous VRAIMENT supprimer votre sauvegarde ?\n\nTous vos Points De Gloire, bâtiments et progrès seront PERDUS définitivement !")) {
-        deleteSave(); // Appelle la fonction de save.js
-    }
-}
-
-// ===== TOAST =====
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    if (toast) {
-        toast.textContent = message;
-        toast.style.display = 'block';
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, 3000);
-    }
-}
-
-// ===== VÉRIFICATION DE LA SAUVEGARDE (pour débogage) =====
-function checkSaveStatus() {
-    const save = localStorage.getItem('gloryOfFranceSave');
-    if (save) {
-        console.log("✅ Sauvegarde existe:", save.substring(0, 100) + "...");
-        return true;
-    } else {
-        console.log("❌ Aucune sauvegarde trouvée");
-        return false;
-    }
 }
 
 // ===== DÉMARRAGE =====
