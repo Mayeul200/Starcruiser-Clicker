@@ -340,11 +340,7 @@ function renderBuilding(building) {
     buildingElement.className = 'building-item';
     buildingElement.id = `building-${building.id}`;
 
-    const tooltip = building.description
-        .replace('{gain}', formatNumber(currentGain))
-        .replace('{count}', building.count)
-        .replace('{percent}', percent)
-        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
+    const tooltip = `${percent}% | Total: ${formatNumber(totalGeneratedByBuilding[building.id] || 0)} | Unité: ${formatNumber(building.gain * buildingMultipliers[building.id] * autoMultiplier)}/s`;
 
     buildingElement.setAttribute('data-tooltip', tooltip);
 
@@ -392,11 +388,7 @@ function updateBuildingsButtons() {
         if (productionSpan) productionSpan.textContent = `${formatNumber(currentGain)}/s`;
         if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-        const tooltip = building.description
-            .replace('{gain}', formatNumber(currentGain))
-            .replace('{count}', building.count)
-            .replace('{percent}', percent)
-            .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
+        const tooltip = `${percent}% | Total: ${formatNumber(totalGeneratedByBuilding[building.id] || 0)} | Unité: ${formatNumber(building.gain * buildingMultipliers[building.id] * autoMultiplier)}/s`;
 
         element.setAttribute('data-tooltip', tooltip);
     });
