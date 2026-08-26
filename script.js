@@ -827,8 +827,8 @@ function gameLoop() {
             totalGain += buildingGain;
 
             if (building.count > 0) {
-                // SOLUTION 3: Corriger les stats ×10 (0.01 au lieu de 0.1)
-                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.01);
+                // SOLUTION 3: Ajouter la production réelle à chaque itération (gameLoop tourne 10x/seconde, donc *0.1 = /10)
+                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.1);
             }
         });
     });
