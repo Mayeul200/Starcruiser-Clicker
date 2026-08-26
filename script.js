@@ -643,19 +643,21 @@ function renderBuilding(building) {
     buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
     buildingElement.innerHTML = `
-        <div class="building-info">
+        <div class="building-left">
             <div class="building-name-icon">
                 <span class="building-name">${building.name}</span>
                 <span class="building-icon">${building.image}</span>
             </div>
             <div class="building-ownership">
-                <span>Possédé : ${building.count}</span>
+                Possédé : ${building.count}
             </div>
         </div>
-        <span class="building-production">${formatNumber(totalGain)}/s</span>
-        <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-            ${formatNumber(currentCost)} Gloire
-        </button>
+        <div class="building-right">
+            <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
+                ${formatNumber(currentCost)} Gloire
+            </button>
+            <div class="building-production">+${formatNumber(totalGain)}/s</div>
+        </div>
     `;
 
     // Mettre à jour le tooltip au survol
