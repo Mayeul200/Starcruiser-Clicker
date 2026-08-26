@@ -5,11 +5,11 @@ const ERAS = [
         name: "L'Aube de la France",
         requiredScore: 0,
         buildings: [
-            { id: "coq-gaulois", name: "Coq Gaulois", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
-            { id: "vercingetorix", name: "Vercingétorix", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
-            { id: "charlemagne", name: "Charlemagne", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
-            { id: "notre-dame", name: "Notre-Dame", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
+            { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
+            { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
+            { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
+            { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
+            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
         ]
     },
     {
@@ -17,8 +17,8 @@ const ERAS = [
         name: "La Construction de la France",
         requiredScore: 50000,
         buildings: [
-            { id: "saint-louis", name: "Saint Louis", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
+            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
         ]
     },
     {
@@ -26,8 +26,8 @@ const ERAS = [
         name: "L'Expansion et la Révolution",
         requiredScore: 1000000,
         buildings: [
-            { id: "louis-xiv", name: "Louis XIV", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-            { id: "revolution", name: "Révolution", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
+            { id: "louis-xiv", name: "Louis XIV", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+            { id: "revolution", name: "Révolution", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
         ]
     },
     {
@@ -35,8 +35,8 @@ const ERAS = [
         name: "L'Ère Moderne",
         requiredScore: 50000000,
         buildings: [
-            { id: "napoleon", name: "Napoléon", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 50000000, gain: 500000, count: 0, image: "🎖️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-            { id: "tour-eiffel", name: "Tour Eiffel", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
+            { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎖️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
+            { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
         ]
     },
     {
@@ -44,8 +44,8 @@ const ERAS = [
         name: "La France Contemporaine",
         requiredScore: 1000000000,
         buildings: [
-            { id: "de-gaulle", name: "De Gaulle", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 1000000000, gain: 10000000, count: 0, image: "🕊️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-            { id: "macron", name: "Macron", description: "Unité : la production que fais ce bâtiment unitairement +{gain} G/s\n% de ma prod total : {percent}%\nTotal généré : {total}", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
+            { id: "de-gaulle", name: "De Gaulle", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000000, gain: 10000000, count: 0, image: "🕊️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+            { id: "macron", name: "Macron", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
         ]
     }
 ];
