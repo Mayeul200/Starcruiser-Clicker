@@ -543,6 +543,11 @@ function renderBuilding(building) {
         const productionSpan = buildingElement.querySelector('.building-production');
         const ownershipSpan = buildingElement.querySelector('.building-ownership span');
         
+        // Mettre à jour la classe not-purchased si le bâtiment est acheté
+        if (building.count > 0) {
+            buildingElement.classList.remove('not-purchased');
+        }
+        
         if (button) {
             button.disabled = !isAffordable;
             button.textContent = `${formatNumber(currentCost)} Gloire`;
