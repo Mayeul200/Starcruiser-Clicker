@@ -843,6 +843,7 @@ function gameLoop() {
         spawnMedalRain();
     }
     if (Date.now() - lastBuildingsUpdate > 500) { lastBuildingsUpdate = Date.now(); updateAllBuildingButtons(); }
+    updateDisplay();
     checkEraUnlocks();
 }
 
