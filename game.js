@@ -398,7 +398,9 @@ function renderBuildings() {
     container.innerHTML = '';
 
     ERAS.forEach(era => {
-        if (score >= era.requiredScore || era.requiredScore === 0) {
+        // Show era if: score is enough OR any building in this era is already unlocked
+        const eraHasUnlockedBuildings = era.buildings.some(b => unlockedBuildings.has(b.id));
+        if (score >= era.requiredScore || era.requiredScore === 0 || eraHasUnlockedBuildings) {
             era.buildings.forEach(building => {
                 if (building.unlockCondition() || unlockedBuildings.has(building.id)) {
                     if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
