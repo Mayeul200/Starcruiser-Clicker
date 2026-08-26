@@ -448,6 +448,13 @@ function updateBuildingButton(buildingId) {
     const totalGain = calculateBuildingGain(building);
     const isAffordable = score >= currentCost;
 
+    // Mettre à jour la classe not-purchased
+    if (building.count > 0) {
+        element.classList.remove('not-purchased');
+    } else {
+        element.classList.add('not-purchased');
+    }
+
     const button = element.querySelector('button');
     const productionSpan = element.querySelector('.building-production');
     const ownershipSpan = element.querySelector('.building-ownership span');
