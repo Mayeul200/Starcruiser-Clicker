@@ -104,6 +104,7 @@ let lastMedalRainTime = 0;
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastUpgradesRender = 0;
+let lastBuildingsUpdate = 0;
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -841,7 +842,7 @@ function gameLoop() {
     if (autoGain > 0 && Date.now() - lastMedalRainTime > 500) {
         spawnMedalRain();
     }
-    if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
+    if (Date.now() - lastBuildingsUpdate > 500) { lastBuildingsUpdate = Date.now(); updateAllBuildingButtons(); }
     checkEraUnlocks();
 }
 
