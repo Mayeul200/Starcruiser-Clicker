@@ -493,34 +493,6 @@ body {
     background: var(--primary) !important;
     color: white !important;
 }
-
-/* Tooltip pour les bâtiments */
-.building-tooltip {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    font-size: 0.85rem;
-    color: var(--text);
-    box-shadow: var(--shadow);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s;
-    z-index: 1000;
-    pointer-events: none;
-    white-space: pre-line;
-    max-width: 300px;
-    line-height: 1.5;
-}
-
-.building-item:hover .building-tooltip {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(8px);
-}
 /* RESPONSIVE */
 @media (max-width: 992px) {
     .main-grid {

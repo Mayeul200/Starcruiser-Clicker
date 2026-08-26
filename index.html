@@ -12,8 +12,8 @@
     <div class="top-bar">
         <div class="upgrades-container" id="upgrades-list"></div>
         <div class="top-bar-controls">
-            <button class="control-button" onclick="window.toggleStats()" title="Statistiques">📊</button>
-            <button class="control-button" onclick="window.toggleSettings()" title="Paramètres">⚙️</button>
+            <button class="control-button" onclick="toggleStats()" title="Statistiques">📊</button>
+            <button class="control-button" onclick="toggleSettings()" title="Paramètres">⚙️</button>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Statistiques</h2>
-                <span class="close-button" onclick="window.toggleStats()">&times;</span>
+                <span class="close-button" onclick="toggleStats()">&times;</span>
             </div>
             <div class="modal-body" id="stats-body"></div>
         </div>
@@ -33,13 +33,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Paramètres</h2>
-                <span class="close-button" onclick="window.toggleSettings()">&times;</span>
+                <span class="close-button" onclick="toggleSettings()">&times;</span>
             </div>
             <div class="modal-body">
-                <button class="modal-button" onclick="window.exportSave()">📤 Exporter</button>
+                <button class="modal-button" onclick="exportSave()">📤 Exporter</button>
                 <textarea id="import-textarea" placeholder="Collez votre sauvegarde..."></textarea>
-                <button class="modal-button" onclick="window.importSave()">📥 Importer</button>
-                <button class="modal-button delete" onclick="window.confirmDeleteSave()">🗑️ Supprimer</button>
+                <button class="modal-button" onclick="importSave()">📥 Importer</button>
+                <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ Supprimer</button>
             </div>
         </div>
     </div>
@@ -54,7 +54,7 @@
 
         <!-- COLONNE CENTRALE (60%) - Zone de clic -->
         <div class="center-panel">
-            <div class="medal" id="medal" onclick="window.addScore(1)">
+            <div class="medal" id="medal" onclick="addScore(1)">
                 <div class="medal-emoji">🏅</div>
             </div>
             <div class="counters">

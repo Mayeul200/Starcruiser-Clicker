@@ -13,7 +13,7 @@ const ERAS = [
             { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
             { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
             { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
+            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
         ]
     },
     {
@@ -21,8 +21,8 @@ const ERAS = [
         name: "La Construction de la France",
         requiredScore: 50000,
         buildings: [
-            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 500000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
+            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
         ]
     },
     {
@@ -160,13 +160,10 @@ function getBuildingTooltip(building) {
     const unitGain = calculateUnitBuildingGain(building);
     const totalGain = calculateBuildingGain(building);
     const percent = autoGain > 0 ? ((totalGain / autoGain) * 100).toFixed(2) : 0;
-    const totalGenerated = totalGeneratedByBuilding[building.id] || 0;
-    
-    // Remplacer les placeholders avec les bonnes valeurs et unités
     return building.description
-        .replace('{gain}', formatNumber(unitGain) + '/s')
+        .replace('{gain}', formatNumber(unitGain))
         .replace('{percent}', percent)
-        .replace('{total}', formatNumber(totalGenerated));
+        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 }
 
 // Calcule le coût actuel d'un bâtiment
@@ -482,12 +479,7 @@ function updateBuildingButton(buildingId) {
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-    // Mettre à jour le tooltip sans recréer l'élément
-    const tooltip = element.querySelector('.building-tooltip');
-    if (tooltip) {
-        tooltip.innerHTML = getBuildingTooltip(building).replace(/\n/g, "<br>")
-/g, '<br>');
-    }
+    // Le tooltip est déjà défini lors du renderBuilding, pas besoin de le recréer
 }
 
 // Met à jour tous les boutons de bâtiments
@@ -543,7 +535,7 @@ function renderBuilding(building) {
     const buildingElement = document.createElement('div');
     buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
     buildingElement.id = `building-${building.id}`;
-    buildingElement.id = `building-${building.id}`;
+    buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
     buildingElement.innerHTML = `
         <div class="building-info">
@@ -555,12 +547,10 @@ function renderBuilding(building) {
                 <span>Possédé : ${building.count}</span>
             </div>
         </div>
-        <span class="building-production">${formatNumber(totalGain)}/s</span>
-        <button onclick="window.buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
+        <span class="building-production">${formatNumber(totalGain)}</span>
+        <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
             ${formatNumber(currentCost)} Gloire
         </button>
-        <div class="building-tooltip">${getBuildingTooltip(building).replace(/\n/g, "<br>")
-/g, '<br>')}</div>
     `;
 
     container.appendChild(buildingElement);
@@ -573,37 +563,16 @@ function renderBuilding(building) {
 // Affiche les améliorations dans la barre du haut
 function renderUpgrades() {
     const container = document.getElementById('upgrades-list');
-    const existingClickIds = new Set();
-    const existingBuildingIds = new Set();
-    
-    // Marquer les éléments existants
-    container.querySelectorAll('.upgrade-item').forEach(el => {
-        const upgradeId = el.getAttribute('data-upgrade-id');
-        if (upgradeId) {
-            if (upgradeId.startsWith('click-')) {
-                existingClickIds.add(upgradeId);
-            } else {
-                existingBuildingIds.add(upgradeId);
-            }
-        }
-    });
+    container.innerHTML = '';
 
     // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
-        const upgradeId = `click-${upgrade.threshold}`;
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
-            existingClickIds.delete(upgradeId);
-            let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
-            
-            if (!upgradeElement) {
-                upgradeElement = document.createElement('div');
-                upgradeElement.className = 'upgrade-item';
-                upgradeElement.id = `upgrade-${upgradeId}`;
-                upgradeElement.setAttribute('data-upgrade-id', upgradeId);
-                upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
-                upgradeElement.onclick = () => window.buyClickUpgrade(upgrade.threshold);
-                container.appendChild(upgradeElement);
-            }
+            const upgradeElement = document.createElement('div');
+            upgradeElement.className = 'upgrade-item';
+            upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
+            upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
+            container.appendChild(upgradeElement);
         }
     });
     
@@ -612,39 +581,21 @@ function renderUpgrades() {
         ERAS.forEach(era => {
             era.buildings.forEach(building => {
                 if (isBuildingUpgradeAvailable(building.id, threshold)) {
-                    const upgradeId = `building-${building.id}-${threshold}`;
-                    existingBuildingIds.delete(upgradeId);
-                    let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
+                    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+                    const color = UPGRADE_COLORS[thresholdIndex];
+                    const buildingGain = calculateBuildingGain(building);
+                    const cost = Math.floor(buildingGain * 5);
                     
-                    if (!upgradeElement) {
-                        const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-                        const color = UPGRADE_COLORS[thresholdIndex];
-                        const buildingGain = calculateBuildingGain(building);
-                        const cost = Math.floor(buildingGain * 5);
-                        
-                        upgradeElement = document.createElement('div');
-                        upgradeElement.className = 'upgrade-item';
-                        upgradeElement.id = `upgrade-${upgradeId}`;
-                        upgradeElement.setAttribute('data-upgrade-id', upgradeId);
-                        upgradeElement.style.background = color;
-                        upgradeElement.style.color = 'white';
-                        upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
-                        upgradeElement.onclick = () => window.buyBuildingUpgrade(building.id, threshold);
-                        container.appendChild(upgradeElement);
-                    }
+                    const upgradeElement = document.createElement('div');
+                    upgradeElement.className = 'upgrade-item';
+                    upgradeElement.style.background = color;
+                    upgradeElement.style.color = 'white';
+                    upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
+                    upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                    container.appendChild(upgradeElement);
                 }
             });
         });
-    });
-    
-    // Supprimer les améliorations qui ne sont plus disponibles
-    existingClickIds.forEach(id => {
-        const el = document.getElementById(`upgrade-${id}`);
-        if (el) el.remove();
-    });
-    existingBuildingIds.forEach(id => {
-        const el = document.getElementById(`upgrade-${id}`);
-        if (el) el.remove();
     });
 }
 
