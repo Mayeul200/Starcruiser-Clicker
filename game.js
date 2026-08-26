@@ -387,6 +387,9 @@ function renderUpgrades() {
             container.appendChild(upgradeElement);
         }
     });
+    
+    // Add building upgrades
+    renderBuildingUpgrades();
 }
 
 // Affiche les bâtiments
