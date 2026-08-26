@@ -396,8 +396,7 @@ body {
 
 /* EFFETS VISUELS */
 .bonuses-container,
-.click-effects,
-.medal-rain {
+.click-effects {
     position: fixed;
     top: var(--top-height);
     left: 0; right: 0; bottom: 0;
@@ -449,39 +448,6 @@ body {
 @keyframes floatUp {
     0% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-80px); }
-}
-
-.medal-rain {
-    position: absolute;
-    font-size: 1.5rem;
-    animation: fall 2s forwards;
-    opacity: 0;
-}
-
-@keyframes fall {
-    0% { opacity: 1; transform: translateY(-30px); }
-    100% { opacity: 0; transform: translateY(100px); }
-}
-
-/* Effet de médailles tournoyantes au clic */
-.click-medal {
-    position: absolute;
-    font-size: 1.2rem;
-    pointer-events: none;
-    z-index: 100;
-    animation: spinFall 2s linear forwards;
-    opacity: 0;
-}
-
-@keyframes spinFall {
-    0% {
-        opacity: 1;
-        transform: rotate(0deg) translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: rotate(720deg) translateY(200px);
-    }
 }
 
 .toast {

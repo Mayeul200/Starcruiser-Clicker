@@ -66,7 +66,6 @@ let buildingUpgradeCosts = {}; // {buildingId: {threshold: fixedCost, ...}}
 let clickGloireTotal = 0;
 let activatedClickUpgrades = [];
 let unlockedBuildings = new Set();
-let lastMedalRainTime = 0;
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
@@ -207,8 +206,7 @@ function saveGame() {
         clickGloireTotal: clickGloireTotal,
         activatedClickUpgrades: [...activatedClickUpgrades],
         unlockedBuildings: Array.from(unlockedBuildings),
-        lastMedalRainTime: lastMedalRainTime,
-        autoMultipliers: [...autoMultipliers],
+                autoMultipliers: [...autoMultipliers],
         clickMultipliers: [...clickMultipliers],
         buildingUpgrades: {},
         buildingUpgradeCosts: {},
@@ -260,8 +258,7 @@ function loadGame() {
         autoMultiplier = parsed.autoMultiplier || 1;
         clickMultiplier = parsed.clickMultiplier || 1;
         clickGloireTotal = parsed.clickGloireTotal || 0;
-        lastMedalRainTime = parsed.lastMedalRainTime || 0;
-
+        
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
 
@@ -749,12 +746,6 @@ function addScore(points) {
     // Récupérer la position du clic
     const medal = document.getElementById('medal');
     const medalRect = medal.getBoundingClientRect();
-    const clickX = medalRect.left + medalRect.width / 2;
-    const clickY = medalRect.top + medalRect.height / 2;
-    
-    // Faire tomber des médailles tournoyantes
-    spawnClickMedals(clickX, clickY);
-    
     medal.style.transform = 'scale(0.95)';
     setTimeout(() => { medal.style.transform = 'scale(1)'; }, 100);
 
@@ -789,35 +780,6 @@ function showClickEffect(value) {
 }
 
 // Pluie de médaillons
-function spawnMedalRain() {
-    const now = Date.now();
-    const medalCount = Math.min(Math.floor(autoGain / 5), 5);
-    if (medalCount <= 0) return;
-
-    const container = document.getElementById('medal-rain');
-    const medal = document.getElementById('medal');
-    const medalRect = medal.getBoundingClientRect();
-
-    for (let i = 0; i < medalCount; i++) {
-        const startX = medalRect.left + Math.random() * medalRect.width;
-        const startY = medalRect.top - 20;
-
-        const medalRain = document.createElement('div');
-        medalRain.className = 'medal-rain';
-        medalRain.innerHTML = '🏅';
-        medalRain.style.left = `${startX}px`;
-        medalRain.style.top = `${startY}px`;
-
-        container.appendChild(medalRain);
-        setTimeout(() => medalRain.remove(), 2000);
-    }
-    lastMedalRainTime = now;
-}
-
-// ============================================
-// BOUCLE PRINCIPALE
-// ============================================
-
 function gameLoop() {
     let totalGain = 0;
 
@@ -834,10 +796,6 @@ function gameLoop() {
     autoGain = totalGain;
     score += autoGain / 10;
 
-    // Pluie de médaillons si gain automatique > 0
-    if (autoGain > 0 && Date.now() - lastMedalRainTime > 500) {
-        spawnMedalRain();
-    }
     if (Date.now() - lastBuildingsUpdate > 500) { lastBuildingsUpdate = Date.now(); updateAllBuildingButtons(); }
     updateDisplay();
     checkBuildingUnlocks();
