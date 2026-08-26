@@ -160,10 +160,13 @@ function getBuildingTooltip(building) {
     const unitGain = calculateUnitBuildingGain(building);
     const totalGain = calculateBuildingGain(building);
     const percent = autoGain > 0 ? ((totalGain / autoGain) * 100).toFixed(2) : 0;
+    const totalGenerated = totalGeneratedByBuilding[building.id] || 0;
+    
+    // Remplacer les placeholders avec les bonnes valeurs et unités
     return building.description
-        .replace('{gain}', formatNumber(unitGain))
+        .replace('{gain}', formatNumber(unitGain) + '/s')
         .replace('{percent}', percent)
-        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
+        .replace('{total}', formatNumber(totalGenerated));
 }
 
 // Calcule le coût actuel d'un bâtiment
@@ -479,7 +482,12 @@ function updateBuildingButton(buildingId) {
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-    // Le tooltip est déjà défini lors du renderBuilding, pas besoin de le recréer
+    // Mettre à jour le tooltip sans recréer l'élément
+    const tooltip = element.querySelector('.building-tooltip');
+    if (tooltip) {
+        tooltip.innerHTML = getBuildingTooltip(building).replace(/
+/g, '<br>');
+    }
 }
 
 // Met à jour tous les boutons de bâtiments
@@ -535,7 +543,7 @@ function renderBuilding(building) {
     const buildingElement = document.createElement('div');
     buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
     buildingElement.id = `building-${building.id}`;
-    buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
+    buildingElement.id = `building-${building.id}`;
 
     buildingElement.innerHTML = `
         <div class="building-info">
@@ -551,6 +559,8 @@ function renderBuilding(building) {
         <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
             ${formatNumber(currentCost)} Gloire
         </button>
+        <div class="building-tooltip">${getBuildingTooltip(building).replace(/
+/g, '<br>')}</div>
     `;
 
     container.appendChild(buildingElement);
