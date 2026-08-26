@@ -417,9 +417,6 @@ function buyClickUpgrade(threshold) {
         return;
     }
     
-    // Appliquer le bonus
-    clickMultiplier += upgrade.bonus;
-    
     // Retirer le coût
     score -= upgrade.cost;
     
@@ -725,7 +722,9 @@ function spawnRandomBonus() {
 
 // Ajoute des points
 function addScore(points) {
-    const basePoints = points * clickMultiplier;
+    // Nouveau système : 1 + (1 + nombre_améliorations) * 1% * autoGain
+    const clickBonusPercent = (1 + activatedClickUpgrades.length) * 0.01;
+    const basePoints = points + (points * clickBonusPercent * autoGain);
     const totalPoints = basePoints;
 
     score += totalPoints;
