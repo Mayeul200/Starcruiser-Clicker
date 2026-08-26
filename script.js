@@ -616,7 +616,7 @@ function renderUpgrades() {
                 upgradeElement.className = 'upgrade-item';
                 upgradeElement.id = `upgrade-${upgradeId}`;
                 upgradeElement.setAttribute('data-upgrade-id', upgradeId);
-                upgradeElement.textContent = upgrade.name;
+                upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
                 upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
                 container.appendChild(upgradeElement);
             }
