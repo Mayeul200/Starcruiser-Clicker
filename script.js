@@ -468,7 +468,33 @@ function buyBuilding(buildingId) {
         checkBuildingUnlocks();
         showToast(`✅ +${buildingsToBuy} ${building.name}`);
     } else {
-        showToast("❌ Pas assez de Gloire");
+        // Acheter le maximum possible
+        let maxAffordable = 0;
+        let cumulativeCost = 0;
+        
+        for (let i = 0; i < buyMultiplier; i++) {
+            const costForOne = calculateBuildingCost({...building, count: building.count + i});
+            if (cumulativeCost + costForOne <= score) {
+                cumulativeCost += costForOne;
+                maxAffordable++;
+            } else {
+                break;
+            }
+        }
+        
+        if (maxAffordable > 0) {
+            score -= cumulativeCost;
+            building.count += maxAffordable;
+            unlockedBuildings.add(building.id);
+            updateDisplay();
+            saveGame();
+            updateAllBuildingButtons();
+            renderUpgrades();
+            checkBuildingUnlocks();
+            showToast(`✅ +${maxAffordable} ${building.name} (max possible)`);
+        } else {
+            showToast("❌ Pas assez de Gloire");
+        }
     }
 }
 
@@ -535,9 +561,15 @@ function updateBuildingButton(buildingId) {
     const building = findBuildingById(buildingId);
     if (!building) return;
 
-    const currentCost = calculateBuildingCost(building);
+    // Calculer le coût total pour buyMultiplier bâtiments
+    let totalCost = 0;
+    for (let i = 0; i < buyMultiplier; i++) {
+        const costForOne = calculateBuildingCost({...building, count: building.count + i});
+        totalCost += costForOne;
+    }
+    
     const totalGain = calculateBuildingGain(building);
-    const isAffordable = score >= currentCost;
+    const isAffordable = score >= totalCost;
 
     // Mettre à jour la classe not-purchased
     if (building.count > 0) {
@@ -552,7 +584,7 @@ function updateBuildingButton(buildingId) {
 
     if (button) {
         button.disabled = !isAffordable;
-        button.textContent = `${formatNumber(currentCost)} Gloire`;
+        button.textContent = `${formatNumber(totalCost)} Gloire`;
     }
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
