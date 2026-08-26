@@ -314,13 +314,6 @@ body {
     border-color: var(--primary);
 }
 
-.building-info {
-    display: flex;
-    flex-direction: column;    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
 .building-left {
     display: flex;
     flex-direction: column;
