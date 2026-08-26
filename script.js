@@ -69,6 +69,7 @@ let unlockedBuildings = new Set();
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
+let buyMultiplier = 1; // Multiplicateur d'achat (1, 5, 50)
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -425,6 +426,20 @@ function deleteSave() {
 
 // ============================================
 // GESTION DES BÂTIMENTS
+// Définit le multiplicateur d'achat
+function setBuyMultiplier(multiplier) {
+    buyMultiplier = multiplier;
+    
+    // Mettre à jour les classes actives des boutons
+    document.querySelectorAll('.multiplier-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById(`multiplier-x${multiplier}`).classList.add('active');
+    
+    updateAllBuildingButtons();
+    showToast(`Multiplicateur: x${multiplier}`);
+}
+
 // ============================================
 
 // Achat d'un bâtiment
@@ -432,18 +447,26 @@ function buyBuilding(buildingId) {
     const building = findBuildingById(buildingId);
     if (!building) return;
 
-    const currentCost = calculateBuildingCost(building);
+    // Calculer le coût total pour buyMultiplier bâtiments
+    let totalCost = 0;
+    let buildingsToBuy = buyMultiplier;
+    
+    // Calculer le coût pour chaque bâtiment (le coût augmente exponentiellement)
+    for (let i = 0; i < buildingsToBuy; i++) {
+        const costForOne = calculateBuildingCost({...building, count: building.count + i});
+        totalCost += costForOne;
+    }
 
-    if (score >= currentCost) {
-        score -= currentCost;
-        building.count++;
+    if (score >= totalCost) {
+        score -= totalCost;
+        building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
-        renderBuildings();
+        updateAllBuildingButtons();
         renderUpgrades();
         checkBuildingUnlocks();
-        showToast(`✅ +1 ${building.name}`);
+        showToast(`✅ +${buildingsToBuy} ${building.name}`);
     } else {
         showToast("❌ Pas assez de Gloire");
     }

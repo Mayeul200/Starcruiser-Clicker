@@ -366,6 +366,49 @@ body {
     opacity: 0.5;
 }
 
+/* Multiplicateurs d'achat */
+.buildings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.buildings-header h3 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.multiplier-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.multiplier-btn {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: white;
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.multiplier-btn:hover {
+    background: var(--secondary);
+    border-color: var(--primary);
+}
+
+.multiplier-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
 /* TOOLTIP */
 .building-item::after {
     content: attr(data-tooltip);
