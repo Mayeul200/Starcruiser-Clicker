@@ -114,6 +114,11 @@ function isBuildingUpgradeAvailable(buildingId, threshold) {
     const upgrades = buildingUpgrades[buildingId] || [];
     const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
     
+    // Calculer le prix fixe si le bâtiment a atteint le seuil et que ce n'est pas déjà fait
+    if (building.count >= threshold && !buildingUpgradeCosts[buildingId]?.[threshold]) {
+        getBuildingUpgradeFixedCost(buildingId, threshold);
+    }
+    
     return building.count >= threshold &&
            !upgrades.includes(threshold) &&
            (thresholdIndex === 0 || upgrades.includes(BUILDING_UPGRADE_THRESHOLDS[thresholdIndex - 1]));
