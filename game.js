@@ -341,7 +341,7 @@ function renderBuilding(building) {
     const isAffordable = score >= currentCost;
 
     const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item';
+    buildingElement.className = 'building-item' + (building.count === 0 && building.everAppeared ? ' not-bought' : '');
     buildingElement.id = `building-${building.id}`;
 
     const tooltip = `Pourcentage de production : ${percent}%
@@ -399,6 +399,13 @@ Total produit : ${formatNumber(totalGeneratedByBuilding[building.id] || 0)} Gloi
 Production unitaire : ${formatNumber(building.gain * buildingMultipliers[building.id] * autoMultiplier)}/s`;
 
         element.setAttribute('data-tooltip', tooltip);
+        
+        // Gérer la classe not-bought (flou si count=0 ET déjà apparu)
+        if (building.count === 0 && building.everAppeared) {
+            element.classList.add('not-bought');
+        } else {
+            element.classList.remove('not-bought');
+        }
     });
 }
 

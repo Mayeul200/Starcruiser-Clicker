@@ -11,6 +11,7 @@ function saveGame() {
         currentEraIndex: currentEraIndex,
         buildingMultipliers: { ...buildingMultipliers },
         totalGeneratedByBuilding: { ...totalGeneratedByBuilding },
+        buildingsEverAppeared: ERAS.flatMap(era => era.buildings.map(b => ({ id: b.id, everAppeared: b.everAppeared || false }))),
         activatedClickUpgrades: [...activatedClickUpgrades],
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
@@ -28,6 +29,7 @@ function saveGame() {
         lastSave: Date.now(),
         version: "2.0.0"
     };
+        buildingsEverAppeared: parsed.buildingsEverAppeared || []
 
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
 }
@@ -52,6 +54,14 @@ function loadGame() {
         if (parsed.buildingMultipliers) {
             Object.keys(buildingMultipliers).forEach(key => {
                 buildingMultipliers[key] = parsed.buildingMultipliers[key] || 1;
+            }
+            
+            // Restaurer everAppeared
+            if (parsed.buildingsEverAppeared) {
+                parsed.buildingsEverAppeared.forEach(b => {
+                    const building = ERAS.flatMap(era => era.buildings).find(bl => bl.id === b.id);
+                    if (building) building.everAppeared = b.everAppeared || false;
+                });
             });
         }
 
