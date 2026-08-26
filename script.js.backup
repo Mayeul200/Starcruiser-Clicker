@@ -13,7 +13,7 @@ const ERAS = [
             { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
             { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
             { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
+            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
         ]
     },
     {
@@ -21,8 +21,8 @@ const ERAS = [
         name: "La Construction de la France",
         requiredScore: 50000,
         buildings: [
-            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
+            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 500000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
         ]
     },
     {
@@ -54,18 +54,18 @@ const ERAS = [
     }
 ];
 
-// Améliorations de clic (barre du haut) - Coût = seuil
+// Améliorations de clic (barre du haut)
 const CLICK_UPGRADES = [
-    { threshold: 50, name: "Clic de base", cost: 50 },
-    { threshold: 100, name: "Clic Précis", cost: 100 },
-    { threshold: 250, name: "Clic Puissant", cost: 250 },
-    { threshold: 500, name: "Clic Expert", cost: 500 },
-    { threshold: 1000, name: "Clic Légendaire", cost: 1000 },
-    { threshold: 2500, name: "Clic Divin", cost: 2500 },
-    { threshold: 5000, name: "Clic Impérial", cost: 5000 },
-    { threshold: 10000, name: "Clic Suprême", cost: 10000 },
-    { threshold: 25000, name: "Clic Ultime", cost: 25000 },
-    { threshold: 50000, name: "Clic Mythique", cost: 50000 }
+    { threshold: 50, bonus: 0.01, name: "Clic de base", cost: 50 },
+    { threshold: 100, bonus: 0.01, name: "Clic Précis", cost: 100 },
+    { threshold: 250, bonus: 0.01, name: "Clic Puissant", cost: 250 },
+    { threshold: 500, bonus: 0.01, name: "Clic Expert", cost: 500 },
+    { threshold: 1000, bonus: 0.02, name: "Clic Légendaire", cost: 1000 },
+    { threshold: 2500, bonus: 0.02, name: "Clic Divin", cost: 2500 },
+    { threshold: 5000, bonus: 0.03, name: "Clic Impérial", cost: 5000 },
+    { threshold: 10000, bonus: 0.05, name: "Clic Suprême", cost: 10000 },
+    { threshold: 25000, bonus: 0.1, name: "Clic Ultime", cost: 25000 },
+    { threshold: 50000, bonus: 0.2, name: "Clic Mythique", cost: 50000 }
 ];
 
 // Building upgrade thresholds (per building individually)
@@ -91,6 +91,7 @@ const RANDOM_BONUSES = [
 // Variables globales
 let score = 0;
 let autoGain = 0;
+let clickMultiplier = 1;
 let autoMultiplier = 1;
 let activeRandomBonuses = [];
 let buildingUpgrades = {}; // {buildingId: [threshold1, threshold2, ...]}
@@ -100,6 +101,7 @@ let unlockedBuildings = new Set();
 let lastMedalRainTime = 0;
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
+
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -150,6 +152,10 @@ function isBuildingUpgradeAvailable(buildingId, threshold) {
     const upgrades = buildingUpgrades[buildingId] || [];
     const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
     
+    // Available if:
+    // 1. Building has at least 'threshold' units
+    // 2. This threshold not already purchased
+    // 3. All previous thresholds are purchased (sequential)
     return building.count >= threshold &&
            !upgrades.includes(threshold) &&
            (thresholdIndex === 0 || upgrades.includes(BUILDING_UPGRADE_THRESHOLDS[thresholdIndex - 1]));
@@ -200,6 +206,7 @@ function saveGame() {
     const saveData = {
         score: score,
         autoGain: autoGain,
+        clickMultiplier: clickMultiplier,
         autoMultiplier: autoMultiplier,
         clickGloireTotal: clickGloireTotal,
         activatedClickUpgrades: [...activatedClickUpgrades],
@@ -250,6 +257,7 @@ function loadGame() {
 
         score = parsed.score || 0;
         autoGain = parsed.autoGain || 0;
+        clickMultiplier = parsed.clickMultiplier || 1;
         autoMultiplier = parsed.autoMultiplier || 1;
         clickGloireTotal = parsed.clickGloireTotal || 0;
         lastMedalRainTime = parsed.lastMedalRainTime || 0;
@@ -283,9 +291,7 @@ function loadGame() {
             // Appliquer les multiplicateurs des bonus actifs
             activeRandomBonuses.forEach(bonus => {
                 if (bonus.effect === "auto" || bonus.effect === "both") autoMultiplier = bonus.multiplier;
-                if (bonus.effect === "click" || bonus.effect === "both") {
-                    // Note: clickMultiplier n'est plus utilisé, mais on garde pour compatibilité
-                }
+                if (bonus.effect === "click" || bonus.effect === "both") clickMultiplier = bonus.multiplier;
             });
         }
 
@@ -309,6 +315,7 @@ function loadGame() {
         activeRandomBonuses = activeRandomBonuses.filter(bonus => bonus.endTime >= now);
         if (activeRandomBonuses.length === 0) {
             autoMultiplier = 1;
+            clickMultiplier = 1;
         }
 
         // Initialiser les structures pour les nouveaux bâtiments
@@ -390,7 +397,7 @@ function buyBuilding(buildingId) {
         unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
-        renderBuildings();
+        updateBuildingButton(buildingId);
         renderUpgrades();
         checkEraUnlocks();
         showToast(`✅ +1 ${building.name}`);
@@ -412,6 +419,7 @@ function buyClickUpgrade(threshold) {
     
     // Retirer le coût
     score -= upgrade.cost;
+    
     activatedClickUpgrades.push(threshold);
     updateDisplay();
     saveGame();
@@ -445,11 +453,11 @@ function buyBuildingUpgrade(buildingId, threshold) {
     updateDisplay();
     saveGame();
     renderUpgrades();
-    renderBuildings();
+    updateAllBuildingButtons();
     showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
 }
 
-// Met à jour un seul bouton de bâtiment (sans modifier le DOM inutilement)
+// Met à jour un seul bouton de bâtiment (optimisé)
 function updateBuildingButton(buildingId) {
     const element = document.getElementById(`building-${buildingId}`);
     if (!element) return;
@@ -532,28 +540,54 @@ function renderBuilding(building) {
     const totalGain = calculateBuildingGain(building);
     const isAffordable = score >= currentCost;
 
-    const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
-    buildingElement.id = `building-${building.id}`;
-    buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
+    let buildingElement = document.getElementById(`building-${building.id}`);
+    
+    if (!buildingElement) {
+        // Créer l'élément s'il n'existe pas
+        buildingElement = document.createElement('div');
+        buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
+        buildingElement.id = `building-${building.id}`;
+        buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
-    buildingElement.innerHTML = `
-        <div class="building-info">
-            <div class="building-name-icon">
-                <span class="building-name">${building.name}</span>
-                <span class="building-icon">${building.image}</span>
+        buildingElement.innerHTML = `
+            <div class="building-info">
+                <div class="building-name-icon">
+                    <span class="building-name">${building.name}</span>
+                    <span class="building-icon">${building.image}</span>
+                </div>
+                <div class="building-ownership">
+                    <span>Possédé : ${building.count}</span>
+                </div>
             </div>
-            <div class="building-ownership">
-                <span>Possédé : ${building.count}</span>
-            </div>
-        </div>
-        <span class="building-production">${formatNumber(totalGain)}</span>
-        <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-            ${formatNumber(currentCost)} Gloire
-        </button>
-    `;
-
-    container.appendChild(buildingElement);
+            <span class="building-production">${formatNumber(totalGain)}</span>
+            <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
+                ${formatNumber(currentCost)} Gloire
+            </button>
+        `;
+        container.appendChild(buildingElement);
+    } else {
+        // Mettre à jour l'élément existant SANS toucher au tooltip
+        const button = buildingElement.querySelector('button');
+        const productionSpan = buildingElement.querySelector('.building-production');
+        const ownershipSpan = buildingElement.querySelector('.building-ownership span');
+        
+        // Mettre à jour la classe not-purchased si le bâtiment est acheté
+        if (building.count > 0) {
+            buildingElement.classList.remove('not-purchased');
+        }
+        
+        if (button) {
+            button.disabled = !isAffordable;
+            button.textContent = `${formatNumber(currentCost)} Gloire`;
+        }
+        if (productionSpan) {
+            productionSpan.textContent = `${formatNumber(totalGain)}`;
+        }
+        if (ownershipSpan) {
+            ownershipSpan.textContent = `Possédé : ${building.count}`;
+        }
+        // On ne touche PAS au data-tooltip pour éviter le clignotement
+    }
 }
 
 // ============================================
@@ -563,16 +597,29 @@ function renderBuilding(building) {
 // Affiche les améliorations dans la barre du haut
 function renderUpgrades() {
     const container = document.getElementById('upgrades-list');
-    container.innerHTML = '';
+    const existingIds = new Set();
+    
+    // D'abord, marquer tous les éléments existants
+    container.querySelectorAll('.upgrade-item').forEach(el => {
+        existingIds.add(el.getAttribute('data-upgrade-id'));
+    });
 
     // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
+        const upgradeId = `click-${upgrade.threshold}`;
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
-            const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-item';
-            upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
-            upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
-            container.appendChild(upgradeElement);
+            existingIds.delete(upgradeId);
+            let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
+            
+            if (!upgradeElement) {
+                upgradeElement = document.createElement('div');
+                upgradeElement.className = 'upgrade-item';
+                upgradeElement.id = `upgrade-${upgradeId}`;
+                upgradeElement.setAttribute('data-upgrade-id', upgradeId);
+                upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
+                upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
+                container.appendChild(upgradeElement);
+            }
         }
     });
     
@@ -581,21 +628,33 @@ function renderUpgrades() {
         ERAS.forEach(era => {
             era.buildings.forEach(building => {
                 if (isBuildingUpgradeAvailable(building.id, threshold)) {
-                    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-                    const color = UPGRADE_COLORS[thresholdIndex];
-                    const buildingGain = calculateBuildingGain(building);
-                    const cost = Math.floor(buildingGain * 5);
+                    const upgradeId = `building-${building.id}-${threshold}`;
+                    existingIds.delete(upgradeId);
+                    let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
                     
-                    const upgradeElement = document.createElement('div');
-                    upgradeElement.className = 'upgrade-item';
-                    upgradeElement.style.background = color;
-                    upgradeElement.style.color = 'white';
-                    upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
-                    upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                    container.appendChild(upgradeElement);
+                    if (!upgradeElement) {
+                        const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+                        const color = UPGRADE_COLORS[thresholdIndex];
+                        
+                        upgradeElement = document.createElement('div');
+                        upgradeElement.className = 'upgrade-item';
+                        upgradeElement.id = `upgrade-${upgradeId}`;
+                        upgradeElement.setAttribute('data-upgrade-id', upgradeId);
+                        upgradeElement.style.background = color;
+                        upgradeElement.style.color = 'white';
+                        upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2</span>';
+                        upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                        container.appendChild(upgradeElement);
+                    }
                 }
             });
         });
+    });
+    
+    // Supprimer les améliorations qui ne sont plus disponibles
+    existingIds.forEach(id => {
+        const el = document.getElementById(`upgrade-${id}`);
+        if (el) el.remove();
     });
 }
 
@@ -630,11 +689,10 @@ function spawnRandomBonus() {
         bonusElement.classList.add('clicked');
 
         if (bonus.effect === "auto") autoMultiplier = bonus.multiplier;
-        else if (bonus.effect === "click") {
-            // Note: clickMultiplier n'est plus utilisé
-        }
+        else if (bonus.effect === "click") clickMultiplier = bonus.multiplier;
         else if (bonus.effect === "both") {
             autoMultiplier = bonus.multiplier;
+            clickMultiplier = bonus.multiplier;
         }
 
         activeRandomBonuses.push({
@@ -649,6 +707,7 @@ function spawnRandomBonus() {
         setTimeout(() => {
             activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
             if (bonus.effect === "auto" || bonus.effect === "both") autoMultiplier = 1;
+            if (bonus.effect === "click" || bonus.effect === "both") clickMultiplier = 1;
             updateDisplay();
             showToast(`⏰ ${bonus.name} expiré`);
         }, bonus.duration);
@@ -663,7 +722,7 @@ function spawnRandomBonus() {
 
 // Ajoute des points
 function addScore(points) {
-    // NOUVELLE MÉCANIQUE : 1 + (nombre_améliorations * 1% * autoGain)
+    // Nouveau système : 1 + (nombre_améliorations * 1% * autoGain)
     const clickBonus = activatedClickUpgrades.length * 0.01 * autoGain;
     const basePoints = points + clickBonus;
     const totalPoints = basePoints;
@@ -679,7 +738,7 @@ function addScore(points) {
 
     updateDisplay();
     saveGame();
-    renderBuildings();
+    updateAllBuildingButtons();
     renderUpgrades();
     checkEraUnlocks();
 }
@@ -761,7 +820,6 @@ function gameLoop() {
 
     updateDisplay();
     updateAllBuildingButtons();
-    renderUpgrades();
     checkEraUnlocks();
 }
 
