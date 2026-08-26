@@ -101,6 +101,7 @@ let unlockedBuildings = new Set();
 let lastMedalRainTime = 0;
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
+let frameCounter = 0; // Compteur pour optimiser les mises à jour
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -458,7 +459,7 @@ function updateBuildingButton(buildingId) {
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-    element.setAttribute('data-tooltip', getBuildingTooltip(building));
+    // Le tooltip est déjà défini lors du renderBuilding, pas besoin de le recréer
 }
 
 // Met à jour tous les boutons de bâtiments
@@ -740,9 +741,12 @@ function gameLoop() {
     }
 
     updateDisplay();
-    updateAllBuildingButtons();
-    renderUpgrades();
-    checkEraUnlocks();
+    frameCounter = (frameCounter + 1) % 10;
+    if (frameCounter === 0) {
+        updateAllBuildingButtons();
+        renderUpgrades();
+        checkEraUnlocks();
+    }
 }
 
 // ============================================
