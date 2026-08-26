@@ -319,6 +319,9 @@ function renderBuildings() {
         if (score >= era.requiredScore || era.requiredScore === 0) {
             era.buildings.forEach(building => {
                 if (building.unlockCondition() || unlockedBuildings.has(building.id)) {
+                    if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+                        unlockedBuildings.add(building.id);
+                    }
                     renderBuilding(building);
                 }
             });
@@ -412,6 +415,13 @@ function findBuildingById(buildingId) {
 }
 
 function checkEraUnlocks() {
+    ERAS.forEach(era => {
+        era.buildings.forEach(building => {
+            if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+                unlockedBuildings.add(building.id);
+            }
+        });
+    });
     renderBuildings();
 }
 
@@ -427,6 +437,7 @@ function buyBuilding(buildingId) {
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
+        unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
         updateBuildingsButtons();

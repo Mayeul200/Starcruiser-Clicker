@@ -7,6 +7,7 @@ function saveGame() {
         autoMultiplier: autoMultiplier,
         clickGloireTotal: clickGloireTotal,
         clickBonus: clickBonus,
+        unlockedBuildings: Array.from(unlockedBuildings),
         lastMedalRainTime: lastMedalRainTime,
         currentEraIndex: currentEraIndex,
         buildingMultipliers: { ...buildingMultipliers },
@@ -62,6 +63,9 @@ function loadGame() {
         }
 
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
+        if (parsed.unlockedBuildings) {
+            unlockedBuildings = new Set(parsed.unlockedBuildings);
+        }
 
         if (parsed.activeRandomBonuses) {
             activeRandomBonuses = parsed.activeRandomBonuses;
