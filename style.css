@@ -273,6 +273,13 @@ body {
     border-left: 1px solid var(--border);
     padding: 16px;
     overflow-y: auto;
+    padding-top: 40px;
+}
+
+.right-panel h3 {
+    color: var(--primary);
+    margin-bottom: 8px;
+    font-size: 1rem;
 }
 
 .buildings-list {
@@ -325,8 +332,9 @@ body {
 }
 
 .building-ownership {
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: var(--text-light);
+    font-weight: 600;
 }
 
 .building-production {
