@@ -533,7 +533,7 @@ function updateBuildingButton(buildingId) {
         button.disabled = !isAffordable;
         button.textContent = `${formatNumber(currentCost)} Gloire`;
     }
-    if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}`;
+    if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
     // SOLUTION 7: Mettre à jour le tooltip dynamiquement
