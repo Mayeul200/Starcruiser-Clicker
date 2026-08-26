@@ -419,7 +419,7 @@ function renderBuilding(building) {
         : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
 
     const totalGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
-    const unitGain = building.gain * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
+    const unitGain = building.gain * buildingMultipliers[building.id] * autoMultiplier;
     const percent = autoGain > 0 ? ((totalGain / autoGain) * 100).toFixed(2) : 0;
     const isAffordable = score >= currentCost;
 
