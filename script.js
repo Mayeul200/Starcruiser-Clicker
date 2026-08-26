@@ -485,7 +485,7 @@ function updateBuildingButton(buildingId) {
     // Mettre à jour le tooltip sans recréer l'élément
     const tooltip = element.querySelector('.building-tooltip');
     if (tooltip) {
-        tooltip.innerHTML = getBuildingTooltip(building).replace(/
+        tooltip.innerHTML = getBuildingTooltip(building).replace(/\n/g, "<br>")
 /g, '<br>');
     }
 }
@@ -556,10 +556,10 @@ function renderBuilding(building) {
             </div>
         </div>
         <span class="building-production">${formatNumber(totalGain)}/s</span>
-        <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
+        <button onclick="window.buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
             ${formatNumber(currentCost)} Gloire
         </button>
-        <div class="building-tooltip">${getBuildingTooltip(building).replace(/
+        <div class="building-tooltip">${getBuildingTooltip(building).replace(/\n/g, "<br>")
 /g, '<br>')}</div>
     `;
 
@@ -601,7 +601,7 @@ function renderUpgrades() {
                 upgradeElement.id = `upgrade-${upgradeId}`;
                 upgradeElement.setAttribute('data-upgrade-id', upgradeId);
                 upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
-                upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
+                upgradeElement.onclick = () => window.buyClickUpgrade(upgrade.threshold);
                 container.appendChild(upgradeElement);
             }
         }
@@ -629,7 +629,7 @@ function renderUpgrades() {
                         upgradeElement.style.background = color;
                         upgradeElement.style.color = 'white';
                         upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
-                        upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                        upgradeElement.onclick = () => window.buyBuildingUpgrade(building.id, threshold);
                         container.appendChild(upgradeElement);
                     }
                 }
