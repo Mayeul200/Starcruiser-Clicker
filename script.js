@@ -564,44 +564,64 @@ function renderBuilding(building) {
 // Affiche les améliorations dans la barre du haut
 function renderUpgrades() {
     const container = document.getElementById('upgrades-list');
-    container.innerHTML = '';
+    const existingIds = new Set();
+    
+    // D'abord, marquer tous les éléments existants
+    container.querySelectorAll('.upgrade-item').forEach(el => {
+        existingIds.add(el.getAttribute('data-upgrade-id'));
+    });
 
     // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
+        const upgradeId = `click-${upgrade.threshold}`;
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
-            const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-item';
-            upgradeElement.textContent = upgrade.name;
-            upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
-            container.appendChild(upgradeElement);
+            existingIds.delete(upgradeId);
+            let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
+            
+            if (!upgradeElement) {
+                upgradeElement = document.createElement('div');
+                upgradeElement.className = 'upgrade-item';
+                upgradeElement.id = `upgrade-${upgradeId}`;
+                upgradeElement.setAttribute('data-upgrade-id', upgradeId);
+                upgradeElement.textContent = upgrade.name;
+                upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
+                container.appendChild(upgradeElement);
+            }
         }
     });
     
     // Améliorations de bâtiments
-    renderBuildingUpgrades();
-}
-
-// Affiche les améliorations de bâtiments
-function renderBuildingUpgrades() {
-    const container = document.getElementById('upgrades-list');
-    
     BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
         ERAS.forEach(era => {
             era.buildings.forEach(building => {
                 if (isBuildingUpgradeAvailable(building.id, threshold)) {
-                    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-                    const color = UPGRADE_COLORS[thresholdIndex];
+                    const upgradeId = `building-${building.id}-${threshold}`;
+                    existingIds.delete(upgradeId);
+                    let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
                     
-                    const upgradeElement = document.createElement('div');
-                    upgradeElement.className = 'upgrade-item';
-                    upgradeElement.style.background = color;
-                    upgradeElement.style.color = 'white';
-                    upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2</span>';
-                    upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                    container.appendChild(upgradeElement);
+                    if (!upgradeElement) {
+                        const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+                        const color = UPGRADE_COLORS[thresholdIndex];
+                        
+                        upgradeElement = document.createElement('div');
+                        upgradeElement.className = 'upgrade-item';
+                        upgradeElement.id = `upgrade-${upgradeId}`;
+                        upgradeElement.setAttribute('data-upgrade-id', upgradeId);
+                        upgradeElement.style.background = color;
+                        upgradeElement.style.color = 'white';
+                        upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2</span>';
+                        upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                        container.appendChild(upgradeElement);
+                    }
                 }
             });
         });
+    });
+    
+    // Supprimer les améliorations qui ne sont plus disponibles
+    existingIds.forEach(id => {
+        const el = document.getElementById(`upgrade-${id}`);
+        if (el) el.remove();
     });
 }
 
@@ -764,7 +784,6 @@ function gameLoop() {
     }
 
     updateDisplay();
-    renderUpgrades();
     checkEraUnlocks();
 }
 
