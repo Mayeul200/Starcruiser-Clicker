@@ -499,7 +499,6 @@ body {
     .building-item { min-height: 45px; padding: 8px; }
     .building-name { font-size: 0.85rem; }
     .building-icon { font-size: 1.2rem; }
-    .building-cost { font-size: 0.8rem; }
     .building-item button { padding: 6px 10px; font-size: 0.8rem; }
 }
 
@@ -514,3 +513,10 @@ body {
     opacity: 0.5;
     filter: blur(2px);
 }
+
+
+/* Styles pour les bonus aléatoires */
+.random-bonus.druide { background: #4CAF50; }
+.random-bonus.alliance { background: #2196F3; }
+.random-bonus.marianne { background: #9C27B0; }
+.random-bonus.napoleon { background: #FF5722; }
