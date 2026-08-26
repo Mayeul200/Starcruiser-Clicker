@@ -211,6 +211,7 @@ function saveGame() {
         autoMultipliers: [...autoMultipliers],
         clickMultipliers: [...clickMultipliers],
         buildingUpgrades: {},
+        buildingUpgradeCosts: {},
         totalGeneratedByBuilding: {},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
