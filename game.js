@@ -1,54 +1,21 @@
-// DONNÉES DU JEU (5 ÈRES)
-const ERAS = [
-    {
-        id: "aube-france",
-        name: "L'Aube de la France",
-        requiredScore: 0,
-        buildings: [
-            { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
-            { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
-            { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
-            { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "construction-france",
-        name: "La Construction de la France",
-        requiredScore: 50000,
-        buildings: [
-            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "expansion-revolution",
-        name: "L'Expansion et la Révolution",
-        requiredScore: 1000000,
-        buildings: [
-            { id: "louis-xiv", name: "Louis XIV", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-            { id: "revolution", name: "Révolution", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "ere-moderne",
-        name: "L'Ère Moderne",
-        requiredScore: 50000000,
-        buildings: [
-            { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎖️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-            { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "france-contemporaine",
-        name: "La France Contemporaine",
-        requiredScore: 1000000000,
-        buildings: [
-            { id: "de-gaulle", name: "De Gaulle", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000000, gain: 10000000, count: 0, image: "🕊️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-            { id: "macron", name: "Macron", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
-        ]
-    }
+// DONNÉES DU JEU - Liste plate de tous les bâtiments
+const BUILDINGS = [
+    { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockThreshold: 0, totalGenerated: 0 },
+    { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockThreshold: 20, totalGenerated: 0 },
+    { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockThreshold: 500, totalGenerated: 0 },
+    { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockThreshold: 5000, totalGenerated: 0 },
+    { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockThreshold: 25000, totalGenerated: 0 },
+    { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨⚖️", unlockThreshold: 50000, totalGenerated: 0 },
+    { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockThreshold: 100000, totalGenerated: 0 },
+    { id: "louis-xiv", name: "Louis XIV", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockThreshold: 1000000, totalGenerated: 0 },
+    { id: "revolution", name: "Révolution", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockThreshold: 2000000, totalGenerated: 0 },
+    { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🏰", unlockThreshold: 50000000, totalGenerated: 0 },
+    { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockThreshold: 100000000, totalGenerated: 0 },
+    { id: "de-gaulle", name: "De Gaulle", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000000, gain: 10000000, count: 0, image: "🎖️", unlockThreshold: 1000000000, totalGenerated: 0 },
+    { id: "macron", name: "Macron", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000000, gain: 50000000, count: 0, image: "📜", unlockThreshold: 2000000000, totalGenerated: 0 }
 ];
+
+
 
 // Améliorations de clic (barre du haut)
 const CLICK_UPGRADES = [
@@ -99,13 +66,12 @@ let clickBonus = 0;
 let activatedClickUpgrades = [];
 let unlockedBuildings = new Set();
 let lastMedalRainTime = 0;
-let currentEraIndex = 0;
 let totalGeneratedByBuilding = {};
 
 // Initialisation
 function initGlobals() {
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
+    BUILDINGS.forEach(era => {
+        BUILDINGS.forEach(building => {
             buildingMultipliers[building.id] = buildingMultipliers[building.id] || 1;
             totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
             buildingUpgrades[building.id] = buildingUpgrades[building.id] || [];
@@ -142,8 +108,8 @@ function renderBuildingUpgrades() {
     const container = document.getElementById('upgrades-list');
     
     BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
-        ERAS.forEach(era => {
-            era.buildings.forEach(building => {
+        BUILDINGS.forEach(era => {
+            BUILDINGS.forEach(building => {
                 if (isBuildingUpgradeAvailable(building.id, threshold)) {
                     const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
                     const color = UPGRADE_COLORS[thresholdIndex];
@@ -195,7 +161,7 @@ function addScore(points) {
     saveGame();
     updateBuildingsButtons();
     renderUpgrades();
-    checkEraUnlocks();
+    checkBuildingUnlocks();
 }
 
 // Affiche l'effet +X
@@ -344,8 +310,8 @@ function renderStats() {
 
     container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1rem;">Par bâtiment</h4>';
 
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
+    BUILDINGS.forEach(era => {
+        BUILDINGS.forEach(building => {
             if (building.count > 0) {
                 const buildingGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
                 const percent = autoGain > 0 ? ((buildingGain / autoGain) * 100).toFixed(2) : 0;
@@ -397,13 +363,13 @@ function renderBuildings() {
     const container = document.getElementById('buildings-list');
     container.innerHTML = '';
 
-    ERAS.forEach(era => {
+    BUILDINGS.forEach(era => {
         // Show era if: score is enough OR any building in this era is already unlocked
-        const eraHasUnlockedBuildings = era.buildings.some(b => unlockedBuildings.has(b.id));
-        if (score >= era.requiredScore || era.requiredScore === 0 || eraHasUnlockedBuildings) {
-            era.buildings.forEach(building => {
-                if (building.unlockCondition() || unlockedBuildings.has(building.id)) {
-                    if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+        const eraHasUnlockedBuildings = BUILDINGS.some(b => unlockedBuildings.has(b.id));
+        if (score >= building.unlockThreshold || building.unlockThreshold === 0 || eraHasUnlockedBuildings) {
+            BUILDINGS.forEach(building => {
+                if (score >= building.unlockThreshold || unlockedBuildings.has(building.id)) {
+                    if (score >= building.unlockThreshold && !unlockedBuildings.has(building.id)) {
                         unlockedBuildings.add(building.id);
                     }
                     renderBuilding(building);
@@ -492,17 +458,17 @@ function updateBuildingsButtons() {
 }
 
 function findBuildingById(buildingId) {
-    for (const era of ERAS) {
-        const building = era.buildings.find(b => b.id === buildingId);
+    for (const era of BUILDINGS) {
+        const building = BUILDINGS.find(b => b.id === buildingId);
         if (building) return building;
     }
     return null;
 }
 
-function checkEraUnlocks() {
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
-            if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+function checkBuildingUnlocks() {
+    BUILDINGS.forEach(era => {
+        BUILDINGS.forEach(building => {
+            if (score >= building.unlockThreshold && !unlockedBuildings.has(building.id)) {
                 unlockedBuildings.add(building.id);
             }
         });
@@ -527,7 +493,7 @@ function buyBuilding(buildingId) {
         saveGame();
         updateBuildingsButtons();
         renderUpgrades();
-        checkEraUnlocks();
+        checkBuildingUnlocks();
         showToast(`✅ +1 ${building.name}`);
     } else {
         showToast("❌ Pas assez de Gloire");
@@ -604,8 +570,8 @@ function spawnRandomBonus() {
 function gameLoop() {
     let totalGain = 0;
 
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
+    BUILDINGS.forEach(era => {
+        BUILDINGS.forEach(building => {
             const buildingGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
             totalGain += buildingGain;
 
@@ -633,7 +599,7 @@ function init() {
     updateDisplay();
     renderBuildings();
     renderUpgrades();
-    checkEraUnlocks();
+    checkBuildingUnlocks();
 }
 
 // Timers
