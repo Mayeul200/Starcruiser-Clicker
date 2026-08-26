@@ -62,6 +62,7 @@ let activeRandomBonuses = [];
 let autoMultipliers = [1];
 let clickMultipliers = [1];
 let buildingUpgrades = {}; // {buildingId: [threshold1, threshold2, ...]}
+let buildingUpgradeCosts = {}; // {buildingId: {threshold: fixedCost, ...}}
 let clickGloireTotal = 0;
 let activatedClickUpgrades = [];
 let unlockedBuildings = new Set();
@@ -129,6 +130,29 @@ function getBuildingTooltip(building) {
         .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 }
 
+
+// Calcule le coût FIXE d'une amélioration de bâtiment (au moment du débloquage)
+function getBuildingUpgradeFixedCost(buildingId, threshold) {
+    const building = findBuildingById(buildingId);
+    if (!building) return 0;
+    
+    // Si le coût est déjà calculé, le retourner
+    if (buildingUpgradeCosts[buildingId] && buildingUpgradeCosts[buildingId][threshold] !== undefined) {
+        return buildingUpgradeCosts[buildingId][threshold];
+    }
+    
+    // Calculer le coût : nombre_de_bâtiments * production_unitaire * 5
+    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
+    const cost = Math.floor(threshold * unitGain * 5);
+    
+    // Stocker le coût fixe
+    if (!buildingUpgradeCosts[buildingId]) {
+        buildingUpgradeCosts[buildingId] = {};
+    }
+    buildingUpgradeCosts[buildingId][threshold] = cost;
+    
+    return cost;
+}
 // Calcule le coût actuel d'un bâtiment
 function calculateBuildingCost(building) {
     return building.count === 0
@@ -204,6 +228,10 @@ function saveGame() {
     for (const buildingId in totalGeneratedByBuilding) {
         saveData.totalGeneratedByBuilding[buildingId] = totalGeneratedByBuilding[buildingId];
     }
+    // Copie les coûts fixes des améliorations
+    for (const buildingId in buildingUpgradeCosts) {
+        saveData.buildingUpgradeCosts[buildingId] = {...buildingUpgradeCosts[buildingId]};
+    }
 
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
     lastSaveTime = Date.now();
@@ -241,6 +269,13 @@ function loadGame() {
         if (parsed.buildingUpgrades) {
             for (const buildingId in parsed.buildingUpgrades) {
                 buildingUpgrades[buildingId] = [...parsed.buildingUpgrades[buildingId]];
+            }
+        }
+
+        // Charger les coûts fixes des améliorations
+        if (parsed.buildingUpgradeCosts) {
+            for (const buildingId in parsed.buildingUpgradeCosts) {
+                buildingUpgradeCosts[buildingId] = {...parsed.buildingUpgradeCosts[buildingId]};
             }
         }
 
@@ -442,9 +477,8 @@ function buyBuildingUpgrade(buildingId, threshold) {
     const building = findBuildingById(buildingId);
     if (!building || !isBuildingUpgradeAvailable(buildingId, threshold)) return;
     
-    // Calculer le coût : x5 la production UNITAIRE du bâtiment
-    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
-    const cost = Math.floor(unitGain * 5 * building.count);
+    // Calculer le coût FIXE (déjà calculé au débloquage)
+    const cost = getBuildingUpgradeFixedCost(buildingId, threshold);
     
     // Vérifier si on a assez de Gloire
     if (score < cost) {
@@ -600,8 +634,7 @@ function renderUpgrades() {
             if (isBuildingUpgradeAvailable(building.id, threshold)) {
                 const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
                 const color = UPGRADE_COLORS[thresholdIndex];
-                const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
-                const cost = Math.floor(unitGain * 5 * building.count);
+                const cost = getBuildingUpgradeFixedCost(building.id, threshold);
                 
                 const upgradeElement = document.createElement('div');
                 upgradeElement.className = 'upgrade-item';
