@@ -746,7 +746,15 @@ function addScore(points) {
 
     showClickEffect(Math.round(totalPoints));
 
+    // Récupérer la position du clic
     const medal = document.getElementById('medal');
+    const medalRect = medal.getBoundingClientRect();
+    const clickX = medalRect.left + medalRect.width / 2;
+    const clickY = medalRect.top + medalRect.height / 2;
+    
+    // Faire tomber des médailles tournoyantes
+    spawnClickMedals(clickX, clickY);
+    
     medal.style.transform = 'scale(0.95)';
     setTimeout(() => { medal.style.transform = 'scale(1)'; }, 100);
 

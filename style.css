@@ -463,6 +463,27 @@ body {
     100% { opacity: 0; transform: translateY(100px); }
 }
 
+/* Effet de médailles tournoyantes au clic */
+.click-medal {
+    position: absolute;
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 100;
+    animation: spinFall 2s linear forwards;
+    opacity: 0;
+}
+
+@keyframes spinFall {
+    0% {
+        opacity: 1;
+        transform: rotate(0deg) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(720deg) translateY(200px);
+    }
+}
+
 .toast {
     position: fixed;
     bottom: 20px; left: 50%;
