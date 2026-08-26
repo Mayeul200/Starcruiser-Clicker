@@ -101,7 +101,7 @@ let unlockedBuildings = new Set();
 let lastMedalRainTime = 0;
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
-let frameCounter = 0; // Compteur pour optimiser les mises à jour
+
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -741,12 +741,9 @@ function gameLoop() {
     }
 
     updateDisplay();
-    frameCounter = (frameCounter + 1) % 10;
-    if (frameCounter === 0) {
-        updateAllBuildingButtons();
-        renderUpgrades();
-        checkEraUnlocks();
-    }
+    updateAllBuildingButtons();
+    renderUpgrades();
+    checkEraUnlocks();
 }
 
 // ============================================
