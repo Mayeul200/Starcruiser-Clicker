@@ -5,7 +5,7 @@
 // LISTE PLATE DES BÂTIMENTS (sans ères)
 const BUILDINGS = [
     { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
-    { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
+    { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "👑🏽", unlockCondition: () => score >= 20, totalGenerated: 0 },
     { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
     { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
     { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 },
@@ -13,8 +13,8 @@ const BUILDINGS = [
     { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 },
     { id: "louis-xiv", name: "Louis XIV", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
     { id: "revolution", name: "Révolution", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 },
-    { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎨", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-    { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🏛️", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
+    { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎯", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
+    { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼️", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
     { id: "de-gaulle", name: "De Gaulle", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000000, gain: 10000000, count: 0, image: "🎖️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
     { id: "macron", name: "Macron", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
 ];
@@ -50,7 +50,7 @@ const RANDOM_BONUSES = [
     { id: "druide", symbol: "🌿", name: "Druide Sacré", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 Gloire/s pendant 30s", colorClass: "druide" },
     { id: "alliance", symbol: "🤝", name: "Alliance Sacrée", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 Gloire/clic pendant 30s", colorClass: "alliance" },
     { id: "marianne", symbol: "👩‍💼", name: "Marianne", effect: "both", multiplier: 3, duration: 45000, tooltip: "×3 Gloire/s ET ×3 Gloire/clic pendant 45s", colorClass: "marianne" },
-    { id: "napoleon-bonus", symbol: "🎨", name: "Stratège Génial", effect: "auto", multiplier: 8, duration: 25000, tooltip: "×8 Gloire/s pendant 25s", colorClass: "napoleon" }
+    { id: "napoleon-bonus", symbol: "🎯", name: "Stratège Génial", effect: "auto", multiplier: 8, duration: 25000, tooltip: "×8 Gloire/s pendant 25s", colorClass: "napoleon" }
 ];
 
 // Variables globales
@@ -62,6 +62,7 @@ let activeRandomBonuses = [];
 let autoMultipliers = [1];
 let clickMultipliers = [1];
 let buildingUpgrades = {}; // {buildingId: [threshold1, threshold2, ...]}
+let buildingUpgradeCosts = {}; // {buildingId: {threshold: cost, ...}}
 let clickGloireTotal = 0;
 let activatedClickUpgrades = [];
 let unlockedBuildings = new Set();
@@ -182,6 +183,7 @@ function saveGame() {
         autoMultipliers: [...autoMultipliers],
         clickMultipliers: [...clickMultipliers],
         buildingUpgrades: {},
+        buildingUpgradeCosts: {},
         totalGeneratedByBuilding: {},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
@@ -200,6 +202,9 @@ function saveGame() {
     // Copie les données des bâtiments
     for (const buildingId in buildingUpgrades) {
         saveData.buildingUpgrades[buildingId] = [...buildingUpgrades[buildingId]];
+    }
+    for (const buildingId in buildingUpgradeCosts) {
+        saveData.buildingUpgradeCosts[buildingId] = {...buildingUpgradeCosts[buildingId]};
     }
     for (const buildingId in totalGeneratedByBuilding) {
         saveData.totalGeneratedByBuilding[buildingId] = totalGeneratedByBuilding[buildingId];
@@ -241,6 +246,13 @@ function loadGame() {
         if (parsed.buildingUpgrades) {
             for (const buildingId in parsed.buildingUpgrades) {
                 buildingUpgrades[buildingId] = [...parsed.buildingUpgrades[buildingId]];
+            }
+        }
+
+        // Charger les coûts des améliorations des bâtiments
+        if (parsed.buildingUpgradeCosts) {
+            for (const buildingId in parsed.buildingUpgradeCosts) {
+                buildingUpgradeCosts[buildingId] = {...parsed.buildingUpgradeCosts[buildingId]};
             }
         }
 
@@ -443,8 +455,15 @@ function buyBuildingUpgrade(buildingId, threshold) {
     if (!building || !isBuildingUpgradeAvailable(buildingId, threshold)) return;
     
     // Calculer le coût : x5 la production UNITAIRE du bâtiment
-    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
-    const cost = Math.floor(unitGain * 5 * building.count);
+    // Si le prix n'est pas encore calculé, le calculer et le stocker
+    if (!buildingUpgradeCosts[buildingId]) {
+        buildingUpgradeCosts[buildingId] = {};
+    }
+    if (buildingUpgradeCosts[buildingId][threshold] === undefined) {
+        const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
+        buildingUpgradeCosts[buildingId][threshold] = Math.floor(unitGain * 5 * building.count);
+    }
+    const cost = buildingUpgradeCosts[buildingId][threshold];
     
     // Vérifier si on a assez de Gloire
     if (score < cost) {
@@ -600,14 +619,16 @@ function renderUpgrades() {
             if (isBuildingUpgradeAvailable(building.id, threshold)) {
                 const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
                 const color = UPGRADE_COLORS[thresholdIndex];
-                const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
-                const cost = Math.floor(unitGain * 5 * building.count);
+                
+                // Utiliser le coût stocké ou le calculer
+                const storedCost = buildingUpgradeCosts[buildingId]?.[threshold];
+                const displayCost = storedCost !== undefined ? storedCost : Math.floor(building.gain * getBuildingUpgradeMultiplier(building.id) * 5 * building.count);
                 
                 const upgradeElement = document.createElement('div');
                 upgradeElement.className = 'upgrade-item';
                 upgradeElement.style.background = color;
                 upgradeElement.style.color = 'white';
-                upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
+                upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(displayCost) + ' G)</span>';
                 upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
                 container.appendChild(upgradeElement);
             }
