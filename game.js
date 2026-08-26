@@ -5,11 +5,11 @@ const ERAS = [
         name: "L'Aube de la France",
         requiredScore: 0,
         buildings: [
-            { id: "coq-gaulois", name: "Coq Gaulois", description: "Symbole de la Gaule.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
-            { id: "vercingetorix", name: "Vercingétorix", description: "Chef gaulois contre Rome.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
-            { id: "charlemagne", name: "Charlemagne", description: "Premier empereur des Francs.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
-            { id: "notre-dame", name: "Notre-Dame", description: "Cathédrale gothique.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Symbole royal.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
+            { id: "coq-gaulois", name: "Coq Gaulois", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
+            { id: "vercingetorix", name: "Vercingétorix", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
+            { id: "charlemagne", name: "Charlemagne", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
+            { id: "notre-dame", name: "Notre-Dame", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
+            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
         ]
     },
     {
@@ -17,8 +17,8 @@ const ERAS = [
         name: "La Construction de la France",
         requiredScore: 50000,
         buildings: [
-            { id: "saint-louis", name: "Saint Louis", description: "Roi juste et pieux.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Héroïne nationale.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
+            { id: "saint-louis", name: "Saint Louis", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
         ]
     },
     {
@@ -26,8 +26,8 @@ const ERAS = [
         name: "L'Expansion et la Révolution",
         requiredScore: 1000000,
         buildings: [
-            { id: "louis-xiv", name: "Louis XIV", description: "Le Roi-Soleil.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-            { id: "revolution", name: "Révolution", description: "Liberté, Égalité, Fraternité.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
+            { id: "louis-xiv", name: "Louis XIV", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+            { id: "revolution", name: "Révolution", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
         ]
     },
     {
@@ -35,8 +35,8 @@ const ERAS = [
         name: "L'Ère Moderne",
         requiredScore: 50000000,
         buildings: [
-            { id: "napoleon", name: "Napoléon", description: "Empereur des Français.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 50000000, gain: 500000, count: 0, image: "🎖️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-            { id: "tour-eiffel", name: "Tour Eiffel", description: "Symbole de Paris.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
+            { id: "napoleon", name: "Napoléon", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 50000000, gain: 500000, count: 0, image: "🎖️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
+            { id: "tour-eiffel", name: "Tour Eiffel", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
         ]
     },
     {
@@ -44,8 +44,8 @@ const ERAS = [
         name: "La France Contemporaine",
         requiredScore: 1000000000,
         buildings: [
-            { id: "de-gaulle", name: "De Gaulle", description: "Fondateur de la Ve République.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000000000, gain: 10000000, count: 0, image: "🕊️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-            { id: "macron", name: "Macron", description: "Président moderne.\nProduction: +{gain}/s\nPossédés: {count}\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
+            { id: "de-gaulle", name: "De Gaulle", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 1000000000, gain: 10000000, count: 0, image: "🕊️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+            { id: "macron", name: "Macron", description: "Production: +{gain}/s\n% de prod: {percent}%\nTotal généré: {total}", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
         ]
     }
 ];
@@ -66,10 +66,10 @@ const CLICK_UPGRADES = [
 
 // Bonus aléatoires
 const RANDOM_BONUSES = [
-    { id: "druide", symbol: "🌿", name: "Druide Sacré", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 PDG/s pendant 30s", colorClass: "druide" },
-    { id: "alliance", symbol: "🤝", name: "Alliance Sacrée", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 PDG/clic pendant 30s", colorClass: "alliance" },
-    { id: "marianne", symbol: "👩‍💼", name: "Marianne", effect: "both", multiplier: 3, duration: 45000, tooltip: "×3 PDG/s ET ×3 PDG/clic pendant 45s", colorClass: "marianne" },
-    { id: "napoleon-bonus", symbol: "🎖️", name: "Stratège Génial", effect: "auto", multiplier: 8, duration: 25000, tooltip: "×8 PDG/s pendant 25s", colorClass: "napoleon" }
+    { id: "druide", symbol: "🌿", name: "Druide Sacré", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 Gloire/s pendant 30s", colorClass: "druide" },
+    { id: "alliance", symbol: "🤝", name: "Alliance Sacrée", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 Gloire/clic pendant 30s", colorClass: "alliance" },
+    { id: "marianne", symbol: "👩‍💼", name: "Marianne", effect: "both", multiplier: 3, duration: 45000, tooltip: "×3 Gloire/s ET ×3 Gloire/clic pendant 45s", colorClass: "marianne" },
+    { id: "napoleon-bonus", symbol: "🎖️", name: "Stratège Génial", effect: "auto", multiplier: 8, duration: 25000, tooltip: "×8 Gloire/s pendant 25s", colorClass: "napoleon" }
 ];
 
 // Variables globales
@@ -79,7 +79,7 @@ let clickMultiplier = 1;
 let autoMultiplier = 1;
 let activeRandomBonuses = [];
 let buildingMultipliers = {};
-let clickPDGTotal = 0;
+let clickGloireTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
 let lastMedalRainTime = 0;
@@ -103,7 +103,7 @@ function addScore(points) {
     const totalPoints = basePoints + bonusPoints;
 
     score += totalPoints;
-    clickPDGTotal += basePoints;
+    clickGloireTotal += basePoints;
 
     showClickEffect(Math.round(totalPoints));
 
@@ -244,9 +244,9 @@ function renderStats() {
 
     const globalStats = [
         { label: "Score total", value: formatNumber(score) },
-        { label: "PDG par seconde", value: formatNumber(autoGain) },
-        { label: "Clics totaux", value: formatNumber(clickPDGTotal) },
-        { label: "PDG total généré", value: formatNumber(calculateTotalGenerated()) }
+        { label: "Gloire par seconde", value: formatNumber(autoGain) },
+        { label: "Clics totaux", value: formatNumber(clickGloireTotal) },
+        { label: "Gloire total généré", value: formatNumber(calculateTotalGenerated()) }
     ];
 
     globalStats.forEach(stat => {
@@ -299,7 +299,7 @@ function renderUpgrades() {
     container.innerHTML = '';
 
     CLICK_UPGRADES.forEach(upgrade => {
-        if (clickPDGTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+        if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeElement = document.createElement('div');
             upgradeElement.className = 'upgrade-item';
             upgradeElement.textContent = upgrade.name;
@@ -360,7 +360,7 @@ function renderBuilding(building) {
         </div>
         <span class="building-production">${formatNumber(currentGain)}/s</span>
         <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-            ${formatNumber(currentCost)} PDG
+            ${formatNumber(currentCost)} Gloire
         </button>
     `;
 
@@ -387,7 +387,7 @@ function updateBuildingsButtons() {
 
         if (button) {
             button.disabled = !isAffordable;
-            button.textContent = `${formatNumber(currentCost)} PDG`;
+            button.textContent = `${formatNumber(currentCost)} Gloire`;
         }
         if (productionSpan) productionSpan.textContent = `${formatNumber(currentGain)}/s`;
         if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
@@ -433,7 +433,7 @@ function buyBuilding(buildingId) {
         checkEraUnlocks();
         showToast(`✅ +1 ${building.name}`);
     } else {
-        showToast("❌ Pas assez de PDG");
+        showToast("❌ Pas assez de Gloire");
     }
 }
 

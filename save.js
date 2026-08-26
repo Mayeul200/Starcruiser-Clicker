@@ -5,7 +5,7 @@ function saveGame() {
         autoGain: autoGain,
         clickMultiplier: clickMultiplier,
         autoMultiplier: autoMultiplier,
-        clickPDGTotal: clickPDGTotal,
+        clickGloireTotal: clickGloireTotal,
         clickBonus: clickBonus,
         lastMedalRainTime: lastMedalRainTime,
         currentEraIndex: currentEraIndex,
@@ -44,7 +44,7 @@ function loadGame() {
         autoGain = parsed.autoGain || 0;
         clickMultiplier = parsed.clickMultiplier || 1;
         autoMultiplier = parsed.autoMultiplier || 1;
-        clickPDGTotal = parsed.clickPDGTotal || 0;
+        clickGloireTotal = parsed.clickGloireTotal || 0;
         clickBonus = parsed.clickBonus || 0;
         lastMedalRainTime = parsed.lastMedalRainTime || 0;
         currentEraIndex = parsed.currentEraIndex || 0;
