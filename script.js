@@ -472,14 +472,18 @@ function updateAllBuildingButtons() {
 
 // Vérifie les déblocages des ères et bâtiments
 function checkEraUnlocks() {
+    let needsRerender = false;
     ERAS.forEach(era => {
         era.buildings.forEach(building => {
             if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
                 unlockedBuildings.add(building.id);
+                needsRerender = true;
             }
         });
     });
-    renderBuildings();
+    if (needsRerender) {
+        renderBuildings();
+    }
 }
 
 // Affiche les bâtiments
@@ -504,34 +508,53 @@ function renderBuildings() {
 // Affiche un bâtiment
 function renderBuilding(building) {
     const container = document.getElementById('buildings-list');
-
     const currentCost = calculateBuildingCost(building);
     const totalGain = calculateBuildingGain(building);
     const isAffordable = score >= currentCost;
 
-    const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
-    buildingElement.id = `building-${building.id}`;
+    let buildingElement = document.getElementById(`building-${building.id}`);
+    
+    if (!buildingElement) {
+        // Créer l'élément s'il n'existe pas
+        buildingElement = document.createElement('div');
+        buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
+        buildingElement.id = `building-${building.id}`;
+        buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
-    buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
-
-    buildingElement.innerHTML = `
-        <div class="building-info">
-            <div class="building-name-icon">
-                <span class="building-name">${building.name}</span>
-                <span class="building-icon">${building.image}</span>
+        buildingElement.innerHTML = `
+            <div class="building-info">
+                <div class="building-name-icon">
+                    <span class="building-name">${building.name}</span>
+                    <span class="building-icon">${building.image}</span>
+                </div>
+                <div class="building-ownership">
+                    <span>Possédé : ${building.count}</span>
+                </div>
             </div>
-            <div class="building-ownership">
-                <span>Possédé : ${building.count}</span>
-            </div>
-        </div>
-        <span class="building-production">${formatNumber(totalGain)}</span>
-        <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-            ${formatNumber(currentCost)} Gloire
-        </button>
-    `;
-
-    container.appendChild(buildingElement);
+            <span class="building-production">${formatNumber(totalGain)}</span>
+            <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
+                ${formatNumber(currentCost)} Gloire
+            </button>
+        `;
+        container.appendChild(buildingElement);
+    } else {
+        // Mettre à jour l'élément existant SANS toucher au tooltip
+        const button = buildingElement.querySelector('button');
+        const productionSpan = buildingElement.querySelector('.building-production');
+        const ownershipSpan = buildingElement.querySelector('.building-ownership span');
+        
+        if (button) {
+            button.disabled = !isAffordable;
+            button.textContent = `${formatNumber(currentCost)} Gloire`;
+        }
+        if (productionSpan) {
+            productionSpan.textContent = `${formatNumber(totalGain)}`;
+        }
+        if (ownershipSpan) {
+            ownershipSpan.textContent = `Possédé : ${building.count}`;
+        }
+        // On ne touche PAS au data-tooltip pour éviter le clignotement
+    }
 }
 
 // ============================================
@@ -741,7 +764,6 @@ function gameLoop() {
     }
 
     updateDisplay();
-    updateAllBuildingButtons();
     renderUpgrades();
     checkEraUnlocks();
 }
