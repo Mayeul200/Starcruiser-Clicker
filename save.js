@@ -12,6 +12,7 @@ function saveGame() {
         currentEraIndex: currentEraIndex,
         buildingMultipliers: { ...buildingMultipliers },
         totalGeneratedByBuilding: { ...totalGeneratedByBuilding },
+        buildingUpgrades: { ...buildingUpgrades },
         activatedClickUpgrades: [...activatedClickUpgrades],
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
@@ -56,7 +57,13 @@ function loadGame() {
             });
         }
 
-        if (parsed.totalGeneratedByBuilding) {
+        
+        if (parsed.buildingUpgrades) {
+            Object.keys(parsed.buildingUpgrades).forEach(key => {
+                buildingUpgrades[key] = parsed.buildingUpgrades[key] || [];
+            });
+        }
+if (parsed.totalGeneratedByBuilding) {
             Object.keys(totalGeneratedByBuilding).forEach(key => {
                 totalGeneratedByBuilding[key] = parsed.totalGeneratedByBuilding[key] || 0;
             });

@@ -64,6 +64,20 @@ const CLICK_UPGRADES = [
     { threshold: 100000, bonus: 0.2, name: "Clic Mythique" }
 ];
 
+// Building upgrade thresholds (per building individually)
+// 25 tiers: 1 -> 5 -> 10 -> 25 -> 50 -> 75 -> 100 -> 150 -> 200 -> 250 -> 300 -> ... -> 1000
+const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
+
+// Colors for each upgrade tier (gradient: light blue -> dark blue -> purple -> pink -> red -> orange -> yellow)
+const UPGRADE_COLORS = [
+    '#88c9ee', '#66b2ff', '#4499ff', '#2288ff', '#1177ff',
+    '#0066ff', '#4444ff', '#6622ff', '#8800ff', '#aa00dd',
+    '#cc00bb', '#ee0099', '#ff0077', '#ff0055', '#ff2233',
+    '#ff4411', '#ff6600', '#ff8800', '#ffaa00', '#ffcc00',
+    '#ffee00', '#ffff00'
+];
+
+
 // Bonus aléatoires
 const RANDOM_BONUSES = [
     { id: "druide", symbol: "🌿", name: "Druide Sacré", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 Gloire/s pendant 30s", colorClass: "druide" },
@@ -79,6 +93,7 @@ let clickMultiplier = 1;
 let autoMultiplier = 1;
 let activeRandomBonuses = [];
 let buildingMultipliers = {};
+let buildingUpgrades = {}; // {buildingId: [threshold1, threshold2, ...]}
 let clickGloireTotal = 0;
 let clickBonus = 0;
 let activatedClickUpgrades = [];
@@ -93,8 +108,72 @@ function initGlobals() {
         era.buildings.forEach(building => {
             buildingMultipliers[building.id] = buildingMultipliers[building.id] || 1;
             totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
+            buildingUpgrades[building.id] = buildingUpgrades[building.id] || [];
         });
     });
+}
+
+
+// Returns the multiplier for a building (2^n where n = number of upgrades)
+function getBuildingUpgradeMultiplier(buildingId) {
+    const upgrades = buildingUpgrades[buildingId] || [];
+    return Math.pow(2, upgrades.length);
+}
+
+// Checks if a building upgrade is available (sequential purchase required)
+function isBuildingUpgradeAvailable(buildingId, threshold) {
+    const building = findBuildingById(buildingId);
+    if (!building) return false;
+    
+    const upgrades = buildingUpgrades[buildingId] || [];
+    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+    
+    // Available if:
+    // 1. Building has at least 'threshold' units
+    // 2. This threshold not already purchased
+    // 3. All previous thresholds are purchased (sequential)
+    return building.count >= threshold &&
+           !upgrades.includes(threshold) &&
+           (thresholdIndex === 0 || upgrades.includes(BUILDING_UPGRADE_THRESHOLDS[thresholdIndex - 1]));
+}
+
+// Renders available building upgrades in the top bar
+function renderBuildingUpgrades() {
+    const container = document.getElementById('upgrades-list');
+    
+    BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
+        ERAS.forEach(era => {
+            era.buildings.forEach(building => {
+                if (isBuildingUpgradeAvailable(building.id, threshold)) {
+                    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+                    const color = UPGRADE_COLORS[thresholdIndex];
+                    
+                    const upgradeElement = document.createElement('div');
+                    upgradeElement.className = 'upgrade-item';
+                    upgradeElement.style.background = color;
+                    upgradeElement.style.color = 'white';
+                    upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' &times;2</span>';
+                    upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                    container.appendChild(upgradeElement);
+                }
+            });
+        });
+    });
+}
+
+// Purchases a building upgrade
+function buyBuildingUpgrade(buildingId, threshold) {
+    if (!isBuildingUpgradeAvailable(buildingId, threshold)) return;
+    
+    if (!buildingUpgrades[buildingId]) {
+        buildingUpgrades[buildingId] = [];
+    }
+    
+    buildingUpgrades[buildingId].push(threshold);
+    updateDisplay();
+    saveGame();
+    renderUpgrades();
+    showToast('+ ' + findBuildingById(buildingId).name + ' improved x2');
 }
 
 // Ajoute des points
@@ -268,7 +347,7 @@ function renderStats() {
     ERAS.forEach(era => {
         era.buildings.forEach(building => {
             if (building.count > 0) {
-                const buildingGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
+                const buildingGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
                 const percent = autoGain > 0 ? ((buildingGain / autoGain) * 100).toFixed(2) : 0;
 
                 const buildingStatElement = document.createElement('div');
