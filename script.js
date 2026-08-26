@@ -722,9 +722,9 @@ function spawnRandomBonus() {
 
 // Ajoute des points
 function addScore(points) {
-    // Nouveau système : 1 + (1 + nombre_améliorations) * 1% * autoGain
-    const clickBonusPercent = (1 + activatedClickUpgrades.length) * 0.01;
-    const basePoints = points + (points * clickBonusPercent * autoGain);
+    // Nouveau système : 1 + (nombre_améliorations * 1% * autoGain)
+    const clickBonus = activatedClickUpgrades.length * 0.01 * autoGain;
+    const basePoints = points + clickBonus;
     const totalPoints = basePoints;
 
     score += totalPoints;
