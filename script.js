@@ -740,6 +740,9 @@ function gameLoop() {
     }
 
     updateDisplay();
+    updateAllBuildingButtons();
+    renderUpgrades();
+    checkEraUnlocks();
 }
 
 // ============================================
