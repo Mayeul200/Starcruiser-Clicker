@@ -94,10 +94,6 @@ function initGlobals() {
             totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
         });
     });
-    // Initialiser unlockedBuildings si vide
-    if (!unlockedBuildings) {
-        unlockedBuildings = new Set();
-    }
 }
 
 // Ajoute des points
@@ -341,12 +337,14 @@ function renderBuilding(building) {
     const isAffordable = score >= currentCost;
 
     const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item' + (building.count === 0 && building.everAppeared ? ' not-bought' : '');
+    buildingElement.className = 'building-item';
     buildingElement.id = `building-${building.id}`;
 
-    const tooltip = `Pourcentage de production : ${percent}%
-Total produit : ${formatNumber(totalGeneratedByBuilding[building.id] || 0)} Gloire
-Production unitaire : ${formatNumber(building.gain * buildingMultipliers[building.id] * autoMultiplier)}/s`;
+    const tooltip = building.description
+        .replace('{gain}', formatNumber(currentGain))
+        .replace('{count}', building.count)
+        .replace('{percent}', percent)
+        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 
     buildingElement.setAttribute('data-tooltip', tooltip);
 
@@ -394,18 +392,13 @@ function updateBuildingsButtons() {
         if (productionSpan) productionSpan.textContent = `${formatNumber(currentGain)}/s`;
         if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-        const tooltip = `Pourcentage de production : ${percent}%
-Total produit : ${formatNumber(totalGeneratedByBuilding[building.id] || 0)} Gloire
-Production unitaire : ${formatNumber(building.gain * buildingMultipliers[building.id] * autoMultiplier)}/s`;
+        const tooltip = building.description
+            .replace('{gain}', formatNumber(currentGain))
+            .replace('{count}', building.count)
+            .replace('{percent}', percent)
+            .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 
         element.setAttribute('data-tooltip', tooltip);
-        
-        // Gérer la classe not-bought (flou si count=0 ET déjà apparu)
-        if (building.count === 0 && building.everAppeared) {
-            element.classList.add('not-bought');
-        } else {
-            element.classList.remove('not-bought');
-        }
     });
 }
 
@@ -433,8 +426,6 @@ function buyBuilding(buildingId) {
     if (score >= currentCost) {
         score -= currentCost;
         building.count++;
-        // Marquer le bâtiment comme débloqué
-        unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
         updateBuildingsButtons();
