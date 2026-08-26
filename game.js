@@ -418,8 +418,9 @@ function renderBuilding(building) {
         ? building.baseCost
         : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
 
-    const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
-    const percent = autoGain > 0 ? ((currentGain / autoGain) * 100).toFixed(2) : 0;
+    const totalGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
+    const unitGain = building.gain * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
+    const percent = autoGain > 0 ? ((totalGain / autoGain) * 100).toFixed(2) : 0;
     const isAffordable = score >= currentCost;
 
     const buildingElement = document.createElement('div');
@@ -427,7 +428,7 @@ function renderBuilding(building) {
     buildingElement.id = `building-${building.id}`;
 
     const tooltip = building.description
-        .replace('{gain}', formatNumber(currentGain))
+        .replace('{gain}', formatNumber(unitGain))
         .replace('{count}', building.count)
         .replace('{percent}', percent)
         .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
@@ -444,7 +445,7 @@ function renderBuilding(building) {
                 <span>Possédé : ${building.count}</span>
             </div>
         </div>
-        <span class="building-production">${formatNumber(currentGain)}</span>
+        <span class="building-production">${formatNumber(totalGain)}</span>
         <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
             ${formatNumber(currentCost)} Gloire
         </button>
