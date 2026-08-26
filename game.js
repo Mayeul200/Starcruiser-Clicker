@@ -342,10 +342,10 @@ function renderBuilding(building) {
     buildingElement.id = `building-${building.id}`;
 
     const tooltip = building.description
-        .replace('{gain}', formatNumber(currentGain) + ' G/s')
+        .replace('{gain}', formatNumber(currentGain))
         .replace('{count}', building.count)
         .replace('{percent}', percent)
-        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0) + ' G');
+        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 
     buildingElement.setAttribute('data-tooltip', tooltip);
 
@@ -359,7 +359,7 @@ function renderBuilding(building) {
                 <span>Possédé : ${building.count}</span>
             </div>
         </div>
-        <span class="building-production">${formatNumber(currentGain) + ' G/s'}</span>
+        <span class="building-production">${formatNumber(currentGain)}</span>
         <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
             ${formatNumber(currentCost)} Gloire
         </button>
@@ -390,14 +390,14 @@ function updateBuildingsButtons() {
             button.disabled = !isAffordable;
             button.textContent = `${formatNumber(currentCost)} Gloire`;
         }
-        if (productionSpan) productionSpan.textContent = `${formatNumber(currentGain) + ' G/s'}`;
+        if (productionSpan) productionSpan.textContent = `${formatNumber(currentGain)}`;
         if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
         const tooltip = building.description
-            .replace('{gain}', formatNumber(currentGain) + ' G/s')
+            .replace('{gain}', formatNumber(currentGain))
             .replace('{count}', building.count)
             .replace('{percent}', percent)
-            .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0) + ' G');
+            .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 
         element.setAttribute('data-tooltip', tooltip);
     });
