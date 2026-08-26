@@ -424,7 +424,7 @@ function renderBuilding(building) {
     const isAffordable = score >= currentCost;
 
     const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item';
+    buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '');
     buildingElement.id = `building-${building.id}`;
 
     const tooltip = building.description
@@ -464,7 +464,7 @@ function updateBuildingsButtons() {
             ? building.baseCost
             : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
 
-        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier;
+        const currentGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
         const percent = autoGain > 0 ? ((currentGain / autoGain) * 100).toFixed(2) : 0;
         const isAffordable = score >= currentCost;
 
@@ -604,7 +604,7 @@ function gameLoop() {
 
     ERAS.forEach(era => {
         era.buildings.forEach(building => {
-            const buildingGain = building.gain * building.count * buildingMultipliers[building.id];
+            const buildingGain = building.gain * building.count * buildingMultipliers[building.id] * autoMultiplier * getBuildingUpgradeMultiplier(building.id);
             totalGain += buildingGain;
 
             if (building.count > 0) {

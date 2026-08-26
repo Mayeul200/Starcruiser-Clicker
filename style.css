@@ -508,3 +508,9 @@ body {
     .medal-emoji { font-size: 4.5rem; }
     .top-bar-controls { flex-direction: column; }
 }
+
+/* Building blur effect for not purchased buildings */
+.building-item.not-purchased {
+    opacity: 0.5;
+    filter: blur(2px);
+}
