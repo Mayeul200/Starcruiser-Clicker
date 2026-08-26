@@ -103,6 +103,7 @@ let unlockedBuildings = new Set();
 let lastMedalRainTime = 0;
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
+let lastUpgradesRender = 0;
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -440,7 +441,7 @@ function buyBuilding(buildingId) {
         updateDisplay();
         saveGame();
         renderBuildings();
-        renderUpgrades();
+        if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
         checkEraUnlocks();
         showToast(`✅ +1 ${building.name}`);
     } else {
@@ -470,7 +471,7 @@ function buyClickUpgrade(threshold) {
     activatedClickUpgrades.push(threshold);
     updateDisplay();
     saveGame();
-    renderUpgrades();
+    if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
     showToast(`✅ ${upgrade.name} activée`);
 }
 
@@ -499,7 +500,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     buildingUpgrades[buildingId].push(threshold);
     updateDisplay();
     saveGame();
-    renderUpgrades();
+    if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
     renderBuildings();
     showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
 }
@@ -761,7 +762,7 @@ function addScore(points) {
     updateDisplay();
     saveGame();
     renderBuildings();
-    renderUpgrades();
+    if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
     checkEraUnlocks();
 }
 
@@ -840,10 +841,7 @@ function gameLoop() {
     if (autoGain > 0 && Date.now() - lastMedalRainTime > 500) {
         spawnMedalRain();
     }
-
-    updateDisplay();
-    updateAllBuildingButtons();
-    renderUpgrades();
+    if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
     checkEraUnlocks();
 }
 
@@ -940,7 +938,7 @@ function init() {
     loadGame();
     updateDisplay();
     renderBuildings();
-    renderUpgrades();
+    if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
     checkEraUnlocks();
 }
 
