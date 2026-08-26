@@ -9,7 +9,8 @@ function saveGame() {
         clickBonus: clickBonus,
         unlockedBuildings: Array.from(unlockedBuildings),
         lastMedalRainTime: lastMedalRainTime,
-                buildingMultipliers: { ...buildingMultipliers },
+        currentEraIndex: currentEraIndex,
+        buildingMultipliers: { ...buildingMultipliers },
         totalGeneratedByBuilding: { ...totalGeneratedByBuilding },
         buildingUpgrades: { ...buildingUpgrades },
         activatedClickUpgrades: [...activatedClickUpgrades],
@@ -48,7 +49,8 @@ function loadGame() {
         clickGloireTotal = parsed.clickGloireTotal || 0;
         clickBonus = parsed.clickBonus || 0;
         lastMedalRainTime = parsed.lastMedalRainTime || 0;
-        
+        currentEraIndex = parsed.currentEraIndex || 0;
+
         if (parsed.buildingMultipliers) {
             Object.keys(buildingMultipliers).forEach(key => {
                 buildingMultipliers[key] = parsed.buildingMultipliers[key] || 1;
