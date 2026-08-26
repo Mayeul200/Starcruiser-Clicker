@@ -475,6 +475,24 @@ body {
     opacity: 1;
 }
 
+
+
+/* Style pour les améliorations de bâtiment (avec couleur) */
+.upgrade-item[data-upgrade-type="building"] {
+    color: white !important;
+    min-width: 160px;
+}
+
+/* Style pour les améliorations de clic */
+.upgrade-item.click-upgrade {
+    background: var(--secondary) !important;
+    color: var(--text) !important;
+}
+
+.upgrade-item.click-upgrade:hover {
+    background: var(--primary) !important;
+    color: white !important;
+}
 /* RESPONSIVE */
 @media (max-width: 992px) {
     .main-grid {
