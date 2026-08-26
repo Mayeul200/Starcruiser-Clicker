@@ -40,7 +40,7 @@ const ERAS = [
         requiredScore: 50000000,
         buildings: [
             { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎨", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-            { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🗼", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
+            { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🏛️", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
         ]
     },
     {
@@ -92,7 +92,10 @@ const RANDOM_BONUSES = [
 let score = 0;
 let autoGain = 0;
 let autoMultiplier = 1;
+let clickMultiplier = 1;
 let activeRandomBonuses = [];
+let autoMultipliers = [1];
+let clickMultipliers = [1];
 let buildingUpgrades = {}; // {buildingId: [threshold1, threshold2, ...]}
 let clickGloireTotal = 0;
 let activatedClickUpgrades = [];
@@ -182,6 +185,16 @@ function formatNumber(num) {
     return (num / 1000000000000).toFixed(1) + "T";
 }
 
+// Fonction pour recalculer le multiplicateur auto global
+function updateAutoMultiplier() {
+    autoMultiplier = autoMultipliers.reduce((a, b) => a * b, 1);
+}
+
+// Fonction pour recalculer le multiplicateur de clic global
+function updateClickMultiplier() {
+    clickMultiplier = clickMultipliers.reduce((a, b) => a * b, 1);
+}
+
 // Affiche un toast notification
 function showToast(message) {
     const toast = document.getElementById('toast');
@@ -194,17 +207,20 @@ function showToast(message) {
 // SAUVEGARDE / CHARGEMENT
 // ============================================
 
-const SAVE_VERSION = "2.0.0";
+const SAVE_VERSION = "2.1.0";
 
 function saveGame() {
     const saveData = {
         score: score,
         autoGain: autoGain,
         autoMultiplier: autoMultiplier,
+        clickMultiplier: clickMultiplier,
         clickGloireTotal: clickGloireTotal,
         activatedClickUpgrades: [...activatedClickUpgrades],
         unlockedBuildings: Array.from(unlockedBuildings),
         lastMedalRainTime: lastMedalRainTime,
+        autoMultipliers: [...autoMultipliers],
+        clickMultipliers: [...clickMultipliers],
         buildingUpgrades: {},
         totalGeneratedByBuilding: {},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
@@ -251,11 +267,18 @@ function loadGame() {
         score = parsed.score || 0;
         autoGain = parsed.autoGain || 0;
         autoMultiplier = parsed.autoMultiplier || 1;
+        clickMultiplier = parsed.clickMultiplier || 1;
         clickGloireTotal = parsed.clickGloireTotal || 0;
         lastMedalRainTime = parsed.lastMedalRainTime || 0;
 
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
+
+        // Charger les multiplicateurs
+        autoMultipliers = parsed.autoMultipliers || [1];
+        clickMultipliers = parsed.clickMultipliers || [1];
+        updateAutoMultiplier();
+        updateClickMultiplier();
 
         // Charger les upgrades des bâtiments
         if (parsed.buildingUpgrades) {
@@ -282,11 +305,19 @@ function loadGame() {
 
             // Appliquer les multiplicateurs des bonus actifs
             activeRandomBonuses.forEach(bonus => {
-                if (bonus.effect === "auto" || bonus.effect === "both") autoMultiplier = bonus.multiplier;
+                if (bonus.effect === "auto" || bonus.effect === "both") {
+                    if (!autoMultipliers.includes(bonus.multiplier)) {
+                        autoMultipliers.push(bonus.multiplier);
+                    }
+                }
                 if (bonus.effect === "click" || bonus.effect === "both") {
-                    // Note: clickMultiplier n'est plus utilisé, mais on garde pour compatibilité
+                    if (!clickMultipliers.includes(bonus.multiplier)) {
+                        clickMultipliers.push(bonus.multiplier);
+                    }
                 }
             });
+            updateAutoMultiplier();
+            updateClickMultiplier();
         }
 
         // Charger les comptes des bâtiments
@@ -307,8 +338,26 @@ function loadGame() {
         // Filtrer les bonus expirés
         const now = Date.now();
         activeRandomBonuses = activeRandomBonuses.filter(bonus => bonus.endTime >= now);
-        if (activeRandomBonuses.length === 0) {
+        
+        // Recalculer les multiplicateurs après filtrage
+        autoMultipliers = [1];
+        clickMultipliers = [1];
+        activeRandomBonuses.forEach(bonus => {
+            if (bonus.effect === "auto" || bonus.effect === "both") {
+                autoMultipliers.push(bonus.multiplier);
+            }
+            if (bonus.effect === "click" || bonus.effect === "both") {
+                clickMultipliers.push(bonus.multiplier);
+            }
+        });
+        updateAutoMultiplier();
+        updateClickMultiplier();
+        
+        if (autoMultipliers.length === 1) {
             autoMultiplier = 1;
+        }
+        if (clickMultipliers.length === 1) {
+            clickMultiplier = 1;
         }
 
         // Initialiser les structures pour les nouveaux bâtiments
@@ -404,6 +453,12 @@ function buyClickUpgrade(threshold) {
     const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
     if (!upgrade) return;
     
+    // Vérifier si déjà achetée (SOLUTION 2)
+    if (activatedClickUpgrades.includes(threshold)) {
+        showToast("✅ Déjà activée !");
+        return;
+    }
+    
     // Vérifier si on a assez de Gloire
     if (score < upgrade.cost) {
         showToast("❌ Pas assez de Gloire");
@@ -424,9 +479,9 @@ function buyBuildingUpgrade(buildingId, threshold) {
     const building = findBuildingById(buildingId);
     if (!building || !isBuildingUpgradeAvailable(buildingId, threshold)) return;
     
-    // Calculer le coût : x5 la production du bâtiment
-    const buildingGain = calculateBuildingGain(building);
-    const cost = Math.floor(buildingGain * 5);
+    // Calculer le coût : x5 la production UNITAIRE du bâtiment (SOLUTION 5)
+    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
+    const cost = Math.floor(unitGain * 5 * building.count);
     
     // Vérifier si on a assez de Gloire
     if (score < cost) {
@@ -479,7 +534,8 @@ function updateBuildingButton(buildingId) {
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-    // Le tooltip est déjà défini lors du renderBuilding, pas besoin de le recréer
+    // SOLUTION 7: Mettre à jour le tooltip dynamiquement
+    element.setAttribute('data-tooltip', getBuildingTooltip(building));
 }
 
 // Met à jour tous les boutons de bâtiments
@@ -553,6 +609,11 @@ function renderBuilding(building) {
         </button>
     `;
 
+    // SOLUTION 7: Mettre à jour le tooltip au survol
+    buildingElement.addEventListener('mouseenter', () => {
+        buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
+    });
+
     container.appendChild(buildingElement);
 }
 
@@ -583,8 +644,8 @@ function renderUpgrades() {
                 if (isBuildingUpgradeAvailable(building.id, threshold)) {
                     const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
                     const color = UPGRADE_COLORS[thresholdIndex];
-                    const buildingGain = calculateBuildingGain(building);
-                    const cost = Math.floor(buildingGain * 5);
+                    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
+                    const cost = Math.floor(unitGain * 5 * building.count);
                     
                     const upgradeElement = document.createElement('div');
                     upgradeElement.className = 'upgrade-item';
@@ -616,7 +677,7 @@ function spawnRandomBonus() {
     bonusElement.innerHTML = bonus.symbol;
     bonusElement.style.left = `${x}px`;
     bonusElement.style.top = `${y}px`;
-    bonusElement.setAttribute('data-tooltip', bonus.tooltip);
+    bonusElement.setAttribute('data-tooltip', bonus.tooltip + ` (${bonus.duration/1000}s)`);
 
     document.getElementById('random-bonuses').appendChild(bonusElement);
 
@@ -629,12 +690,18 @@ function spawnRandomBonus() {
         clearTimeout(timeout);
         bonusElement.classList.add('clicked');
 
-        if (bonus.effect === "auto") autoMultiplier = bonus.multiplier;
-        else if (bonus.effect === "click") {
-            // Note: clickMultiplier n'est plus utilisé
+        // SOLUTION 1: Gérer les bonus click
+        if (bonus.effect === "auto" || bonus.effect === "both") {
+            if (!autoMultipliers.includes(bonus.multiplier)) {
+                autoMultipliers.push(bonus.multiplier);
+                updateAutoMultiplier();
+            }
         }
-        else if (bonus.effect === "both") {
-            autoMultiplier = bonus.multiplier;
+        if (bonus.effect === "click" || bonus.effect === "both") {
+            if (!clickMultipliers.includes(bonus.multiplier)) {
+                clickMultipliers.push(bonus.multiplier);
+                updateClickMultiplier();
+            }
         }
 
         activeRandomBonuses.push({
@@ -646,14 +713,26 @@ function spawnRandomBonus() {
 
         setTimeout(() => bonusElement.remove(), 500);
 
+        // SOLUTION 14: Ajouter timer dans le toast
+        showToast(`✅ ${bonus.name} activé (${bonus.duration/1000}s)`);
+
         setTimeout(() => {
             activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
-            if (bonus.effect === "auto" || bonus.effect === "both") autoMultiplier = 1;
+            
+            // SOLUTION 4: Retirer le multiplicateur du tableau
+            if (bonus.effect === "auto" || bonus.effect === "both") {
+                autoMultipliers = autoMultipliers.filter(m => m !== bonus.multiplier);
+                updateAutoMultiplier();
+            }
+            if (bonus.effect === "click" || bonus.effect === "both") {
+                clickMultipliers = clickMultipliers.filter(m => m !== bonus.multiplier);
+                updateClickMultiplier();
+            }
+            
             updateDisplay();
             showToast(`⏰ ${bonus.name} expiré`);
         }, bonus.duration);
 
-        showToast(`✅ ${bonus.name} activé`);
     };
 }
 
@@ -666,7 +745,9 @@ function addScore(points) {
     // NOUVELLE MÉCANIQUE : 1 + (nombre_améliorations * 1% * autoGain)
     const clickBonus = activatedClickUpgrades.length * 0.01 * autoGain;
     const basePoints = points + clickBonus;
-    const totalPoints = basePoints;
+    
+    // SOLUTION 1: Appliquer le multiplicateur de clic
+    const totalPoints = basePoints * clickMultiplier;
 
     score += totalPoints;
     clickGloireTotal += basePoints;
@@ -746,7 +827,8 @@ function gameLoop() {
             totalGain += buildingGain;
 
             if (building.count > 0) {
-                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.1);
+                // SOLUTION 3: Corriger les stats ×10 (0.01 au lieu de 0.1)
+                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.01);
             }
         });
     });
