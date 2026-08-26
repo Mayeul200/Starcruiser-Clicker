@@ -563,16 +563,37 @@ function renderBuilding(building) {
 // Affiche les améliorations dans la barre du haut
 function renderUpgrades() {
     const container = document.getElementById('upgrades-list');
-    container.innerHTML = '';
+    const existingClickIds = new Set();
+    const existingBuildingIds = new Set();
+    
+    // Marquer les éléments existants
+    container.querySelectorAll('.upgrade-item').forEach(el => {
+        const upgradeId = el.getAttribute('data-upgrade-id');
+        if (upgradeId) {
+            if (upgradeId.startsWith('click-')) {
+                existingClickIds.add(upgradeId);
+            } else {
+                existingBuildingIds.add(upgradeId);
+            }
+        }
+    });
 
     // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
+        const upgradeId = `click-${upgrade.threshold}`;
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
-            const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-item';
-            upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
-            upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
-            container.appendChild(upgradeElement);
+            existingClickIds.delete(upgradeId);
+            let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
+            
+            if (!upgradeElement) {
+                upgradeElement = document.createElement('div');
+                upgradeElement.className = 'upgrade-item';
+                upgradeElement.id = `upgrade-${upgradeId}`;
+                upgradeElement.setAttribute('data-upgrade-id', upgradeId);
+                upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
+                upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
+                container.appendChild(upgradeElement);
+            }
         }
     });
     
@@ -581,21 +602,39 @@ function renderUpgrades() {
         ERAS.forEach(era => {
             era.buildings.forEach(building => {
                 if (isBuildingUpgradeAvailable(building.id, threshold)) {
-                    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-                    const color = UPGRADE_COLORS[thresholdIndex];
-                    const buildingGain = calculateBuildingGain(building);
-                    const cost = Math.floor(buildingGain * 5);
+                    const upgradeId = `building-${building.id}-${threshold}`;
+                    existingBuildingIds.delete(upgradeId);
+                    let upgradeElement = document.getElementById(`upgrade-${upgradeId}`);
                     
-                    const upgradeElement = document.createElement('div');
-                    upgradeElement.className = 'upgrade-item';
-                    upgradeElement.style.background = color;
-                    upgradeElement.style.color = 'white';
-                    upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
-                    upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                    container.appendChild(upgradeElement);
+                    if (!upgradeElement) {
+                        const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+                        const color = UPGRADE_COLORS[thresholdIndex];
+                        const buildingGain = calculateBuildingGain(building);
+                        const cost = Math.floor(buildingGain * 5);
+                        
+                        upgradeElement = document.createElement('div');
+                        upgradeElement.className = 'upgrade-item';
+                        upgradeElement.id = `upgrade-${upgradeId}`;
+                        upgradeElement.setAttribute('data-upgrade-id', upgradeId);
+                        upgradeElement.style.background = color;
+                        upgradeElement.style.color = 'white';
+                        upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
+                        upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                        container.appendChild(upgradeElement);
+                    }
                 }
             });
         });
+    });
+    
+    // Supprimer les améliorations qui ne sont plus disponibles
+    existingClickIds.forEach(id => {
+        const el = document.getElementById(`upgrade-${id}`);
+        if (el) el.remove();
+    });
+    existingBuildingIds.forEach(id => {
+        const el = document.getElementById(`upgrade-${id}`);
+        if (el) el.remove();
     });
 }
 
