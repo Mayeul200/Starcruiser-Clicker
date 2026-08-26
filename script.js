@@ -2,56 +2,21 @@
 // GLORY OF FRANCE CLICKER - MAIN SCRIPT
 // ============================================
 
-// DONNÉES DU JEU (5 ÈRES)
-const ERAS = [
-    {
-        id: "aube-france",
-        name: "L'Aube de la France",
-        requiredScore: 0,
-        buildings: [
-            { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
-            { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
-            { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
-            { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-            { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "construction-france",
-        name: "La Construction de la France",
-        requiredScore: 50000,
-        buildings: [
-            { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-            { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "expansion-revolution",
-        name: "L'Expansion et la Révolution",
-        requiredScore: 1000000,
-        buildings: [
-            { id: "louis-xiv", name: "Louis XIV", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-            { id: "revolution", name: "Révolution", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "ere-moderne",
-        name: "L'Ère Moderne",
-        requiredScore: 50000000,
-        buildings: [
-            { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎨", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-            { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🏛️", unlockCondition: () => score >= 100000000, totalGenerated: 0 }
-        ]
-    },
-    {
-        id: "france-contemporaine",
-        name: "La France Contemporaine",
-        requiredScore: 1000000000,
-        buildings: [
-            { id: "de-gaulle", name: "De Gaulle", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000000, gain: 10000000, count: 0, image: "🎖️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-            { id: "macron", name: "Macron", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
-        ]
-    }
+// LISTE PLATE DES BÂTIMENTS (sans ères)
+const BUILDINGS = [
+    { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
+    { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
+    { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
+    { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
+    { id: "fleur-de-lys", name: "Fleur de Lys", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100000, gain: 1000, count: 0, image: "🌸", unlockCondition: () => score >= 25000, totalGenerated: 0 },
+    { id: "saint-louis", name: "Saint Louis", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000, gain: 500, count: 0, image: "👨‍⚖️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+    { id: "joan-of-arc", name: "Jeanne d'Arc", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000, gain: 2000, count: 0, image: "🛡️", unlockCondition: () => score >= 100000, totalGenerated: 0 },
+    { id: "louis-xiv", name: "Louis XIV", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000, gain: 10000, count: 0, image: "☀️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+    { id: "revolution", name: "Révolution", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000, gain: 50000, count: 0, image: "🎭", unlockCondition: () => score >= 2000000, totalGenerated: 0 },
+    { id: "napoleon", name: "Napoléon", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 50000000, gain: 500000, count: 0, image: "🎨", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
+    { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 200000000, gain: 2000000, count: 0, image: "🏛️", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
+    { id: "de-gaulle", name: "De Gaulle", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000000000, gain: 10000000, count: 0, image: "🎖️", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+    { id: "macron", name: "Macron", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 5000000000, gain: 50000000, count: 0, image: "💼", unlockCondition: () => score >= 2000000000, totalGenerated: 0 }
 ];
 
 // Améliorations de clic (barre du haut) - Coût = seuil
@@ -112,21 +77,15 @@ let lastBuildingsUpdate = 0;
 
 // Initialisation des structures de données
 function initGlobals() {
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
-            totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
-            buildingUpgrades[building.id] = buildingUpgrades[building.id] || [];
-        });
+    BUILDINGS.forEach(building => {
+        totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
+        buildingUpgrades[building.id] = buildingUpgrades[building.id] || [];
     });
 }
 
 // Trouve un bâtiment par son ID
 function findBuildingById(buildingId) {
-    for (const era of ERAS) {
-        const building = era.buildings.find(b => b.id === buildingId);
-        if (building) return building;
-    }
-    return null;
+    return BUILDINGS.find(b => b.id === buildingId);
 }
 
 // Calcule le gain d'un bâtiment (factorisé)
@@ -209,7 +168,7 @@ function showToast(message) {
 // SAUVEGARDE / CHARGEMENT
 // ============================================
 
-const SAVE_VERSION = "2.1.0";
+const SAVE_VERSION = "3.0.0";
 
 function saveGame() {
     const saveData = {
@@ -231,12 +190,9 @@ function saveGame() {
             multiplier: bonus.multiplier,
             endTime: bonus.endTime
         })),
-        eras: ERAS.map(era => ({
-            id: era.id,
-            buildings: era.buildings.map(building => ({
-                id: building.id,
-                count: building.count
-            }))
+        buildings: BUILDINGS.map(building => ({
+            id: building.id,
+            count: building.count
         })),
         lastSave: Date.now(),
         version: SAVE_VERSION
@@ -322,18 +278,24 @@ function loadGame() {
             updateClickMultiplier();
         }
 
-        // Charger les comptes des bâtiments
-        if (parsed.eras) {
-            parsed.eras.forEach(savedEra => {
-                const era = ERAS.find(e => e.id === savedEra.id);
-                if (era) {
-                    savedEra.buildings.forEach(savedBuilding => {
-                        const building = era.buildings.find(b => b.id === savedBuilding.id);
-                        if (building) {
-                            building.count = savedBuilding.count || 0;
-                        }
-                    });
+        // Charger les comptes des bâtiments (nouveau format)
+        if (parsed.buildings) {
+            parsed.buildings.forEach(savedBuilding => {
+                const building = BUILDINGS.find(b => b.id === savedBuilding.id);
+                if (building) {
+                    building.count = savedBuilding.count || 0;
                 }
+            });
+        }
+        // Charger les comptes des bâtiments (ancien format avec ères)
+        else if (parsed.eras) {
+            parsed.eras.forEach(savedEra => {
+                savedEra.buildings.forEach(savedBuilding => {
+                    const building = BUILDINGS.find(b => b.id === savedBuilding.id);
+                    if (building) {
+                        building.count = savedBuilding.count || 0;
+                    }
+                });
             });
         }
 
@@ -398,7 +360,7 @@ function importSave() {
     if (!importText) { showToast("❌ Rien à importer."); return; }
     try {
         const testParse = JSON.parse(importText);
-        if (testParse.version && testParse.eras && testParse.buildingUpgrades) {
+        if (testParse.version && testParse.buildings && testParse.buildingUpgrades) {
             localStorage.setItem('gloryOfFranceSave', importText);
             showToast("✅ Importé ! Redémarrage...");
             setTimeout(() => window.location.reload(), 1000);
@@ -443,7 +405,7 @@ function buyBuilding(buildingId) {
         saveGame();
         renderBuildings();
         if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
-        checkEraUnlocks();
+        checkBuildingUnlocks();
         showToast(`✅ +1 ${building.name}`);
     } else {
         showToast("❌ Pas assez de Gloire");
@@ -455,7 +417,7 @@ function buyClickUpgrade(threshold) {
     const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
     if (!upgrade) return;
     
-    // Vérifier si déjà achetée (SOLUTION 2)
+    // Vérifier si déjà achetée
     if (activatedClickUpgrades.includes(threshold)) {
         showToast("✅ Déjà activée !");
         return;
@@ -481,7 +443,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     const building = findBuildingById(buildingId);
     if (!building || !isBuildingUpgradeAvailable(buildingId, threshold)) return;
     
-    // Calculer le coût : x5 la production UNITAIRE du bâtiment (SOLUTION 5)
+    // Calculer le coût : x5 la production UNITAIRE du bâtiment
     const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
     const cost = Math.floor(unitGain * 5 * building.count);
     
@@ -536,7 +498,7 @@ function updateBuildingButton(buildingId) {
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
 
-    // SOLUTION 7: Mettre à jour le tooltip dynamiquement
+    // Mettre à jour le tooltip dynamiquement
     element.setAttribute('data-tooltip', getBuildingTooltip(building));
 }
 
@@ -548,16 +510,14 @@ function updateAllBuildingButtons() {
     });
 }
 
-// Vérifie les déblocages des ères et bâtiments
-function checkEraUnlocks() {
+// Vérifie les déblocages des bâtiments
+function checkBuildingUnlocks() {
     let needsRerender = false;
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
-            if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
-                unlockedBuildings.add(building.id);
-                needsRerender = true;
-            }
-        });
+    BUILDINGS.forEach(building => {
+        if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+            unlockedBuildings.add(building.id);
+            needsRerender = true;
+        }
     });
     if (needsRerender) {
         renderBuildings();
@@ -569,16 +529,12 @@ function renderBuildings() {
     const container = document.getElementById('buildings-list');
     container.innerHTML = '';
 
-    ERAS.forEach(era => {
-        if (score >= era.requiredScore || era.requiredScore === 0) {
-            era.buildings.forEach(building => {
-                if (building.unlockCondition() || unlockedBuildings.has(building.id)) {
-                    if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
-                        unlockedBuildings.add(building.id);
-                    }
-                    renderBuilding(building);
-                }
-            });
+    BUILDINGS.forEach(building => {
+        if (building.unlockCondition() || unlockedBuildings.has(building.id)) {
+            if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+                unlockedBuildings.add(building.id);
+            }
+            renderBuilding(building);
         }
     });
 }
@@ -611,7 +567,7 @@ function renderBuilding(building) {
         </button>
     `;
 
-    // SOLUTION 7: Mettre à jour le tooltip au survol
+    // Mettre à jour le tooltip au survol
     buildingElement.addEventListener('mouseenter', () => {
         buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
     });
@@ -641,23 +597,21 @@ function renderUpgrades() {
     
     // Améliorations de bâtiments
     BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
-        ERAS.forEach(era => {
-            era.buildings.forEach(building => {
-                if (isBuildingUpgradeAvailable(building.id, threshold)) {
-                    const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-                    const color = UPGRADE_COLORS[thresholdIndex];
-                    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
-                    const cost = Math.floor(unitGain * 5 * building.count);
-                    
-                    const upgradeElement = document.createElement('div');
-                    upgradeElement.className = 'upgrade-item';
-                    upgradeElement.style.background = color;
-                    upgradeElement.style.color = 'white';
-                    upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
-                    upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                    container.appendChild(upgradeElement);
-                }
-            });
+        BUILDINGS.forEach(building => {
+            if (isBuildingUpgradeAvailable(building.id, threshold)) {
+                const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+                const color = UPGRADE_COLORS[thresholdIndex];
+                const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
+                const cost = Math.floor(unitGain * 5 * building.count);
+                
+                const upgradeElement = document.createElement('div');
+                upgradeElement.className = 'upgrade-item';
+                upgradeElement.style.background = color;
+                upgradeElement.style.color = 'white';
+                upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
+                upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                container.appendChild(upgradeElement);
+            }
         });
     });
 }
@@ -692,7 +646,7 @@ function spawnRandomBonus() {
         clearTimeout(timeout);
         bonusElement.classList.add('clicked');
 
-        // SOLUTION 1: Gérer les bonus click
+        // Gérer les bonus click
         if (bonus.effect === "auto" || bonus.effect === "both") {
             if (!autoMultipliers.includes(bonus.multiplier)) {
                 autoMultipliers.push(bonus.multiplier);
@@ -715,13 +669,11 @@ function spawnRandomBonus() {
 
         setTimeout(() => bonusElement.remove(), 500);
 
-        // SOLUTION 14: Ajouter timer dans le toast
         showToast(`✅ ${bonus.name} activé (${bonus.duration/1000}s)`);
 
         setTimeout(() => {
             activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
             
-            // SOLUTION 4: Retirer le multiplicateur du tableau
             if (bonus.effect === "auto" || bonus.effect === "both") {
                 autoMultipliers = autoMultipliers.filter(m => m !== bonus.multiplier);
                 updateAutoMultiplier();
@@ -748,7 +700,7 @@ function addScore(points) {
     const clickBonus = activatedClickUpgrades.length * 0.01 * autoGain;
     const basePoints = points + clickBonus;
     
-    // SOLUTION 1: Appliquer le multiplicateur de clic
+    // Appliquer le multiplicateur de clic
     const totalPoints = basePoints * clickMultiplier;
 
     score += totalPoints;
@@ -764,7 +716,7 @@ function addScore(points) {
     saveGame();
     renderBuildings();
     if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
-    checkEraUnlocks();
+    checkBuildingUnlocks();
 }
 
 // Affiche l'effet +X
@@ -790,7 +742,7 @@ function showClickEffect(value) {
     setTimeout(() => effect.remove(), 1000);
 }
 
-// Pluie de médaillons (bug corrigé)
+// Pluie de médaillons
 function spawnMedalRain() {
     const now = Date.now();
     const medalCount = Math.min(Math.floor(autoGain / 5), 5);
@@ -813,7 +765,7 @@ function spawnMedalRain() {
         container.appendChild(medalRain);
         setTimeout(() => medalRain.remove(), 2000);
     }
-    lastMedalRainTime = now; // Bug corrigé : mise à jour de lastMedalRainTime
+    lastMedalRainTime = now;
 }
 
 // ============================================
@@ -823,28 +775,26 @@ function spawnMedalRain() {
 function gameLoop() {
     let totalGain = 0;
 
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
-            const buildingGain = calculateBuildingGain(building);
-            totalGain += buildingGain;
+    BUILDINGS.forEach(building => {
+        const buildingGain = calculateBuildingGain(building);
+        totalGain += buildingGain;
 
-            if (building.count > 0) {
-                // SOLUTION 3: Ajouter la production réelle à chaque itération (gameLoop tourne 10x/seconde, donc *0.1 = /10)
-                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.1);
-            }
-        });
+        if (building.count > 0) {
+            // Ajouter la production réelle à chaque itération (gameLoop tourne 10x/seconde, donc *0.1 = /10)
+            totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.1);
+        }
     });
 
     autoGain = totalGain;
     score += autoGain / 10;
 
-    // Pluie de médaillons si gain automatique > 0 (bug corrigé)
+    // Pluie de médaillons si gain automatique > 0
     if (autoGain > 0 && Date.now() - lastMedalRainTime > 500) {
         spawnMedalRain();
     }
     if (Date.now() - lastBuildingsUpdate > 500) { lastBuildingsUpdate = Date.now(); updateAllBuildingButtons(); }
     updateDisplay();
-    checkEraUnlocks();
+    checkBuildingUnlocks();
 }
 
 // ============================================
@@ -885,24 +835,22 @@ function renderStats() {
 
     container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1rem;">Par bâtiment</h4>';
 
-    ERAS.forEach(era => {
-        era.buildings.forEach(building => {
-            if (building.count > 0) {
-                const buildingGain = calculateBuildingGain(building);
-                const percent = autoGain > 0 ? ((buildingGain / autoGain) * 100).toFixed(2) : 0;
+    BUILDINGS.forEach(building => {
+        if (building.count > 0) {
+            const buildingGain = calculateBuildingGain(building);
+            const percent = autoGain > 0 ? ((buildingGain / autoGain) * 100).toFixed(2) : 0;
 
-                const buildingStatElement = document.createElement('div');
-                buildingStatElement.style.display = 'flex';
-                buildingStatElement.style.justifyContent = 'space-between';
-                buildingStatElement.style.padding = '6px 0';
-                buildingStatElement.style.fontSize = '0.9rem';
-                buildingStatElement.innerHTML = `
-                    <span>${building.image} ${building.name}</span>
-                    <span style="color: #64748b;">+${formatNumber(buildingGain)}/s (${percent}%)</span>
-                `;
-                container.appendChild(buildingStatElement);
-            }
-        });
+            const buildingStatElement = document.createElement('div');
+            buildingStatElement.style.display = 'flex';
+            buildingStatElement.style.justifyContent = 'space-between';
+            buildingStatElement.style.padding = '6px 0';
+            buildingStatElement.style.fontSize = '0.9rem';
+            buildingStatElement.innerHTML = `
+                <span>${building.image} ${building.name}</span>
+                <span style="color: #64748b;">+${formatNumber(buildingGain)}/s (${percent}%)</span>
+            `;
+            container.appendChild(buildingStatElement);
+        }
     });
 }
 
@@ -941,7 +889,7 @@ function init() {
     updateDisplay();
     renderBuildings();
     if (Date.now() - lastUpgradesRender > 500) { lastUpgradesRender = Date.now(); renderUpgrades(); }
-    checkEraUnlocks();
+    checkBuildingUnlocks();
 }
 
 // ============================================
