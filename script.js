@@ -56,16 +56,16 @@ const ERAS = [
 
 // Améliorations de clic (barre du haut)
 const CLICK_UPGRADES = [
-    { threshold: 100, bonus: 0.01, name: "Maîtrise du Clic" },
-    { threshold: 200, bonus: 0.01, name: "Clic Précis" },
-    { threshold: 500, bonus: 0.01, name: "Clic Puissant" },
-    { threshold: 1000, bonus: 0.01, name: "Clic Expert" },
-    { threshold: 2000, bonus: 0.01, name: "Clic Légendaire" },
-    { threshold: 5000, bonus: 0.02, name: "Clic Divin" },
-    { threshold: 10000, bonus: 0.03, name: "Clic Impérial" },
-    { threshold: 20000, bonus: 0.05, name: "Clic Suprême" },
-    { threshold: 50000, bonus: 0.1, name: "Clic Ultime" },
-    { threshold: 100000, bonus: 0.2, name: "Clic Mythique" }
+    { threshold: 50, bonus: 0.01, name: "Clic de base", cost: 50 },
+    { threshold: 100, bonus: 0.01, name: "Clic Précis", cost: 100 },
+    { threshold: 250, bonus: 0.01, name: "Clic Puissant", cost: 250 },
+    { threshold: 500, bonus: 0.01, name: "Clic Expert", cost: 500 },
+    { threshold: 1000, bonus: 0.02, name: "Clic Légendaire", cost: 1000 },
+    { threshold: 2500, bonus: 0.02, name: "Clic Divin", cost: 2500 },
+    { threshold: 5000, bonus: 0.03, name: "Clic Impérial", cost: 5000 },
+    { threshold: 10000, bonus: 0.05, name: "Clic Suprême", cost: 10000 },
+    { threshold: 25000, bonus: 0.1, name: "Clic Ultime", cost: 25000 },
+    { threshold: 50000, bonus: 0.2, name: "Clic Mythique", cost: 50000 }
 ];
 
 // Building upgrade thresholds (per building individually)
@@ -411,8 +411,18 @@ function buyClickUpgrade(threshold) {
     const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
     if (!upgrade) return;
     
+    // Vérifier si on a assez de Gloire
+    if (score < upgrade.cost) {
+        showToast("❌ Pas assez de Gloire");
+        return;
+    }
+    
     // Appliquer le bonus
     clickMultiplier += upgrade.bonus;
+    
+    // Retirer le coût
+    score -= upgrade.cost;
+    
     activatedClickUpgrades.push(threshold);
     updateDisplay();
     saveGame();
@@ -422,7 +432,21 @@ function buyClickUpgrade(threshold) {
 
 // Achat d'une amélioration de bâtiment
 function buyBuildingUpgrade(buildingId, threshold) {
-    if (!isBuildingUpgradeAvailable(buildingId, threshold)) return;
+    const building = findBuildingById(buildingId);
+    if (!building || !isBuildingUpgradeAvailable(buildingId, threshold)) return;
+    
+    // Calculer le coût : x5 la production du bâtiment
+    const buildingGain = calculateBuildingGain(building);
+    const cost = Math.floor(buildingGain * 5);
+    
+    // Vérifier si on a assez de Gloire
+    if (score < cost) {
+        showToast("❌ Pas assez de Gloire");
+        return;
+    }
+    
+    // Retirer le coût
+    score -= cost;
     
     if (!buildingUpgrades[buildingId]) {
         buildingUpgrades[buildingId] = [];
@@ -433,7 +457,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     saveGame();
     renderUpgrades();
     updateAllBuildingButtons();
-    showToast('+ ' + findBuildingById(buildingId).name + ' improved x2');
+    showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
 }
 
 // Met à jour un seul bouton de bâtiment (optimisé)
