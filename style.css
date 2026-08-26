@@ -301,12 +301,12 @@ body {
     border-radius: var(--radius);
     padding: 12px;
     display: flex;
-    align-items: center;
     justify-content: space-between;
     cursor: pointer;
     transition: all 0.2s;
     min-height: 70px;
     position: relative;
+}
 }
 
 .building-item:hover {
