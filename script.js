@@ -605,7 +605,7 @@ function renderBuilding(building) {
                 <span>Possédé : ${building.count}</span>
             </div>
         </div>
-        <span class="building-production">${formatNumber(totalGain)}</span>
+        <span class="building-production">${formatNumber(totalGain)}/s</span>
         <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
             ${formatNumber(currentCost)} Gloire
         </button>
