@@ -625,9 +625,23 @@ function updateBuildingButton(buildingId) {
 
     // Calculer le coût total pour buyMultiplier bâtiments
     let totalCost = 0;
-    for (let i = 0; i < buyMultiplier; i++) {
+    let buildingsToShow = buyMultiplier === 'max' ? calculateMaxAffordable(building) : buyMultiplier;
+    
+    // Limiter buildingsToShow pour éviter des boucles trop longues dans l'affichage
+    if (buildingsToShow > 100) {
+        buildingsToShow = 100; // On affiche le coût pour 100 maximum pour l'estimation
+    }
+    
+    for (let i = 0; i < buildingsToShow; i++) {
         const costForOne = calculateBuildingCost({...building, count: building.count + i});
         totalCost += costForOne;
+    }
+    
+    // Pour le mode max, ajouter "..." si on peut acheter plus que ce qu'on affiche
+    if (buyMultiplier === 'max' && calculateMaxAffordable(building) > 100) {
+        totalCost = formatNumber(totalCost) + "+";
+    } else {
+        totalCost = formatNumber(totalCost);
     }
     
     const totalGain = calculateBuildingGain(building);
@@ -646,7 +660,7 @@ function updateBuildingButton(buildingId) {
 
     if (button) {
         button.disabled = !isAffordable;
-        button.textContent = `${formatNumber(totalCost)} Gloire`;
+        button.textContent = `${totalCost} Gloire`;
     }
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
     if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
