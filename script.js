@@ -657,7 +657,7 @@ function updateBuildingButton(buildingId) {
     const ownershipSpan = element.querySelector('.building-ownership span');
 
     if (button) {
-        button.disabled = !isAffordable;
+        button.disabled = !isAffordable || buildingsToShow === 0;
         button.textContent = `${displayCost} Gloire`;
     }
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
