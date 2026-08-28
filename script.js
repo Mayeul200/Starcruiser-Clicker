@@ -206,7 +206,7 @@ function formatNumber(num, isTotalScore) {
     let normalized = absNum;
     
     // Trouver l'exposant qui donne 4-6 chiffres avant le suffixe
-    const suffixes = ["", " Thousand", " Million", " Billion", " Trillion", " Quadrillion", " Quintillion"];
+    const suffixes = ["", " Thousand", " Million", " Billion", " Trillion", " Quadrillion", " Quintillion", " Sextillion", " Septillion", " Octillion", " Nonillion", " Decillion", " Undecillion", " Duodecillion", " Tredecillion", " Quattuordecillion", " Quindecillion", " Sexdecillion"];
     for (let i = suffixes.length - 1; i >= 0; i--) {
         const testExponent = i * 3;
         const testNormalized = absNum / Math.pow(10, testExponent);
