@@ -4,8 +4,7 @@
 
 // LISTE PLATE DES BÂTIMENTS (sans ères)
 const BUILDINGS = [
-    { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain    container.appendChild(upgradesContainer);
-} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
+    { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
     { id: "vercingetorix", name: "Vercingétorix", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 100, gain: 1, count: 0, image: "🗡️", unlockCondition: () => score >= 20, totalGenerated: 0 },
     { id: "charlemagne", name: "Charlemagne", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 1000, gain: 10, count: 0, image: "👑", unlockCondition: () => score >= 500, totalGenerated: 0 },
     { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10000, gain: 100, count: 0, image: "⛪", unlockCondition: () => score >= 5000, totalGenerated: 0 },
@@ -755,6 +754,8 @@ function renderUpgrades() {
     // Créer un conteneur pour les améliorations
     const upgradesContainer = document.createElement('div');
     upgradesContainer.className = 'upgrades-container-center';
+
+    // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeElement = document.createElement('div');
@@ -807,6 +808,7 @@ function renderUpgrades() {
         });
     });
 
+    container.appendChild(upgradesContainer);
 }
 
 // ============================================
