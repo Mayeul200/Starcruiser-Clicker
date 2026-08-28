@@ -943,15 +943,71 @@ function calculateTotalGenerated() {
     return total;
 }
 
+
+// ============================================
+// FONCTIONS UTILITAIRES POUR LES STATISTIQUES
+// ============================================
+
+// Calcule la puissance de clic actuelle
+function getClickPower() {
+    const basePower = 1;
+    const clickBonus = activatedClickUpgrades.length * 0.01 * autoGain;
+    return (basePower + clickBonus) * clickMultiplier;
+}
+
+// Calcule le nombre total de bâtiments possédés
+function getTotalBuildingsOwned() {
+    let total = 0;
+    BUILDINGS.forEach(building => {
+        total += building.count;
+    });
+    return formatNumber(total);
+}
+
+// Calcule la durée de la partie
+function getGameDuration() {
+    if (!lastSaveTime) return "N/A";
+    
+    const startTime = lastSaveTime;
+    const now = Date.now();
+    const durationMs = now - startTime;
+    
+    if (durationMs < 60000) {
+        return Math.floor(durationMs / 1000) + "s";
+    } else if (durationMs < 3600000) {
+        return Math.floor(durationMs / 60000) + "min";
+    } else if (durationMs < 86400000) {
+        return Math.floor(durationMs / 3600000) + "h";
+    } else {
+        return Math.floor(durationMs / 86400000) + "j";
+    }
+}
+
+// Compte le nombre de bonus cliqués
+function getClickedBonusesCount() {
+    // Pour l'instant, on retourne 0 car on ne stocke pas cette info
+    // On pourrait l'ajouter dans le futur
+    return 0;
+}
+
 function renderStats() {
     const container = document.getElementById('stats-body');
     container.innerHTML = '';
 
+    // ======================
+    // STATISTIQUES GLOBALES
+    // ======================
+    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">Statistiques Globales</h4>';
+
     const globalStats = [
-        { label: "Score total", value: formatNumber(score) },
+        { label: "Gloire Actuelle", value: formatNumber(score, true) },
+        { label: "Gloire total généré", value: formatNumber(calculateTotalGenerated()) },
         { label: "Gloire par seconde", value: formatNumber(autoGain) },
         { label: "Clics totaux", value: formatNumber(clickGloireTotal) },
-        { label: "Gloire total généré", value: formatNumber(calculateTotalGenerated()) }
+        { label: "Gloire par Clic", value: formatNumber(getClickPower()) },
+        { label: "Nombre de Bâtiments Possédés", value: getTotalBuildingsOwned() },
+        { label: "Partie Commencée depuis", value: getGameDuration() },
+        { label: "Bonus temporaires Cliqués", value: getClickedBonusesCount() }
     ];
 
     globalStats.forEach(stat => {
@@ -967,25 +1023,74 @@ function renderStats() {
         container.appendChild(statElement);
     });
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1rem;">Par bâtiment</h4>';
+    // ======================
+    // AMÉLIORATIONS
+    // ======================
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Améliorations</h4>';
 
+    // Améliorations de clic
+    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">Améliorations de Clic:</h5>';
+    
+    if (activatedClickUpgrades.length > 0) {
+        activatedClickUpgrades.forEach(threshold => {
+            const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
+            if (upgrade) {
+                const statElement = document.createElement('div');
+                statElement.style.display = 'flex';
+                statElement.style.justifyContent = 'space-between';
+                statElement.style.padding = '4px 0';
+                statElement.style.fontSize = '0.85rem';
+                statElement.style.color = '#64748b';
+                statElement.innerHTML = `
+                    <span>✓ ${upgrade.name}</span>
+                `;
+                container.appendChild(statElement);
+            }
+        });
+    } else {
+        const statElement = document.createElement('div');
+        statElement.style.padding = '4px 0';
+        statElement.style.fontSize = '0.85rem';
+        statElement.style.color = '#94a3b8';
+        statElement.textContent = 'Aucune amélioration de clic';
+        container.appendChild(statElement);
+    }
+
+    // Améliorations de bâtiments
+    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 0.9rem;">Améliorations de Bâtiments:</h5>';
+    
+    let hasBuildingUpgrades = false;
     BUILDINGS.forEach(building => {
-        if (building.count > 0) {
-            const buildingGain = calculateBuildingGain(building);
-            const percent = autoGain > 0 ? ((buildingGain / autoGain) * 100).toFixed(2) : 0;
-
-            const buildingStatElement = document.createElement('div');
-            buildingStatElement.style.display = 'flex';
-            buildingStatElement.style.justifyContent = 'space-between';
-            buildingStatElement.style.padding = '6px 0';
-            buildingStatElement.style.fontSize = '0.9rem';
-            buildingStatElement.innerHTML = `
-                <span>${building.image} ${building.name}</span>
-                <span style="color: #64748b;">+${formatNumber(buildingGain)}/s (${percent}%)</span>
+        const upgrades = buildingUpgrades[building.id] || [];
+        if (upgrades.length > 0) {
+            hasBuildingUpgrades = true;
+            const statElement = document.createElement('div');
+            statElement.style.display = 'flex';
+            statElement.style.justifyContent = 'space-between';
+            statElement.style.padding = '4px 0';
+            statElement.style.fontSize = '0.85rem';
+            statElement.style.color = '#64748b';
+            statElement.innerHTML = `
+                <span>${building.image} ${building.name}: ${upgrades.length} niveau(x)</span>
             `;
-            container.appendChild(buildingStatElement);
+            container.appendChild(statElement);
         }
     });
+
+    if (!hasBuildingUpgrades) {
+        const statElement = document.createElement('div');
+        statElement.style.padding = '4px 0';
+        statElement.style.fontSize = '0.85rem';
+        statElement.style.color = '#94a3b8';
+        statElement.textContent = 'Aucune amélioration de bâtiment';
+        container.appendChild(statElement);
+    }
+
+    // ======================
+    // TROPHÉES
+    // ======================
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Trophées</h4>';
+    container.innerHTML += '<div style="padding: 8px 0; font-size: 0.9rem; color: #94a3b8;">Bientôt disponible...</div>';
 }
 
 // ============================================
