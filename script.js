@@ -748,12 +748,8 @@ function renderBuilding(building) {
 
 // Affiche les améliorations dans la barre du centre
 function renderUpgrades() {
-    const container = document.getElementById('upgrades-bar');
+    const container = document.getElementById('upgrades-container');
     container.innerHTML = '';
-
-    // Créer un conteneur pour les améliorations
-    const upgradesContainer = document.createElement('div');
-    upgradesContainer.className = 'upgrades-container-center';
 
     // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
@@ -771,7 +767,7 @@ function renderUpgrades() {
             upgradeElement.setAttribute('data-tooltip', tooltip);
             
             upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
-            upgradesContainer.appendChild(upgradeElement);
+            container.appendChild(upgradeElement);
         }
     });
     
@@ -803,7 +799,7 @@ function renderUpgrades() {
                 upgradeElement.setAttribute('data-tooltip', tooltip);
                 
                 upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                upgradesContainer.appendChild(upgradeElement);
+                container.appendChild(upgradeElement);
             }
         });
     });
