@@ -187,7 +187,7 @@ body {
 /* MAIN GRID */
 .main-grid {
     display: grid;
-    grid-template-columns: 20% 55% 25%;
+    grid-template-columns: 22.5% 55% 22.5%;
     height: calc(100vh - var(--top-height));
     position: fixed;
     top: var(--top-height);
