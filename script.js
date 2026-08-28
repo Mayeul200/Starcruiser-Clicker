@@ -461,6 +461,7 @@ function buyBuilding(buildingId) {
         unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
+        renderBuildings();
         updateAllBuildingButtons();
         renderUpgrades();
         checkBuildingUnlocks();
@@ -486,6 +487,7 @@ function buyBuilding(buildingId) {
             unlockedBuildings.add(building.id);
             updateDisplay();
             saveGame();
+            renderBuildings();
             updateAllBuildingButtons();
             renderUpgrades();
             checkBuildingUnlocks();
