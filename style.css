@@ -54,6 +54,15 @@ body {
     padding: 0 15px;
     border-bottom: 1px solid var(--border);
     background: white;
+    position: relative;
+}
+
+.upgrades-title {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-right: 12px;
+    white-space: nowrap;
 }
 
 .upgrades-container-center {
