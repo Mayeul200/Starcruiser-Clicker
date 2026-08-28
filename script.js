@@ -213,8 +213,8 @@ function formatNumber(num) {
         // 3 chiffres avant la virgule -> 3 décimales pour 6 chiffres (ex: 678.736M)
         return normalized.toFixed(3).toLocaleString() + suffix;
     } else if (normalizedAbs >= 10) {
-        // 2 chiffres avant la virgule -> 2 décimales pour 5 chiffres (ex: 34.57M)
-        return normalized.toFixed(2).toLocaleString() + suffix;
+        // 2 chiffres avant la virgule -> 3 décimales pour 5 chiffres (ex: 34.575M)
+        return normalized.toFixed(3).toLocaleString() + suffix;
     } else {
         // 1 chiffre avant la virgule -> 3 décimales pour 4 chiffres (ex: 3.456M)
         return normalized.toFixed(3).toLocaleString() + suffix;
