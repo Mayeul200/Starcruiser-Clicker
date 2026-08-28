@@ -56,6 +56,20 @@ body {
     background: white;
 }
 
+    .upgrades-header {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .upgrades-header h3 {
+        color: var(--primary);
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
 .upgrades-container-center {
     display: flex;
     gap: 6px;
