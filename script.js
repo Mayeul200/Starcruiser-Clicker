@@ -78,6 +78,7 @@ let unlockedBuildings = new Set();
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
+let gameStartTime = 0; // Heure de début de la partie
 let buyMultiplier = 1; // Multiplicateur d'achat (1, 5, 50)
 
 // ============================================
@@ -299,6 +300,7 @@ function saveGame() {
 
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
     lastSaveTime = Date.now();
+    gameStartTime = Date.now();
 }
 
 function loadGame() {
@@ -423,6 +425,13 @@ function loadGame() {
 
         // Initialiser les structures pour les nouveaux bâtiments
         initGlobals();
+        
+        // Si on a une sauvegarde, utiliser son timestamp, sinon prendre maintenant
+        if (parsed.lastSave) {
+            gameStartTime = parsed.lastSave;
+        } else {
+            gameStartTime = Date.now();
+        }
 
     } catch (e) {
         console.error("Erreur de chargement :", e);
@@ -989,9 +998,9 @@ function getTotalBuildingsOwned() {
 
 // Calcule la durée de la partie
 function getGameDuration() {
-    if (!lastSaveTime) return "N/A";
+    if (!gameStartTime) return "N/A";
     
-    const startTime = lastSaveTime;
+    const startTime = gameStartTime;
     const now = Date.now();
     const durationMs = now - startTime;
     
@@ -1193,4 +1202,10 @@ setInterval(() => {
 }, 10000);
 
 // Initialisation au chargement
-window.onload = init;
+window.onload = function() {
+    init();
+    // Initialiser le temps de début si ce n'est pas déjà fait
+    if (!gameStartTime) {
+        gameStartTime = Date.now();
+    }
+};
