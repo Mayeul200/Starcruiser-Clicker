@@ -492,10 +492,16 @@ function setBuyMultiplier(multiplier) {
     document.querySelectorAll('.multiplier-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.getElementById(`multiplier-x${multiplier}`).classList.add('active');
+    
+    if (multiplier === 'max') {
+        document.getElementById('multiplier-max').classList.add('active');
+        showToast("Multiplicateur: Max");
+    } else {
+        document.getElementById(`multiplier-x${multiplier}`).classList.add('active');
+        showToast(`Multiplicateur: x${multiplier}`);
+    }
     
     updateAllBuildingButtons();
-    showToast(`Multiplicateur: x${multiplier}`);
 }
 
 // ============================================
@@ -505,17 +511,17 @@ function buyBuilding(buildingId) {
     const building = findBuildingById(buildingId);
     if (!building) return;
 
-    // Calculer le coût total pour buyMultiplier bâtiments
-    let totalCost = 0;
-    let buildingsToBuy = buyMultiplier;
+    // Calculer le nombre de bâtiments à acheter (mode max ou multiplicateur)
+    let buildingsToBuy = buyMultiplier === 'max' ? calculateMaxAffordable(building) : buyMultiplier;
     
-    // Calculer le coût pour chaque bâtiment (le coût augmente exponentiellement)
+    // Calculer le coût total
+    let totalCost = 0;
     for (let i = 0; i < buildingsToBuy; i++) {
         const costForOne = calculateBuildingCost({...building, count: building.count + i});
         totalCost += costForOne;
     }
 
-    if (score >= totalCost) {
+    if (buildingsToBuy > 0) {
         score -= totalCost;
         building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
@@ -525,37 +531,31 @@ function buyBuilding(buildingId) {
         updateAllBuildingButtons();
         renderUpgrades();
         checkBuildingUnlocks();
-        showToast(`✅ +${buildingsToBuy} ${building.name}`);
+        const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
+        showToast(`✅ +${buildingsToBuy} ${building.name}${maxText}`);
     } else {
-        // Acheter le maximum possible
-        let maxAffordable = 0;
-        let cumulativeCost = 0;
-        
-        for (let i = 0; i < buyMultiplier; i++) {
-            const costForOne = calculateBuildingCost({...building, count: building.count + i});
-            if (cumulativeCost + costForOne <= score) {
-                cumulativeCost += costForOne;
-                maxAffordable++;
-            } else {
-                break;
-            }
-        }
-        
-        if (maxAffordable > 0) {
-            score -= cumulativeCost;
-            building.count += maxAffordable;
-            unlockedBuildings.add(building.id);
-            updateDisplay();
-            saveGame();
-            renderBuildings();
-            updateAllBuildingButtons();
-            renderUpgrades();
-            checkBuildingUnlocks();
-            showToast(`✅ +${maxAffordable} ${building.name} (max possible)`);
-        } else {
-            showToast("❌ Pas assez de Gloire");
-        }
+        showToast("❌ Pas assez de Gloire");
     }
+}
+
+// Calcule le nombre maximum de bâtiments achetables
+function calculateMaxAffordable(building) {
+    let maxAffordable = 0;
+    let cumulativeCost = 0;
+    let i = 0;
+    while (true) {
+        const costForOne = calculateBuildingCost({...building, count: building.count + i});
+        if (cumulativeCost + costForOne <= score) {
+            cumulativeCost += costForOne;
+            maxAffordable++;
+            i++;
+        } else {
+            break;
+        }
+        // Sécurité : éviter une boucle infinie
+        if (i > 100000) break;
+    }
+    return maxAffordable;
 }
 
 // Achat d'une amélioration de clic
