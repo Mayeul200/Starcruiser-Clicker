@@ -746,19 +746,32 @@ function renderBuilding(building) {
 // GESTION DES AMÉLIORATIONS
 // ============================================
 
-// Affiche les améliorations dans la barre du haut
+// Affiche les améliorations dans la barre du centre
 function renderUpgrades() {
-    const container = document.getElementById('upgrades-list');
+    const container = document.getElementById('upgrades-bar');
     container.innerHTML = '';
+
+    // Créer un conteneur pour les améliorations
+    const upgradesContainer = document.createElement('div');
+    upgradesContainer.className = 'upgrades-container-center';
 
     // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-item';
-            upgradeElement.textContent = upgrade.name + ' (' + formatNumber(upgrade.cost) + ' G)';
+            upgradeElement.className = 'upgrade-icon';
+            upgradeElement.innerHTML = '💰';
+            
+            // Créer le tooltip
+            const tooltip = `Amélioration de Clic: ${upgrade.name}
+` +
+                          `Coût: ${formatNumber(upgrade.cost)} Gloire
+` +
+                          `Seuil: ${formatNumber(upgrade.threshold)} Gloire totale`;
+            upgradeElement.setAttribute('data-tooltip', tooltip);
+            
             upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
-            container.appendChild(upgradeElement);
+            upgradesContainer.appendChild(upgradeElement);
         }
     });
     
@@ -771,15 +784,31 @@ function renderUpgrades() {
                 const cost = getBuildingUpgradeFixedCost(building.id, threshold);
                 
                 const upgradeElement = document.createElement('div');
-                upgradeElement.className = 'upgrade-item';
+                upgradeElement.className = 'upgrade-icon';
                 upgradeElement.style.background = color;
-                upgradeElement.style.color = 'white';
-                upgradeElement.innerHTML = '<span>' + building.image + ' ' + building.name + ' ×2 (' + formatNumber(cost) + ' G)</span>';
+                upgradeElement.innerHTML = building.image;
+                
+                // Créer le tooltip
+                const currentMultiplier = getBuildingUpgradeMultiplier(building.id);
+                const nextMultiplier = currentMultiplier * 2;
+                const tooltip = `Amélioration de ${building.name}
+` +
+                              `Niveau actuel: ${currentMultiplier}×
+` +
+                              `Prochain niveau: ${nextMultiplier}×
+` +
+                              `Seuil: ${threshold} unités
+` +
+                              `Coût: ${formatNumber(cost)} Gloire`;
+                upgradeElement.setAttribute('data-tooltip', tooltip);
+                
                 upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                container.appendChild(upgradeElement);
+                upgradesContainer.appendChild(upgradeElement);
             }
         });
     });
+
+    container.appendChild(upgradesContainer);
 }
 
 // ============================================

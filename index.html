@@ -10,7 +10,6 @@
 <body>
     <!-- BARRE DU HAUT (10% hauteur max) -->
     <div class="top-bar">
-        <div class="upgrades-container" id="upgrades-list"></div>
         <div class="top-bar-controls">
             <button class="control-button" onclick="toggleStats()" title="Statistiques">📊</button>
             <button class="control-button" onclick="toggleSettings()" title="Paramètres">⚙️</button>
@@ -54,6 +53,7 @@
 
         <!-- COLONNE CENTRALE (60%) - Zone de clic -->
         <div class="center-panel">
+            <div class="upgrades-bar" id="upgrades-bar"></div>
             <div class="medal" id="medal" onclick="addScore(1)">
                 <div class="medal-emoji">🏅</div>
             </div>

@@ -38,41 +38,79 @@ body {
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 0 16px;
     z-index: 1000;
 }
 
-.upgrades-container {
-    flex: 1;
+/* BARRE D'AMELIORATIONS (dans le centre) */
+.upgrades-bar {
+    height: 8%;
+    width: 100%;
     display: flex;
-    gap: 8px;
+    align-items: center;
+    justify-content: center;
     overflow-x: auto;
     padding: 4px 0;
-    height: 100%;
-    align-items: center;
+    border-bottom: 1px solid var(--border);
 }
 
-.upgrade-item {
-    min-width: 120px;
-    height: calc(var(--top-height) - 20px);
-    background: var(--secondary);
-    border: 1px solid var(--border);
+.upgrades-container-center {
+    display: flex;
+    gap: 6px;
+    height: 100%;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.upgrade-icon {
+    min-width: 32px;
+    height: 32px;
     border-radius: var(--radius);
-    padding: 0 12px;
-    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    white-space: nowrap;
+    font-size: 1.2rem;
     transition: all 0.2s;
+    position: relative;
+    border: 1px solid transparent;
 }
 
-.upgrade-item:hover {
-    background: var(--primary);
-    color: white;
+.upgrade-icon:hover {
+    transform: scale(1.15);
     border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Tooltip pour les améliorations */
+.upgrade-icon::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    color: var(--text);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    z-index: 1000;
+    pointer-events: none;
+    white-space: pre-line;
+    max-width: 300px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.upgrade-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
 }
 
 .top-bar-controls {
@@ -226,9 +264,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
+    justify-content: flex-start;
+    padding: 0 20px;
     height: 100%;
+    position: relative;
 }
 
 .medal {
