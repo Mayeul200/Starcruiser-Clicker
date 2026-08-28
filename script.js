@@ -300,7 +300,6 @@ function saveGame() {
 
     localStorage.setItem('gloryOfFranceSave', JSON.stringify(saveData));
     lastSaveTime = Date.now();
-    gameStartTime = Date.now();
 }
 
 function loadGame() {
