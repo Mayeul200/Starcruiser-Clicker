@@ -867,7 +867,7 @@ function addScore(points) {
 
     updateDisplay();
     saveGame();
-    renderBuildings();
+    updateAllBuildingButtons();
     renderUpgrades();
     checkBuildingUnlocks();
 }
