@@ -581,6 +581,7 @@ function buyClickUpgrade(threshold) {
     updateDisplay();
     saveGame();
     renderUpgrades();
+    updateAllBuildingButtons();
     showToast(`✅ ${upgrade.name} activée`);
 }
 
@@ -609,7 +610,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     updateDisplay();
     saveGame();
     renderUpgrades();
-    renderBuildings();
+    updateAllBuildingButtons();
     showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
 }
 
