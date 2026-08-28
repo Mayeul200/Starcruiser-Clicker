@@ -206,7 +206,7 @@ function formatNumber(num) {
     let normalized = absNum;
     
     // Trouver l'exposant qui donne 4-6 chiffres avant le suffixe
-    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi"];
+    const suffixes = ["", " Thousand", " Million", " Billion", " Trillion", " Quadrillion", " Quintillion"];
     for (let i = suffixes.length - 1; i >= 0; i--) {
         const testExponent = i * 3;
         const testNormalized = absNum / Math.pow(10, testExponent);
@@ -222,13 +222,13 @@ function formatNumber(num) {
     let normalizedAbs = Math.abs(normalized);
     if (normalizedAbs >= 100) {
         // 3 chiffres avant la virgule -> 3 décimales pour 6 chiffres (ex: 678.736M)
-        return normalized.toFixed(3).toLocaleString() + suffix;
+        return normalized.toFixed(3).toLocaleString() + " " + suffix;
     } else if (normalizedAbs >= 10) {
         // 2 chiffres avant la virgule -> 3 décimales pour 5 chiffres (ex: 34.575M)
-        return normalized.toFixed(3).toLocaleString() + suffix;
+        return normalized.toFixed(3).toLocaleString() + " " + suffix;
     } else {
         // 1 chiffre avant la virgule -> 3 décimales pour 4 chiffres (ex: 3.456M)
-        return normalized.toFixed(3).toLocaleString() + suffix;
+        return normalized.toFixed(3).toLocaleString() + " " + suffix;
     }
 }
 
