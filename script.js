@@ -997,6 +997,27 @@ function toggleStats() {
 function updateDisplay() {
     document.getElementById('score-value').textContent = formatNumber(score);
     document.getElementById('gain-value').textContent = formatNumber(autoGain);
+    updateBonusTimer();
+}
+
+// Met à jour l'affichage du timer des bonus actifs
+function updateBonusTimer() {
+    const timerElement = document.getElementById('bonus-timer');
+    if (!timerElement) return;
+    
+    const activeBonuses = activeRandomBonuses.filter(b => b.id === 'croissant');
+    if (activeBonuses.length === 0) {
+        timerElement.textContent = '';
+        timerElement.style.display = 'none';
+        return;
+    }
+    
+    const bonus = activeBonuses[0];
+    const remainingTime = Math.max(0, bonus.endTime - Date.now());
+    const seconds = Math.ceil(remainingTime / 1000);
+    
+    timerElement.textContent = `⏳ x${bonus.multiplier} (${seconds}s)`;
+    timerElement.style.display = 'block';
 }
 
 // ============================================
