@@ -496,7 +496,7 @@ body {
     z-index: 1000;
     pointer-events: none;
     white-space: pre-line;
-    max-width: 300px;
+    max-width: 400px;
     line-height: 1.5;
 }
 
