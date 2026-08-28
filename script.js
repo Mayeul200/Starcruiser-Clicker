@@ -716,7 +716,7 @@ function renderBuilding(building) {
             <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
                 ${formatNumber(currentCost)} Gloire
             </button>
-            <div class="building-production">+${formatNumber(totalGain)}/s</div>
+            <div class="building-production">${formatNumber(totalGain)}/s</div>
         </div>
     `;
 
