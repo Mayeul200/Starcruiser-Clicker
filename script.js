@@ -47,10 +47,8 @@ const UPGRADE_COLORS = [
 
 // Bonus aléatoires
 const RANDOM_BONUSES = [
-    { id: "druide", symbol: "🌿", name: "Druide Sacré", effect: "auto", multiplier: 5, duration: 30000, tooltip: "×5 Gloire/s pendant 30s", colorClass: "druide" },
-    { id: "alliance", symbol: "🤝", name: "Alliance Sacrée", effect: "click", multiplier: 10, duration: 30000, tooltip: "×10 Gloire/clic pendant 30s", colorClass: "alliance" },
-    { id: "marianne", symbol: "👩‍💼", name: "Marianne", effect: "both", multiplier: 3, duration: 45000, tooltip: "×3 Gloire/s ET ×3 Gloire/clic pendant 45s", colorClass: "marianne" },
-    { id: "napoleon-bonus", symbol: "🎨", name: "Stratège Génial", effect: "auto", multiplier: 8, duration: 25000, tooltip: "×8 Gloire/s pendant 25s", colorClass: "napoleon" }
+    { id: "baguette", symbol: "🥖", name: "Baguette Magique", effect: "instant", type: "baguette", colorClass: "baguette" },
+    { id: "croissant", symbol: "🥐", name: "Croissant Doré", effect: "multiplier", type: "croissant", multiplier: 10, duration: 30000, colorClass: "croissant" }
 ];
 
 // Variables globales
@@ -290,7 +288,7 @@ function loadGame() {
             }
         }
 
-        // Charger les bonus actifs
+        // Charger les bonus actifs (compatibilité avec anciens et nouveaux bonus)
         if (parsed.activeRandomBonuses) {
             activeRandomBonuses = parsed.activeRandomBonuses.map(bonus => ({
                 id: bonus.id,
@@ -299,15 +297,15 @@ function loadGame() {
                 endTime: bonus.endTime
             }));
 
-            // Appliquer les multiplicateurs des bonus actifs
+            // Appliquer les multiplicateurs des bonus actifs (seulement pour les bonus de type multiplier)
             activeRandomBonuses.forEach(bonus => {
-                if (bonus.effect === "auto" || bonus.effect === "both") {
-                    if (!autoMultipliers.includes(bonus.multiplier)) {
+                if (bonus.effect === "auto" || bonus.effect === "both" || bonus.effect === "multiplier") {
+                    if (bonus.multiplier && !autoMultipliers.includes(bonus.multiplier)) {
                         autoMultipliers.push(bonus.multiplier);
                     }
                 }
                 if (bonus.effect === "click" || bonus.effect === "both") {
-                    if (!clickMultipliers.includes(bonus.multiplier)) {
+                    if (bonus.multiplier && !clickMultipliers.includes(bonus.multiplier)) {
                         clickMultipliers.push(bonus.multiplier);
                     }
                 }
@@ -345,11 +343,11 @@ function loadGame() {
         autoMultipliers = [1];
         clickMultipliers = [1];
         activeRandomBonuses.forEach(bonus => {
-            if (bonus.effect === "auto" || bonus.effect === "both") {
-                autoMultipliers.push(bonus.multiplier);
+            if (bonus.effect === "auto" || bonus.effect === "both" || bonus.effect === "multiplier") {
+                if (bonus.multiplier) autoMultipliers.push(bonus.multiplier);
             }
             if (bonus.effect === "click" || bonus.effect === "both") {
-                clickMultipliers.push(bonus.multiplier);
+                if (bonus.multiplier) clickMultipliers.push(bonus.multiplier);
             }
         });
         updateAutoMultiplier();
@@ -725,9 +723,17 @@ function spawnRandomBonus() {
     bonusElement.innerHTML = bonus.symbol;
     bonusElement.style.left = `${x}px`;
     bonusElement.style.top = `${y}px`;
-    bonusElement.setAttribute('data-tooltip', bonus.tooltip + ` (${bonus.duration/1000}s)`);
-
+    bonusElement.style.transform = 'scale(0.1)';
+    bonusElement.style.opacity = '0';
+    
     document.getElementById('random-bonuses').appendChild(bonusElement);
+
+    // Animation d'apparition progressive
+    setTimeout(() => {
+        bonusElement.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-in';
+        bonusElement.style.transform = 'scale(1)';
+        bonusElement.style.opacity = '1';
+    }, 10);
 
     const timeout = setTimeout(() => {
         bonusElement.classList.add('clicked');
@@ -738,47 +744,38 @@ function spawnRandomBonus() {
         clearTimeout(timeout);
         bonusElement.classList.add('clicked');
 
-        // Gérer les bonus click
-        if (bonus.effect === "auto" || bonus.effect === "both") {
+        if (bonus.id === "baguette") {
+            // Bonus instantané : 1 minute de production totale
+            const oneMinuteProduction = autoGain * 60;
+            score += oneMinuteProduction;
+            showToast(`✅ ${bonus.name} : +${formatNumber(oneMinuteProduction)} Gloire !`);
+        } 
+        else if (bonus.id === "croissant") {
+            // Bonus multiplicateur x10 pendant 30 secondes
             if (!autoMultipliers.includes(bonus.multiplier)) {
                 autoMultipliers.push(bonus.multiplier);
                 updateAutoMultiplier();
             }
-        }
-        if (bonus.effect === "click" || bonus.effect === "both") {
-            if (!clickMultipliers.includes(bonus.multiplier)) {
-                clickMultipliers.push(bonus.multiplier);
-                updateClickMultiplier();
-            }
-        }
 
-        activeRandomBonuses.push({
-            id: bonus.id,
-            effect: bonus.effect,
-            multiplier: bonus.multiplier,
-            endTime: Date.now() + bonus.duration
-        });
+            activeRandomBonuses.push({
+                id: bonus.id,
+                effect: bonus.effect,
+                multiplier: bonus.multiplier,
+                endTime: Date.now() + bonus.duration
+            });
 
-        setTimeout(() => bonusElement.remove(), 500);
+            showToast(`✅ ${bonus.name} : ×${bonus.multiplier} Gloire/s pendant ${bonus.duration/1000}s`);
 
-        showToast(`✅ ${bonus.name} activé (${bonus.duration/1000}s)`);
-
-        setTimeout(() => {
-            activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
-            
-            if (bonus.effect === "auto" || bonus.effect === "both") {
+            setTimeout(() => {
+                activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
                 autoMultipliers = autoMultipliers.filter(m => m !== bonus.multiplier);
                 updateAutoMultiplier();
-            }
-            if (bonus.effect === "click" || bonus.effect === "both") {
-                clickMultipliers = clickMultipliers.filter(m => m !== bonus.multiplier);
-                updateClickMultiplier();
-            }
-            
-            updateDisplay();
-            showToast(`⏰ ${bonus.name} expiré`);
-        }, bonus.duration);
+                updateDisplay();
+                showToast(`⏰ ${bonus.name} expiré`);
+            }, bonus.duration);
+        }
 
+        setTimeout(() => bonusElement.remove(), 500);
     };
 }
 

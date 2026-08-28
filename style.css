@@ -516,12 +516,11 @@ body {
     cursor: pointer;
     pointer-events: all;
     box-shadow: var(--shadow);
-    animation: pulse 2s infinite;
-    transition: all 0.2s;
+    transition: all 0.5s ease-out;
 }
 
 .random-bonus:hover {
-    transform: scale(1.2);
+    transform: scale(1.15) !important;
 }
 
 .random-bonus.clicked {
@@ -632,7 +631,5 @@ body {
 
 
 /* Styles pour les bonus aléatoires */
-.random-bonus.druide { background: #4CAF50; }
-.random-bonus.alliance { background: #2196F3; }
-.random-bonus.marianne { background: #9C27B0; }
-.random-bonus.napoleon { background: #FF5722; }
+.random-bonus.baguette { background: #FFD700; color: #8B4513; }
+.random-bonus.croissant { background: #FFA500; color: #FFFFFF; }
