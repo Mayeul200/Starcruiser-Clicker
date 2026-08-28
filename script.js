@@ -176,7 +176,7 @@ function calculateBuildingCost(building) {
 
 // Formate les nombres pour toujours afficher entre 4 et 6 chiffres significatifs
 // Exemples: 0.2 -> 0.2, 3456 -> 3 456, 3 456 000 -> 3.456M, 34 456 000 -> 34.456M
-function formatNumber(num) {
+function formatNumber(num, isTotalScore) {
     if (num === 0) return "0";
     
     let absNum = Math.abs(num);
@@ -221,13 +221,14 @@ function formatNumber(num) {
     // Formater avec le bon nombre de décimales pour garder 4-6 chiffres significatifs
     let normalizedAbs = Math.abs(normalized);
     if (normalizedAbs >= 100) {
-        // 3 chiffres avant la virgule -> 3 décimales pour 6 chiffres (ex: 678.736M)
-        return normalized.toFixed(3).toLocaleString() + " " + suffix;
+        // 3 chiffres avant la virgule -> 2 décimales pour les suffixes, 3 pour le score total
+        const decimals = (isTotalScore !== undefined && isTotalScore) ? 3 : 2;
+        return normalized.toFixed(decimals).toLocaleString() + " " + suffix;
     } else if (normalizedAbs >= 10) {
-        // 2 chiffres avant la virgule -> 3 décimales pour 5 chiffres (ex: 34.575M)
+        // 2 chiffres avant la virgule -> 3 décimales pour 5 chiffres
         return normalized.toFixed(3).toLocaleString() + " " + suffix;
     } else {
-        // 1 chiffre avant la virgule -> 3 décimales pour 4 chiffres (ex: 3.456M)
+        // 1 chiffre avant la virgule -> 3 décimales pour 4 chiffres
         return normalized.toFixed(3).toLocaleString() + " " + suffix;
     }
 }
@@ -996,7 +997,7 @@ function toggleStats() {
 // ============================================
 
 function updateDisplay() {
-    document.getElementById('score-value').textContent = formatNumber(score);
+    document.getElementById('score-value').textContent = formatNumber(score, true);
     document.getElementById('gain-value').textContent = formatNumber(autoGain);
     updateBonusTimer();
 }
