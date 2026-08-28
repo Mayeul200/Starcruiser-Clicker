@@ -748,14 +748,8 @@ function renderBuilding(building) {
 
 // Affiche les améliorations dans la barre du centre
 function renderUpgrades() {
-    const container = document.getElementById('upgrades-bar');
+    const container = document.getElementById('upgrades-container');
     container.innerHTML = '';
-
-    // Créer un conteneur pour les améliorations
-    const upgradesContainer = document.createElement('div');
-    upgradesContainer.className = 'upgrades-container-center';
-
-    // Améliorations de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (clickGloireTotal >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeElement = document.createElement('div');
@@ -808,7 +802,6 @@ function renderUpgrades() {
         });
     });
 
-    container.appendChild(upgradesContainer);
 }
 
 // ============================================
