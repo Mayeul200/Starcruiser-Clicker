@@ -45,13 +45,13 @@ body {
 
 /* BARRE D'AMELIORATIONS (dans le centre) */
 .upgrades-bar {
-    height: 40px;
+    height: 48px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     overflow: hidden;
-    padding: 0 10px;
+    padding: 0 15px;
     border-bottom: 1px solid var(--border);
     background: white;
 }
@@ -64,6 +64,7 @@ body {
     width: 100%;
     overflow-x: auto;
     padding: 0;
+    margin-left: 5px;
 }
 
 .upgrades-container-center::-webkit-scrollbar {
@@ -76,14 +77,14 @@ body {
 }
 
 .upgrade-icon {
-    min-width: 32px;
-    height: 32px;
+    min-width: 36px;
+    height: 36px;
     border-radius: var(--radius);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     transition: all 0.2s;
     position: relative;
     border: 1px solid transparent;
@@ -178,7 +179,7 @@ body {
 }
 
 .modal-header h2 {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
 }
 
 .close-button {
@@ -607,7 +608,7 @@ body {
 .click-effect {
     position: absolute;
     color: var(--accent);
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 600;
     text-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
     animation: floatUp 1s forwards;
@@ -680,7 +681,7 @@ body {
     .counter { font-size: 1.1rem; }
     .building-item { min-height: 45px; padding: 8px; }
     .building-name { font-size: 0.85rem; }
-    .building-icon { font-size: 1.2rem; }
+    .building-icon { font-size: 1.3rem; }
     .building-cost { font-size: 0.8rem; }
     .building-item button {
     width: 100%; padding: 6px 10px; font-size: 0.8rem; }
