@@ -163,13 +163,62 @@ function calculateBuildingCost(building) {
         : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
 }
 
-// Formate les nombres
+// Formate les nombres pour toujours afficher entre 4 et 6 chiffres significatifs
+// Exemples: 0.2 -> 0.2, 3456 -> 3 456, 3 456 000 -> 3.456M, 34 456 000 -> 34.456M
 function formatNumber(num) {
-    if (num < 1000) return num.toFixed(num % 1 === 0 ? 0 : 1);
-    if (num < 1000000) return (num / 1000).toFixed(1) + "K";
-    if (num < 1000000000) return (num / 1000000).toFixed(1) + "M";
-    if (num < 1000000000000) return (num / 1000000000).toFixed(1) + "B";
-    return (num / 1000000000000).toFixed(1) + "T";
+    if (num === 0) return "0";
+    
+    let absNum = Math.abs(num);
+    
+    // Pour les nombres < 1000, on affiche avec 1 décimale si nécessaire
+    if (absNum < 1000) {
+        if (num % 1 === 0) {
+            return Math.round(num).toLocaleString();
+        } else {
+            return num.toFixed(1).toLocaleString();
+        }
+    }
+    
+    // Pour les nombres entre 1000 et 999999, on affiche sans suffixe avec séparateurs
+    if (absNum < 1000000) {
+        if (num % 1 === 0) {
+            return Math.round(num).toLocaleString();
+        } else {
+            return num.toFixed(1).toLocaleString();
+        }
+    }
+    
+    // Pour les nombres >= 1M, on utilise des suffixes avec TOUJOURS 4-6 chiffres significatifs
+    // On trouve le bon exposant pour que la partie numérique ait 4-6 chiffres
+    let exponent = 0;
+    let suffix = "";
+    let normalized = absNum;
+    
+    // Trouver l'exposant qui donne 4-6 chiffres avant le suffixe
+    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi"];
+    for (let i = suffixes.length - 1; i >= 0; i--) {
+        const testExponent = i * 3;
+        const testNormalized = absNum / Math.pow(10, testExponent);
+        if (testNormalized >= 1 && testNormalized < 1000) {
+            exponent = testExponent;
+            suffix = suffixes[i];
+            normalized = num / Math.pow(10, exponent);
+            break;
+        }
+    }
+    
+    // Formater avec le bon nombre de décimales pour garder 4-6 chiffres significatifs
+    let normalizedAbs = Math.abs(normalized);
+    if (normalizedAbs >= 100) {
+        // 3 chiffres avant la virgule -> 3 décimales pour 6 chiffres (ex: 678.736M)
+        return normalized.toFixed(3).toLocaleString() + suffix;
+    } else if (normalizedAbs >= 10) {
+        // 2 chiffres avant la virgule -> 2 décimales pour 5 chiffres (ex: 34.57M)
+        return normalized.toFixed(2).toLocaleString() + suffix;
+    } else {
+        // 1 chiffre avant la virgule -> 3 décimales pour 4 chiffres (ex: 3.456M)
+        return normalized.toFixed(3).toLocaleString() + suffix;
+    }
 }
 
 // Fonction pour recalculer le multiplicateur auto global
