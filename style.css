@@ -259,7 +259,7 @@ body {
     right: 0;
     gap: 1px;
     background: var(--border);
-    overflow: hidden;
+    overflow: visible;
 }
 
 /* LEFT PANEL */
@@ -301,6 +301,7 @@ body {
     align-items: center;
     height: 100%;
     position: relative;
+    z-index: 1;
 }
 
 .medal {
