@@ -175,101 +175,37 @@ function calculateBuildingCost(building) {
         : Math.floor(building.baseCost * Math.exp(0.12 * building.count));
 }
 
-// Formate les nombres pour toujours afficher entre 4 et 6 chiffres significatifs
-// Exemples: 0.2 -> 0.2, 3456 -> 3 456, 3 456 000 -> 3.456M, 34 456 000 -> 34.456M
+// Formate les nombres : max 3 chiffres avant la virgule, 2 après (3 pour le score total)
 function formatNumber(num, isTotalScore) {
     if (num === 0) return "0";
     
+    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "De", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd"];
+    
+    // Déterminer le suffixe approprié
+    let exponent = 0;
     let absNum = Math.abs(num);
     
-    // Pour les nombres < 1000, on affiche avec 1 décimale si nécessaire
-    if (absNum < 1000) {
-        if (num % 1 === 0) {
-            return Math.round(num).toLocaleString();
-        } else {
-            return num.toFixed(1).toLocaleString();
-        }
-    }
-    
-    // Pour les nombres entre 1000 et 999999, on affiche sans suffixe avec séparateurs
-    if (absNum < 1000000) {
-        if (num % 1 === 0) {
-            return Math.round(num).toLocaleString();
-        } else {
-            return num.toFixed(1).toLocaleString();
-        }
-    }
-    
-    // Pour les nombres >= 1M, on utilise des suffixes avec TOUJOURS 4-6 chiffres significatifs
-    // On trouve le bon exposant pour que la partie numérique ait 4-6 chiffres
-    let exponent = 0;
-    let suffix = "";
-    let normalized = absNum;
-    
-    // Trouver l'exposant qui donne 4-6 chiffres avant le suffixe
-    const suffixes = ["", " Thousand", " Million", " Billion", " Trillion", " Quadrillion", " Quintillion", " Sextillion", " Septillion", " Octillion", " Nonillion", " Decillion", " Undecillion", " Duodecillion", " Tredecillion", " Quattuordecillion", " Quindecillion", " Sexdecillion"];
+    // Trouver le plus grand suffixe où le nombre normalisé a <= 3 chiffres avant la virgule
     for (let i = suffixes.length - 1; i >= 0; i--) {
-        const testExponent = i * 3;
-        const testNormalized = absNum / Math.pow(10, testExponent);
-        if (testNormalized >= 1 && testNormalized < 1000) {
-            exponent = testExponent;
-            suffix = suffixes[i];
-            normalized = num / Math.pow(10, exponent);
-            break;
+        exponent = i * 3;
+        const normalized = absNum / Math.pow(10, exponent);
+        if (normalized >= 1 && normalized < 1000) {
+            // Calculer le nombre de décimales
+            const decimals = (isTotalScore !== undefined && isTotalScore) ? 3 : 2;
+            const formatted = (num / Math.pow(10, exponent)).toFixed(decimals);
+            return formatted.toLocaleString() + " " + suffixes[i];
         }
     }
     
-    // Formater avec le bon nombre de décimales pour garder 4-6 chiffres significatifs
-    let normalizedAbs = Math.abs(normalized);
-    if (normalizedAbs >= 100) {
-        // 3 chiffres avant la virgule -> 2 décimales pour les suffixes, 3 pour le score total
-        const decimals = (isTotalScore !== undefined && isTotalScore) ? 3 : 2;
-        return normalized.toFixed(decimals).toLocaleString() + " " + suffix;
-    } else if (normalizedAbs >= 10) {
-        // 2 chiffres avant la virgule -> 3 décimales pour 5 chiffres
-        return normalized.toFixed(3).toLocaleString() + " " + suffix;
+    // Si on arrive ici, c'est un nombre < 1000
+    // Afficher avec 2 décimales max (ou 3 pour le total)
+    const decimals = (isTotalScore !== undefined && isTotalScore) ? 3 : 2;
+    if (num % 1 === 0) {
+        return Math.round(num).toLocaleString();
     } else {
-        // 1 chiffre avant la virgule -> 3 décimales pour 4 chiffres
-        return normalized.toFixed(3).toLocaleString() + " " + suffix;
+        return num.toFixed(decimals).toLocaleString();
     }
-}
-
-// Fonction pour recalculer le multiplicateur auto global
-function updateAutoMultiplier() {
-    autoMultiplier = autoMultipliers.reduce((a, b) => a * b, 1);
-}
-
-// Fonction pour recalculer le multiplicateur de clic global
-function updateClickMultiplier() {
-    clickMultiplier = clickMultipliers.reduce((a, b) => a * b, 1);
-}
-
-// Affiche un toast notification
-function showToast(message) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.classList.add('active');
-    setTimeout(() => toast.classList.remove('active'), 3000);
-}
-
-// ============================================
-// SAUVEGARDE / CHARGEMENT
-// ============================================
-
-const SAVE_VERSION = "3.0.0";
-
-function saveGame() {
-    const saveData = {
-        score: score,
-        autoGain: autoGain,
-        autoMultiplier: autoMultiplier,
-        clickMultiplier: clickMultiplier,
-        clickGloireTotal: clickGloireTotal,
-        activatedClickUpgrades: [...activatedClickUpgrades],
-        unlockedBuildings: Array.from(unlockedBuildings),
-                autoMultipliers: [...autoMultipliers],
-        clickMultipliers: [...clickMultipliers],
-        buildingUpgrades: {},
+},
         buildingUpgradeCosts: {},
         totalGeneratedByBuilding: {},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
