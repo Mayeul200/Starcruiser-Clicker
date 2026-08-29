@@ -93,7 +93,49 @@ const RANDOM_BONUSES = [
     { id: "croissant", symbol: "\ud83e\udd50", name: "Croissant Doré", effect: "multiplier", type: "croissant", multiplier: 10, duration: 30000, colorClass: "croissant" }
 ];
 
-const SAVE_VERSION = "4.0.0";
+const SAVE_VERSION = "5.0.0";
+
+// ============================================
+// TROPH\u0009ES
+// ============================================
+const TROPHIES = [
+    // Milestones de Gloire par seconde
+    { id: "gps-1", name: "Premi\u00e8res Pas", description: "Atteindre 1 Gloire par seconde", icon: "\ud83c\udfc6", threshold: 1, type: "gps", unlocked: false },
+    { id: "gps-10", name: "En Route", description: "Atteindre 10 Gloire par seconde", icon: "\ud83d\ude83", threshold: 10, type: "gps", unlocked: false },
+    { id: "gps-100", name: "En Bonne Voie", description: "Atteindre 100 Gloire par seconde", icon: "\ud83d\ude85", threshold: 100, type: "gps", unlocked: false },
+    { id: "gps-1000", name: "D\u00e9collage", description: "Atteindre 1 000 Gloire par seconde", icon: "\u2708\ufe0f", threshold: 1000, type: "gps", unlocked: false },
+    { id: "gps-10000", name: "Vitesse de Croisi\u00e8re", description: "Atteindre 10 000 Gloire par seconde", icon: "\ud83d\udef3", threshold: 10000, type: "gps", unlocked: false },
+    { id: "gps-100000", name: "Fus\u00e9e", description: "Atteindre 100 000 Gloire par seconde", icon: "\ud83d\udca0", threshold: 100000, type: "gps", unlocked: false },
+    { id: "gps-1000000", name: "Vitesse de la Lumie\u0000re", description: "Atteindre 1 000 000 Gloire par seconde", icon: "\u26a1", threshold: 1000000, type: "gps", unlocked: false },
+    
+    // Am\u00e9liorations de b\u00e2timents
+    { id: "first-upgrade", name: "Premi\u00e8re Am\u00e9lioration", description: "Acheter votre premi\u00e8re am\u00e9lioration de b\u00e2timent", icon: "\ud83c\udf96\ufe0f", threshold: 1, type: "building-upgrade", unlocked: false },
+    { id: "five-upgrades", name: "Am\u00e9liorateur", description: "Avoir 5 am\u00e9liorations de b\u00e2timents", icon: "\ud83d\udc77\u200d\ud83c\udf96\ufe0f", threshold: 5, type: "building-upgrade", unlocked: false },
+    { id: "ten-upgrades", name: "Ma\u00eetre des Am\u00e9liorations", description: "Avoir 10 am\u00e9liorations de b\u00e2timents", icon: "\ud83d\udc68\u200d\ud83d\udcbb", threshold: 10, type: "building-upgrade", unlocked: false },
+    { id: "twenty-upgrades", name: "G\u00e9nie des Am\u00e9liorations", description: "Avoir 20 am\u00e9liorations de b\u00e2timents", icon: "\ud83e\udd13", threshold: 20, type: "building-upgrade", unlocked: false },
+    
+    // Am\u00e9liorations de clic
+    { id: "first-click-upgrade", name: "Premier Clic Am\u00e9lior\u00e9", description: "Acheter votre premi\u00e8re am\u00e9lioration de clic", icon: "\ud83d\udc49", threshold: 1, type: "click-upgrade", unlocked: false },
+    { id: "all-click-upgrades", name: "Ma\u00eetre du Clic", description: "D\u00e9bloquer toutes les am\u00e9liorations de clic", icon: "\ud83d\udc4a", threshold: CLICK_UPGRADES.length, type: "click-upgrade", unlocked: false },
+    
+    // B\u00e2timents
+    { id: "first-building", name: "Premier B\u00e2timent", description: "Acheter votre premier b\u00e2timent", icon: "\ud83c\uddf7\ud83c\udde6", threshold: 1, type: "building", unlocked: false },
+    { id: "ten-buildings", name: "Constructeur", description: "Poss\u00e9der 10 b\u00e2timents au total", icon: "\ud83c\uddfa\ud83c\uddf8", threshold: 10, type: "building", unlocked: false },
+    { id: "hundred-buildings", name: "Architecte", description: "Poss\u00e9der 100 b\u00e2timents au total", icon: "\ud83c\udfdb\ufe0f", threshold: 100, type: "building", unlocked: false },
+    { id: "thousand-buildings", name: "Empereur B\u00e2tisseur", description: "Poss\u00e9der 1 000 b\u00e2timents au total", icon: "\ud83c\uddf9\ud83c\uddfc", threshold: 1000, type: "building", unlocked: false },
+    
+    // Score total
+    { id: "score-1000", name: "Petit D\u00e9but", description: "Atteindre 1 000 Gloire", icon: "\ud83c\udf37", threshold: 1000, type: "score", unlocked: false },
+    { id: "score-1000000", name: "Millionnaire", description: "Atteindre 1 000 000 Gloire", icon: "\ud83d\udcb0", threshold: 1000000, type: "score", unlocked: false },
+    { id: "score-1000000000", name: "Milliardaire", description: "Atteindre 1 000 000 000 Gloire", icon: "\ud83d\udcb3", threshold: 1000000000, type: "score", unlocked: false },
+    
+    // Bonus
+    { id: "first-bonus", name: "Premier Bonus", description: "Cliquer sur votre premier bonus al\u00e9atoire", icon: "\ud83e\udd56", threshold: 1, type: "bonus", unlocked: false },
+    { id: "ten-bonuses", name: "Chasseur de Bonus", description: "Cliquer sur 10 bonus al\u00e9atoires", icon: "\ud83c\udf81", threshold: 10, type: "bonus", unlocked: false },
+    
+    // Sp\u00e9cial
+    { id: "all-buildings", name: "Collectionneur", description: "D\u00e9bloquer tous les types de b\u00e2timents", icon: "\ud83c\uddf6\ud83c\udde6", threshold: BUILDINGS.length, type: "building-types", unlocked: false }
+];
 
 // ============================================
 // VARIABLES GLOBALES
@@ -116,6 +158,7 @@ let lastBuildingsUpdate = 0;
 let gameStartTime = 0;
 let buyMultiplier = 1;
 let clickedBonusesCount = 0;
+let unlockedTrophies = new Set();
 
 // ============================================
 // FONCTIONS UTILITAIRES
@@ -269,6 +312,7 @@ function saveGame() {
         buildingUpgradeCosts: {},
         totalGeneratedByBuilding: {},
         clickedBonusesCount: clickedBonusesCount,
+        unlockedTrophies: Array.from(unlockedTrophies),
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
             effect: bonus.effect,
@@ -316,6 +360,7 @@ function loadGame() {
         clickMultiplier = parsed.clickMultiplier || 1;
         totalGloryFromClicks = parsed.totalGloryFromClicks || parsed.clickGloireTotal || 0;
         clickedBonusesCount = parsed.clickedBonusesCount || 0;
+        unlockedTrophies = new Set(parsed.unlockedTrophies || []);
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
@@ -505,6 +550,7 @@ function buyBuilding(buildingId) {
         checkBuildingUnlocks();
         const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
         showToast(`\u2705 +${buildingsToBuy} ${building.name}${maxText}`);
+        checkTrophies();
     } else {
         showToast("\u274c Pas assez de Gloire");
     }
@@ -575,6 +621,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     hideTooltip();
     renderUpgrades();
     updateAllBuildingButtons();
+    checkTrophies();
     showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
 }
 
@@ -810,6 +857,7 @@ function spawnRandomBonus() {
         }
 
         setTimeout(() => bonusElement.remove(), 500);
+        checkTrophies();
     };
 }
 
@@ -836,6 +884,7 @@ function addScore(points) {
     updateAllBuildingButtons();
     renderUpgrades();
     checkBuildingUnlocks();
+    checkTrophies();
 }
 
 function showClickEffect(value) {
@@ -885,6 +934,7 @@ function gameLoop() {
     }
     updateDisplay();
     checkBuildingUnlocks();
+    checkTrophies();
 }
 
 // ============================================
@@ -918,6 +968,118 @@ function getGameDuration() {
     if (durationMs < 3600000) return Math.floor(durationMs / 60000) + "min";
     if (durationMs < 86400000) return Math.floor(durationMs / 3600000) + "h";
     return Math.floor(durationMs / 86400000) + "j";
+}
+
+// ============================================
+// GESTION DES TROPH\u001aES
+// ============================================
+
+function getTotalBuildingUpgrades() {
+    let count = 0;
+    for (const buildingId in buildingUpgrades) {
+        count += buildingUpgrades[buildingId].length;
+    }
+    return count;
+}
+
+function getUnlockedBuildingTypes() {
+    return BUILDINGS.filter(b => b.count > 0).length;
+}
+
+function checkTrophies() {
+    let changed = false;
+    
+    TROPHIES.forEach(trophy => {
+        if (!unlockedTrophies.has(trophy.id)) {
+            let unlocked = false;
+            
+            switch (trophy.type) {
+                case 'gps':
+                    unlocked = gloryPerSecond >= trophy.threshold;
+                    break;
+                case 'building-upgrade':
+                    unlocked = getTotalBuildingUpgrades() >= trophy.threshold;
+                    break;
+                case 'click-upgrade':
+                    unlocked = activatedClickUpgrades.length >= trophy.threshold;
+                    break;
+                case 'building':
+                    unlocked = getTotalBuildingsOwned() >= trophy.threshold;
+                    break;
+                case 'score':
+                    unlocked = score >= trophy.threshold;
+                    break;
+                case 'bonus':
+                    unlocked = clickedBonusesCount >= trophy.threshold;
+                    break;
+                case 'building-types':
+                    unlocked = getUnlockedBuildingTypes() >= trophy.threshold;
+                    break;
+            }
+            
+            if (unlocked) {
+                unlockedTrophies.add(trophy.id);
+                changed = true;
+                showToast(`Trophee debloque : ${trophy.name}!`);
+            }
+        }
+    });
+    
+    return changed;
+}
+
+function renderTrophies() {
+    const container = document.createElement('div');
+    container.style.marginTop = '8px';
+    
+    const trophiesGrid = document.createElement('div');
+    trophiesGrid.style.display = 'grid';
+    trophiesGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(60px, 1fr))';
+    trophiesGrid.style.gap = '8px';
+    trophiesGrid.style.marginTop = '8px';
+    
+    TROPHIES.forEach(trophy => {
+        const trophyElement = document.createElement('div');
+        trophyElement.className = 'trophy-icon';
+        trophyElement.style.width = '50px';
+        trophyElement.style.height = '50px';
+        trophyElement.style.borderRadius = '50%';
+        trophyElement.style.display = 'flex';
+        trophyElement.style.alignItems = 'center';
+        trophyElement.style.justifyContent = 'center';
+        trophyElement.style.fontSize = '1.5rem';
+        trophyElement.style.cursor = 'pointer';
+        trophyElement.style.position = 'relative';
+        trophyElement.style.transition = 'all 0.2s';
+        trophyElement.style.border = '2px solid #e2e8f0';
+        trophyElement.style.background = '#f8fafc';
+        
+        if (unlockedTrophies.has(trophy.id)) {
+            trophyElement.style.background = '#dbeafe';
+            trophyElement.style.borderColor = '#2563eb';
+            trophyElement.style.opacity = '1';
+        } else {
+            trophyElement.style.opacity = '0.4';
+            trophyElement.style.filter = 'grayscale(100%)';
+        }
+        
+        trophyElement.innerHTML = trophy.icon;
+        
+        trophyElement.addEventListener('mouseenter', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const name = trophy.name;
+            const description = trophy.description;
+            const isUnlocked = unlockedTrophies.has(trophy.id);
+            const status = isUnlocked ? 'Debloque' : 'Verrouille';
+            showTooltip(`${name}\n${description}\n${status}`, rect.left + rect.width/2, rect.top);
+        });
+        trophyElement.addEventListener('mouseleave', hideTooltip);
+        
+        trophiesGrid.appendChild(trophyElement);
+    });
+    
+    container.appendChild(trophiesGrid);
+    return container;
 }
 
 function renderStats() {
@@ -1003,8 +1165,9 @@ function renderStats() {
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Trophées</h4>';
-    container.innerHTML += '<div style="padding: 8px 0; font-size: 0.9rem; color: #94a3b8;">Bientôt disponible...</div>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Trophees</h4>';
+    const trophiesSection = renderTrophies();
+    container.appendChild(trophiesSection);
 }
 
 // ============================================
@@ -1063,6 +1226,7 @@ function init() {
     renderBuildings();
     renderUpgrades();
     checkBuildingUnlocks();
+    checkTrophies();
 }
 
 // ============================================
