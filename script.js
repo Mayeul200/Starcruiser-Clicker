@@ -499,6 +499,7 @@ function buyBuilding(buildingId) {
         unlockedBuildings.add(building.id);
         updateDisplay();
         saveGame();
+        hideTooltip();
         updateAllBuildingButtons();
         renderUpgrades();
         checkBuildingUnlocks();
@@ -545,6 +546,7 @@ function buyClickUpgrade(threshold) {
     activatedClickUpgrades.push(threshold);
     updateDisplay();
     saveGame();
+    hideTooltip();
     renderUpgrades();
     updateAllBuildingButtons();
     showToast(`\u2705 ${upgrade.name} activée`);
@@ -570,6 +572,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     buildingUpgrades[buildingId].push(threshold);
     updateDisplay();
     saveGame();
+    hideTooltip();
     renderUpgrades();
     updateAllBuildingButtons();
     showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
@@ -605,14 +608,14 @@ function updateBuildingButton(buildingId) {
 
     const button = element.querySelector('button');
     const productionSpan = element.querySelector('.building-production');
-    const ownershipSpan = element.querySelector('.building-ownership span');
+    const ownershipDiv = element.querySelector('.building-ownership');
 
     if (button) {
         button.disabled = !isAffordable || buildingsToShow === 0;
         button.textContent = `${displayCost} Gloire`;
     }
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
-    if (ownershipSpan) ownershipSpan.textContent = `Possédé : ${building.count}`;
+    if (ownershipDiv) ownershipDiv.textContent = `Possédé : ${building.count}`;
 
     element.setAttribute('data-tooltip', getBuildingTooltip(building));
 }
