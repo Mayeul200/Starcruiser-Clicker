@@ -113,13 +113,13 @@ body {
 .upgrade-icon::after {
     content: attr(data-tooltip);
     position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(8px);
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%) translateX(8px);
     background: white;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 10px 12px;
+    padding: 8px 12px;
     font-size: 0.85rem;
     color: var(--text);
     box-shadow: var(--shadow);
@@ -128,10 +128,9 @@ body {
     transition: all 0.2s;
     z-index: 2000;
     pointer-events: none;
-    white-space: pre-line;
-    max-width: 300px;
+    white-space: nowrap;
     line-height: 1.5;
-    text-align: center;
+    text-align: left;
 }
 
 .upgrade-icon:hover::after {
