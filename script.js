@@ -109,14 +109,14 @@ function checkTrophies() {
     
     if (updated) {
         saveTrophies();
-        renderTrophies();
+        renderTrophiesInModal();
         showToast("🏆 Nouveau trophée débloqué !");
     }
 }
 
 // Rendre les trophées dans l'interface
 function renderTrophies() {
-    const container = document.getElementById('trophies-container');
+    const container = document.getElementById('trophies-body');
     if (!container) return;
     
     container.innerHTML = '';
@@ -1307,6 +1307,70 @@ function toggleSettings() {
     document.getElementById('settings-modal').classList.toggle('active');
 }
 
+
+// Fonction pour changer d'onglet dans la modal des statistiques
+function showStatsTab(tabName) {
+    // Mettre à jour les boutons d'onglet
+    document.querySelectorAll('.modal-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Mettre à jour le titre
+    const title = document.getElementById('modal-title');
+    if (title) {
+        title.textContent = tabName === 'stats' ? 'Statistiques' : 'Trophées';
+    }
+    
+    // Afficher/masquer les contenus
+    const statsBody = document.getElementById('stats-body');
+    const trophiesBody = document.getElementById('trophies-body');
+    
+    if (statsBody && trophiesBody) {
+        if (tabName === 'stats') {
+            statsBody.classList.remove('hidden');
+            trophiesBody.classList.add('hidden');
+            renderStats(); // Re-rendre les stats au cas où
+        } else {
+            statsBody.classList.add('hidden');
+            trophiesBody.classList.remove('hidden');
+            renderTrophiesInModal(); // Rendre les trophées dans la modal
+        }
+    }
+}
+
+// Rendre les trophées dans la modal des statistiques
+function renderTrophiesInModal() {
+    const container = document.getElementById('trophies-body');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Ajouter les trophées d'améliorations
+    const upgradesTitle = document.createElement('h4');
+    upgradesTitle.textContent = "Améliorations";
+    upgradesTitle.style.color = "var(--primary)";
+    upgradesTitle.style.marginBottom = "8px";
+    container.appendChild(upgradesTitle);
+    
+    UPGRADE_TROPHIES.forEach(trophy => {
+        const trophyElement = createTrophyElement(trophy);
+        container.appendChild(trophyElement);
+    });
+    
+    // Ajouter les trophées de production
+    const productionTitle = document.createElement('h4');
+    productionTitle.textContent = "Production";
+    productionTitle.style.color = "var(--primary)";
+    productionTitle.style.margin = "16px 0 8px 0";
+    container.appendChild(productionTitle);
+    
+    PRODUCTION_TROPHIES.forEach(trophy => {
+        const trophyElement = createTrophyElement(trophy);
+        container.appendChild(trophyElement);
+    });
+}
+
 function toggleStats() {
     const modal = document.getElementById('stats-modal');
     modal.classList.toggle('active');
@@ -1356,7 +1420,7 @@ function init() {
     updateDisplay();
     renderBuildings();
     renderUpgrades();
-    renderTrophies();
+    renderTrophiesInModal();
     checkBuildingUnlocks();
 }
 
@@ -1386,3 +1450,8 @@ window.onload = function() {
         gameStartTime = Date.now();
     }
 };
+
+
+.hidden {
+    display: none !important;
+}

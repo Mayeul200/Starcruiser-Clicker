@@ -231,7 +231,13 @@ body {
     background: #ef4444;
 }
 
-.modal-button.delete:hover {
+.modal-button.delete:hove
+
+.hidden {
+    display: none !important;
+}
+
+r {
     background: #dc2626;
 }
 
