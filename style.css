@@ -361,7 +361,7 @@ body {
 .right-panel {
     background: white;
     border-left: 1px solid var(--border);
-    padding: 16px;
+    padding: 0 16px 16px 16px;
     overflow-y: auto;
     height: 100%;
 }
