@@ -376,6 +376,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin-top: 8px;
 }
 /* Layout des bâtiments en 2 colonnes */
 .building-left {
