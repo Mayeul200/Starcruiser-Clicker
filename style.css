@@ -231,13 +231,7 @@ body {
     background: #ef4444;
 }
 
-.modal-button.delete:hove
-
-.hidden {
-    display: none !important;
-}
-
-r {
+.modal-button.delete:hover {
     background: #dc2626;
 }
 
@@ -287,66 +281,6 @@ r {
 .left-panel p {
     color: var(--text-light);
     font-size: 0.9rem;
-}
-
-
-/* TROPHÉES */
-.trophies-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-    overflow-y: auto;
-    padding-top: 8px;
-}
-
-.trophy {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    transition: all 0.2s;
-}
-
-.trophy:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.trophy-icon {
-    font-size: 1.5rem;
-    min-width: 40px;
-    text-align: center;
-}
-
-.trophy-info {
-    flex: 1;
-}
-
-.trophy-name {
-    font-weight: 600;
-    color: var(--text);
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-}
-
-.trophy-description {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
-
-.trophy.locked {
-    opacity: 0.5;
-    filter: grayscale(100%);
-}
-
-.trophy.locked .trophy-icon,
-.trophy.locked .trophy-name {
-    color: var(--text-light);
 }
 
 /* CENTER PANEL */

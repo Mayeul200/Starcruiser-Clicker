@@ -25,156 +25,6 @@ let currentHoveredIcon = null;
 // GLORY OF FRANCE CLICKER - MAIN SCRIPT
 // ============================================
 
-
-// ============================================
-// SYSTÈME DE TROPHÉES
-// ============================================
-
-// Trophées pour les paliers d'améliorations
-const UPGRADE_TROPHIES = [
-    { id: "first-click", name: "Premier Clic", description: "Avoir amélioré son clic une fois", threshold: 1, icon: "🏆", type: "click" },
-    { id: "click-master", name: "Maître du Clic", description: "Avoir toutes les améliorations de clic", threshold: 10, icon: "🥇", type: "click" },
-    { id: "first-building", name: "Premier Bâtiment", description: "Avoir amélioré un bâtiment une fois", threshold: 1, icon: "🏅", type: "building" },
-    { id: "building-expert", name: "Expert en Bâtiments", description: "Avoir 5 améliorations de bâtiments", threshold: 5, icon: "🥈", type: "building" },
-    { id: "building-master", name: "Maître des Bâtiments", description: "Avoir 25 améliorations de bâtiments", threshold: 25, icon: "🥇", type: "building" }
-];
-
-// Trophées pour les multiples de 10 G/s
-const PRODUCTION_TROPHIES = [
-    { id: "10-gps", name: "10 G/s", description: "Atteindre 10 Gloire par seconde", threshold: 10, icon: "🎖️" },
-    { id: "50-gps", name: "50 G/s", description: "Atteindre 50 Gloire par seconde", threshold: 50, icon: "🎖️" },
-    { id: "100-gps", name: "100 G/s", description: "Atteindre 100 Gloire par seconde", threshold: 100, icon: "🎖️" },
-    { id: "500-gps", name: "500 G/s", description: "Atteindre 500 Gloire par seconde", threshold: 500, icon: "🏅" },
-    { id: "1000-gps", name: "1000 G/s", description: "Atteindre 1000 Gloire par seconde", threshold: 1000, icon: "🏅" },
-    { id: "5000-gps", name: "5000 G/s", description: "Atteindre 5000 Gloire par seconde", threshold: 5000, icon: "🥈" },
-    { id: "10000-gps", name: "10000 G/s", description: "Atteindre 10000 Gloire par seconde", threshold: 10000, icon: "🥈" },
-    { id: "50000-gps", name: "50000 G/s", description: "Atteindre 50000 Gloire par seconde", threshold: 50000, icon: "🥇" },
-    { id: "100000-gps", name: "100000 G/s", description: "Atteindre 100000 Gloire par seconde", threshold: 100000, icon: "🥇" }
-];
-
-// État des trophées (sera chargé depuis localStorage)
-let trophiesState = {};
-
-// Initialiser l'état des trophées
-function initTrophies() {
-    const saved = localStorage.getItem('trophiesState');
-    if (saved) {
-        trophiesState = JSON.parse(saved);
-    } else {
-        // Initialiser tous les trophées comme verrouillés
-        [...UPGRADE_TROPHIES, ...PRODUCTION_TROPHIES].forEach(trophy => {
-            trophiesState[trophy.id] = false;
-        });
-        saveTrophies();
-    }
-}
-
-// Sauvegarder l'état des trophées
-function saveTrophies() {
-    localStorage.setItem('trophiesState', JSON.stringify(trophiesState));
-}
-
-// Vérifier et débloquer les trophées
-function checkTrophies() {
-    let updated = false;
-    
-    // Vérifier les trophées d'améliorations de clic
-    const clickUpgradesCount = CLICK_UPGRADES.filter(upgrade => score >= upgrade.threshold).length;
-    UPGRADE_TROPHIES.filter(t => t.type === "click").forEach(trophy => {
-        if (!trophiesState[trophy.id] && clickUpgradesCount >= trophy.threshold) {
-            trophiesState[trophy.id] = true;
-            updated = true;
-        }
-    });
-    
-    // Vérifier les trophées d'améliorations de bâtiments
-    let buildingUpgradesCount = 0;
-    BUILDINGS.forEach(building => {
-        buildingUpgradesCount += building.upgradeCount || 0;
-    });
-    UPGRADE_TROPHIES.filter(t => t.type === "building").forEach(trophy => {
-        if (!trophiesState[trophy.id] && buildingUpgradesCount >= trophy.threshold) {
-            trophiesState[trophy.id] = true;
-            updated = true;
-        }
-    });
-    
-    // Vérifier les trophées de production
-    PRODUCTION_TROPHIES.forEach(trophy => {
-        if (!trophiesState[trophy.id] && autoGain >= trophy.threshold) {
-            trophiesState[trophy.id] = true;
-            updated = true;
-        }
-    });
-    
-    if (updated) {
-        saveTrophies();
-        renderTrophiesInModal();
-        showToast("🏆 Nouveau trophée débloqué !");
-    }
-}
-
-// Rendre les trophées dans l'interface
-function renderTrophies() {
-    const container = document.getElementById('trophies-body');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    // Ajouter les trophées d'améliorations
-    const upgradesTitle = document.createElement('h4');
-    upgradesTitle.textContent = "Améliorations";
-    upgradesTitle.style.color = "var(--primary)";
-    upgradesTitle.style.marginBottom = "8px";
-    container.appendChild(upgradesTitle);
-    
-    UPGRADE_TROPHIES.forEach(trophy => {
-        const trophyElement = createTrophyElement(trophy);
-        container.appendChild(trophyElement);
-    });
-    
-    // Ajouter les trophées de production
-    const productionTitle = document.createElement('h4');
-    productionTitle.textContent = "Production";
-    productionTitle.style.color = "var(--primary)";
-    productionTitle.style.margin = "16px 0 8px 0";
-    container.appendChild(productionTitle);
-    
-    PRODUCTION_TROPHIES.forEach(trophy => {
-        const trophyElement = createTrophyElement(trophy);
-        container.appendChild(trophyElement);
-    });
-}
-
-// Créer un élément de trophée
-function createTrophyElement(trophy) {
-    const element = document.createElement('div');
-    element.className = `trophy ${trophiesState[trophy.id] ? '' : 'locked'}`;
-    
-    const icon = document.createElement('div');
-    icon.className = 'trophy-icon';
-    icon.textContent = trophy.icon;
-    
-    const info = document.createElement('div');
-    info.className = 'trophy-info';
-    
-    const name = document.createElement('div');
-    name.className = 'trophy-name';
-    name.textContent = trophy.name;
-    
-    const description = document.createElement('div');
-    description.className = 'trophy-description';
-    description.textContent = trophy.description;
-    
-    info.appendChild(name);
-    info.appendChild(description);
-    
-    element.appendChild(icon);
-    element.appendChild(info);
-    
-    return element;
-}
-
 // LISTE PLATE DES BÂTIMENTS (sans ères)
 const BUILDINGS = [
     { id: "coq-gaulois", name: "Coq Gaulois", description: "Production unitaire : +{gain} G/s\n% de la production totale : {percent}%\nTotal généré : {total} Gloire", baseCost: 10, gain: 0.1, count: 0, image: "🐓", unlockCondition: () => true, totalGenerated: 0 },
@@ -789,18 +639,10 @@ function buyBuildingUpgrade(buildingId, threshold) {
     }
     
     buildingUpgrades[buildingId].push(threshold);
-    
-    // Incrémenter le compteur d'améliorations pour ce bâtiment
-    if (!building.upgradeCount) {
-        building.upgradeCount = 0;
-    }
-    building.upgradeCount++;
-    
     updateDisplay();
     saveGame();
     renderUpgrades();
     updateAllBuildingButtons();
-    checkTrophies();
     showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
 }
 
@@ -1307,70 +1149,6 @@ function toggleSettings() {
     document.getElementById('settings-modal').classList.toggle('active');
 }
 
-
-// Fonction pour changer d'onglet dans la modal des statistiques
-function showStatsTab(tabName) {
-    // Mettre à jour les boutons d'onglet
-    document.querySelectorAll('.modal-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    event.target.classList.add('active');
-    
-    // Mettre à jour le titre
-    const title = document.getElementById('modal-title');
-    if (title) {
-        title.textContent = tabName === 'stats' ? 'Statistiques' : 'Trophées';
-    }
-    
-    // Afficher/masquer les contenus
-    const statsBody = document.getElementById('stats-body');
-    const trophiesBody = document.getElementById('trophies-body');
-    
-    if (statsBody && trophiesBody) {
-        if (tabName === 'stats') {
-            statsBody.classList.remove('hidden');
-            trophiesBody.classList.add('hidden');
-            renderStats(); // Re-rendre les stats au cas où
-        } else {
-            statsBody.classList.add('hidden');
-            trophiesBody.classList.remove('hidden');
-            renderTrophiesInModal(); // Rendre les trophées dans la modal
-        }
-    }
-}
-
-// Rendre les trophées dans la modal des statistiques
-function renderTrophiesInModal() {
-    const container = document.getElementById('trophies-body');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    // Ajouter les trophées d'améliorations
-    const upgradesTitle = document.createElement('h4');
-    upgradesTitle.textContent = "Améliorations";
-    upgradesTitle.style.color = "var(--primary)";
-    upgradesTitle.style.marginBottom = "8px";
-    container.appendChild(upgradesTitle);
-    
-    UPGRADE_TROPHIES.forEach(trophy => {
-        const trophyElement = createTrophyElement(trophy);
-        container.appendChild(trophyElement);
-    });
-    
-    // Ajouter les trophées de production
-    const productionTitle = document.createElement('h4');
-    productionTitle.textContent = "Production";
-    productionTitle.style.color = "var(--primary)";
-    productionTitle.style.margin = "16px 0 8px 0";
-    container.appendChild(productionTitle);
-    
-    PRODUCTION_TROPHIES.forEach(trophy => {
-        const trophyElement = createTrophyElement(trophy);
-        container.appendChild(trophyElement);
-    });
-}
-
 function toggleStats() {
     const modal = document.getElementById('stats-modal');
     modal.classList.toggle('active');
@@ -1416,11 +1194,9 @@ function updateBonusTimer() {
 function init() {
     initGlobals();
     loadGame();
-    initTrophies();
     updateDisplay();
     renderBuildings();
     renderUpgrades();
-    renderTrophiesInModal();
     checkBuildingUnlocks();
 }
 
@@ -1433,7 +1209,6 @@ setInterval(spawnRandomBonus, 60000);
 
 // Game loop toutes les 100ms
 setInterval(gameLoop, 100);
-setInterval(checkTrophies, 1000);
 
 // Sauvegarde automatique toutes les 30 secondes
 setInterval(() => {
@@ -1450,8 +1225,3 @@ window.onload = function() {
         gameStartTime = Date.now();
     }
 };
-
-
-.hidden {
-    display: none !important;
-}
