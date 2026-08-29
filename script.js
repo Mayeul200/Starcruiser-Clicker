@@ -1,3 +1,26 @@
+
+// Tooltip global
+const tooltip = document.createElement('div');
+tooltip.className = 'upgrade-tooltip';
+document.body.appendChild(tooltip);
+
+// Fonction pour afficher le tooltip
+function showTooltip(text, x, y) {
+    tooltip.textContent = text;
+    tooltip.style.top = y + 'px';
+    tooltip.style.left = x + 'px';
+    tooltip.style.transform = 'translate(-50%, -100%)';
+    tooltip.classList.add('visible');
+}
+
+// Fonction pour cacher le tooltip
+function hideTooltip() {
+    tooltip.classList.remove('visible');
+}
+
+// Variables pour suivre l'icône survolée
+let currentHoveredIcon = null;
+
 // ============================================
 // GLORY OF FRANCE CLICKER - MAIN SCRIPT
 // ============================================
@@ -766,11 +789,13 @@ function renderUpgrades() {
             upgradeElement.className = 'upgrade-icon';
             upgradeElement.innerHTML = '💰';
             
-            // Créer le tooltip
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.textContent = `Multiplication x2 - ${formatNumber(upgrade.cost)} Gloire`;
-            upgradeElement.appendChild(tooltip);
+
+            // Configurer les événements de survol pour le tooltip
+            upgradeElement.addEventListener('mouseenter', (e) => {
+                const rect = e.target.getBoundingClientRect();
+                showTooltip(`Multiplication x2 - ${formatNumber(upgrade.cost)} Gloire`, rect.left + rect.width/2, rect.top);
+            });
+            upgradeElement.addEventListener('mouseleave', hideTooltip);
             
             upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
             container.appendChild(upgradeElement);
@@ -790,11 +815,13 @@ function renderUpgrades() {
                 upgradeElement.style.background = color;
                 upgradeElement.innerHTML = building.image;
                 
-                // Créer le tooltip
-                const tooltip = document.createElement('div');
-                tooltip.className = 'tooltip';
-                tooltip.textContent = `Multiplication x2 - ${formatNumber(cost)} Gloire`;
-                upgradeElement.appendChild(tooltip);
+
+                // Configurer les événements de survol pour le tooltip
+                upgradeElement.addEventListener('mouseenter', (e) => {
+                    const rect = e.target.getBoundingClientRect();
+                    showTooltip(`Multiplication x2 - ${formatNumber(cost)} Gloire`, rect.left + rect.width/2, rect.top);
+                });
+                upgradeElement.addEventListener('mouseleave', hideTooltip);
                 
                 upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
                 container.appendChild(upgradeElement);

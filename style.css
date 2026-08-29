@@ -111,11 +111,8 @@ body {
 }
 
 /* Tooltip pour les améliorations */
-.tooltip {
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    transform: translateY(-50%) translateX(8px);
+.upgrade-tooltip {
+    position: fixed;
     background: white;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -131,9 +128,12 @@ body {
     white-space: nowrap;
     line-height: 1.5;
     text-align: left;
+    transform: translate(-50%, -100%);
+    top: 0;
+    left: 0;
 }
 
-.upgrade-icon:hover .tooltip {
+.upgrade-tooltip.visible {
     opacity: 1;
     visibility: visible;
 }
