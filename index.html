@@ -20,10 +20,15 @@
     <div class="modal" id="stats-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Statistiques</h2>
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="switchStatsTab('stats')">Statistiques</button>
+                    <button class="modal-tab" onclick="switchStatsTab('trophies')">Trophées</button>
+                </div>
+                <h2 id="stats-modal-title">Statistiques</h2>
                 <span class="close-button" onclick="toggleStats()">&times;</span>
             </div>
             <div class="modal-body" id="stats-body"></div>
+            <div class="modal-body hidden" id="trophies-body"></div>
         </div>
     </div>
 
@@ -45,10 +50,10 @@
 
     <!-- GRID PRINCIPAL (3 colonnes) -->
     <div class="main-grid">
-        <!-- COLONNE GAUCHE (20%) - Trophées -->
+        <!-- COLONNE GAUCHE (20%) - Mini-jeux -->
         <div class="left-panel">
-            <h3>Trophées</h3>
-            <div class="trophies-container" id="trophies-container"></div>
+            <h3>Mini-Jeux</h3>
+            <p>Réservé pour les mini-jeux</p>
         </div>
 
         <!-- COLONNE CENTRALE (60%) - Zone de clic -->
