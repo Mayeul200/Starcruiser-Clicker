@@ -9,7 +9,7 @@ function showTooltip(text, x, y) {
     tooltip.textContent = text;
     tooltip.style.top = y + 'px';
     tooltip.style.left = x + 'px';
-    tooltip.style.transform = 'translate(-50%, -100%)';
+    tooltip.style.transform = 'translate(-50%, -120%)';
     tooltip.classList.add('visible');
 }
 
