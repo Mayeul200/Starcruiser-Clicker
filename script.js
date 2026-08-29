@@ -767,9 +767,7 @@ function renderUpgrades() {
             upgradeElement.innerHTML = '💰';
             
             // Créer le tooltip
-            const tooltip = `Multiplication x2`;
-` +
-                          `Seuil: ${formatNumber(upgrade.threshold)} Gloire totale`;
+            const tooltip = `Multiplication x2 - ${formatNumber(upgrade.cost)} Gloire`;
             upgradeElement.setAttribute('data-tooltip', tooltip);
             
             upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
@@ -793,7 +791,7 @@ function renderUpgrades() {
                 // Créer le tooltip
                 const currentMultiplier = getBuildingUpgradeMultiplier(building.id);
                 const nextMultiplier = currentMultiplier * 2;
-                const tooltip = `Multiplication x2`;
+                const tooltip = `Multiplication x2 - ${formatNumber(cost)} Gloire`;
                 upgradeElement.setAttribute('data-tooltip', tooltip);
                 
                 upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
