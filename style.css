@@ -1,5 +1,6 @@
 /* ============================================
    GLORY OF FRANCE CLICKER - STYLE SOBRE ET MODERNE
+   Version Optimisée
    ============================================ */
 
 :root {
@@ -43,7 +44,7 @@ body {
     z-index: 1000;
 }
 
-/* BARRE D'AMELIORATIONS (dans le centre) */
+/* BARRE D'AMÉLIORATIONS (dans le centre) */
 .upgrades-bar {
     height: 48px;
     width: 100%;
@@ -78,15 +79,12 @@ body {
     margin-left: 0;
     flex: 1;
     min-width: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .upgrades-container-center::-webkit-scrollbar {
     display: none;
-}
-
-.upgrades-container-center {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
 }
 
 .upgrade-icon {
@@ -284,14 +282,14 @@ body {
 }
 
 /* CENTER PANEL */
-    .center-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        flex-grow: 1;
-        width: 100%;
-    }
+.center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 100%;
+}
 
 .center-panel {
     background: white;
@@ -378,34 +376,8 @@ body {
     gap: 8px;
     margin-top: 8px;
 }
-/* Layout des bâtiments en 2 colonnes */
-.building-left {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
 
-.building-right {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: flex-end;
-}
-
-.building-ownership {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    font-weight: 600;
-}
-
-.building-production {
-    font-size: 0.9rem;
-    color: var(--primary);
-    font-weight: 600;
-}
-
-
+/* Layout des bâtiments */
 .building-item {
     background: var(--secondary);
     border: 1px solid var(--border);
@@ -435,25 +407,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    flex-direction: column;
     align-items: flex-end;
-    gap: 4px;
 }
-
-.building-ownership {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    font-weight: 600;
-}
-
-.building-production {
-    font-size: 0.9rem;
-    color: var(--primary);
-    font-weight: 600;
-    margin-right: 0;
-}
-
-
 
 .building-name-icon {
     display: flex;
@@ -473,7 +428,7 @@ body {
 }
 
 .building-ownership {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--text-light);
     font-weight: 600;
 }
@@ -482,7 +437,6 @@ body {
     font-size: 0.9rem;
     color: var(--primary);
     font-weight: 600;
-    margin-left: 8px;
 }
 
 .building-item button {
@@ -614,9 +568,9 @@ body {
     pointer-events: none;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-80px); }
 }
 
 .click-effect {
@@ -627,11 +581,6 @@ body {
     text-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
     animation: floatUp 1s forwards;
     opacity: 0;
-}
-
-@keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-80px); }
 }
 
 .toast {
@@ -654,15 +603,13 @@ body {
     opacity: 1;
 }
 
-
-
-/* Style pour les améliorations de bâtiment (avec couleur) */
+/* Styles pour les améliorations de bâtiment (avec couleur) */
 .upgrade-item[data-upgrade-type="building"] {
     color: white !important;
     min-width: 160px;
 }
 
-/* Style pour les améliorations de clic */
+/* Styles pour les améliorations de clic */
 .upgrade-item.click-upgrade {
     background: var(--secondary) !important;
     color: var(--text) !important;
@@ -672,6 +619,17 @@ body {
     background: var(--primary) !important;
     color: white !important;
 }
+
+/* Building blur effect for not purchased buildings */
+.building-item.not-purchased {
+    opacity: 0.5;
+    filter: blur(2px);
+}
+
+/* Styles pour les bonus aléatoires */
+.random-bonus.baguette { background: #FFD700; color: #8B4513; }
+.random-bonus.croissant { background: #FFA500; color: #FFFFFF; }
+
 /* RESPONSIVE */
 @media (max-width: 992px) {
     .main-grid {
@@ -688,7 +646,6 @@ body {
 
 @media (max-width: 768px) {
     .top-bar { height: 12vh; min-height: 70px; }
-    .upgrade-item { min-width: 100px; font-size: 12px; }
     .medal { width: 180px; height: 180px; }
     .medal-emoji { font-size: 5.5rem; }
     .counters { margin-top: 16px; }
@@ -696,9 +653,9 @@ body {
     .building-item { min-height: 45px; padding: 8px; }
     .building-name { font-size: 0.85rem; }
     .building-icon { font-size: 1.3rem; }
-    .building-cost { font-size: 0.8rem; }
     .building-item button {
-    width: 100%; padding: 6px 10px; font-size: 0.8rem; }
+        width: 100%; padding: 6px 10px; font-size: 0.8rem; 
+    }
 }
 
 @media (max-width: 480px) {
@@ -706,14 +663,3 @@ body {
     .medal-emoji { font-size: 4.5rem; }
     .top-bar-controls { flex-direction: column; }
 }
-
-/* Building blur effect for not purchased buildings */
-.building-item.not-purchased {
-    opacity: 0.5;
-    filter: blur(2px);
-}
-
-
-/* Styles pour les bonus aléatoires */
-.random-bonus.baguette { background: #FFD700; color: #8B4513; }
-.random-bonus.croissant { background: #FFA500; color: #FFFFFF; }
