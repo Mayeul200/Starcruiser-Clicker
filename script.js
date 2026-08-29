@@ -179,7 +179,7 @@ function calculateBuildingCost(building) {
 function formatNumber(num, isTotalScore) {
     if (num === 0) return "0";
     
-    const suffixes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "De", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd"];
+    const suffixes = ["", " Thousand", " Million", " Billion", " Trillion", " Quadrillion", " Quintillion", " Sextillion", " Septillion", " Octillion", " Nonillion", " Decillion"];
     
     // Déterminer le suffixe approprié
     let exponent = 0;
@@ -206,7 +206,6 @@ function formatNumber(num, isTotalScore) {
         return num.toFixed(decimals).toLocaleString();
     }
 },
-        buildingUpgradeCosts: {},
         totalGeneratedByBuilding: {},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
