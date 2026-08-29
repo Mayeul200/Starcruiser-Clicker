@@ -512,10 +512,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
+    height: 47px;
+    padding: 0 8px;
     border-bottom: 1px solid var(--border);
-    margin-top: 8px;
 }
 
 .buildings-header h3 {
