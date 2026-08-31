@@ -1,6 +1,6 @@
 // ============================================
 // STARSHIP CLICKER - MAIN SCRIPT
-// Version 1.0
+// Version 2.0.0
 // ============================================
 
 // ============================================
@@ -23,7 +23,7 @@ function hideTooltip() {
 }
 
 // ============================================
-// CONSTANTES GLOBALES
+// GLOBAL CONSTANTS
 // ============================================
 const BUILDING_PRICE_GROWTH_RATE = 0.12;
 const GAME_LOOP_FPS = 10;
@@ -35,30 +35,30 @@ const MAX_BUILDING_DISPLAY = 100;
 const BUILDING_UPDATE_INTERVAL_MS = 500;
 
 // ============================================
-// DONNÉES DU JEU
+// GAME DATA
 // ============================================
 const BUILDINGS = [
-    { id: "workshop", name: "Workshop", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "🪚", unlockCondition: () => true, totalGenerated: 0 },
-    { id: "tool-factory", name: "Tool Factory", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 100, gain: 1, count: 0, image: "🏭", unlockCondition: () => score >= 20, totalGenerated: 0 },
-    { id: "engine", name: "Engine", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "🚀", unlockCondition: () => score >= 500, totalGenerated: 0 },
-    { id: "fuel-tank", name: "Fuel Tank", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "⛽", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-    { id: "rocket-body", name: "Rocket Body", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 50000, gain: 1000, count: 0, image: "🚀", unlockCondition: () => score >= 25000, totalGenerated: 0 },
-    { id: "cockpit", name: "Cockpit", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 100000, gain: 500, count: 0, image: "👨‍🚀", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-    { id: "booster", name: "Booster", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 200000, gain: 2000, count: 0, image: "🔥", unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "satellite", name: "Satellite", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🛰️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-    { id: "space-shuttle", name: "Space Shuttle", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 5000000, gain: 50000, count: 0, image: "🚀🌍", unlockCondition: () => score >= 5000000, totalGenerated: 0 },
-    { id: "rocket", name: "Rocket", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 20000000, gain: 200000, count: 0, image: "🚀", unlockCondition: () => score >= 20000000, totalGenerated: 0 },
-    { id: "launch-pad", name: "Launch Pad", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 100000000, gain: 1000000, count: 0, image: "🛫", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
-    { id: "moon-base", name: "Moon Base", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 500000000, gain: 5000000, count: 0, image: "🌕", unlockCondition: () => score >= 500000000, totalGenerated: 0 },
-    { id: "mars-rover", name: "Mars Rover", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 2000000000, gain: 20000000, count: 0, image: "🤖", unlockCondition: () => score >= 2000000000, totalGenerated: 0 },
-    { id: "space-station", name: "Space Station", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "🛰️", unlockCondition: () => score >= 10000000000, totalGenerated: 0 },
-    { id: "mars-colony", name: "Mars Colony", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 50000000000, gain: 500000000, count: 0, image: "🪐", unlockCondition: () => score >= 50000000000, totalGenerated: 0 },
-    { id: "deep-space-probe", name: "Deep Space Probe", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 200000000000, gain: 2000000000, count: 0, image: "🛸", unlockCondition: () => score >= 200000000000, totalGenerated: 0 },
-    { id: "interstellar-ship", name: "Interstellar Ship", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 1000000000000, gain: 10000000000, count: 0, image: "🚀", unlockCondition: () => score >= 1000000000000, totalGenerated: 0 },
-    { id: "galaxy-gateway", name: "Galaxy Gateway", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 5000000000000, gain: 50000000000, count: 0, image: "🌌", unlockCondition: () => score >= 5000000000000, totalGenerated: 0 },
-    { id: "cosmic-factory", name: "Cosmic Factory", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 25000000000000, gain: 250000000000, count: 0, image: "🏭", unlockCondition: () => score >= 25000000000000, totalGenerated: 0 },
-    { id: "quantum-drive", name: "Quantum Drive", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 100000000000000, gain: 1000000000000, count: 0, image: "⚛️", unlockCondition: () => score >= 100000000000000, totalGenerated: 0 },
-    { id: "universe-engine", name: "Universe Engine", description: "Production unitaire : +{gain} Parts/s\n% de la production totale : {percent}%\nTotal generated : {total} Parts", baseCost: 500000000000000, gain: 5000000000000, count: 0, image: "💫", unlockCondition: () => score >= 500000000000000, totalGenerated: 0 }
+    { id: "workshop", name: "Workshop", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "🪚", unlockCondition: () => true, totalGenerated: 0 },
+    { id: "tool-factory", name: "Tool Factory", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100, gain: 1, count: 0, image: "🏭", unlockCondition: () => score >= 20, totalGenerated: 0 },
+    { id: "engine", name: "Engine", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "🚀", unlockCondition: () => score >= 500, totalGenerated: 0 },
+    { id: "fuel-tank", name: "Fuel Tank", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "⛽", unlockCondition: () => score >= 5000, totalGenerated: 0 },
+    { id: "rocket-body", name: "Rocket Body", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000, gain: 1000, count: 0, image: "🚀", unlockCondition: () => score >= 25000, totalGenerated: 0 },
+    { id: "cockpit", name: "Cockpit", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000, gain: 500, count: 0, image: "👨‍🚀", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+    { id: "booster", name: "Booster", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 200000, gain: 2000, count: 0, image: "🔥", unlockCondition: () => score >= 100000, totalGenerated: 0 },
+    { id: "satellite", name: "Satellite", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🛰️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+    { id: "space-shuttle", name: "Space Shuttle", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000, gain: 50000, count: 0, image: "🚀🏭", unlockCondition: () => score >= 5000000, totalGenerated: 0 },
+    { id: "rocket", name: "Rocket", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 20000000, gain: 200000, count: 0, image: "🚀", unlockCondition: () => score >= 20000000, totalGenerated: 0 },
+    { id: "launch-pad", name: "Launch Pad", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000, gain: 1000000, count: 0, image: "🛫", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
+    { id: "moon-base", name: "Moon Base", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000, gain: 5000000, count: 0, image: "🌕", unlockCondition: () => score >= 500000000, totalGenerated: 0 },
+    { id: "mars-rover", name: "Mars Rover", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 2000000000, gain: 20000000, count: 0, image: "🤖", unlockCondition: () => score >= 2000000000, totalGenerated: 0 },
+    { id: "space-station", name: "Space Station", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "🛰️", unlockCondition: () => score >= 10000000000, totalGenerated: 0 },
+    { id: "mars-colony", name: "Mars Colony", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000000000, gain: 500000000, count: 0, image: "🪐", unlockCondition: () => score >= 50000000000, totalGenerated: 0 },
+    { id: "deep-space-probe", name: "Deep Space Probe", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 200000000000, gain: 2000000000, count: 0, image: "🛸", unlockCondition: () => score >= 200000000000, totalGenerated: 0 },
+    { id: "interstellar-ship", name: "Interstellar Ship", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000000000, gain: 10000000000, count: 0, image: "🚀", unlockCondition: () => score >= 1000000000000, totalGenerated: 0 },
+    { id: "galaxy-gateway", name: "Galaxy Gateway", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000000000, gain: 50000000000, count: 0, image: "🌌", unlockCondition: () => score >= 5000000000000, totalGenerated: 0 },
+    { id: "cosmic-factory", name: "Cosmic Factory", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 25000000000000, gain: 250000000000, count: 0, image: "🏭", unlockCondition: () => score >= 25000000000000, totalGenerated: 0 },
+    { id: "quantum-drive", name: "Quantum Drive", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000000000, gain: 1000000000000, count: 0, image: "⚛️", unlockCondition: () => score >= 100000000000000, totalGenerated: 0 },
+    { id: "universe-engine", name: "Universe Engine", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000000000, gain: 5000000000000, count: 0, image: "💫", unlockCondition: () => score >= 500000000000000, totalGenerated: 0 }
 ];
 
 const CLICK_UPGRADES = [
@@ -86,7 +86,7 @@ const UPGRADE_COLORS = [
 
 const RANDOM_BONUSES = [
     { id: "meteor-shower", symbol: "🌠", name: "Meteor Shower", effect: "instant", type: "meteor", colorClass: "meteor" },
-    { id: "solar-flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 10, duration: 30000, colorClass: "flare" }
+    { id: "solar-flare", symbol: "🛰️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 10, duration: 30000, colorClass: "flare" }
 ];
 
 const SAVE_VERSION = "2.0.0";
@@ -106,9 +106,9 @@ const TROPHIES = [
     
     // Building upgrades
     { id: "first-upgrade", name: "First Upgrade", description: "Buy your first building upgrade", icon: "🪚", threshold: 1, type: "building-upgrade", unlocked: false },
-    { id: "five-upgrades", name: "Upgrade Master", description: "Have 5 building upgrades", icon: "👷‍♂️", threshold: 5, type: "building-upgrade", unlocked: false },
-    { id: "ten-upgrades", name: "Engineering Genius", description: "Have 10 building upgrades", icon: "👨‍🔬", threshold: 10, type: "building-upgrade", unlocked: false },
-    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Have 20 building upgrades", icon: "🏆", threshold: 20, type: "building-upgrade", unlocked: false },
+    { id: "five-upgrades", name: "Upgrade Master", description: "Own 5 building upgrades", icon: "👷‍♂️", threshold: 5, type: "building-upgrade", unlocked: false },
+    { id: "ten-upgrades", name: "Engineering Genius", description: "Own 10 building upgrades", icon: "👨‍🔬", threshold: 10, type: "building-upgrade", unlocked: false },
+    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Own 20 building upgrades", icon: "🤖", threshold: 20, type: "building-upgrade", unlocked: false },
     
     // Click Upgrades
     { id: "first-click-upgrade", name: "First Launch", description: "Buy your first click upgrade", icon: "🚀", threshold: 1, type: "click-upgrade", unlocked: false },
@@ -134,7 +134,7 @@ const TROPHIES = [
 ];
 
 // ============================================
-// VARIABLES GLOBALES
+// GLOBAL VARIABLES
 // ============================================
 let score = 0;
 let partsPerSecond = 0;
@@ -148,7 +148,7 @@ let clickedBonusesCount = 0;
 let unlockedTrophies = new Set();
 
 // ============================================
-// FONCTIONS UTILITAIRES
+// UTILITY FUNCTIONS
 // ============================================
 
 function initGlobals() {
@@ -228,7 +228,7 @@ function calculateBuildingCost(building) {
         : Math.floor(building.baseCost * Math.exp(BUILDING_PRICE_GROWTH_RATE * building.count));
 }
 
-// Fonction de formatage optimisée
+// Optimized formatting function
 function formatNumber(num, isTotalScore) {
     if (num === 0) return "0";
     
@@ -251,7 +251,7 @@ function formatNumber(num, isTotalScore) {
     const scale = Math.pow(10, tier * 3);
     const scaled = num / scale;
     
-    // Déterminer le nombre de décimales
+    // Determine number of decimals
     const scaledAbs = Math.abs(scaled);
     const decimals = scaledAbs >= 100 ? (isTotalScore ? 3 : 2) : (scaledAbs >= 10 ? 3 : 3);
     
@@ -281,7 +281,7 @@ function showToast(message) {
 }
 
 // ============================================
-// SAUVEGARDE / CHARGEMENT
+// SAVE / LOAD
 // ============================================
 
 function saveGame() {
@@ -359,14 +359,14 @@ function loadGame() {
         updateAutoMultiplier();
         updateClickMultiplier();
 
-        // Load les upgrades des buildings
+        // Load building upgrades
         if (parsed.buildingUpgrades) {
             for (const buildingId in parsed.buildingUpgrades) {
                 buildingUpgrades[buildingId] = [...parsed.buildingUpgrades[buildingId]];
             }
         }
 
-        // Load les coûts fixes des upgrades
+        // Load upgrade fixed costs
         if (parsed.buildingUpgradeCosts) {
             for (const buildingId in parsed.buildingUpgradeCosts) {
                 buildingUpgradeCosts[buildingId] = {...parsed.buildingUpgradeCosts[buildingId]};
@@ -405,7 +405,7 @@ function loadGame() {
             updateClickMultiplier();
         }
 
-        // Load les comptes des buildings
+        // Load building counts
         if (parsed.buildings) {
             parsed.buildings.forEach(savedBuilding => {
                 const building = BUILDINGS.find(b => b.id === savedBuilding.id);
@@ -457,15 +457,15 @@ function exportSave() {
     if (saveData) {
         navigator.clipboard.writeText(saveData)
             .then(() => showToast("\u2705 Sauvegarde copiée !"))
-            .catch(() => showToast("\❌ Échec de la copie."));
+            .catch(() => showToast("\❌ Copy failed."));
     } else {
-        showToast("\❌ Aucune sauvegarde.");
+        showToast("\❌ No save found.");
     }
 }
 
 function importSave() {
     const importText = document.getElementById('import-textarea').value.trim();
-    if (!importText) { showToast("\❌ Rien à importer."); return; }
+    if (!importText) { showToast("\❌ Nothing to import."); return; }
     try {
         const testParse = JSON.parse(importText);
         if (testParse.version && testParse.buildings && testParse.buildingUpgrades) {
@@ -473,10 +473,10 @@ function importSave() {
             showToast("\u2705 Importé ! Redémarrage...");
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showToast("\❌ Format invalide.");
+            showToast("\❌ Invalid format.");
         }
     } catch (e) {
-        showToast("\❌ Format invalide.");
+        showToast("\❌ Invalid format.");
     }
 }
 
@@ -493,7 +493,7 @@ function deleteSave() {
 }
 
 // ============================================
-// GESTION DES BÂTIMENTS
+// BUILDINGS MANAGEMENT
 // ============================================
 
 function setBuyMultiplier(multiplier) {
@@ -505,7 +505,7 @@ function setBuyMultiplier(multiplier) {
     
     if (multiplier === 'max') {
         document.getElementById('multiplier-max').classList.add('active');
-        showToast("Multiplicateur: Max");
+        showToast("Multiplier: Max");
     } else {
         document.getElementById(`multiplier-x${multiplier}`).classList.add('active');
         showToast(`Multiplicateur: x${multiplier}`);
@@ -566,7 +566,7 @@ function buyClickUpgrade(threshold) {
     if (!upgrade) return;
     
     if (activatedClickUpgrades.includes(threshold)) {
-        showToast("\u2705 Déjà activée !");
+        showToast("\u2705 Already activated!");
         return;
     }
     
@@ -582,7 +582,7 @@ function buyClickUpgrade(threshold) {
     hideTooltip();
     renderUpgrades();
     updateAllBuildingButtons();
-    showToast(`\u2705 ${upgrade.name} activée`);
+    showToast(`\u2705 ${upgrade.name} activated`);
 }
 
 function buyBuildingUpgrade(buildingId, threshold) {
@@ -725,7 +725,7 @@ function renderBuilding(building) {
 }
 
 // ============================================
-// GESTION DES AMÉLIORATIONS
+// UPGRADES MANAGEMENT
 // ============================================
 
 function renderUpgrades() {
@@ -741,7 +741,7 @@ function renderUpgrades() {
             
             upgradeElement.addEventListener('mouseenter', (e) => {
                 const rect = e.target.getBoundingClientRect();
-                showTooltip(`Multiplication x2 - ${formatNumber(upgrade.cost)} Parts`, rect.left + rect.width/2, rect.top);
+                showTooltip(`x2 Multiplier - ${formatNumber(upgrade.cost)} Parts`, rect.left + rect.width/2, rect.top);
             });
             upgradeElement.addEventListener('mouseleave', hideTooltip);
             
@@ -765,7 +765,7 @@ function renderUpgrades() {
                 
                 upgradeElement.addEventListener('mouseenter', (e) => {
                     const rect = e.target.getBoundingClientRect();
-                    showTooltip(`Multiplication x2 - ${formatNumber(cost)} Parts`, rect.left + rect.width/2, rect.top);
+                    showTooltip(`x2 Multiplier - ${formatNumber(cost)} Parts`, rect.left + rect.width/2, rect.top);
                 });
                 upgradeElement.addEventListener('mouseleave', hideTooltip);
                 
@@ -777,7 +777,7 @@ function renderUpgrades() {
 }
 
 // ============================================
-// GESTION DES BONUS ALÉATOIRES
+// BONUSES MANAGEMENT
 // ============================================
 
 function spawnRandomBonus() {
@@ -814,12 +814,12 @@ function spawnRandomBonus() {
         bonusElement.classList.add('clicked');
         clickedBonusesCount++;
 
-        if (bonus.id === "baguette") {
+        if (bonus.id === "meteor") {
             const oneMinuteProduction = partsPerSecond * 60;
             score += oneMinuteProduction;
             showToast(`\u2705 ${bonus.name} : +${formatNumber(oneMinuteProduction)} Parts !`);
         } 
-        else if (bonus.id === "croissant") {
+        else if (bonus.id === "flare") {
             if (!autoMultipliers.includes(bonus.multiplier)) {
                 autoMultipliers.push(bonus.multiplier);
                 updateAutoMultiplier();
@@ -849,7 +849,7 @@ function spawnRandomBonus() {
 }
 
 // ============================================
-// EFFETS VISUELS
+// VISUAL EFFECTS
 // ============================================
 
 function addScore(points) {
@@ -897,7 +897,7 @@ function showClickEffect(value) {
 }
 
 // ============================================
-// BOUCLE PRINCIPALE
+// MAIN GAME LOOP
 // ============================================
 
 function gameLoop() {
@@ -925,7 +925,7 @@ function gameLoop() {
 }
 
 // ============================================
-// STATISTIQUES
+// STATISTICS
 // ============================================
 
 function calculateTotalGenerated() {
@@ -958,7 +958,7 @@ function getGameDuration() {
 }
 
 // ============================================
-// GESTION DES TROPH\u001aES
+// TROPHIES MANAGEMENT
 // ============================================
 
 function getTotalBuildingUpgrades() {
@@ -971,7 +971,6 @@ function getTotalBuildingUpgrades() {
 
 function getUnlockedBuildingTypes() {
     return BUILDINGS.filter(b => b.count > 0).length;
-}
 
 function checkTrophies() {
     let changed = false;
@@ -981,7 +980,7 @@ function checkTrophies() {
             let unlocked = false;
             
             switch (trophy.type) {
-                case 'gps':
+                case 'pps':
                     unlocked = partsPerSecond >= trophy.threshold;
                     break;
                 case 'building-upgrade':
@@ -1073,15 +1072,15 @@ function renderStats() {
     const container = document.getElementById('stats-body');
     container.innerHTML = '';
 
-    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">Statistiques Globales</h4>';
+    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">Global Stats</h4>';
 
     const globalStats = [
         { label: "Parts Actuelle", value: formatNumber(score, true) },
         { label: "Parts total generated", value: formatNumber(calculateTotalGenerated()) },
         { label: "Parts par seconde", value: formatNumber(partsPerSecond) },
-        { label: "Clics totaux", value: formatNumber(totalPartsFromClicks) },
+        { label: "Total Clicks", value: formatNumber(totalPartsFromClicks) },
         { label: "Parts par Clic", value: formatNumber(getClickPower()) },
-        { label: "Nombre de Buildings Owneds", value: formatNumber(getTotalBuildingsOwned()) },
+        { label: "Total Buildings Owned", value: formatNumber(getTotalBuildingsOwned()) },
         { label: "Partie Commencée depuis", value: getGameDuration() },
         { label: "Bonus temporaires Cliqués", value: clickedBonusesCount }
     ];
@@ -1100,7 +1099,7 @@ function renderStats() {
     });
 
     container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Upgrades</h4>';
-    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">Upgrades de Clic:</h5>';
+    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">Click Upgrades:</h5>';
     
     if (activatedClickUpgrades.length > 0) {
         activatedClickUpgrades.forEach(threshold => {
@@ -1125,7 +1124,7 @@ function renderStats() {
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 0.9rem;">Upgrades de Buildings:</h5>';
+    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 0.9rem;">Building Upgrades:</h5>';
     
     let hasBuildingUpgrades = false;
     BUILDINGS.forEach(building => {
@@ -1152,7 +1151,7 @@ function renderStats() {
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Trophees</h4>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Trophies</h4>';
     const trophiesSection = renderTrophies();
     container.appendChild(trophiesSection);
 }
