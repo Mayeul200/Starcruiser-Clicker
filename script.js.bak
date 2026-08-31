@@ -1,6 +1,6 @@
 // ============================================
-// GLORY OF FRANCE CLICKER - MAIN SCRIPT
-// Version 4.0.0 - Système de Prestige
+// STARSHIP CLICKER - MAIN SCRIPT
+// Version 2.0.0
 // ============================================
 
 // ============================================
@@ -38,43 +38,31 @@ const BUILDING_UPDATE_INTERVAL_MS = 500;
 // GAME DATA
 // ============================================
 const BUILDINGS = [
-    { id: "baguette", name: "Boulangerie", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 10, gain: 0.1, count: 0, image: "🥖", unlockCondition: () => true, totalGenerated: 0 },
-    { id: "fromage", name: "Fromagerie", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 100, gain: 1, count: 0, image: "🧀", unlockCondition: () => score >= 20, totalGenerated: 0 },
-    { id: "vin", name: "Vignoble", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 1000, gain: 10, count: 0, image: "🍷", unlockCondition: () => score >= 500, totalGenerated: 0 },
-    { id: "cafe", name: "Café", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 10000, gain: 100, count: 0, image: "☕", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-    { id: "tour-eiffel", name: "Tour Eiffel", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 50000, gain: 1000, count: 0, image: "🗼", unlockCondition: () => score >= 25000, totalGenerated: 0 },
-    { id: "louvre", name: "Louvre", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 100000, gain: 500, count: 0, image: "🏛️", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-    { id: "notre-dame", name: "Notre-Dame", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 200000, gain: 2000, count: 0, image: "⛪", unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "chateau", name: "Château", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 1000000, gain: 10000, count: 0, image: "🏰", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-    { id: "arc-triomphe", name: "Arc de Triomphe", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 5000000, gain: 50000, count: 0, image: "🏛️", unlockCondition: () => score >= 2000000, totalGenerated: 0 },
-    { id: "lyon", name: "Lyon", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 50000000, gain: 500000, count: 0, image: "🏙️", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-    { id: "marseille", name: "Marseille", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 200000000, gain: 2000000, count: 0, image: "🌊", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
-    { id: "bordeaux", name: "Bordeaux", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 1000000000, gain: 10000000, count: 0, image: "🍷", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-    { id: "normandie", name: "Normandie", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 5000000000, gain: 50000000, count: 0, image: "🐄", unlockCondition: () => score >= 2000000000, totalGenerated: 0 },
-    { id: "alsace", name: "Alsace", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 25000000000, gain: 250000000, count: 0, image: "🍺", unlockCondition: () => score >= 10000000000, totalGenerated: 0 },
-    { id: "provence", name: "Provence", description: "Production unitaire: +{gain} Pièces/s\n% de la production totale: {percent}%\nTotal généré: {total} Pièces", baseCost: 500000000000, gain: 5000000000, count: 0, image: "🌻", unlockCondition: () => score >= 500000000000, totalGenerated: 0 }
-];
-
-const MISSIONS = [
-    { id: "village", name: "Village", threshold: 10000000, points: 1, description: "Fonder un village français" },
-    { id: "ville", name: "Ville", threshold: 100000000, points: 2, description: "Construire une ville" },
-    { id: "departement", name: "Département", threshold: 1000000000, points: 3, description: "Unifier un département" },
-    { id: "region", name: "Région", threshold: 10000000000, points: 5, description: "Conquérir une région" },
-    { id: "royaume", name: "Royaume", threshold: 100000000000, points: 8, description: "Établir un royaume" },
-    { id: "empire", name: "Empire", threshold: 1000000000000, points: 12, description: "Créer un empire" },
-    { id: "republique", name: "République", threshold: 10000000000000, points: 18, description: "Fonder la République" },
-    { id: "glory", name: "Gloire de la France", threshold: 100000000000000, points: 25, description: "Atteindre la Gloire Suprême" }
-];
-
-const PRESTIGE_UPGRADES = [
-    { id: "artisanat", cost: 1, effect: "production", multiplier: 1.05, name: "Artisanat", description: "+5% production" },
-    { id: "revolution", cost: 1, effect: "click", multiplier: 1.1, name: "Révolution", description: "+10% par clic" },
-    { id: "economie", cost: 2, effect: "cost", value: 0.02, name: "Économie", description: "-2% coût bâtiments" },
-    { id: "savoir", cost: 2, effect: "duration", multiplier: 1.1, name: "Savoir", description: "+10% durée bonus" },
-    { id: "automatisation", cost: 3, effect: "autoClick", rate: 0.1, name: "Automatisation", description: "+0.1 Pièces/s" },
-    { id: "centralisation", cost: 5, effect: "production", multiplier: 1.15, name: "Centralisation", description: "+15% production" },
-    { id: "grandeur", cost: 10, effect: "production", multiplier: 1.25, name: "Grandeur", description: "+25% production" },
-    { id: "suprématie", cost: 20, effect: "production", multiplier: 1.5, name: "Suprématie", description: "+50% production" }
+    { id: "workshop", name: "Workshop", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "🪚", unlockCondition: () => true, totalGenerated: 0 },
+    { id: "tool-factory", name: "Tool Factory", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100, gain: 1, count: 0, image: "🏭", unlockCondition: () => score >= 20, totalGenerated: 0 },
+    { id: "engine", name: "Engine", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "🚀", unlockCondition: () => score >= 500, totalGenerated: 0 },
+    { id: "fuel-tank", name: "Fuel Tank", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "⛽", unlockCondition: () => score >= 5000, totalGenerated: 0 },
+    { id: "rocket-body", name: "Rocket Body", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000, gain: 1000, count: 0, image: "🚀", unlockCondition: () => score >= 25000, totalGenerated: 0 },
+    { id: "cockpit", name: "Cockpit", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000, gain: 500, count: 0, image: "👨‍🚀", unlockCondition: () => score >= 50000, totalGenerated: 0 },
+    { id: "booster", name: "Booster", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 200000, gain: 2000, count: 0, image: "🔥", unlockCondition: () => score >= 100000, totalGenerated: 0 },
+    { id: "satellite", name: "Satellite", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🛰️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+    { id: "space-shuttle", name: "Space Shuttle", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000, gain: 50000, count: 0, image: "🚀🌍", unlockCondition: () => score >= 2000000, totalGenerated: 0 },
+    { id: "rocket", name: "Rocket", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000000, gain: 500000, count: 0, image: "🚀", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
+    { id: "launch-pad", name: "Launch Pad", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 200000000, gain: 2000000, count: 0, image: "🛫", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
+    { id: "moon-base", name: "Moon Base", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "🌕", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+    { id: "mars-rover", name: "Mars Rover", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000000, gain: 50000000, count: 0, image: "🤖", unlockCondition: () => score >= 2000000000, totalGenerated: 0 },
+    { id: "space-station", name: "Space Station", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 25000000000, gain: 250000000, count: 0, image: "🛰️", unlockCondition: () => score >= 10000000000, totalGenerated: 0 },
+    { id: "mars-colony", name: "Mars Colony", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000000, gain: 1000000000, count: 0, image: "🪐", unlockCondition: () => score >= 50000000000, totalGenerated: 0 },
+    { id: "deep-space-probe", name: "Deep Space Probe", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000000, gain: 5000000000, count: 0, image: "🛸", unlockCondition: () => score >= 250000000000, totalGenerated: 0 },
+    { id: "interstellar-ship", name: "Interstellar Ship", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 2500000000000, gain: 25000000000, count: 0, image: "🚀", unlockCondition: () => score >= 1000000000000, totalGenerated: 0 },
+    { id: "galaxy-gateway", name: "Galaxy Gateway", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10000000000000, gain: 100000000000, count: 0, image: "🌌", unlockCondition: () => score >= 5000000000000, totalGenerated: 0 },
+    { id: "cosmic-factory", name: "Cosmic Factory", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000000000000, gain: 500000000000, count: 0, image: "🏭", unlockCondition: () => score >= 25000000000000, totalGenerated: 0 },
+    { id: "quantum-drive", name: "Quantum Drive", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 250000000000000, gain: 2500000000000, count: 0, image: "⚛️", unlockCondition: () => score >= 100000000000000, totalGenerated: 0 },
+    { id: "universe-engine", name: "Universe Engine", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000000000000, gain: 10000000000000, count: 0, image: "💫", unlockCondition: () => score >= 500000000000000, totalGenerated: 0 },
+    { id: "quantum-gateway", name: "Quantum Gateway", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000000000000, gain: 50000000000000, count: 0, image: "⚛️", unlockCondition: () => score >= 2000000000000000, totalGenerated: 0 },
+    { id: "cosmic-foundry", name: "Cosmic Foundry", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 25000000000000000, gain: 250000000000000, count: 0, image: "🏭", unlockCondition: () => score >= 10000000000000000, totalGenerated: 0 },
+    { id: "intergalactic-hub", name: "Intergalactic Hub", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000000000000, gain: 1000000000000000, count: 0, image: "🌌", unlockCondition: () => score >= 50000000000000000, totalGenerated: 0 },
+    { id: "stellar-empire", name: "Stellar Empire", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000000000000, gain: 5000000000000000, count: 0, image: "🌌", unlockCondition: () => score >= 200000000000000000, totalGenerated: 0 }
 ];
 
 const CLICK_UPGRADES = [
@@ -90,12 +78,14 @@ const CLICK_UPGRADES = [
     { threshold: 50000, name: "Universal Click", cost: 50000 }
 ];
 
-const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500];
+const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
 
 const UPGRADE_COLORS = [
-    '#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe',
-    '#dbeafe', '#eff6ff', '#86efac', '#4ade80', '#22c55e',
-    '#16a34a', '#15803d', '#059669', '#047857', '#065f46'
+    '#88c9ee', '#66b2ff', '#4499ff', '#2288ff', '#1177ff',
+    '#0066ff', '#4444ff', '#6622ff', '#8800ff', '#aa00dd',
+    '#cc00bb', '#ee0099', '#ff0077', '#ff0055', '#ff2233',
+    '#ff4411', '#ff6600', '#ff8800', '#ffaa00', '#ffcc00',
+    '#ffee00', '#ffff00'
 ];
 
 const RANDOM_BONUSES = [
@@ -103,7 +93,7 @@ const RANDOM_BONUSES = [
     { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 10, duration: 30000, colorClass: "flare" }
 ];
 
-const SAVE_VERSION = "4.0.0";
+const SAVE_VERSION = "2.0.0";
 
 // ============================================
 // TROPH\u0009ES
@@ -145,10 +135,6 @@ const TROPHIES = [
     
     // Special
     { id: "all-buildings", name: "Space Collector", description: "Unlock all building types", icon: "🌌", threshold: BUILDINGS.length, type: "building-types", unlocked: false }
-,
-    // Missions
-    { id: "first-mission", name: "Première Mission", description: "Accomplir votre première mission pour la France", icon: "🇫🇷", threshold: 1, type: "mission", unlocked: false },
-    { id: "explorer", name: "Explorateur", description: "Accomplir 5 missions pour la France", icon: "🌍", threshold: 5, type: "mission", unlocked: false }
 ];
 
 // ============================================
@@ -174,16 +160,6 @@ let buyMultiplier = 1;
 let clickedBonusesCount = 0;
 let unlockedTrophies = new Set();
 
-// Prestige System
-let missionPoints = 0;
-let unlockedMissions = new Set();
-let purchasedPrestigeUpgrades = {};
-let productionBoost = 1;
-let clickBoost = 1;
-let costReduction = 0;
-let bonusDurationBoost = 1;
-let autoClickRate = 0;
-
 // ============================================
 // UTILITY FUNCTIONS
 // ============================================
@@ -201,12 +177,12 @@ function findBuildingById(buildingId) {
 
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier * productionBoost;
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier;
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier * productionBoost;
+    return building.gain * autoMultiplier * upgradeMultiplier;
 }
 
 function getBuildingUpgradeMultiplier(buildingId) {
@@ -260,10 +236,9 @@ function getBuildingUpgradeFixedCost(buildingId, threshold) {
 }
 
 function calculateBuildingCost(building) {
-    const baseCost = building.baseCost * (1 - costReduction);
     return building.count === 0
-        ? Math.floor(baseCost)
-        : Math.floor(baseCost * Math.exp(BUILDING_PRICE_GROWTH_RATE * building.count));
+        ? building.baseCost
+        : Math.floor(building.baseCost * Math.exp(BUILDING_PRICE_GROWTH_RATE * building.count));
 }
 
 // Fonction de formatage optimisée
@@ -350,16 +325,7 @@ function saveGame() {
         })),
         lastSave: Date.now(),
         gameStartTime: gameStartTime,
-        version: SAVE_VERSION,
-        // Missions & Prestige
-        missionPoints: missionPoints,
-        unlockedMissions: Array.from(unlockedMissions),
-        purchasedPrestigeUpgrades: {...purchasedPrestigeUpgrades},
-        productionBoost: productionBoost,
-        clickBoost: clickBoost,
-        costReduction: costReduction,
-        bonusDurationBoost: bonusDurationBoost,
-        autoClickRate: autoClickRate
+        version: SAVE_VERSION
     };
 
     for (const buildingId in buildingUpgrades) {
@@ -395,21 +361,6 @@ function loadGame() {
         totalPartsFromClicks = parsed.totalPartsFromClicks || parsed.clickPartsTotal || 0;
         clickedBonusesCount = parsed.clickedBonusesCount || 0;
         unlockedTrophies = new Set(parsed.unlockedTrophies || []);
-
-        // Charger les données de prestige
-        missionPoints = parsed.missionPoints || 0;
-        unlockedMissions = new Set(parsed.unlockedMissions || []);
-        purchasedPrestigeUpgrades = parsed.purchasedPrestigeUpgrades || {};
-        productionBoost = parsed.productionBoost || 1;
-        clickBoost = parsed.clickBoost || 1;
-        costReduction = parsed.costReduction || 0;
-        bonusDurationBoost = parsed.bonusDurationBoost || 1;
-        autoClickRate = parsed.autoClickRate || 0;
-        
-        // Réappliquer les effets des améliorations de prestige
-        for (const upgradeId in purchasedPrestigeUpgrades) {
-            applyPrestigeUpgradeEffect(upgradeId);
-        }
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
@@ -553,242 +504,6 @@ function deleteSave() {
     showToast("\ud83d\uddd1\ufe0f Supprimé !");
     setTimeout(() => window.location.reload(), 1000);
 }
-// ============================================
-// MISSION SYSTEM
-// ============================================
-
-function checkMissions() {
-    MISSIONS.forEach(mission => {
-        if (!unlockedMissions.has(mission.id) && score >= mission.threshold) {
-            unlockedMissions.add(mission.id);
-            missionPoints += mission.points;
-            showToast(`🇫🇷 Mission accomplie: ${mission.name}! +${mission.points} Points de Gloire`);
-            saveGame();
-        }
-    });
-}
-
-function launchMission() {
-    const availableMissions = MISSIONS.filter(m => !unlockedMissions.has(m.id));
-    if (availableMissions.length === 0) {
-        showToast("✅ Toutes les missions sont accomplies!");
-        return;
-    }
-    
-    const nextMission = availableMissions[0];
-    if (score < nextMission.threshold) {
-        showToast(`❌ Il faut ${formatNumber(nextMission.threshold)} Pièces pour la prochaine mission`);
-        return;
-    }
-    
-    // Soft reset - keep prestige upgrades
-    const currentPrestigeUpgrades = {...purchasedPrestigeUpgrades};
-    const currentMissionPoints = missionPoints;
-    const currentUnlockedMissions = new Set(unlockedMissions);
-    
-    // Reset game state
-    score = 0;
-    partsPerSecond = 0;
-    autoMultiplier = 1;
-    clickMultiplier = 1;
-    totalPartsFromClicks = 0;
-    activatedClickUpgrades = [];
-    unlockedBuildings = new Set();
-    autoMultipliers = [1];
-    clickMultipliers = [1];
-    buildingUpgrades = {};
-    buildingUpgradeCosts = {};
-    totalGeneratedByBuilding = {};
-    clickedBonusesCount = 0;
-    activeRandomBonuses = [];
-    
-    BUILDINGS.forEach(building => {
-        building.count = 0;
-    });
-    
-    // Restore prestige
-    missionPoints = currentMissionPoints;
-    unlockedMissions = currentUnlockedMissions;
-    purchasedPrestigeUpgrades = currentPrestigeUpgrades;
-    
-    // Re-apply prestige effects
-    productionBoost = 1;
-    clickBoost = 1;
-    costReduction = 0;
-    bonusDurationBoost = 1;
-    autoClickRate = 0;
-    
-    for (const upgradeId in purchasedPrestigeUpgrades) {
-        applyPrestigeUpgradeEffect(upgradeId);
-    }
-    
-    gameStartTime = Date.now();
-    lastSaveTime = 0;
-    
-    updateDisplay();
-    renderBuildings();
-    renderUpgrades();
-    renderMissionsPanel();
-    renderPrestigeUpgrades();
-    updateMissionPointsDisplay();
-    updateProgressBar();
-    saveGame();
-    
-    showToast(`🇫🇷 Mission ${nextMission.name} lancée! Nouvelle partie avec vos améliorations`);
-}
-
-function buyPrestigeUpgrade(upgradeId) {
-    const upgrade = PRESTIGE_UPGRADES.find(u => u.id === upgradeId);
-    if (!upgrade) return;
-    
-    if (purchasedPrestigeUpgrades[upgradeId]) {
-        showToast("✅ Déjà acheté!");
-        return;
-    }
-    
-    if (missionPoints < upgrade.cost) {
-        showToast("❌ Pas assez de Points de Gloire");
-        return;
-    }
-    
-    missionPoints -= upgrade.cost;
-    purchasedPrestigeUpgrades[upgradeId] = true;
-    applyPrestigeUpgradeEffect(upgradeId);
-    
-    updateMissionPointsDisplay();
-    renderPrestigeUpgrades();
-    saveGame();
-    showToast(`✅ ${upgrade.name} acheté! ${upgrade.description}`);
-}
-
-function applyPrestigeUpgradeEffect(upgradeId) {
-    const upgrade = PRESTIGE_UPGRADES.find(u => u.id === upgradeId);
-    if (!upgrade) return;
-    
-    switch (upgrade.effect) {
-        case "production":
-            productionBoost *= upgrade.multiplier;
-            break;
-        case "click":
-            clickBoost *= upgrade.multiplier;
-            break;
-        case "cost":
-            costReduction += upgrade.value;
-            break;
-        case "duration":
-            bonusDurationBoost *= upgrade.multiplier;
-            break;
-        case "autoClick":
-            autoClickRate += upgrade.rate;
-            break;
-    }
-}
-
-function updateMissionPointsDisplay() {
-    const mpElement = document.getElementById('mission-points');
-    if (mpElement) {
-        mpElement.textContent = formatNumber(missionPoints);
-    }
-}
-
-function updateProgressBar() {
-    const availableMissions = MISSIONS.filter(m => !unlockedMissions.has(m.id));
-    if (availableMissions.length === 0) {
-        const progressBar = document.getElementById('mission-progress-bar');
-        const progressText = document.getElementById('mission-progress-text');
-        if (progressBar) progressBar.style.width = '100%';
-        if (progressText) progressText.textContent = 'Toutes les missions accomplies!';
-        return;
-    }
-    
-    const nextMission = availableMissions[0];
-    const progress = Math.min(100, (score / nextMission.threshold) * 100);
-    
-    const progressBar = document.getElementById('mission-progress-bar');
-    const progressText = document.getElementById('mission-progress-text');
-    
-    if (progressBar) {
-        progressBar.style.width = progress + '%';
-    }
-    if (progressText) {
-        progressText.textContent = `Prochaine: ${nextMission.name} (${formatNumber(score)}/${formatNumber(nextMission.threshold)} Pièces)`;
-    }
-}
-
-function renderMissionsPanel() {
-    const container = document.getElementById('missions-list');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    MISSIONS.forEach(mission => {
-        const missionElement = document.createElement('div');
-        missionElement.className = 'mission-item' + (unlockedMissions.has(mission.id) ? ' unlocked' : '');
-        
-        const isUnlocked = unlockedMissions.has(mission.id);
-        const canAfford = score >= mission.threshold;
-        
-        missionElement.innerHTML = `
-            <div class="mission-info">
-                <span class="mission-name">${mission.name}</span>
-                <span class="mission-description">${mission.description}</span>
-                <span class="mission-reward">+${mission.points} Points de Gloire</span>
-            </div>
-            <div class="mission-status">
-                ${isUnlocked ? '<span class="status-icon">✅</span>' : (canAfford ? '<span class="status-icon">🇫🇷</span>' : '<span class="status-icon">🔒</span>')}
-            </div>
-        `;
-        
-        container.appendChild(missionElement);
-    });
-}
-
-function renderPrestigeUpgrades() {
-    const container = document.getElementById('prestige-upgrades-list');
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    PRESTIGE_UPGRADES.forEach(upgrade => {
-        const isPurchased = purchasedPrestigeUpgrades[upgrade.id];
-        const canAfford = missionPoints >= upgrade.cost && !isPurchased;
-        
-        const upgradeElement = document.createElement('div');
-        upgradeElement.className = 'prestige-upgrade-item' + (isPurchased ? ' purchased' : '') + (canAfford ? ' affordable' : '');
-        
-        upgradeElement.innerHTML = `
-            <div class="prestige-upgrade-info">
-                <span class="prestige-upgrade-name">${upgrade.name}</span>
-                <span class="prestige-upgrade-description">${upgrade.description}</span>
-                <span class="prestige-upgrade-cost">${formatNumber(upgrade.cost)} Points de Gloire</span>
-            </div>
-            <button onclick="buyPrestigeUpgrade('${upgrade.id}')" ${isPurchased ? 'disabled' : ''}>
-                ${isPurchased ? 'Acheté' : 'Acheter'}
-            </button>
-        `;
-        
-        container.appendChild(upgradeElement);
-    });
-}
-
-function toggleMissions() {
-    const modal = document.getElementById('missions-modal');
-    modal.classList.toggle('active');
-    if (modal.classList.contains('active')) {
-        renderMissionsPanel();
-        updateProgressBar();
-    }
-}
-
-function togglePrestigeShop() {
-    const modal = document.getElementById('prestige-modal');
-    modal.classList.toggle('active');
-    if (modal.classList.contains('active')) {
-        renderPrestigeUpgrades();
-        updateMissionPointsDisplay();
-    }
-}
-
 
 // ============================================
 // BUILDINGS MANAGEMENT
@@ -1153,7 +868,7 @@ function spawnRandomBonus() {
 function addScore(points) {
     const clickBonus = activatedClickUpgrades.length * 0.01 * partsPerSecond;
     const basePoints = points + clickBonus;
-    const totalPoints = basePoints * clickMultiplier * clickBoost;
+    const totalPoints = basePoints * clickMultiplier;
 
     score += totalPoints;
     totalPartsFromClicks += basePoints;
@@ -1212,7 +927,6 @@ function gameLoop() {
 
     partsPerSecond = totalGain;
     score += partsPerSecond / GAME_LOOP_FPS;
-    score += autoClickRate / GAME_LOOP_FPS;
 
     if (Date.now() - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastBuildingsUpdate = Date.now();
@@ -1221,8 +935,6 @@ function gameLoop() {
     updateDisplay();
     checkBuildingUnlocks();
     checkTrophies();
-    checkMissions();
-    updateProgressBar();
 }
 
 // ============================================
@@ -1240,7 +952,7 @@ function calculateTotalGenerated() {
 function getClickPower() {
     const basePower = 1;
     const clickBonus = activatedClickUpgrades.length * 0.01 * partsPerSecond;
-    return (basePower + clickBonus) * clickMultiplier * clickBoost;
+    return (basePower + clickBonus) * clickMultiplier;
 }
 
 function getTotalBuildingsOwned() {
@@ -1302,9 +1014,6 @@ function checkTrophies() {
                     break;
                 case 'building-types':
                     unlocked = getUnlockedBuildingTypes() >= trophy.threshold;
-                    break;
-                case 'mission':
-                    unlocked = unlockedMissions.size >= trophy.threshold;
                     break;
             }
             
@@ -1384,9 +1093,7 @@ function renderStats() {
         { label: "Parts per Click", value: formatNumber(getClickPower()) },
         { label: "Total Buildings Owned", value: formatNumber(getTotalBuildingsOwned()) },
         { label: "Game started", value: getGameDuration() },
-        { label: "Bonuses clicked", value: clickedBonusesCount },
-        { label: "Points de Gloire", value: formatNumber(missionPoints) },
-        { label: "Missions accomplies", value: unlockedMissions.size + "/" + MISSIONS.length }
+        { label: "Bonuses clicked", value: clickedBonusesCount }
     ];
 
     globalStats.forEach(stat => {

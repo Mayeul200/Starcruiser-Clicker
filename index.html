@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Starship Clicker</title>
+    <title>🇫🇷 Glory of France Clicker</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -11,8 +11,8 @@
     <!-- TOP BAR (10% height max) -->
     <div class="top-bar">
         <div class="top-bar-controls">
-            <button class="control-button" onclick="toggleStats()" title="Statistics">📊</button>
-            <button class="control-button" onclick="toggleSettings()" title="Settings">⚙️</button>
+                <button class="control-button" onclick="toggleStats()" title="Statistiques">📊</button>
+            <button class="control-button" onclick="toggleSettings()" title="Paramètres">⚙️</button>
         </div>
     </div>
 
@@ -20,7 +20,7 @@
     <div class="modal" id="stats-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Statistics</h2>
+                <h2>Statistiques</h2>
                 <span class="close-button" onclick="toggleStats()">&times;</span>
             </div>
             <div class="modal-body" id="stats-body"></div>
@@ -31,30 +31,30 @@
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Settings</h2>
+                <h2>Paramètres</h2>
                 <span class="close-button" onclick="toggleSettings()">&times;</span>
             </div>
             <div class="modal-body">
                 <button class="modal-button" onclick="exportSave()">📤 Export</button>
-                <textarea id="import-textarea" placeholder="Paste your save here..."></textarea>
+                <textarea id="import-textarea" placeholder="Collez votre sauvegarde ici..."></textarea>
                 <button class="modal-button" onclick="importSave()">📥 Import</button>
-                <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ Delete</button>
+                <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ Supprimer</button>
             </div>
         </div>
     </div>
 
     <!-- MAIN GRID (3 columns) -->
     <div class="main-grid">
-        <!-- LEFT PANEL (20%) - Mini-games -->
+        <!-- LEFT PANEL (20%) - Mini-jeux -->
         <div class="left-panel">
-            <h3>Mini-Games</h3>
-            <p>Reserved for mini-games</p>
+            <h3>Mini-jeux</h3>
+            <p>Réservé pour les mini-jeux</p>
         </div>
 
-        <!-- CENTER PANEL (60%) - Click Zone -->
+        <!-- CENTER PANEL (60%) - Zone de clic -->
         <div class="center-panel">
             <div class="upgrades-bar" id="upgrades-bar">
-                <span class="upgrades-title">Upgrades</span>
+                <span class="upgrades-title">Améliorations</span>
                 <div class="upgrades-container-center" id="upgrades-container"></div>
             </div>
             <div class="center-content">
@@ -62,22 +62,22 @@
                     <div class="medal-emoji">🚀</div>
                 </div>
                 <div class="counters">
-                    <div class="counter"><span id="score-value">0</span> Parts</div>
+                    <div class="counter"><span id="score-value">0</span> Pièces</div>
                     <div class="counter">+<span id="gain-value">0</span>/s</div>
                     <div class="bonus-timer" id="bonus-timer"></div>
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT PANEL (20%) - Buildings -->
+        <!-- RIGHT PANEL (20%) - Bâtiments -->
         <div class="right-panel">
             <div class="buildings-header">
-                <h3>Buildings</h3>
+                <h3>Bâtiments</h3>
                 <div class="multiplier-buttons">
-                    <button class="multiplier-btn" id="multiplier-x1" onclick="setBuyMultiplier(1)" title="Buy 1 at a time">x1</button>
-                    <button class="multiplier-btn active" id="multiplier-x5" onclick="setBuyMultiplier(5)" title="Buy 5 at a time">x5</button>
-                    <button class="multiplier-btn" id="multiplier-x50" onclick="setBuyMultiplier(50)" title="Buy 50 at a time">x50</button>
-                    <button class="multiplier-btn" id="multiplier-max" onclick="setBuyMultiplier('max')" title="Buy maximum possible">Max</button>
+                    <button class="multiplier-btn" id="multiplier-x1" onclick="setBuyMultiplier(1)" title="Acheter 1 à la fois">x1</button>
+                    <button class="multiplier-btn active" id="multiplier-x5" onclick="setBuyMultiplier(5)" title="Acheter 5 à la fois">x5</button>
+                    <button class="multiplier-btn" id="multiplier-x50" onclick="setBuyMultiplier(50)" title="Acheter 50 à la fois">x50</button>
+                    <button class="multiplier-btn" id="multiplier-max" onclick="setBuyMultiplier('max')" title="Acheter le maximum possible">Max</button>
                 </div>
             </div>
             <div class="buildings-list" id="buildings-list"></div>
@@ -90,5 +90,44 @@
     <div class="toast" id="toast"></div>
 
     <script src="script.js"></script>
+    <!-- MISSIONS MODAL -->
+    <div id="missions-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🇫🇷 Missions pour la France</h2>
+                <button onclick="toggleMissions()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="mission-progress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="mission-progress-bar"></div>
+                    </div>
+                    <div id="mission-progress-text" class="progress-text"></div>
+                </div>
+                <div id="missions-list" class="missions-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRESTIGE MODAL -->
+    <div id="prestige-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏆 Boutique de Gloire</h2>
+                <button onclick="togglePrestigeShop()" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="prestige-points">
+                    <span>Points de Gloire: </span>
+                    <span id="mission-points">0</span>
+                </div>
+                <div id="prestige-upgrades-list" class="prestige-upgrades-list"></div>
+            </div>
+        </div>
+    </div>
 </body>
-</html>
+</html>    <div class="mission-progress-container">
+        <div class="mission-progress-bar" id="mission-progress-bar"></div>
+        <div class="mission-progress-text" id="mission-progress-text"></div>
+    </div>
+
