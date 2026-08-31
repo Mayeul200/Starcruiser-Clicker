@@ -63,7 +63,7 @@ const BUILDINGS = [
     { id: "cosmic-foundry", name: "Cosmic Foundry", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 25000000000000000, gain: 250000000000000, count: 0, image: "🏭", unlockCondition: () => score >= 10000000000000000, totalGenerated: 0 },
     { id: "intergalactic-hub", name: "Intergalactic Hub", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000000000000, gain: 1000000000000000, count: 0, image: "🌌", unlockCondition: () => score >= 50000000000000000, totalGenerated: 0 },
     { id: "stellar-empire", name: "Stellar Empire", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000000000000, gain: 5000000000000000, count: 0, image: "🌌", unlockCondition: () => score >= 200000000000000000, totalGenerated: 0 }
-];;
+];
 
 const CLICK_UPGRADES = [
     { threshold: 50, name: "Basic Launch", cost: 50 },
@@ -76,7 +76,7 @@ const CLICK_UPGRADES = [
     { threshold: 10000, name: "Cosmic Master", cost: 10000 },
     { threshold: 25000, name: "Interstellar Power", cost: 25000 },
     { threshold: 50000, name: "Universal Click", cost: 50000 }
-];;
+];
 
 const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
 
@@ -91,7 +91,7 @@ const UPGRADE_COLORS = [
 const RANDOM_BONUSES = [
     { id: "meteor", symbol: "🌠", name: "Meteor Shower", effect: "instant", type: "meteor", colorClass: "meteor" },
     { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 10, duration: 30000, colorClass: "flare" }
-];;
+];
 
 const SAVE_VERSION = "2.0.0";
 
@@ -135,7 +135,7 @@ const TROPHIES = [
     
     // Special
     { id: "all-buildings", name: "Space Collector", description: "Unlock all building types", icon: "🌌", threshold: BUILDINGS.length, type: "building-types", unlocked: false }
-];;
+];
 
 // ============================================
 // GLOBAL VARIABLES
