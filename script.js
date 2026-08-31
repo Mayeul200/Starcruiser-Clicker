@@ -1085,18 +1085,15 @@ function renderTrophies() {
 function renderStats() {
     const container = document.getElementById('stats-body');
     container.innerHTML = '';
-
     container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">Global Stats</h4>';
-
+    const globalStats = [
         { label: "Current Parts", value: formatNumber(score, true) },
         { label: "Total Parts generated", value: formatNumber(calculateTotalGenerated()) },
-        { label: "Parts per second", value: formatNumber(partsPerSecond) },
         { label: "Parts per second", value: formatNumber(partsPerSecond) },
         { label: "Parts per Click", value: formatNumber(getClickPower()) },
         { label: "Total Buildings Owned", value: formatNumber(getTotalBuildingsOwned()) },
         { label: "Game started", value: getGameDuration() },
         { label: "Bonuses clicked", value: clickedBonusesCount }
-        { label: "Bonus temporaires Cliqués", value: clickedBonusesCount }
     ];
 
     globalStats.forEach(stat => {
