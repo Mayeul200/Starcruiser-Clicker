@@ -1,18 +1,27 @@
 /* ============================================
-   GLORY OF FRANCE CLICKER - STYLE SOBRE ET MODERNE
-   Version Optimisée
+   STARSHIP CLICKER - SPACE THEME STYLES
+   Version 2.0.0
    ============================================ */
 
 :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --secondary: #f8fafc;
+    --primary: #1e3a8a;
+    --primary-dark: #1e40af;
+    --primary-light: #3b82f6;
+    --secondary: #0f172a;
+    --secondary-light: #1e293b;
     --accent: #f59e0b;
-    --text: #1e293b;
-    --text-light: #64748b;
-    --border: #e2e8f0;
-    --bg: #f1f5f9;
-    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --accent-light: #fbbf24;
+    --text: #f8fafc;
+    --text-light: #94a3b8;
+    --text-dark: #64748b;
+    --border: #334155;
+    --border-light: #475569;
+    --bg: #0a0a0a;
+    --bg-light: #0f172a;
+    --bg-panel: #1e293b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+    --glow: 0 0 10px rgba(30, 58, 138, 0.5);
     --radius: 8px;
     --top-height: 10vh;
 }
@@ -35,16 +44,17 @@ body {
     top: 0; left: 0; right: 0;
     height: var(--top-height);
     min-height: 60px; max-height: 80px;
-    background: white;
+    background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: flex-end;
     padding: 0 16px;
     z-index: 1000;
+    box-shadow: var(--shadow);
 }
 
-/* BARRE D'AMÉLIORATIONS (dans le centre) */
+/* UPGRADES BAR (in center) */
 .upgrades-bar {
     height: 48px;
     width: 100%;
@@ -53,18 +63,20 @@ body {
     overflow: visible;
     padding: 0 15px;
     border-bottom: 1px solid var(--border);
-    background: white;
+    background: var(--bg-panel);
     position: relative;
     z-index: 200;
+    box-shadow: var(--shadow);
 }
 
 .upgrades-title {
-    color: var(--primary);
+    color: var(--accent-light);
     font-weight: 600;
     font-size: 0.95rem;
     margin-right: 12px;
     white-space: nowrap;
     flex-shrink: 0;
+    text-shadow: var(--glow);
 }
 
 .upgrades-container-center {
@@ -98,26 +110,30 @@ body {
     font-size: 1.3rem;
     transition: all 0.2s;
     position: relative;
-    border: 1px solid transparent;
+    border: 1px solid var(--border-light);
+    background: var(--bg-panel);
+    color: var(--text);
     z-index: 3000;
+    box-shadow: var(--shadow);
 }
 
 .upgrade-icon:hover {
     transform: scale(1.15);
-    border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-lg), var(--glow);
+    background: var(--secondary-light);
 }
 
-/* Tooltip pour les améliorations */
+/* Tooltip for upgrades */
 .upgrade-tooltip {
     position: fixed;
-    background: white;
-    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius);
     padding: 8px 12px;
     font-size: 0.85rem;
     color: var(--text);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s;
@@ -154,10 +170,13 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: all 0.2s;
+    box-shadow: var(--shadow);
 }
 
 .control-button:hover {
-    background: var(--primary-dark);
+    background: var(--primary-light);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-lg), var(--glow);
 }
 
 /* MODALS */
@@ -167,12 +186,13 @@ body {
     transform: translate(-50%, -50%);
     width: 90%; max-width: 500px;
     max-height: 80vh;
-    background: white;
+    background: var(--bg-panel);
     border-radius: var(--radius);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     z-index: 1000;
     display: none;
     overflow: hidden;
+    border: 1px solid var(--border-light);
 }
 
 .modal.active {
@@ -180,12 +200,13 @@ body {
 }
 
 .modal-header {
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     padding: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .modal-header h2 {
@@ -206,6 +227,8 @@ body {
     padding: 16px;
     overflow-y: auto;
     max-height: calc(80vh - 60px);
+    background: var(--bg-panel);
+    color: var(--text);
 }
 
 .modal-button {
@@ -222,7 +245,8 @@ body {
 }
 
 .modal-button:hover {
-    background: var(--primary-dark);
+    background: var(--primary-light);
+    box-shadow: var(--glow);
 }
 
 .modal-button.delete {
@@ -243,6 +267,8 @@ body {
     font-size: 0.9rem;
     resize: none;
     margin-bottom: 8px;
+    background: var(--secondary);
+    color: var(--text);
 }
 
 /* MAIN GRID */
@@ -261,23 +287,24 @@ body {
 
 /* LEFT PANEL */
 .left-panel {
-    background: white;
+    background: var(--bg-panel);
     border-right: 1px solid var(--border);
     padding: 16px;
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
+    color: var(--text);
 }
 
 .left-panel h3 {
-    color: var(--primary);
+    color: var(--accent-light);
     margin-bottom: 8px;
     font-size: 1rem;
 }
 
 .left-panel p {
-    color: var(--text-light);
+    color: var(--text-dark);
     font-size: 0.9rem;
 }
 
@@ -292,7 +319,7 @@ body {
 }
 
 .center-panel {
-    background: white;
+    background: var(--bg-panel);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -304,20 +331,26 @@ body {
 .medal {
     width: 220px;
     height: 220px;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
+    background: linear-gradient(135deg, var(--primary), var(--accent), var(--primary-dark));
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 3px solid white;
-    box-shadow: var(--shadow);
+    border: 3px solid var(--primary-light);
+    box-shadow: var(--shadow-lg), var(--glow);
     transition: all 0.2s;
+    animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
+    50% { box-shadow: 0 0 20px rgba(30, 58, 138, 0.8), var(--shadow-lg); }
 }
 
 .medal:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 0 25px rgba(30, 58, 138, 0.8), var(--shadow-lg);
 }
 
 .medal:active {
@@ -326,6 +359,7 @@ body {
 
 .medal-emoji {
     font-size: 7rem;
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.7));
 }
 
 .counters {
@@ -340,32 +374,35 @@ body {
 }
 
 .counter span {
-    color: var(--primary);
+    color: var(--accent-light);
     font-weight: 600;
+    text-shadow: var(--glow);
 }
 
 .bonus-timer {
     font-size: 1rem;
     margin-top: 8px;
-    color: var(--accent);
+    color: var(--accent-light);
     font-weight: 600;
-    background: rgba(245, 158, 11, 0.1);
+    background: rgba(245, 158, 11, 0.2);
     padding: 4px 12px;
     border-radius: var(--radius);
     display: none;
+    border: 1px solid var(--accent);
 }
 
 /* RIGHT PANEL */
 .right-panel {
-    background: white;
+    background: var(--bg-panel);
     border-left: 1px solid var(--border);
     padding: 0 16px 16px 16px;
     overflow-y: auto;
     height: 100%;
+    color: var(--text);
 }
 
 .right-panel h3 {
-    color: var(--primary);
+    color: var(--accent-light);
     margin-bottom: 8px;
     font-size: 1rem;
 }
@@ -377,7 +414,7 @@ body {
     margin-top: 8px;
 }
 
-/* Layout des bâtiments */
+/* Building items */
 .building-item {
     background: var(--secondary);
     border: 1px solid var(--border);
@@ -392,8 +429,9 @@ body {
 }
 
 .building-item:hover {
-    background: #eef2ff;
-    border-color: var(--primary);
+    background: var(--secondary-light);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-lg);
 }
 
 .building-left {
@@ -429,13 +467,13 @@ body {
 
 .building-ownership {
     font-size: 0.9rem;
-    color: var(--text-light);
+    color: var(--text-dark);
     font-weight: 600;
 }
 
 .building-production {
     font-size: 0.9rem;
-    color: var(--primary);
+    color: var(--accent-light);
     font-weight: 600;
 }
 
@@ -453,7 +491,8 @@ body {
 }
 
 .building-item button:hover:not(:disabled) {
-    background: var(--primary-dark);
+    background: var(--primary-light);
+    box-shadow: var(--glow);
 }
 
 .building-item button:disabled {
@@ -462,7 +501,7 @@ body {
     opacity: 0.5;
 }
 
-/* Multiplicateurs d'achat */
+/* Buy multipliers */
 .buildings-header {
     display: flex;
     justify-content: space-between;
@@ -474,7 +513,7 @@ body {
 
 .buildings-header h3 {
     margin: 0;
-    color: var(--primary);
+    color: var(--accent-light);
     font-size: 1rem;
 }
 
@@ -485,9 +524,9 @@ body {
 
 .multiplier-btn {
     padding: 4px 8px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius);
-    background: white;
+    background: var(--secondary);
     color: var(--text);
     font-size: 0.85rem;
     cursor: pointer;
@@ -495,14 +534,15 @@ body {
 }
 
 .multiplier-btn:hover {
-    background: var(--secondary);
-    border-color: var(--primary);
+    background: var(--secondary-light);
+    border-color: var(--primary-light);
 }
 
 .multiplier-btn.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
+    box-shadow: var(--glow);
 }
 
 /* TOOLTIP */
@@ -510,13 +550,13 @@ body {
     content: attr(data-tooltip);
     position: absolute;
     top: 100%; left: 0;
-    background: white;
-    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius);
     padding: 12px;
     font-size: 0.85rem;
     color: var(--text);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s;
@@ -533,7 +573,7 @@ body {
     transform: translateY(8px);
 }
 
-/* EFFETS VISUELS */
+/* VISUAL EFFECTS */
 .bonuses-container,
 .click-effects {
     position: fixed;
@@ -553,7 +593,7 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
     pointer-events: all;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg), var(--glow);
     transition: all 0.5s ease-out;
 }
 
@@ -575,7 +615,7 @@ body {
 
 .click-effect {
     position: absolute;
-    color: var(--accent);
+    color: var(--accent-light);
     font-size: 1.3rem;
     font-weight: 600;
     text-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
@@ -587,37 +627,21 @@ body {
     position: fixed;
     bottom: 20px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: var(--text);
-    color: white;
+    background: var(--secondary-light);
+    color: var(--text);
     padding: 12px 24px;
     border-radius: var(--radius);
     font-size: 1rem;
     z-index: 1000;
     opacity: 0;
     transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
 }
 
 .toast.active {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
-}
-
-/* Styles pour les améliorations de bâtiment (avec couleur) */
-.upgrade-item[data-upgrade-type="building"] {
-    color: white !important;
-    min-width: 160px;
-}
-
-/* Styles pour les améliorations de clic */
-.upgrade-item.click-upgrade {
-    background: var(--secondary) !important;
-    color: var(--text) !important;
-}
-
-.upgrade-item.click-upgrade:hover {
-    background: var(--primary) !important;
-    color: white !important;
 }
 
 /* Building blur effect for not purchased buildings */
@@ -626,9 +650,43 @@ body {
     filter: blur(2px);
 }
 
-/* Styles pour les bonus aléatoires */
-.random-bonus.baguette { background: #FFD700; color: #8B4513; }
-.random-bonus.croissant { background: #FFA500; color: #FFFFFF; }
+/* Styles for random bonuses */
+.random-bonus.meteor { background: linear-gradient(135deg, #374151, #1f2937); color: #fbbf24; }
+.random-bonus.flare { background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; }
+
+/* TROPHIES */
+.trophy-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    border: 2px solid var(--border-light);
+    background: var(--secondary);
+    color: var(--text);
+}
+
+.trophy-icon:hover {
+    transform: scale(1.15);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-lg), var(--glow);
+}
+
+.trophy-icon.unlocked {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-color: var(--primary-light);
+    opacity: 1;
+}
+
+.trophy-icon.locked {
+    opacity: 0.4;
+    filter: grayscale(100%);
+}
 
 /* RESPONSIVE */
 @media (max-width: 992px) {
@@ -662,37 +720,4 @@ body {
     .medal { width: 150px; height: 150px; }
     .medal-emoji { font-size: 4.5rem; }
     .top-bar-controls { flex-direction: column; }
-}
-
-/* TROPHIES */
-.trophy-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s;
-    border: 2px solid var(--border);
-    background: var(--secondary);
-}
-
-.trophy-icon:hover {
-    transform: scale(1.15);
-    border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.trophy-icon.unlocked {
-    background: #dbeafe;
-    border-color: #2563eb;
-    opacity: 1;
-}
-
-.trophy-icon.locked {
-    opacity: 0.4;
-    filter: grayscale(100%);
 }
