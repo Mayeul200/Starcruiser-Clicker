@@ -1,18 +1,18 @@
 /* ============================================
-   STARSHIP CLICKER - SPACE THEME STYLE
-   Version 1.0
+   GLORY OF FRANCE CLICKER - STYLE SOBRE ET MODERNE
+   Version Optimisée
    ============================================ */
 
 :root {
-    --primary: #3b82f6;
-    --primary-dark: #1e40af;
-    --secondary: #0f172a;
-    --accent: #8b5cf6;
-    --text: #f8fafc;
-    --text-light: #94a3b8;
-    --border: #334155;
-    --bg: #0f172a;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #f8fafc;
+    --accent: #f59e0b;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --bg: #f1f5f9;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
     --radius: 8px;
     --top-height: 10vh;
 }
@@ -24,13 +24,6 @@
 body {
     font-family: 'Inter', sans-serif;
     background: var(--bg);
-    background-image:
-        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-        radial-gradient(1px 1px at 50px 70px, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1px 1px at 100px 40px, #fff, transparent),
-        radial-gradient(1px 1px at 150px 80px, rgba(255,255,255,0.3), transparent),
-        radial-gradient(2px 2px at 200px 120px, #fff, transparent);
-    background-size: 200px 200px;
     color: var(--text);
     min-height: 100vh;
     line-height: 1.5;
@@ -42,7 +35,7 @@ body {
     top: 0; left: 0; right: 0;
     height: var(--top-height);
     min-height: 60px; max-height: 80px;
-    background: rgba(15, 23, 42, 0.9);
+    background: white;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -51,7 +44,7 @@ body {
     z-index: 1000;
 }
 
-/* UPGRADES BAR */
+/* BARRE D'AMÉLIORATIONS (dans le centre) */
 .upgrades-bar {
     height: 48px;
     width: 100%;
@@ -60,7 +53,7 @@ body {
     overflow: visible;
     padding: 0 15px;
     border-bottom: 1px solid var(--border);
-    background: rgba(15, 23, 42, 0.8);
+    background: white;
     position: relative;
     z-index: 200;
 }
@@ -112,13 +105,13 @@ body {
 .upgrade-icon:hover {
     transform: scale(1.15);
     border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Tooltip */
+/* Tooltip pour les améliorations */
 .upgrade-tooltip {
     position: fixed;
-    background: rgba(15, 23, 42, 0.95);
+    background: white;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 8px 12px;
@@ -174,9 +167,9 @@ body {
     transform: translate(-50%, -50%);
     width: 90%; max-width: 500px;
     max-height: 80vh;
-    background: rgba(15, 23, 42, 0.95);
+    background: white;
     border-radius: var(--radius);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     z-index: 1000;
     display: none;
     overflow: hidden;
@@ -213,7 +206,6 @@ body {
     padding: 16px;
     overflow-y: auto;
     max-height: calc(80vh - 60px);
-    color: var(--text);
 }
 
 .modal-button {
@@ -251,8 +243,6 @@ body {
     font-size: 0.9rem;
     resize: none;
     margin-bottom: 8px;
-    background: rgba(30, 41, 59, 0.7);
-    color: var(--text);
 }
 
 /* MAIN GRID */
@@ -271,7 +261,7 @@ body {
 
 /* LEFT PANEL */
 .left-panel {
-    background: rgba(15, 23, 42, 0.8);
+    background: white;
     border-right: 1px solid var(--border);
     padding: 16px;
     display: flex;
@@ -302,7 +292,7 @@ body {
 }
 
 .center-panel {
-    background: rgba(15, 23, 42, 0.8);
+    background: white;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -320,14 +310,14 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 3px solid var(--accent);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-    transition: all 0.3s;
+    border: 3px solid white;
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
 }
 
 .medal:hover {
-    transform: scale(1.05) rotate(-5deg);
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .medal:active {
@@ -359,7 +349,7 @@ body {
     margin-top: 8px;
     color: var(--accent);
     font-weight: 600;
-    background: rgba(139, 92, 246, 0.2);
+    background: rgba(245, 158, 11, 0.1);
     padding: 4px 12px;
     border-radius: var(--radius);
     display: none;
@@ -367,7 +357,7 @@ body {
 
 /* RIGHT PANEL */
 .right-panel {
-    background: rgba(15, 23, 42, 0.8);
+    background: white;
     border-left: 1px solid var(--border);
     padding: 0 16px 16px 16px;
     overflow-y: auto;
@@ -387,9 +377,9 @@ body {
     margin-top: 8px;
 }
 
-/* Building items */
+/* Layout des bâtiments */
 .building-item {
-    background: rgba(30, 41, 59, 0.7);
+    background: var(--secondary);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 12px;
@@ -402,7 +392,7 @@ body {
 }
 
 .building-item:hover {
-    background: rgba(59, 130, 246, 0.2);
+    background: #eef2ff;
     border-color: var(--primary);
 }
 
@@ -497,7 +487,7 @@ body {
     padding: 4px 8px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: rgba(30, 41, 59, 0.7);
+    background: white;
     color: var(--text);
     font-size: 0.85rem;
     cursor: pointer;
@@ -505,7 +495,7 @@ body {
 }
 
 .multiplier-btn:hover {
-    background: rgba(59, 130, 246, 0.3);
+    background: var(--secondary);
     border-color: var(--primary);
 }
 
@@ -520,7 +510,7 @@ body {
     content: attr(data-tooltip);
     position: absolute;
     top: 100%; left: 0;
-    background: rgba(15, 23, 42, 0.95);
+    background: white;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 12px;
@@ -563,7 +553,7 @@ body {
     font-size: 1.5rem;
     cursor: pointer;
     pointer-events: all;
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    box-shadow: var(--shadow);
     transition: all 0.5s ease-out;
 }
 
@@ -588,7 +578,7 @@ body {
     color: var(--accent);
     font-size: 1.3rem;
     font-weight: 600;
-    text-shadow: 0 0 4px rgba(139, 92, 246, 0.5);
+    text-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
     animation: floatUp 1s forwards;
     opacity: 0;
 }
@@ -597,16 +587,15 @@ body {
     position: fixed;
     bottom: 20px; left: 50%;
     transform: translateX(-50%) translateY(100px);
-    background: rgba(15, 23, 42, 0.9);
-    color: var(--text);
+    background: var(--text);
+    color: white;
     padding: 12px 24px;
     border-radius: var(--radius);
     font-size: 1rem;
     z-index: 1000;
     opacity: 0;
     transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .toast.active {
@@ -614,16 +603,32 @@ body {
     opacity: 1;
 }
 
-/* Styles pour les bonus spatiaux */
-.random-bonus.meteor { background: #f59e0b; color: #000; }
-.random-bonus.flare { background: #fbbf24; color: #000; }
-.random-bonus.alien { background: #8b5cf6; color: #fff; }
+/* Styles pour les améliorations de bâtiment (avec couleur) */
+.upgrade-item[data-upgrade-type="building"] {
+    color: white !important;
+    min-width: 160px;
+}
+
+/* Styles pour les améliorations de clic */
+.upgrade-item.click-upgrade {
+    background: var(--secondary) !important;
+    color: var(--text) !important;
+}
+
+.upgrade-item.click-upgrade:hover {
+    background: var(--primary) !important;
+    color: white !important;
+}
 
 /* Building blur effect for not purchased buildings */
 .building-item.not-purchased {
     opacity: 0.5;
     filter: blur(2px);
 }
+
+/* Styles pour les bonus aléatoires */
+.random-bonus.baguette { background: #FFD700; color: #8B4513; }
+.random-bonus.croissant { background: #FFA500; color: #FFFFFF; }
 
 /* RESPONSIVE */
 @media (max-width: 992px) {
@@ -672,18 +677,18 @@ body {
     position: relative;
     transition: all 0.2s;
     border: 2px solid var(--border);
-    background: rgba(30, 41, 59, 0.7);
+    background: var(--secondary);
 }
 
 .trophy-icon:hover {
     transform: scale(1.15);
     border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .trophy-icon.unlocked {
-    background: rgba(59, 130, 246, 0.3);
-    border-color: var(--primary);
+    background: #dbeafe;
+    border-color: #2563eb;
     opacity: 1;
 }
 
