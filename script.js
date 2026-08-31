@@ -827,12 +827,12 @@ function spawnRandomBonus() {
         bonusElement.classList.add('clicked');
         clickedBonusesCount++;
 
-        if (bonus.id === "baguette") {
+        if (bonus.id === "meteor") {
             const oneMinuteProduction = partsPerSecond * 60;
             score += oneMinuteProduction;
-            showToast(`\u2705 ${bonus.name} : +${formatNumber(oneMinuteProduction)} Parts !`);
+            showToast(`\u2705 ${bonus.name}: +${formatNumber(oneMinuteProduction)} Parts!`);
         } 
-        else if (bonus.id === "croissant") {
+        else if (bonus.id === "flare") {
             if (!autoMultipliers.includes(bonus.multiplier)) {
                 autoMultipliers.push(bonus.multiplier);
                 updateAutoMultiplier();
@@ -845,7 +845,7 @@ function spawnRandomBonus() {
                 endTime: Date.now() + bonus.duration
             });
 
-            showToast(`\u2705 ${bonus.name} : \u00d7${bonus.multiplier} Parts/s pendant ${bonus.duration/1000}s`);
+            showToast(`\u2705 ${bonus.name}: ×${bonus.multiplier} Parts/s for ${bonus.duration/1000}s`);
 
             setTimeout(() => {
                 activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
@@ -1197,7 +1197,7 @@ function updateBonusTimer() {
     const timerElement = document.getElementById('bonus-timer');
     if (!timerElement) return;
     
-    const activeBonuses = activeRandomBonuses.filter(b => b.id === 'croissant');
+    const activeBonuses = activeRandomBonuses.filter(b => b.id === 'flare');
     if (activeBonuses.length === 0) {
         timerElement.textContent = '';
         timerElement.style.display = 'none';
