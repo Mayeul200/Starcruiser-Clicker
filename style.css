@@ -856,3 +856,209 @@ body {
         justify-content: center;
     }
 }
+
+/* ============================================
+   SPACE MAP STYLES
+   ============================================ */
+
+/* Space Map Modal */
+.space-map-modal {
+    background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
+    border: 2px solid var(--primary-light);
+    box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
+    max-width: 800px;
+    width: 95%;
+}
+
+.space-map-modal .modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-bottom: 2px solid var(--primary-light);
+}
+
+.space-map-modal .modal-header h2 {
+    color: white;
+}
+
+/* Space Progress Text */
+.space-progress-text {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(30, 58, 138, 0.1);
+    border-radius: var(--radius);
+}
+
+/* Space Map Container */
+.space-map-container {
+    position: relative;
+    height: 200px;
+    margin: 20px 0;
+    background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 2px solid var(--border);
+}
+
+/* Space Connection Lines */
+.space-connection {
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.space-connection.active {
+    background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+}
+
+/* Space Planets */
+.space-planet {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.space-planet .planet-emoji {
+    font-size: 2rem;
+    text-shadow: 0 0 10px var(--text);
+}
+
+.space-planet .planet-name {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.space-planet .planet-distance {
+    font-size: 0.7rem;
+    color: var(--text-dark);
+}
+
+.space-planet.unlocked .planet-emoji {
+    text-shadow: 0 0 20px var(--planet-color);
+    filter: drop-shadow(0 0 5px var(--planet-color));
+}
+
+.space-planet.unlocked .planet-name {
+    color: var(--planet-color);
+}
+
+.space-planet.current .planet-emoji {
+    animation: pulse 2s infinite;
+}
+
+.space-planet.current .planet-name {
+    color: var(--accent-light);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* Spaceship */
+.spaceship {
+    position: absolute;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    z-index: 3;
+    animation: fly 3s ease-in-out infinite;
+}
+
+@keyframes fly {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(0deg); }
+    50% { transform: translate(-50%, -50%) translateY(-5px) rotate(5deg); }
+}
+
+/* New Planets Unlocked */
+.new-planets-unlocked {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(16, 185, 129, 0.1);
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
+}
+
+.new-planet-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius);
+    font-weight: 600;
+}
+
+.new-planet-item .planet-emoji {
+    font-size: 1.5rem;
+}
+
+.new-planet-item .planet-name {
+    color: var(--text);
+}
+
+.new-planet-item .planet-bonus {
+    color: var(--accent-light);
+    font-weight: 700;
+}
+
+.no-new-planets {
+    color: var(--text-dark);
+    font-style: italic;
+    text-align: center;
+}
+
+/* Space Modal Actions */
+.space-modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.space-confirm-button {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.space-confirm-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Responsive for Space Map */
+@media (max-width: 768px) {
+    .space-map-container {
+        height: 150px;
+    }
+    
+    .space-planet .planet-emoji {
+        font-size: 1.5rem;
+    }
+    
+    .space-planet .planet-name {
+        display: none;
+    }
+    
+    .space-progress-text {
+        font-size: 1rem;
+    }
+}

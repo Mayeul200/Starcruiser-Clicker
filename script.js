@@ -163,6 +163,22 @@ let rocketsLaunched = 0;
 let isLaunching = false;
 
 // ============================================
+// SPACE MAP SYSTEM (Planets & Bonuses)
+// ============================================
+const PLANETS = [
+    { id: 'mercure', name: 'Mercure', emoji: '\u263f', distanceRequired: 500, bonusPercent: 1, color: '#a9a9a9' },
+    { id: 'venus', name: 'V\u00e9nus', emoji: '\u2640', distanceRequired: 2000, bonusPercent: 2, color: '#f5c842' },
+    { id: 'terre', name: 'Terre', emoji: '\u2641', distanceRequired: 10000, bonusPercent: 3, color: '#10b981' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 50000, bonusPercent: 5, color: '#ef4444' },
+    { id: 'jupiter', name: 'Jupiter', emoji: '\u2643', distanceRequired: 200000, bonusPercent: 8, color: '#f59e0b' },
+    { id: 'saturne', name: 'Saturne', emoji: '\u2644', distanceRequired: 800000, bonusPercent: 12, color: '#8b5cf6' },
+    { id: 'uranus', name: 'Uranus', emoji: '\u2645', distanceRequired: 2000000, bonusPercent: 20, color: '#06b6d4' }
+];
+
+let unlockedPlanets = new Set();
+let planetBonuses = {}; // {planetId: bonusMultiplier}
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -318,6 +334,8 @@ function saveGame() {
         maxDistance: maxDistance,
         prestigeMultiplier: prestigeMultiplier,
         rocketsLaunched: rocketsLaunched,
+        unlockedPlanets: Array.from(unlockedPlanets),
+        planetBonuses: {...planetBonuses},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
             effect: bonus.effect,
@@ -841,6 +859,247 @@ function showLaunchResults(distance) {
 
 function closeLaunchResults() {
     document.getElementById('launch-results-modal').classList.remove('active');
+}
+
+// ============================================
+// SPACE MAP FUNCTIONS
+// ============================================
+
+function calculatePlanetProgress(distance) {
+    // Trouver quelle planète on atteint et le pourcentage entre les planètes
+    let currentPlanetIndex = -1;
+    let nextPlanetIndex = -1;
+    let progressPercent = 0;
+
+    for (let i = PLANETS.length - 1; i >= 0; i--) {
+        if (distance >= PLANETS[i].distanceRequired) {
+            currentPlanetIndex = i;
+            break;
+        }
+    }
+
+    if (currentPlanetIndex === -1) {
+        // Pas encore atteint Mercure
+        return {
+            currentPlanet: null,
+            nextPlanet: PLANETS[0],
+            progressPercent: Math.round((distance / PLANETS[0].distanceRequired) * 100)
+        };
+    }
+
+    if (currentPlanetIndex === PLANETS.length - 1) {
+        // Uranus atteint (max)
+        return {
+            currentPlanet: PLANETS[currentPlanetIndex],
+            nextPlanet: null,
+            progressPercent: 100
+        };
+    }
+
+    // Calculer le progrès vers la prochaine planète
+    const currentPlanet = PLANETS[currentPlanetIndex];
+    const nextPlanet = PLANETS[currentPlanetIndex + 1];
+    const distanceBetween = nextPlanet.distanceRequired - currentPlanet.distanceRequired;
+    const distanceFromCurrent = distance - currentPlanet.distanceRequired;
+    progressPercent = Math.round((distanceFromCurrent / distanceBetween) * 100);
+
+    return {
+        currentPlanet: currentPlanet,
+        nextPlanet: nextPlanet,
+        progressPercent: progressPercent
+    };
+}
+
+function checkNewPlanetsUnlocked(distance) {
+    const newlyUnlocked = [];
+    
+    PLANETS.forEach(planet => {
+        if (distance >= planet.distanceRequired && !unlockedPlanets.has(planet.id)) {
+            unlockedPlanets.add(planet.id);
+            planetBonuses[planet.id] = planet.bonusPercent / 100;
+            newlyUnlocked.push(planet);
+        }
+    });
+    
+    return newlyUnlocked;
+}
+
+function getTotalPlanetBonus() {
+    let total = 1;
+    Object.values(planetBonuses).forEach(bonus => {
+        total += bonus;
+    });
+    return total;
+}
+
+function showSpaceMap(distance) {
+    const modal = document.getElementById('space-map-modal');
+    const mapContainer = document.getElementById('space-map-container');
+    const progressText = document.getElementById('space-progress-text');
+    const newUnlocksContainer = document.getElementById('new-planets-unlocked');
+    
+    // Calculer la progression
+    const progress = calculatePlanetProgress(distance);
+    
+    // Mettre à jour le texte de progression
+    if (progress.currentPlanet) {
+        if (progress.nextPlanet) {
+            progressText.innerHTML = `Tu as atteint <strong>${progress.currentPlanet.emoji} ${progress.currentPlanet.name}</strong> ! En route vers ${progress.nextPlanet.emoji} ${progress.nextPlanet.name} (${progress.progressPercent}%)`;
+        } else {
+            progressText.innerHTML = `F\u00e9licitations ! Tu as atteint <strong>${progress.currentPlanet.emoji} ${progress.currentPlanet.name}</strong>, la dernière planète !`;
+        }
+    } else {
+        progressText.innerHTML = `En route vers <strong>${progress.nextPlanet.emoji} ${progress.nextPlanet.name}</strong> (${progress.progressPercent}%)`;
+    }
+    
+    // Vérifier les nouvelles planètes débloquées
+    const newlyUnlocked = checkNewPlanetsUnlocked(distance);
+    
+    // Afficher les nouvelles planètes débloquées
+    newUnlocksContainer.innerHTML = '';
+    if (newlyUnlocked.length > 0) {
+        newlyUnlocked.forEach(planet => {
+            const planetElement = document.createElement('div');
+            planetElement.className = 'new-planet-item';
+            planetElement.innerHTML = `
+                <span class="planet-emoji">${planet.emoji}</span>
+                <span class="planet-name">${planet.name}</span>
+                <span class="planet-bonus">+${planet.bonusPercent}% Parts/s</span>
+            `;
+            planetElement.style.borderColor = planet.color;
+            planetElement.style.color = planet.color;
+            newUnlocksContainer.appendChild(planetElement);
+        });
+    } else {
+        newUnlocksContainer.innerHTML = '<p class="no-new-planets">Aucune nouvelle planète débloquée</p>';
+    }
+    
+    // Dessiner la carte de l'espace
+    drawSpaceMap(distance);
+    
+    // Afficher le modal
+    modal.classList.add('active');
+}
+
+function drawSpaceMap(distance) {
+    const container = document.getElementById('space-map-container');
+    const progress = calculatePlanetProgress(distance);
+    
+    container.innerHTML = '';
+    
+    PLANETS.forEach((planet, index) => {
+        const planetElement = document.createElement('div');
+        planetElement.className = 'space-planet';
+        
+        const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
+        const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
+        const isNext = progress.nextPlanet && progress.nextPlanet.id === planet.id;
+        
+        let className = 'space-planet';
+        if (isUnlocked) className += ' unlocked';
+        if (isCurrent) className += ' current';
+        if (isNext) className += ' next';
+        
+        planetElement.className = className;
+        planetElement.innerHTML = `
+            <span class="planet-emoji">${planet.emoji}</span>
+            <span class="planet-name">${planet.name}</span>
+            <span class="planet-distance">${formatNumber(planet.distanceRequired)} km</span>
+        `;
+        
+        planetElement.style.setProperty('--planet-color', planet.color);
+        
+        // Positionner les planètes (layout horizontal)
+        const position = (index / (PLANETS.length - 1)) * 100;
+        planetElement.style.left = `${position}%`;
+        
+        // Ajouter la ligne de connexion (sauf pour la dernière)
+        if (index < PLANETS.length - 1) {
+            const nextPlanet = PLANETS[index + 1];
+            const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
+            
+            const line = document.createElement('div');
+            line.className = 'space-connection';
+            if (isUnlocked && isNextUnlocked) {
+                line.classList.add('active');
+            }
+            line.style.left = `${position}%`;
+            line.style.width = `${100 / (PLANETS.length - 1)}%`;
+            container.appendChild(line);
+        }
+        
+        container.appendChild(planetElement);
+    });
+    
+    // Ajouter le vaisseau spatial
+    if (progress.currentPlanet || progress.progressPercent > 0) {
+        const spaceship = document.createElement('div');
+        spaceship.className = 'spaceship';
+        spaceship.innerHTML = '\u{1F680}';
+        
+        // Calculer la position du vaisseau
+        let shipPosition = 0;
+        if (progress.currentPlanet) {
+            const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
+            const nextIndex = currentIndex + 1;
+            
+            if (nextIndex < PLANETS.length && progress.nextPlanet) {
+                // Entre deux planètes
+                const startPos = (currentIndex / (PLANETS.length - 1)) * 100;
+                const endPos = (nextIndex / (PLANETS.length - 1)) * 100;
+                shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
+            } else {
+                // Sur la dernière planète
+                shipPosition = 100;
+            }
+        } else {
+            // Avant la première planète
+            const firstPlanetPos = 0;
+            const secondPlanetPos = 100 / (PLANETS.length - 1);
+            shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
+        }
+        
+        spaceship.style.left = `${shipPosition}%`;
+        container.appendChild(spaceship);
+    }
+}
+
+function confirmSpaceMapAndReset(distance) {
+    closeSpaceMap();
+    
+    // Appliquer le reset avec les bonus
+    if (distance > maxDistance) {
+        maxDistance = distance;
+    }
+    rocketsLaunched++;
+    prestigeMultiplier = 1 + (maxDistance / 1000000);
+    
+    // Appliquer les bonus des planètes au prestigeMultiplier
+    const planetBonus = getTotalPlanetBonus();
+    prestigeMultiplier *= planetBonus;
+    
+    // Reset du score mais garder les pièces et les bonus
+    score = 0;
+    BUILDINGS.forEach(b => b.count = 0);
+    unlockedBuildings = new Set();
+    totalPartsFromClicks = 0;
+    activatedClickUpgrades = [];
+    buildingUpgrades = {};
+    buildingUpgradeCosts = {};
+    totalGeneratedByBuilding = {};
+    
+    updateDisplay();
+    saveGame();
+    renderBuildings();
+    renderUpgrades();
+    
+    // Afficher le modal de résultats
+    showLaunchResults(distance);
+    isLaunching = false;
+}
+
+function closeSpaceMap() {
+    document.getElementById('space-map-modal').classList.remove('active');
 }
 
 // ============================================

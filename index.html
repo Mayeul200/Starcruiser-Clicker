@@ -53,7 +53,29 @@
                 </div>
             </div>
         </div>
+    </div>    <!-- SPACE MAP MODAL -->
+    <div class="modal" id="space-map-modal">
+        <div class="modal-content space-map-modal">
+            <div class="modal-header">
+                <h2>🌌 Carte de l'Espace</h2>
+                <span class="close-button" onclick="closeSpaceMap()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="space-progress-text" id="space-progress-text">
+                    Calcul de ta position dans l'espace...
+                </div>
+                <div class="space-map-container" id="space-map-container"></div>
+                <div class="new-planets-unlocked" id="new-planets-unlocked"></div>
+                <div class="space-modal-actions">
+                    <button class="space-confirm-button" onclick="confirmSpaceMapAndReset()">
+                        ✅ Continuer (Reset + Bonus)
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
+
+
 
 <!-- SETTINGS MODAL -->
     <div class="modal" id="settings-modal">
