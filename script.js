@@ -808,37 +808,14 @@ function launchRocket() {
         medal.style.transition = 'all 2s';
     }, 500);
     
-    // Réinitialiser après l'animation
+    // Après l'animation, afficher la carte spatiale AVANT le reset
     setTimeout(() => {
         medal.style.transform = 'scale(1)';
         medal.style.opacity = '1';
         medal.style.transition = 'none';
         
-        // Mettre à jour les statistiques de prestige
-        if (distance > maxDistance) {
-            maxDistance = distance;
-        }
-        rocketsLaunched++;
-        prestigeMultiplier = 1 + (maxDistance / 1000000);
-        
-        // Reset du score mais garder les pièces et les bonus
-        score = 0;
-        BUILDINGS.forEach(b => b.count = 0);
-        unlockedBuildings = new Set();
-        totalPartsFromClicks = 0;
-        activatedClickUpgrades = [];
-        buildingUpgrades = {};
-        buildingUpgradeCosts = {};
-        totalGeneratedByBuilding = {};
-        
-        updateDisplay();
-        saveGame();
-        renderBuildings();
-        renderUpgrades();
-        
-        // Afficher le modal de résultats
-        showLaunchResults(distance);
-        
+        // Afficher la carte spatiale avec la progression
+        showSpaceMap(distance);
         isLaunching = false;
         showToast(`🚀 Mission réussie ! Distance: ${formatNumber(distance)} km`);
     }, 2500);
