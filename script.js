@@ -777,8 +777,15 @@ function checkRocketReady() {
 function calculateDistance() {
     // Calculer la distance basée sur le score et le nombre de pièces
     const partsUnlocked = ROCKET_PARTS.filter(part => part.count > 0).length;
-    const totalScore = score + 1; // +1 pour éviter log(0)
-    return Math.floor(Math.log(totalScore) * 1000 + (partsUnlocked * 100)) * prestigeMultiplier;
+    const totalScore = Math.max(score, 0) + 1; // Éviter les valeurs négatives
+    const logDistance = Math.log(totalScore) * 1000;
+    const partsBonus = partsUnlocked * 100;
+    const baseDistance = Math.floor(logDistance + partsBonus);
+    
+    // S'assurer que prestigeMultiplier est un nombre valide
+    const multiplier = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
+    
+    return baseDistance * multiplier;
 }
 
 function launchRocket() {
@@ -1049,11 +1056,11 @@ function confirmSpaceMapAndReset(distance) {
         maxDistance = distance;
     }
     rocketsLaunched++;
-    prestigeMultiplier = 1 + (maxDistance / 1000000);
+    prestigeMultiplier = 1 + (isNaN(maxDistance) ? 0 : maxDistance / 1000000);
     
     // Appliquer les bonus des planètes au prestigeMultiplier
     const planetBonus = getTotalPlanetBonus();
-    prestigeMultiplier *= planetBonus;
+    prestigeMultiplier *= (isNaN(planetBonus) ? 1 : planetBonus);
     
     // Reset du score mais garder les pièces et les bonus
     score = 0;
