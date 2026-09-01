@@ -37,33 +37,27 @@ const BUILDING_UPDATE_INTERVAL_MS = 500;
 // ============================================
 // GAME DATA
 // ============================================
-const BUILDINGS = [
-    { id: "workshop", name: "Workshop", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "🪚", unlockCondition: () => true, totalGenerated: 0 },
-    { id: "tool-factory", name: "Tool Factory", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100, gain: 1, count: 0, image: "🏭", unlockCondition: () => score >= 20, totalGenerated: 0 },
-    { id: "engine", name: "Engine", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "🚀", unlockCondition: () => score >= 500, totalGenerated: 0 },
-    { id: "fuel-tank", name: "Fuel Tank", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "⛽", unlockCondition: () => score >= 5000, totalGenerated: 0 },
-    { id: "rocket-body", name: "Rocket Body", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000, gain: 1000, count: 0, image: "🚀", unlockCondition: () => score >= 25000, totalGenerated: 0 },
-    { id: "cockpit", name: "Cockpit", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000, gain: 500, count: 0, image: "👨‍🚀", unlockCondition: () => score >= 50000, totalGenerated: 0 },
-    { id: "booster", name: "Booster", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 200000, gain: 2000, count: 0, image: "🔥", unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "satellite", name: "Satellite", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🛰️", unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-    { id: "space-shuttle", name: "Space Shuttle", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000, gain: 50000, count: 0, image: "🚀🌍", unlockCondition: () => score >= 2000000, totalGenerated: 0 },
-    { id: "rocket", name: "Rocket", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000000, gain: 500000, count: 0, image: "🚀", unlockCondition: () => score >= 50000000, totalGenerated: 0 },
-    { id: "launch-pad", name: "Launch Pad", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 200000000, gain: 2000000, count: 0, image: "🛫", unlockCondition: () => score >= 100000000, totalGenerated: 0 },
-    { id: "moon-base", name: "Moon Base", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "🌕", unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-    { id: "mars-rover", name: "Mars Rover", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000000, gain: 50000000, count: 0, image: "🤖", unlockCondition: () => score >= 2000000000, totalGenerated: 0 },
-    { id: "space-station", name: "Space Station", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 25000000000, gain: 250000000, count: 0, image: "🛰️", unlockCondition: () => score >= 10000000000, totalGenerated: 0 },
-    { id: "mars-colony", name: "Mars Colony", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000000, gain: 1000000000, count: 0, image: "🪐", unlockCondition: () => score >= 50000000000, totalGenerated: 0 },
-    { id: "deep-space-probe", name: "Deep Space Probe", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000000, gain: 5000000000, count: 0, image: "🛸", unlockCondition: () => score >= 250000000000, totalGenerated: 0 },
-    { id: "interstellar-ship", name: "Interstellar Ship", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 2500000000000, gain: 25000000000, count: 0, image: "🚀", unlockCondition: () => score >= 1000000000000, totalGenerated: 0 },
-    { id: "galaxy-gateway", name: "Galaxy Gateway", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 10000000000000, gain: 100000000000, count: 0, image: "🌌", unlockCondition: () => score >= 5000000000000, totalGenerated: 0 },
-    { id: "cosmic-factory", name: "Cosmic Factory", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 50000000000000, gain: 500000000000, count: 0, image: "🏭", unlockCondition: () => score >= 25000000000000, totalGenerated: 0 },
-    { id: "quantum-drive", name: "Quantum Drive", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 250000000000000, gain: 2500000000000, count: 0, image: "⚛️", unlockCondition: () => score >= 100000000000000, totalGenerated: 0 },
-    { id: "universe-engine", name: "Universe Engine", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 1000000000000000, gain: 10000000000000, count: 0, image: "💫", unlockCondition: () => score >= 500000000000000, totalGenerated: 0 },
-    { id: "quantum-gateway", name: "Quantum Gateway", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 5000000000000000, gain: 50000000000000, count: 0, image: "⚛️", unlockCondition: () => score >= 2000000000000000, totalGenerated: 0 },
-    { id: "cosmic-foundry", name: "Cosmic Foundry", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 25000000000000000, gain: 250000000000000, count: 0, image: "🏭", unlockCondition: () => score >= 10000000000000000, totalGenerated: 0 },
-    { id: "intergalactic-hub", name: "Intergalactic Hub", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 100000000000000000, gain: 1000000000000000, count: 0, image: "🌌", unlockCondition: () => score >= 50000000000000000, totalGenerated: 0 },
-    { id: "stellar-empire", name: "Stellar Empire", description: "Unit production: +{gain} Parts/s\n% of total production: {percent}%\nTotal generated: {total} Parts", baseCost: 500000000000000000, gain: 5000000000000000, count: 0, image: "🌌", unlockCondition: () => score >= 200000000000000000, totalGenerated: 0 }
+
+// ============================================
+// GAME DATA - 10 ROCKET PARTS
+// ============================================
+const ROCKET_PARTS = [
+    { id: "workshop", name: "Atelier", description: "Fabrique des pieces: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "🛠️", order: 1, unlockCondition: () => true, totalGenerated: 0 },
+    { id: "nozzles", name: "Tuyeres", description: "Propulsion: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100, gain: 1, count: 0, image: "🎯", order: 2, unlockCondition: () => score >= 50, totalGenerated: 0 },
+    { id: "engines", name: "Moteurs", description: "Moteurs principaux: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "🔥", order: 3, unlockCondition: () => score >= 500, totalGenerated: 0 },
+    { id: "fuel-tank", name: "Reservoir", description: "Carburant: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "⛽", order: 4, unlockCondition: () => score >= 5000, totalGenerated: 0 },
+    { id: "rocket-body", name: "Corps", description: "Structure: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000, gain: 1000, count: 0, image: "🟫", order: 5, unlockCondition: () => score >= 25000, totalGenerated: 0 },
+    { id: "wings", name: "Stabilisateurs", description: "Equilibre: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "✈️", order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
+    { id: "cockpit", name: "Cockpit", description: "Poste de pilotage: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000, gain: 100000, count: 0, image: "👨‍🚀", order: 7, unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+    { id: "shield", name: "Bouclier", description: "Protection: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000000, gain: 1000000, count: 0, image: "🛡️", order: 8, unlockCondition: () => score >= 10000000, totalGenerated: 0 },
+    { id: "launch-pad", name: "Pas de tir", description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "🚀", order: 9, unlockCondition: () => score >= 100000000, totalGenerated: 0 },
+    { id: "astronaut", name: "Astronaute", description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "👩‍🚀", order: 10, unlockCondition: () => score >= 1000000000, totalGenerated: 0 }
 ];
+
+// Alias pour compatibilite
+const BUILDINGS = ROCKET_PARTS;
+
+
 
 const CLICK_UPGRADES = [
     { threshold: 50, name: "Basic Launch", cost: 50 },
