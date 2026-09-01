@@ -27,7 +27,35 @@
         </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
+
+        <!-- LAUNCH RESULTS MODAL -->
+    <div class="modal" id="launch-results-modal">
+        <div class="modal-content launch-modal">
+            <div class="modal-header">
+                <h2>🚀 Mission Résultats</h2>
+                <span class="close-button" onclick="closeLaunchResults()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="launch-result-item">
+                    <span class="launch-label">Distance parcourue:</span>
+                    <span class="launch-value" id="launch-results-distance">0 km</span>
+                </div>
+                <div class="launch-result-item">
+                    <span class="launch-label">Bonus permanent:</span>
+                    <span class="launch-value" id="launch-results-multiplier">x1</span>
+                </div>
+                <div class="launch-result-item">
+                    <span class="launch-label">Fusées lancées:</span>
+                    <span class="launch-value" id="launch-results-rockets">0</span>
+                </div>
+                <div class="launch-info">
+                    <p>Plus tu vas loin, plus ton bonus permanent augmente !</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- SETTINGS MODAL -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -61,6 +89,11 @@
                 <div class="medal" id="medal" onclick="addScore(1)">
                     <div class="medal-emoji">🚀</div>
                 </div>
+                <button class="launch-button" id="launch-button" onclick="launchRocket()" title="Lancer la fusée">
+                    <span class="launch-button-icon">🚀</span>
+                    <span class="launch-button-text">LANCER LA FUSÉE</span>
+                </button>
+
                 <div class="counters">
                     <div class="counter"><span id="score-value">0</span> Parts</div>
                     <div class="counter">+<span id="gain-value">0</span>/s</div>

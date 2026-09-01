@@ -155,6 +155,14 @@ let clickedBonusesCount = 0;
 let unlockedTrophies = new Set();
 
 // ============================================
+// ROCKET LAUNCH SYSTEM (Prestige)
+// ============================================
+let maxDistance = 0;
+let prestigeMultiplier = 1;
+let rocketsLaunched = 0;
+let isLaunching = false;
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -307,6 +315,9 @@ function saveGame() {
         totalGeneratedByBuilding: {},
         clickedBonusesCount: clickedBonusesCount,
         unlockedTrophies: Array.from(unlockedTrophies),
+        maxDistance: maxDistance,
+        prestigeMultiplier: prestigeMultiplier,
+        rocketsLaunched: rocketsLaunched,
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
             effect: bonus.effect,
@@ -355,6 +366,11 @@ function loadGame() {
         totalPartsFromClicks = parsed.totalPartsFromClicks || parsed.clickPartsTotal || 0;
         clickedBonusesCount = parsed.clickedBonusesCount || 0;
         unlockedTrophies = new Set(parsed.unlockedTrophies || []);
+        
+        // Charger le système de prestige
+        maxDistance = parsed.maxDistance || 0;
+        prestigeMultiplier = parsed.prestigeMultiplier || 1;
+        rocketsLaunched = parsed.rocketsLaunched || 0;
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
@@ -729,6 +745,102 @@ function renderBuilding(building) {
     });
 
     container.appendChild(buildingElement);
+}
+
+// ============================================
+// ROCKET LAUNCH SYSTEM
+// ============================================
+
+function checkRocketReady() {
+    // Vérifier si toutes les pièces sont débloquées (count > 0)
+    return ROCKET_PARTS.every(part => part.count > 0);
+}
+
+function calculateDistance() {
+    // Calculer la distance basée sur le score et le nombre de pièces
+    const partsUnlocked = ROCKET_PARTS.filter(part => part.count > 0).length;
+    const totalScore = score + 1; // +1 pour éviter log(0)
+    return Math.floor(Math.log(totalScore) * 1000 + (partsUnlocked * 100)) * prestigeMultiplier;
+}
+
+function launchRocket() {
+    if (!checkRocketReady()) {
+        showToast("❌ Fusée pas encore prête ! Il manque des pièces.");
+        return;
+    }
+    
+    if (isLaunching) {
+        showToast("⏳ Lancement en cours...");
+        return;
+    }
+    
+    isLaunching = true;
+    
+    // Calculer la distance
+    const distance = calculateDistance();
+    
+    // Animation de lancement (à améliorer plus tard)
+    const medal = document.getElementById('medal');
+    medal.style.transform = 'scale(0.8)';
+    medal.style.transition = 'transform 0.5s';
+    
+    setTimeout(() => {
+        medal.style.transform = 'translateY(-200px) scale(1.5)';
+        medal.style.opacity = '0';
+        medal.style.transition = 'all 2s';
+    }, 500);
+    
+    // Réinitialiser après l'animation
+    setTimeout(() => {
+        medal.style.transform = 'scale(1)';
+        medal.style.opacity = '1';
+        medal.style.transition = 'none';
+        
+        // Mettre à jour les statistiques de prestige
+        if (distance > maxDistance) {
+            maxDistance = distance;
+        }
+        rocketsLaunched++;
+        prestigeMultiplier = 1 + (maxDistance / 1000000);
+        
+        // Reset du score mais garder les pièces et les bonus
+        score = 0;
+        BUILDINGS.forEach(b => b.count = 0);
+        unlockedBuildings = new Set();
+        totalPartsFromClicks = 0;
+        activatedClickUpgrades = [];
+        buildingUpgrades = {};
+        buildingUpgradeCosts = {};
+        totalGeneratedByBuilding = {};
+        
+        updateDisplay();
+        saveGame();
+        renderBuildings();
+        renderUpgrades();
+        
+        // Afficher le modal de résultats
+        showLaunchResults(distance);
+        
+        isLaunching = false;
+        showToast(`🚀 Mission réussie ! Distance: ${formatNumber(distance)} km`);
+    }, 2500);
+}
+
+function showLaunchResults(distance) {
+    const modal = document.getElementById('launch-results-modal');
+    const distanceElement = document.getElementById('launch-results-distance');
+    const multiplierElement = document.getElementById('launch-results-multiplier');
+    const rocketsElement = document.getElementById('launch-results-rockets');
+    
+    distanceElement.textContent = formatNumber(distance) + ' km';
+    multiplierElement.textContent = prestigeMultiplier.toFixed(2);
+    rocketsElement.textContent = rocketsLaunched;
+    
+    modal.classList.add('active');
+}
+
+function closeLaunchResults() {
+    document.getElementById('launch-results-modal').classList.remove('active');
 }
 
 // ============================================

@@ -721,3 +721,138 @@ body {
     .medal-emoji { font-size: 4.5rem; }
     .top-bar-controls { flex-direction: column; }
 }
+
+/* ============================================
+   ROCKET LAUNCH SYSTEM
+   ============================================ */
+
+/* Launch Button */
+.launch-button {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px auto;
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(239, 68, 68, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.launch-button:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(239, 68, 68, 0.6);
+    background: linear-gradient(135deg, #f87171, #ef4444);
+}
+
+.launch-button:active {
+    transform: translateY(1px);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.launch-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.launch-button-icon {
+    font-size: 1.5rem;
+}
+
+.launch-button-text {
+    letter-spacing: 1px;
+}
+
+/* Launch Results Modal */
+.launch-modal {
+    background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
+    border: 2px solid var(--primary-light);
+    box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
+    max-width: 500px;
+    width: 90%;
+}
+
+.launch-modal .modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-bottom: 2px solid var(--primary-light);
+}
+
+.launch-modal .modal-header h2 {
+    color: white;
+}
+
+.launch-result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    margin: 10px 0;
+    background: rgba(30, 58, 138, 0.1);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--primary-light);
+}
+
+.launch-label {
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.launch-value {
+    font-weight: 700;
+    color: var(--accent-light);
+    font-size: 1.2rem;
+}
+
+.launch-info {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 15px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.launch-info p {
+    color: var(--accent-light);
+    font-style: italic;
+}
+
+/* Animation for launch */
+@keyframes rocketLaunch {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+}
+
+.launch-animation {
+    animation: rocketLaunch 2s ease-out forwards;
+}
+
+/* Responsive for launch button */
+@media (max-width: 768px) {
+    .launch-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+    
+    .launch-button-icon {
+        font-size: 1.2rem;
+    }
+    
+    .launch-button-text {
+        display: none;
+    }
+    
+    .launch-button {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        justify-content: center;
+    }
+}
