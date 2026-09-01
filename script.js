@@ -160,6 +160,7 @@ let unlockedTrophies = new Set();
 let maxDistance = 0;
 let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
+let lastLaunchDistance = 0;
 let isLaunching = false;
 
 // ============================================
@@ -822,6 +823,7 @@ function launchRocket() {
         medal.style.transition = 'none';
         
         // Afficher la carte spatiale avec la progression
+        lastLaunchDistance = distance;
         showSpaceMap(distance);
         isLaunching = false;
         showToast(`🚀 Mission réussie ! Distance: ${formatNumber(distance)} km`);
@@ -1053,12 +1055,12 @@ function drawSpaceMap(distance) {
     }
 }
 
-function confirmSpaceMapAndReset(distance) {
+function confirmSpaceMapAndReset() {
     closeSpaceMap();
     
     // Appliquer le reset avec les bonus
-    if (distance > maxDistance) {
-        maxDistance = distance;
+    if (lastLaunchDistance > maxDistance) {
+        maxDistance = lastLaunchDistance;
     }
     rocketsLaunched++;
     prestigeMultiplier = 1 + (isNaN(maxDistance) ? 0 : maxDistance / 1000000);
@@ -1083,7 +1085,7 @@ function confirmSpaceMapAndReset(distance) {
     renderUpgrades();
     
     // Afficher le modal de résultats
-    showLaunchResults(distance);
+    showLaunchResults(lastLaunchDistance);
     isLaunching = false;
 }
 
