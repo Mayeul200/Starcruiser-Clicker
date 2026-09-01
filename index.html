@@ -95,10 +95,31 @@
 
     <!-- MAIN GRID (3 columns) -->
     <div class="main-grid">
-        <!-- LEFT PANEL (20%) - Mini-games -->
+        <!-- LEFT PANEL (20%) - Space Progress -->
         <div class="left-panel">
-            <h3>Mini-Games</h3>
-            <p>Reserved for mini-games</p>
+            <h3>🌌 Progression Spatiale</h3>
+            <div class="space-progress-container" id="space-progress-sidebar">
+                <div class="space-progress-header">
+                    <span class="current-planet-display" id="current-planet-display">
+                        🌍 Terre: 0%
+                    </span>
+                </div>
+                <div class="mini-space-map" id="mini-space-map"></div>
+                <div class="space-stats" id="space-stats-sidebar">
+                    <div class="stat-item">
+                        <span class="stat-label">Distance:</span>
+                        <span class="stat-value" id="sidebar-distance">0 km</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Bonus:</span>
+                        <span class="stat-value" id="sidebar-bonus">x1.00</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Planètes:</span>
+                        <span class="stat-value" id="sidebar-planets">0/7</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- CENTER PANEL (60%) - Click Zone -->

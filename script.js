@@ -825,6 +825,7 @@ function launchRocket() {
         // Afficher la carte spatiale avec la progression
         lastLaunchDistance = distance;
         showSpaceMap(distance);
+        updateSpaceProgress();
         isLaunching = false;
         showToast(`🚀 Mission réussie ! Distance: ${formatNumber(distance)} km`);
     }, 2500);
@@ -1087,11 +1088,131 @@ function confirmSpaceMapAndReset() {
     // Afficher le modal de résultats
     showLaunchResults(lastLaunchDistance);
     isLaunching = false;
+        updateSpaceProgress();
 }
 
 function closeSpaceMap() {
     document.getElementById('space-map-modal').classList.remove('active');
 }
+
+// ============================================
+// SPACE PROGRESS SIDEBAR UPDATE
+// ============================================
+
+function updateSpaceProgress() {
+    // Calculer la distance actuelle (simulée si pas encore lancé)
+    const distance = lastLaunchDistance > 0 ? lastLaunchDistance : calculateDistance();
+    const progress = calculatePlanetProgress(distance);
+    
+    // Mettre à jour l'affichage de la planète actuelle
+    const planetDisplay = document.getElementById('current-planet-display');
+    if (planetDisplay) {
+        if (progress.currentPlanet) {
+            if (progress.nextPlanet) {
+                planetDisplay.innerHTML = `${progress.currentPlanet.emoji} ${progress.currentPlanet.name}: ${progress.progressPercent}%`;
+            } else {
+                planetDisplay.innerHTML = `${progress.currentPlanet.emoji} ${progress.currentPlanet.name}: 100%`;
+            }
+        } else {
+            planetDisplay.innerHTML = `🌌 En route: ${progress.progressPercent}%`;
+        }
+    }
+    
+    // Mettre à jour la mini-carte
+    updateMiniSpaceMap(distance);
+    
+    // Mettre à jour les stats
+    const sidebarDistance = document.getElementById('sidebar-distance');
+    const sidebarBonus = document.getElementById('sidebar-bonus');
+    const sidebarPlanets = document.getElementById('sidebar-planets');
+    
+    if (sidebarDistance) {
+        sidebarDistance.textContent = formatNumber(distance) + ' km';
+    }
+    if (sidebarBonus) {
+        const totalBonus = getTotalPlanetBonus();
+        sidebarBonus.textContent = 'x' + totalBonus.toFixed(2);
+    }
+    if (sidebarPlanets) {
+        const unlockedCount = unlockedPlanets.size;
+        sidebarPlanets.textContent = unlockedCount + '/7';
+    }
+}
+
+function updateMiniSpaceMap(distance) {
+    const container = document.getElementById('mini-space-map');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    const progress = calculatePlanetProgress(distance);
+    
+    // Dessiner les planètes
+    PLANETS.forEach((planet, index) => {
+        const planetElement = document.createElement('div');
+        planetElement.className = 'space-planet';
+        
+        const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
+        const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
+        
+        if (isUnlocked) planetElement.classList.add('unlocked');
+        if (isCurrent) planetElement.classList.add('current');
+        
+        planetElement.innerHTML = `<span class="planet-emoji">${planet.emoji}</span>`;
+        planetElement.style.setProperty('--planet-color', planet.color);
+        
+        // Positionner les planètes
+        const position = (index / (PLANETS.length - 1)) * 100;
+        planetElement.style.left = `${position}%`;
+        
+        // Ajouter la ligne de connexion
+        if (index < PLANETS.length - 1) {
+            const nextPlanet = PLANETS[index + 1];
+            const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
+            
+            const line = document.createElement('div');
+            line.className = 'space-connection';
+            if (isUnlocked && isNextUnlocked) {
+                line.classList.add('active');
+            }
+            line.style.left = `${position}%`;
+            line.style.width = `${100 / (PLANETS.length - 1)}%`;
+            container.appendChild(line);
+        }
+        
+        container.appendChild(planetElement);
+    });
+    
+    // Ajouter le vaisseau spatial
+    if (progress.currentPlanet || progress.progressPercent > 0) {
+        const spaceship = document.createElement('div');
+        spaceship.className = 'spaceship';
+        spaceship.innerHTML = '🚀';
+        
+        // Calculer la position du vaisseau
+        let shipPosition = 0;
+        if (progress.currentPlanet) {
+            const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
+            const nextIndex = currentIndex + 1;
+            
+            if (nextIndex < PLANETS.length && progress.nextPlanet) {
+                const startPos = (currentIndex / (PLANETS.length - 1)) * 100;
+                const endPos = (nextIndex / (PLANETS.length - 1)) * 100;
+                shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
+            } else {
+                shipPosition = 100;
+            }
+        } else {
+            const firstPlanetPos = 0;
+            const secondPlanetPos = 100 / (PLANETS.length - 1);
+            shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
+        }
+        
+        spaceship.style.left = `${shipPosition}%`;
+        container.appendChild(spaceship);
+    }
+}
+
 
 // ============================================
 // UPGRADES MANAGEMENT
@@ -1289,6 +1410,7 @@ function gameLoop() {
         updateAllBuildingButtons();
     }
     updateDisplay();
+        updateSpaceProgress();
     checkBuildingUnlocks();
     checkTrophies();
 }

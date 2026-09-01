@@ -1062,3 +1062,134 @@ body {
         font-size: 1rem;
     }
 }
+
+/* ============================================
+   SPACE PROGRESS SIDEBAR
+   ============================================ */
+
+.left-panel {
+    background: linear-gradient(180deg, var(--bg-panel), var(--secondary-light));
+    border-right: 1px solid var(--border);
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.left-panel h3 {
+    color: var(--text);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 10px;
+}
+
+.space-progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.space-progress-header {
+    text-align: center;
+}
+
+.current-planet-display {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-light);
+    background: rgba(245, 158, 11, 0.1);
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
+}
+
+/* Mini Space Map */
+.mini-space-map {
+    height: 120px;
+    background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+
+.mini-space-map .space-connection {
+    position: absolute;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+    transform: translateY(-50%);
+}
+
+.mini-space-map .space-connection.active {
+    background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+}
+
+.mini-space-map .space-planet {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    z-index: 2;
+}
+
+.mini-space-map .space-planet .planet-emoji {
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px var(--text);
+}
+
+.mini-space-map .space-planet.unlocked .planet-emoji {
+    text-shadow: 0 0 10px var(--planet-color);
+    filter: drop-shadow(0 0 3px var(--planet-color));
+}
+
+.mini-space-map .spaceship {
+    position: absolute;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    z-index: 3;
+    color: var(--accent-light);
+}
+
+/* Space Stats */
+.space-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(30, 58, 138, 0.05);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 0.85rem;
+    color: var(--accent-light);
+    font-weight: 700;
+}
+
+/* Responsive for sidebar */
+@media (max-width: 768px) {
+    .left-panel {
+        display: none; /* Masquer sur mobile pour gagner de la place */
+    }
+}
