@@ -834,9 +834,14 @@ function showLaunchResults(distance) {
     const multiplierElement = document.getElementById('launch-results-multiplier');
     const rocketsElement = document.getElementById('launch-results-rockets');
     
-    distanceElement.textContent = formatNumber(distance) + ' km';
-    multiplierElement.textContent = prestigeMultiplier.toFixed(2);
-    rocketsElement.textContent = rocketsLaunched;
+    // Protéger contre NaN et undefined
+    const safeDistance = isNaN(distance) || distance === undefined ? 0 : distance;
+    const safeMultiplier = isNaN(prestigeMultiplier) || prestigeMultiplier === undefined ? 1 : prestigeMultiplier;
+    const safeRockets = rocketsLaunched === undefined ? 0 : rocketsLaunched;
+    
+    distanceElement.textContent = formatNumber(safeDistance) + ' km';
+    multiplierElement.textContent = safeMultiplier.toFixed(2);
+    rocketsElement.textContent = safeRockets;
     
     modal.classList.add('active');
 }
