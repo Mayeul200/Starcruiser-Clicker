@@ -1877,19 +1877,30 @@ let constructedParts = new Set();
 function updateConstructionScene() {
     const container = document.getElementById('rocket-parts-container');
     if (!container) return;
-    
-    // Clear existing pieces
+
     container.innerHTML = '';
-    
-    // Add each part that has been bought
+
     ROCKET_PARTS.forEach(part => {
         if (part.count > 0) {
-            // Create piece element
-            const pieceElement = document.createElement('div');
-            pieceElement.className = 'rocket-piece';
-            pieceElement.dataset.row = part.gridRow;
-            pieceElement.dataset.col = part.gridCol;
-            pieceElement.dataset.id = part.id;
+            const piece = document.createElement('div');
+            piece.className = `rocket-piece ${part.id}`;
+            piece.title = part.name;
+            
+            // Positionnement sur grille 100x100
+            const x = part.x || 50;
+            const y = part.y || 50;
+            const width = part.width || 10;
+            const height = part.height || 10;
+            
+            // Appliquer les styles de position directement
+            piece.style.left = x + '%';
+            piece.style.top = y + '%';
+            piece.style.width = width + '%';
+            piece.style.height = height + '%';
+            piece.style.fontSize = '2rem';
+            piece.style.display = 'flex';
+            piece.style.alignItems = 'center';
+            piece.style.justifyContent = 'center';
             
             // Use image if available, fallback to emoji
             if (part.imgPath) {
@@ -1897,24 +1908,34 @@ function updateConstructionScene() {
                 img.src = part.imgPath;
                 img.alt = part.name;
                 img.loading = 'lazy';
-                pieceElement.appendChild(img);
+                img.style.cssText = 'width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));';
+                piece.appendChild(img);
             } else {
-                pieceElement.textContent = part.image;
+                piece.textContent = part.image;
             }
             
-            // Add to container
-            container.appendChild(pieceElement);
+            // Animation d'apparition
+            piece.style.opacity = '0';
+            piece.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            
+            requestAnimationFrame(() => {
+                piece.style.transition = 'all 0.3s ease';
+                piece.style.opacity = '1';
+                piece.style.transform = 'translate(-50%, -50%) scale(1)';
+            });
             
             // Trigger animation if newly constructed
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
-                pieceElement.classList.add('new', 'unlocked');
+                piece.classList.add('new', 'unlocked');
                 setTimeout(() => {
-                    pieceElement.classList.remove('new');
+                    piece.classList.remove('new');
                 }, 800);
             } else {
-                pieceElement.classList.add('unlocked');
+                piece.classList.add('unlocked');
             }
+            
+            container.appendChild(piece);
         }
     });
     
