@@ -1193,3 +1193,207 @@ body {
         display: none; /* Masquer sur mobile pour gagner de la place */
     }
 }
+
+/* ============================================
+   ROCKET CONSTRUCTION STYLES
+   ============================================ */
+
+/* Rocket Construction Container */
+.rocket-construction {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+}
+
+/* Workshop (Atelier) */
+.workshop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg), 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.workshop-emoji {
+    font-size: 2rem;
+}
+
+.workshop-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* Rocket Base (where parts are added) */
+.rocket-base {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    min-width: 150px;
+    padding: 15px;
+    background: linear-gradient(180deg, #0a0a2a, #1a1a4a);
+    border: 2px solid var(--primary-light);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(30, 58, 138, 0.3);
+    position: relative;
+}
+
+/* Rocket Parts (added dynamically) */
+.rocket-part {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.rocket-part .part-emoji {
+    font-size: 1.5rem;
+}
+
+.rocket-part .part-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.rocket-part .part-count {
+    font-size: 0.75rem;
+    color: var(--text-dark);
+}
+
+/* Rocket structure (visual representation) */
+.rocket-structure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.rocket-section {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.rocket-section .section-part {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    opacity: 0.3;
+}
+
+.rocket-section .section-part.unlocked {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px var(--accent-light));
+}
+
+/* Rocket body (main structure) */
+.rocket-body {
+    width: 40px;
+    height: 100px;
+    background: linear-gradient(180deg, #4a4a6a, #2a2a4a);
+    border-radius: 5px;
+    border: 2px solid var(--border-light);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.rocket-body::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid #4a4a6a;
+}
+
+.rocket-body::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(180deg, #ff6b35, #f7931e);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Rocket parts positions */
+.rocket-nose {
+    position: absolute;
+    top: -15px;
+    font-size: 1.5rem;
+    color: var(--accent-light);
+}
+
+.rocket-engine {
+    position: absolute;
+    bottom: -20px;
+    font-size: 1.2rem;
+    color: #ff6b35;
+}
+
+.rocket-wings {
+    position: absolute;
+    left: -20px;
+    font-size: 1.2rem;
+}
+
+.rocket-wings.right {
+    left: auto;
+    right: -20px;
+}
+
+/* Animation for new parts */
+@keyframes partAppear {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.rocket-part.new {
+    animation: partAppear 0.5s ease-out;
+}
+
+/* Responsive for rocket construction */
+@media (max-width: 768px) {
+    .rocket-construction {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .workshop {
+        margin-bottom: 15px;
+    }
+    
+    .rocket-base {
+        min-width: 100px;
+        padding: 10px;
+    }
+    
+    .rocket-part {
+        min-width: 80px;
+    }
+}

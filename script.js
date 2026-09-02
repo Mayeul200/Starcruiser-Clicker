@@ -161,6 +161,26 @@ let maxDistance = 0;
 let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
 let lastLaunchDistance = 0;
+
+
+// ============================================
+// ROCKET CONSTRUCTION DATA
+// ============================================
+const ROCKET_PART_POSITIONS = {
+    'nozzles': { position: 'bottom', emoji: '⛽', name: 'Tuyères', class: 'rocket-engine' },
+    'engines': { position: 'bottom', emoji: '⛽', name: 'Moteurs', class: 'rocket-engine' },
+    'fuel-tank': { position: 'middle', emoji: '⛽', name: 'Réservoir', class: 'rocket-body' },
+    'rocket-body': { position: 'middle', emoji: '⛽', name: 'Corps', class: 'rocket-body' },
+    'wings': { position: 'sides', emoji: '✈️', name: 'Stabilisateurs', class: 'rocket-wings' },
+    'cockpit': { position: 'top', emoji: '♁', name: 'Cockpit', class: 'rocket-nose' },
+    'shield': { position: 'top', emoji: '♁', name: 'Bouclier', class: 'rocket-nose' },
+    'launch-pad': { position: 'bottom', emoji: '♁', name: 'Pas de tir', class: 'rocket-engine' },
+    'astronaut': { position: 'top', emoji: '♁', name: 'Astronaute', class: 'rocket-nose' }
+};
+
+// Track which parts have been unlocked/built
+let rocketPartsBuilt = new Set();
+
 let isLaunching = false;
 
 // ============================================
@@ -579,6 +599,12 @@ function buyBuilding(buildingId) {
         checkBuildingUnlocks();
         const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
         showToast(`\u2705 +${buildingsToBuy} ${building.name}${maxText}`);
+        // Mettre à jour la construction de la fusée
+        if (building.count === buildingsToBuy) {
+            highlightNewRocketPart(building.id);
+        } else {
+            updateRocketConstruction();
+        }
         checkTrophies();
     } else {
         showToast("\u274c Pas assez de Parts");
@@ -826,6 +852,7 @@ function launchRocket() {
         lastLaunchDistance = distance;
         showSpaceMap(distance);
         updateSpaceProgress();
+        updateRocketConstruction();
         isLaunching = false;
         showToast(`🚀 Mission réussie ! Distance: ${formatNumber(distance)} km`);
     }, 2500);
@@ -1089,6 +1116,7 @@ function confirmSpaceMapAndReset() {
     showLaunchResults(lastLaunchDistance);
     isLaunching = false;
         updateSpaceProgress();
+        updateRocketConstruction();
 }
 
 function closeSpaceMap() {
@@ -1212,6 +1240,115 @@ function updateMiniSpaceMap(distance) {
         container.appendChild(spaceship);
     }
 }
+
+// ============================================
+// ROCKET CONSTRUCTION FUNCTIONS
+// ============================================
+
+function updateRocketConstruction() {
+    const rocketBase = document.getElementById('rocket-base');
+    if (!rocketBase) return;
+    
+    // Clear existing parts
+    rocketBase.innerHTML = '';
+    
+    // Add rocket structure
+    const rocketStructure = document.createElement('div');
+    rocketStructure.className = 'rocket-structure';
+    
+    // Add each part that has been built (count > 0)
+    ROCKET_PARTS.forEach(part => {
+        // Skip workshop (it's the atelier, not part of the rocket)
+        if (part.id === 'workshop') return;
+        
+        if (part.count > 0 && !rocketPartsBuilt.has(part.id)) {
+            rocketPartsBuilt.add(part.id);
+        }
+        
+        if (rocketPartsBuilt.has(part.id)) {
+            const partElement = document.createElement('div');
+            partElement.className = 'section-part unlocked';
+            partElement.innerHTML = part.image;
+            partElement.title = part.name;
+            
+            // Position based on part type
+            if (part.id === 'wings') {
+                // Wings go on both sides
+                const leftWing = partElement.cloneNode(true);
+                leftWing.classList.add('rocket-wings');
+                rocketStructure.appendChild(leftWing);
+                
+                const rightWing = partElement.cloneNode(true);
+                rightWing.classList.add('rocket-wings', 'right');
+                rocketStructure.appendChild(rightWing);
+            } else {
+                partElement.classList.add(getRocketPartClass(part.id));
+                rocketStructure.appendChild(partElement);
+            }
+        }
+    });
+    
+    rocketBase.appendChild(rocketStructure);
+    
+    // Add floating parts list
+    addFloatingPartsList();
+}
+
+function getRocketPartClass(partId) {
+    const positions = {
+        'nozzles': 'rocket-engine',
+        'engines': 'rocket-engine',
+        'fuel-tank': 'rocket-body',
+        'rocket-body': 'rocket-body',
+        'cockpit': 'rocket-nose',
+        'shield': 'rocket-nose',
+        'launch-pad': 'rocket-engine',
+        'astronaut': 'rocket-nose'
+    };
+    return positions[partId] || 'rocket-body';
+}
+
+function addFloatingPartsList() {
+    const rocketBase = document.getElementById('rocket-base');
+    if (!rocketBase) return;
+    
+    // Create floating parts list
+    const partsList = document.createElement('div');
+    partsList.className = 'rocket-parts-list';
+    partsList.style.marginTop = '15px';
+    partsList.style.display = 'flex';
+    partsList.style.flexWrap = 'wrap';
+    partsList.style.gap = '8px';
+    partsList.style.justifyContent = 'center';
+    
+    // Add each built part
+    ROCKET_PARTS.forEach(part => {
+        if (part.id === 'workshop') return; // Skip workshop
+        
+        if (rocketPartsBuilt.has(part.id)) {
+            const partElement = document.createElement('div');
+            partElement.className = 'rocket-part';
+            partElement.innerHTML = `
+                <span class="part-emoji">${part.image}</span>
+                <span class="part-name">${part.name}</span>
+                <span class="part-count">x${part.count}</span>
+            `;
+            partsList.appendChild(partElement);
+        }
+    });
+    
+    rocketBase.appendChild(partsList);
+}
+
+function highlightNewRocketPart(partId) {
+    // Add visual feedback when a new part is bought
+    if (partId === 'workshop') return; // Skip workshop
+    
+    // Update rocket construction display
+    updateRocketConstruction();
+}
+
+
 
 
 // ============================================
@@ -1411,6 +1548,7 @@ function gameLoop() {
     }
     updateDisplay();
         updateSpaceProgress();
+        updateRocketConstruction();
     checkBuildingUnlocks();
     checkTrophies();
 }
