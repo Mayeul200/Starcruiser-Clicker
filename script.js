@@ -1881,7 +1881,8 @@ function updateConstructionScene() {
     container.innerHTML = '';
 
     ROCKET_PARTS.forEach(part => {
-        if (part.count > 0) {
+        // L'atelier s'affiche toujours, les autres pièces si count > 0
+        if (part.id === "workshop" || part.count > 0) {
             const piece = document.createElement('div');
             piece.className = `rocket-piece ${part.id}`;
             piece.title = part.name;
@@ -1912,6 +1913,14 @@ function updateConstructionScene() {
                 piece.appendChild(img);
             } else {
                 piece.textContent = part.image;
+            }
+            
+            // Ajouter le label pour l'atelier
+            if (part.id === "workshop") {
+                const label = document.createElement('span');
+                label.className = 'workshop-label';
+                label.textContent = part.name;
+                piece.appendChild(label);
             }
             
             // Animation d'apparition

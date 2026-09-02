@@ -2,7 +2,6 @@
    STARSHIP CLICKER - SPACE THEME STYLES
    Version 2.0.0
    ============================================ */
-
 :root {
     --primary: #1e3a8a;
     --primary-dark: #1e40af;
@@ -25,11 +24,9 @@
     --radius: 8px;
     --top-height: 10vh;
 }
-
 *, *::before, *::after {
     margin: 0; padding: 0; box-sizing: border-box;
 }
-
 body {
     font-family: 'Inter', sans-serif;
     background: var(--bg);
@@ -37,7 +34,6 @@ body {
     min-height: 100vh;
     line-height: 1.5;
 }
-
 /* TOP BAR */
 .top-bar {
     position: fixed;
@@ -53,7 +49,6 @@ body {
     z-index: 1000;
     box-shadow: var(--shadow);
 }
-
 /* UPGRADES BAR (in center) */
 .upgrades-bar {
     height: 48px;
@@ -68,7 +63,6 @@ body {
     z-index: 200;
     box-shadow: var(--shadow);
 }
-
 .upgrades-title {
     color: var(--accent-light);
     font-weight: 600;
@@ -78,7 +72,6 @@ body {
     flex-shrink: 0;
     text-shadow: var(--glow);
 }
-
 .upgrades-container-center {
     display: flex;
     gap: 6px;
@@ -94,11 +87,9 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
-
 .upgrades-container-center::-webkit-scrollbar {
     display: none;
 }
-
 .upgrade-icon {
     min-width: 36px;
     height: 36px;
@@ -116,14 +107,12 @@ body {
     z-index: 3000;
     box-shadow: var(--shadow);
 }
-
 .upgrade-icon:hover {
     transform: scale(1.15);
     border-color: var(--primary-light);
     box-shadow: var(--shadow-lg), var(--glow);
     background: var(--secondary-light);
 }
-
 /* Tooltip for upgrades */
 .upgrade-tooltip {
     position: fixed;
@@ -146,12 +135,10 @@ body {
     top: 0;
     left: 0;
 }
-
 .upgrade-tooltip.visible {
     opacity: 1;
     visibility: visible;
 }
-
 .top-bar-controls {
     display: flex;
     flex-direction: column;
@@ -160,7 +147,6 @@ body {
     height: 100%;
     justify-content: center;
 }
-
 .control-button {
     width: 40px; height: 40px;
     border: none;
@@ -172,13 +158,11 @@ body {
     transition: all 0.2s;
     box-shadow: var(--shadow);
 }
-
 .control-button:hover {
     background: var(--primary-light);
     transform: scale(1.1);
     box-shadow: var(--shadow-lg), var(--glow);
 }
-
 /* MODALS */
 .modal {
     position: fixed;
@@ -194,11 +178,9 @@ body {
     overflow: hidden;
     border: 1px solid var(--border-light);
 }
-
 .modal.active {
     display: block;
 }
-
 .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
@@ -208,21 +190,17 @@ body {
     align-items: center;
     border-bottom: 1px solid var(--border-light);
 }
-
 .modal-header h2 {
     font-size: 1.3rem;
 }
-
 .close-button {
     font-size: 24px;
     cursor: pointer;
     color: white;
 }
-
 .close-button:hover {
     opacity: 0.8;
 }
-
 .modal-body {
     padding: 16px;
     overflow-y: auto;
@@ -230,7 +208,6 @@ body {
     background: var(--bg-panel);
     color: var(--text);
 }
-
 .modal-button {
     width: 100%;
     padding: 12px;
@@ -243,20 +220,16 @@ body {
     margin-bottom: 8px;
     transition: all 0.2s;
 }
-
 .modal-button:hover {
     background: var(--primary-light);
     box-shadow: var(--glow);
 }
-
 .modal-button.delete {
     background: #ef4444;
 }
-
 .modal-button.delete:hover {
     background: #dc2626;
 }
-
 #import-textarea {
     width: 100%;
     min-height: 100px;
@@ -270,7 +243,6 @@ body {
     background: var(--secondary);
     color: var(--text);
 }
-
 /* MAIN GRID */
 .main-grid {
     display: grid;
@@ -284,7 +256,6 @@ body {
     background: var(--border);
     overflow: visible;
 }
-
 /* LEFT PANEL */
 .left-panel {
     background: var(--bg-panel);
@@ -296,18 +267,15 @@ body {
     overflow-y: auto;
     color: var(--text);
 }
-
 .left-panel h3 {
     color: var(--accent-light);
     margin-bottom: 8px;
     font-size: 1rem;
 }
-
 .left-panel p {
     color: var(--text-dark);
     font-size: 0.9rem;
 }
-
 /* CENTER PANEL */
 .center-content {
     display: flex;
@@ -317,7 +285,6 @@ body {
     flex-grow: 1;
     width: 100%;
 }
-
 .center-panel {
     background: var(--bg-panel);
     display: flex;
@@ -327,7 +294,6 @@ body {
     position: relative;
     z-index: 1;
 }
-
 .medal {
     width: 220px;
     height: 220px;
@@ -342,43 +308,35 @@ body {
     transition: all 0.2s;
     animation: pulse 3s infinite;
 }
-
 @keyframes pulse {
     0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
     50% { box-shadow: 0 0 20px rgba(30, 58, 138, 0.8), var(--shadow-lg); }
 }
-
 .medal:hover {
     transform: scale(1.05);
     box-shadow: 0 0 25px rgba(30, 58, 138, 0.8), var(--shadow-lg);
 }
-
 .medal:active {
     transform: scale(0.95);
 }
-
 .medal-emoji {
     font-size: 7rem;
     filter: drop-shadow(0 0 5px rgba(255,255,255,0.7));
 }
-
 .counters {
     margin-top: 20px;
     text-align: center;
 }
-
 .counter {
     font-size: 1.3rem;
     margin: 4px 0;
     color: var(--text);
 }
-
 .counter span {
     color: var(--accent-light);
     font-weight: 600;
     text-shadow: var(--glow);
 }
-
 .bonus-timer {
     font-size: 1rem;
     margin-top: 8px;
@@ -390,7 +348,6 @@ body {
     display: none;
     border: 1px solid var(--accent);
 }
-
 /* RIGHT PANEL */
 .right-panel {
     background: var(--bg-panel);
@@ -400,20 +357,17 @@ body {
     height: 100%;
     color: var(--text);
 }
-
 .right-panel h3 {
     color: var(--accent-light);
     margin-bottom: 8px;
     font-size: 1rem;
 }
-
 .buildings-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
     margin-top: 8px;
 }
-
 /* Building items */
 .building-item {
     background: var(--secondary);
@@ -427,56 +381,47 @@ body {
     min-height: 70px;
     position: relative;
 }
-
 .building-item:hover {
     background: var(--secondary-light);
     border-color: var(--primary-light);
     box-shadow: var(--shadow-lg);
 }
-
 .building-left {
     display: flex;
     flex-direction: column;
     gap: 4px;
     flex: 1;
 }
-
 .building-right {
     display: flex;
     flex-direction: column;
     gap: 4px;
     align-items: flex-end;
 }
-
 .building-name-icon {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
 .building-name {
     font-size: 0.95rem;
     font-weight: 500;
     color: var(--text);
     white-space: nowrap;
 }
-
 .building-icon {
     font-size: 1.5rem;
 }
-
 .building-ownership {
     font-size: 0.9rem;
     color: var(--text-dark);
     font-weight: 600;
 }
-
 .building-production {
     font-size: 0.9rem;
     color: var(--accent-light);
     font-weight: 600;
 }
-
 .building-item button {
     width: 100%;
     background: var(--primary);
@@ -489,18 +434,15 @@ body {
     transition: all 0.2s;
     min-width: 80px;
 }
-
 .building-item button:hover:not(:disabled) {
     background: var(--primary-light);
     box-shadow: var(--glow);
 }
-
 .building-item button:disabled {
     background: var(--border);
     cursor: not-allowed;
     opacity: 0.5;
 }
-
 /* Buy multipliers */
 .buildings-header {
     display: flex;
@@ -510,18 +452,15 @@ body {
     padding: 0 8px;
     border-bottom: 1px solid var(--border);
 }
-
 .buildings-header h3 {
     margin: 0;
     color: var(--accent-light);
     font-size: 1rem;
 }
-
 .multiplier-buttons {
     display: flex;
     gap: 4px;
 }
-
 .multiplier-btn {
     padding: 4px 8px;
     border: 1px solid var(--border-light);
@@ -532,19 +471,16 @@ body {
     cursor: pointer;
     transition: all 0.2s;
 }
-
 .multiplier-btn:hover {
     background: var(--secondary-light);
     border-color: var(--primary-light);
 }
-
 .multiplier-btn.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
     box-shadow: var(--glow);
 }
-
 /* TOOLTIP */
 .building-item::after {
     content: attr(data-tooltip);
@@ -566,13 +502,11 @@ body {
     width: 90%;
     line-height: 1.5;
 }
-
 .building-item:hover::after {
     opacity: 1;
     visibility: visible;
     transform: translateY(8px);
 }
-
 /* VISUAL EFFECTS */
 .bonuses-container,
 .click-effects {
@@ -582,7 +516,6 @@ body {
     pointer-events: none;
     z-index: 50;
 }
-
 .random-bonus {
     position: absolute;
     width: 50px; height: 50px;
@@ -596,23 +529,19 @@ body {
     box-shadow: var(--shadow-lg), var(--glow);
     transition: all 0.5s ease-out;
 }
-
 .random-bonus:hover {
     transform: scale(1.15) !important;
 }
-
 .random-bonus.clicked {
     opacity: 0;
     transform: scale(0.5);
     transition: all 0.5s;
     pointer-events: none;
 }
-
 @keyframes floatUp {
     0% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-80px); }
 }
-
 .click-effect {
     position: absolute;
     color: var(--accent-light);
@@ -622,7 +551,6 @@ body {
     animation: floatUp 1s forwards;
     opacity: 0;
 }
-
 .toast {
     position: fixed;
     bottom: 20px; left: 50%;
@@ -638,22 +566,18 @@ body {
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--border-light);
 }
-
 .toast.active {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
-
 /* Building blur effect for not purchased buildings */
 .building-item.not-purchased {
     opacity: 0.5;
     filter: blur(2px);
 }
-
 /* Styles for random bonuses */
 .random-bonus.meteor { background: linear-gradient(135deg, #374151, #1f2937); color: #fbbf24; }
 .random-bonus.flare { background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; }
-
 /* TROPHIES */
 .trophy-icon {
     width: 50px;
@@ -670,24 +594,20 @@ body {
     background: var(--secondary);
     color: var(--text);
 }
-
 .trophy-icon:hover {
     transform: scale(1.15);
     border-color: var(--primary-light);
     box-shadow: var(--shadow-lg), var(--glow);
 }
-
 .trophy-icon.unlocked {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-color: var(--primary-light);
     opacity: 1;
 }
-
 .trophy-icon.locked {
     opacity: 0.4;
     filter: grayscale(100%);
 }
-
 /* RESPONSIVE */
 @media (max-width: 992px) {
     .main-grid {
@@ -701,7 +621,6 @@ body {
     .top-bar-controls { flex-direction: row; gap: 8px; }
     .control-button { width: 36px; height: 36px; font-size: 14px; }
 }
-
 @media (max-width: 768px) {
     .top-bar { height: 12vh; min-height: 70px; }
     .medal { width: 180px; height: 180px; }
@@ -715,17 +634,14 @@ body {
         width: 100%; padding: 6px 10px; font-size: 0.8rem; 
     }
 }
-
 @media (max-width: 480px) {
     .medal { width: 150px; height: 150px; }
     .medal-emoji { font-size: 4.5rem; }
     .top-bar-controls { flex-direction: column; }
 }
-
 /* ============================================
    ROCKET LAUNCH SYSTEM
    ============================================ */
-
 /* Launch Button */
 .launch-button {
     background: linear-gradient(135deg, #ef4444, #dc2626);
@@ -745,32 +661,26 @@ body {
     position: relative;
     overflow: hidden;
 }
-
 .launch-button:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg), 0 0 30px rgba(239, 68, 68, 0.6);
     background: linear-gradient(135deg, #f87171, #ef4444);
 }
-
 .launch-button:active {
     transform: translateY(1px);
     background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
-
 .launch-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 }
-
 .launch-button-icon {
     font-size: 1.5rem;
 }
-
 .launch-button-text {
     letter-spacing: 1px;
 }
-
 /* Launch Results Modal */
 .launch-modal {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
@@ -779,16 +689,13 @@ body {
     max-width: 500px;
     width: 90%;
 }
-
 .launch-modal .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-bottom: 2px solid var(--primary-light);
 }
-
 .launch-modal .modal-header h2 {
     color: white;
 }
-
 .launch-result-item {
     display: flex;
     justify-content: space-between;
@@ -798,18 +705,15 @@ body {
     border-radius: var(--radius);
     border-left: 4px solid var(--primary-light);
 }
-
 .launch-label {
     font-weight: 600;
     color: var(--text-light);
 }
-
 .launch-value {
     font-weight: 700;
     color: var(--accent-light);
     font-size: 1.2rem;
 }
-
 .launch-info {
     background: rgba(245, 158, 11, 0.1);
     border: 1px solid var(--accent);
@@ -818,37 +722,30 @@ body {
     margin-top: 20px;
     text-align: center;
 }
-
 .launch-info p {
     color: var(--accent-light);
     font-style: italic;
 }
-
 /* Animation for launch */
 @keyframes rocketLaunch {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
 }
-
 .launch-animation {
     animation: rocketLaunch 2s ease-out forwards;
 }
-
 /* Responsive for launch button */
 @media (max-width: 768px) {
     .launch-button {
         padding: 10px 20px;
         font-size: 1rem;
     }
-    
     .launch-button-icon {
         font-size: 1.2rem;
     }
-    
     .launch-button-text {
         display: none;
     }
-    
     .launch-button {
         width: 60px;
         height: 60px;
@@ -856,11 +753,9 @@ body {
         justify-content: center;
     }
 }
-
 /* ============================================
    SPACE MAP STYLES
    ============================================ */
-
 /* Space Map Modal */
 .space-map-modal {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
@@ -869,16 +764,13 @@ body {
     max-width: 800px;
     width: 95%;
 }
-
 .space-map-modal .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-bottom: 2px solid var(--primary-light);
 }
-
 .space-map-modal .modal-header h2 {
     color: white;
 }
-
 /* Space Progress Text */
 .space-progress-text {
     text-align: center;
@@ -889,7 +781,6 @@ body {
     background: rgba(30, 58, 138, 0.1);
     border-radius: var(--radius);
 }
-
 /* Space Map Container */
 .space-map-container {
     position: relative;
@@ -900,7 +791,6 @@ body {
     overflow: hidden;
     border: 2px solid var(--border);
 }
-
 /* Space Connection Lines */
 .space-connection {
     position: absolute;
@@ -910,11 +800,9 @@ body {
     transform: translateY(-50%);
     z-index: 1;
 }
-
 .space-connection.active {
     background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
 }
-
 /* Space Planets */
 .space-planet {
     position: absolute;
@@ -927,45 +815,36 @@ body {
     z-index: 2;
     transition: all 0.3s ease;
 }
-
 .space-planet .planet-emoji {
     font-size: 2rem;
     text-shadow: 0 0 10px var(--text);
 }
-
 .space-planet .planet-name {
     font-size: 0.8rem;
     color: var(--text-light);
     font-weight: 600;
 }
-
 .space-planet .planet-distance {
     font-size: 0.7rem;
     color: var(--text-dark);
 }
-
 .space-planet.unlocked .planet-emoji {
     text-shadow: 0 0 20px var(--planet-color);
     filter: drop-shadow(0 0 5px var(--planet-color));
 }
-
 .space-planet.unlocked .planet-name {
     color: var(--planet-color);
 }
-
 .space-planet.current .planet-emoji {
     animation: pulse 2s infinite;
 }
-
 .space-planet.current .planet-name {
     color: var(--accent-light);
 }
-
 @keyframes pulse {
     0%, 100% { transform: translate(-50%, -50%) scale(1); }
     50% { transform: translate(-50%, -50%) scale(1.2); }
 }
-
 /* Spaceship */
 .spaceship {
     position: absolute;
@@ -975,12 +854,10 @@ body {
     z-index: 3;
     animation: fly 3s ease-in-out infinite;
 }
-
 @keyframes fly {
     0%, 100% { transform: translate(-50%, -50%) translateY(0) rotate(0deg); }
     50% { transform: translate(-50%, -50%) translateY(-5px) rotate(5deg); }
 }
-
 /* New Planets Unlocked */
 .new-planets-unlocked {
     margin: 20px 0;
@@ -989,7 +866,6 @@ body {
     border-radius: var(--radius);
     border: 1px solid var(--accent);
 }
-
 .new-planet-item {
     display: flex;
     align-items: center;
@@ -1000,33 +876,27 @@ body {
     border-radius: var(--radius);
     font-weight: 600;
 }
-
 .new-planet-item .planet-emoji {
     font-size: 1.5rem;
 }
-
 .new-planet-item .planet-name {
     color: var(--text);
 }
-
 .new-planet-item .planet-bonus {
     color: var(--accent-light);
     font-weight: 700;
 }
-
 .no-new-planets {
     color: var(--text-dark);
     font-style: italic;
     text-align: center;
 }
-
 /* Space Modal Actions */
 .space-modal-actions {
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
-
 .space-confirm-button {
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
@@ -1038,42 +908,34 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
 .space-confirm-button:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg), 0 0 20px rgba(16, 185, 129, 0.4);
 }
-
 /* Responsive for Space Map */
 @media (max-width: 768px) {
     .space-map-container {
         height: 150px;
     }
-    
     .space-planet .planet-emoji {
         font-size: 1.5rem;
     }
-    
     .space-planet .planet-name {
         display: none;
     }
-    
     .space-progress-text {
         font-size: 1rem;
     }
 }
-
 /* ============================================
    SPACE PROGRESS SIDEBAR
    ============================================ */
-
 .left-panel {
     background: linear-gradient(180deg, var(--bg-panel), var(--secondary-light));
     border-right: 1px solid var(--border);
     padding: 15px;
     overflow-y: auto;
 }
-
 .left-panel h3 {
     color: var(--text);
     margin-bottom: 15px;
@@ -1082,17 +944,14 @@ body {
     border-bottom: 2px solid var(--primary-light);
     padding-bottom: 10px;
 }
-
 .space-progress-container {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
-
 .space-progress-header {
     text-align: center;
 }
-
 .current-planet-display {
     font-size: 1.1rem;
     font-weight: 600;
@@ -1102,7 +961,6 @@ body {
     border-radius: var(--radius);
     border: 1px solid var(--accent);
 }
-
 /* Mini Space Map */
 .mini-space-map {
     height: 120px;
@@ -1112,7 +970,6 @@ body {
     position: relative;
     overflow: hidden;
 }
-
 .mini-space-map .space-connection {
     position: absolute;
     top: 50%;
@@ -1120,11 +977,9 @@ body {
     background: linear-gradient(90deg, transparent, var(--border-light), transparent);
     transform: translateY(-50%);
 }
-
 .mini-space-map .space-connection.active {
     background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
 }
-
 .mini-space-map .space-planet {
     position: absolute;
     top: 50%;
@@ -1135,17 +990,14 @@ body {
     gap: 2px;
     z-index: 2;
 }
-
 .mini-space-map .space-planet .planet-emoji {
     font-size: 1.2rem;
     text-shadow: 0 0 5px var(--text);
 }
-
 .mini-space-map .space-planet.unlocked .planet-emoji {
     text-shadow: 0 0 10px var(--planet-color);
     filter: drop-shadow(0 0 3px var(--planet-color));
 }
-
 .mini-space-map .spaceship {
     position: absolute;
     top: 45%;
@@ -1154,7 +1006,6 @@ body {
     z-index: 3;
     color: var(--accent-light);
 }
-
 /* Space Stats */
 .space-stats {
     display: flex;
@@ -1165,7 +1016,6 @@ body {
     border-radius: var(--radius);
     border: 1px solid var(--border-light);
 }
-
 .stat-item {
     display: flex;
     justify-content: space-between;
@@ -1174,32 +1024,25 @@ body {
     background: rgba(255, 255, 255, 0.02);
     border-radius: 4px;
 }
-
 .stat-label {
     font-size: 0.85rem;
     color: var(--text-light);
     font-weight: 500;
 }
-
 .stat-value {
     font-size: 0.85rem;
     color: var(--accent-light);
     font-weight: 700;
 }
-
 /* Responsive for sidebar */
 @media (max-width: 768px) {
     .left-panel {
         display: none; /* Masquer sur mobile pour gagner de la place */
     }
 }
-
-
-
 /* ============================================
    CONSTRUCTION SCENE STYLES
    ============================================ */
-
 .center-content {
     display: flex;
     flex-direction: column;
@@ -1208,7 +1051,6 @@ body {
     width: 100%;
     padding: 10px 0;
 }
-
 /* Construction Scene */
 .construction-scene {
     position: relative;
@@ -1218,7 +1060,6 @@ body {
     overflow: hidden;
     border-radius: var(--radius);
 }
-
 /* Fond de paysage */
 .scene-background {
     position: absolute;
@@ -1231,7 +1072,6 @@ body {
     z-index: 1;
     filter: blur(0.5px);
 }
-
 /* Grille de positionnement (invisible en production) */
 .construction-grid {
     position: absolute;
@@ -1245,15 +1085,11 @@ body {
     z-index: 2;
     pointer-events: none;
 }
-
 .grid-line {
     position: absolute;
     background: rgba(255, 255, 255, 0.1);
     pointer-events: none;
 }
-
-
-
 /* Conteneur des pièces */
 .rocket-parts-container {
     position: absolute;
@@ -1266,7 +1102,6 @@ body {
     grid-template-rows: repeat(5, 1fr);
     grid-template-columns: repeat(3, 1fr);
 }
-
 /* Style des pièces de fusée */
 .rocket-piece {
     position: relative;
@@ -1276,12 +1111,10 @@ body {
     transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
 }
-
 .rocket-piece.unlocked {
     opacity: 1;
     transform: scale(1) translateY(0);
 }
-
 .rocket-piece img {
     width: 100%;
     height: auto;
@@ -1289,22 +1122,16 @@ body {
     max-height: 120px;
     display: block;
 }
-
 /* Positionnement par grille */
-
-.workshop-image {
     width: 80px;
     height: auto;
     filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.9));
 }
-
-.workshop-label {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text);
     text-shadow: 0 0 5px var(--text);
 }
-
 /* Animation d'apparition */
 @keyframes partAppear {
     0% {
@@ -1323,11 +1150,9 @@ body {
         filter: blur(0px);
     }
 }
-
 .rocket-piece.new {
     animation: partAppear 0.8s ease-out forwards;
 }
-
 /* Animation de décollage */
 @keyframes rocketLiftoff {
     0% {
@@ -1345,72 +1170,57 @@ body {
         filter: brightness(2);
     }
 }
-
 .rocket-complete .rocket-piece {
     animation: rocketLiftoff 3s ease-out forwards;
 }
-
 /* Bouton de lancement */
 .launch-button {
     margin: 10px auto;
     display: block;
 }
-
 /* Responsive pour la scène de construction */
 @media (max-width: 768px) {
     .construction-scene {
         height: 300px;
     }
-    
     .rocket-piece img {
         max-width: 80px;
     }
-    
-    .workshop-image {
         width: 60px;
     }
-    
     .grid-line {
         display: none; /* Masquer la grille sur mobile */
     }
 }
-
     .rocket-construction {
         flex-direction: column;
         align-items: center;
     }
-    
     .workshop {
         margin-bottom: 15px;
     }
-    
     .rocket-base {
         min-width: 100px;
         padding: 10px;
     }
-    
     .rocket-part {
         min-width: 80px;
     }
 }
-
 /* ============================================
    MINI-GAMES SECTION STYLES
    ============================================ */
-
 .mini-games-section {
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid var(--border);
 }
-
 .mini-games-section h4 {
     color: var(--text-light);
     font-size: 1rem;
     margin-bottom: 10px;
     text-align: center;
 }
-
 .mini-games-container {
     display: flex;
     flex-direction: column;
@@ -1421,7 +1231,6 @@ body {
     border: 1px dashed var(--border-light);
     min-height: 100px;
 }
-
 .mini-games-placeholder {
     color: var(--text-dark);
     font-style: italic;
@@ -1429,7 +1238,6 @@ body {
     padding: 20px;
     font-size: 0.85rem;
 }
-
 /* Mini-game card (for future use) */
 .mini-game-card {
     display: flex;
@@ -1442,49 +1250,40 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
 .mini-game-card:hover {
     background: var(--secondary-light);
     border-color: var(--primary-light);
     transform: translateY(-2px);
     box-shadow: var(--shadow);
 }
-
 .mini-game-card .game-icon {
     font-size: 1.5rem;
     text-align: center;
 }
-
 .mini-game-card .game-name {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text);
     text-align: center;
 }
-
 .mini-game-card .game-description {
     font-size: 0.75rem;
     color: var(--text-dark);
     text-align: center;
 }
-
 /* Responsive for mini-games */
 @media (max-width: 768px) {
     .mini-games-section {
         display: none; /* Masquer sur mobile */
     }
 }
-
-
 /* ===== SYSTEME DE GRID 100x100 ===== */
-
 .center-content {
     position: relative;
     width: 100%;
     height: calc(100vh - 100px);
     overflow: hidden;
 }
-
 .construction-scene-100x100 {
     position: relative;
     width: 100%;
@@ -1492,7 +1291,6 @@ body {
     min-height: 400px;
     background-color: #0a0a1a;
 }
-
 .scene-background {
     position: absolute;
     top: 0;
@@ -1506,7 +1304,6 @@ body {
     opacity: 0.3;
     z-index: 0;
 }
-
 /* Grille 100x100 (optionnelle) */
 .grid-100x100 {
     position: absolute;
@@ -1518,31 +1315,26 @@ body {
     z-index: 1;
     display: none; /* Masquée par défaut */
 }
-
 .grid-100x100.show {
     display: block;
 }
-
 .grid-line {
     position: absolute;
     background: rgba(255, 255, 255, 0.2);
     pointer-events: none;
 }
-
 .grid-line.h {
     width: 100%;
     height: 1px;
     top: calc(var(--pos) * 1%);
     left: 0;
 }
-
 .grid-line.v {
     width: 1px;
     height: 100%;
     top: 0;
     left: calc(var(--pos) * 1%);
 }
-
 /* Conteneur des pièces de fusée */
 .rocket-parts-100x100 {
     position: absolute;
@@ -1552,7 +1344,6 @@ body {
     height: 100%;
     z-index: 2;
 }
-
 /* Pièces de fusée sur grille 100x100 */
 .rocket-piece {
     position: absolute;
@@ -1567,17 +1358,30 @@ body {
     z-index: 3;
     transform: translate(-50%, -50%);
 }
-
 .rocket-piece img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
 }
-
 .rocket-piece:hover {
     transform: translate(-50%, -50%) scale(1.1) !important;
     z-index: 10;
+}
+
+/* Label de l'atelier */
+.workshop-label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 0.7rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
 }
 
 /* Animation de pulsation pour les pièces nouvelles */
@@ -1585,16 +1389,13 @@ body {
     0%, 100% { transform: translate(-50%, -50%) scale(1); }
     50% { transform: translate(-50%, -50%) scale(1.05); }
 }
-
 .rocket-piece.new {
     animation: pulse 0.5s ease;
 }
-
 .rocket-piece.unlocked {
     pointer-events: auto;
     cursor: pointer;
 }/* Atelier fixe */
-.workshop-fixed {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -1602,21 +1403,16 @@ body {
     justify-content: center;
     z-index: 4;
 }
-
-.workshop-image {
     width: 40px;
     height: 40px;
     object-fit: contain;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
 }
-
-.workshop-label {
     color: white;
     font-size: 0.7rem;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     margin-top: 4px;
 }
-
 /* Images des pièces */
 .rocket-piece img {
     width: 100%;
@@ -1624,18 +1420,14 @@ body {
     object-fit: contain;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
 }
-
 /* Animation de pulsation pour les pièces nouvelles */
 @keyframes pulse {
     0%, 100% { transform: translate(-50%, -50%) scale(1); }
     50% { transform: translate(-50%, -50%) scale(1.05); }
 }
-
 .rocket-piece.new {
     animation: pulse 0.5s ease;
 }
-
-
 /* Médaille cliquable */
 .medal {
     position: absolute;
@@ -1654,21 +1446,17 @@ body {
     transition: all 0.2s ease;
     z-index: 100;
 }
-
 .medal:hover {
     transform: translateY(-50%) scale(1.1);
     box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
 }
-
 .medal:active {
     transform: translateY(-50%) scale(0.95);
 }
-
 .medal-emoji {
     font-size: 2.5rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
-
 /* Bouton de lancement */
 .launch-button {
     position: absolute;
@@ -1690,30 +1478,24 @@ body {
     align-items: center;
     gap: 8px;
 }
-
 .launch-button:hover {
     transform: translateX(-50%) translateY(-2px);
     box-shadow: 0 6px 20px rgba(255, 68, 68, 0.6);
 }
-
 .launch-button:active {
     transform: translateX(-50%) translateY(0);
 }
-
 .launch-button:disabled {
     background: #666;
     cursor: not-allowed;
     box-shadow: none;
 }
-
 .launch-button-icon {
     font-size: 1.2rem;
 }
-
 .launch-button-text {
     font-size: 0.9rem;
 }
-
 /* Compteurs */
 .counters {
     position: absolute;
@@ -1727,18 +1509,15 @@ body {
     padding: 8px 16px;
     border-radius: 10px;
 }
-
 .counter {
     color: white;
     font-size: 1.1rem;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
-
 .counter span {
     color: #ffd700;
 }
-
 /* Barre des upgrades */
 .upgrades-bar {
     position: absolute;
@@ -1752,13 +1531,11 @@ body {
     align-items: center;
     padding: 0 10px;
 }
-
 .upgrades-title {
     color: white;
     font-size: 0.9rem;
     font-weight: bold;
 }
-
 .upgrades-container-center {
     display: flex;
     gap: 10px;
