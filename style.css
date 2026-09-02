@@ -1397,3 +1397,84 @@ body {
         min-width: 80px;
     }
 }
+
+/* ============================================
+   MINI-GAMES SECTION STYLES
+   ============================================ */
+
+.mini-games-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border);
+}
+
+.mini-games-section h4 {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.mini-games-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: var(--radius);
+    border: 1px dashed var(--border-light);
+    min-height: 100px;
+}
+
+.mini-games-placeholder {
+    color: var(--text-dark);
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.85rem;
+}
+
+/* Mini-game card (for future use) */
+.mini-game-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mini-game-card:hover {
+    background: var(--secondary-light);
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.mini-game-card .game-icon {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.mini-game-card .game-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+}
+
+.mini-game-card .game-description {
+    font-size: 0.75rem;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+/* Responsive for mini-games */
+@media (max-width: 768px) {
+    .mini-games-section {
+        display: none; /* Masquer sur mobile */
+    }
+}
