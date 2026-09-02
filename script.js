@@ -1894,22 +1894,20 @@ function updateConstructionScene() {
             piece.className = `rocket-piece ${part.id}`;
             piece.title = part.name;
             
-            // Positionnement sur grille 100x100
+            // Positionnement : X en % (pour centrer), Y en pixels
             const x = part.x || 50;
-            const y = part.y || 50;
             const width = part.width || 10;
-            const height = part.height || 10;
             
-            // Appliquer les styles de position directement
+            // Calculer la position Y en pixels basée sur la position %
+            // On utilise une hauteur de conteneur de référence de 600px
+            const containerHeight = 600;
+            const yPercent = part.y || 50;
+            const yPixels = (yPercent / 100) * containerHeight;
+            
+            // Appliquer les styles de position
             piece.style.left = x + '%';
-            piece.style.top = y + '%';
-            piece.style.width = width + '%';
-            piece.style.height = height + '%';
-            piece.style.fontSize = '2rem';
-            piece.style.display = 'flex';
-            piece.style.alignItems = 'center';
-            piece.style.justifyContent = 'center';
-            piece.style.flexDirection = 'column';
+            piece.style.top = yPixels + 'px';
+            piece.style.zIndex = '3';
             
             // Use image if available, fallback to emoji
             if (part.imgPath) {
@@ -1917,7 +1915,6 @@ function updateConstructionScene() {
                 img.src = part.imgPath;
                 img.alt = part.name;
                 img.loading = 'lazy';
-                img.style.cssText = 'width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));';
                 piece.appendChild(img);
             } else {
                 piece.textContent = part.image;

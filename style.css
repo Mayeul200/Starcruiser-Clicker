@@ -1348,8 +1348,11 @@ body {
 .rocket-piece {
     position: absolute;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 150px; /* Largeur fixe pour toutes les pièces */
+    height: auto; /* Hauteur proportionnelle */
     font-size: 2rem;
     color: white;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -1358,15 +1361,47 @@ body {
     z-index: 3;
     transform: translate(-50%, -50%);
 }
+
 .rocket-piece img {
     width: 100%;
-    height: 100%;
+    height: auto; /* Conserve les proportions */
     object-fit: contain;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
 }
+
 .rocket-piece:hover {
     transform: translate(-50%, -50%) scale(1.1) !important;
     z-index: 10;
+}
+
+/* Animation de pulsation pour les pièces nouvelles */
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.rocket-piece.new {
+    animation: pulse 0.5s ease;
+}
+
+.rocket-piece.unlocked {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Label de l'atelier */
+.workshop-label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 0.7rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
 }
 
 /* Label de l'atelier */
