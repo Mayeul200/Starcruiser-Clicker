@@ -1517,3 +1517,272 @@ body {
         display: none; /* Masquer sur mobile */
     }
 }
+
+
+/* ===== SYSTEME DE GRID 100x100 ===== */
+
+.center-content {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    overflow: hidden;
+}
+
+.construction-scene-100x100 {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    background-color: #0a0a1a;
+}
+
+.scene-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/backgrounds/valley-night.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    z-index: 0;
+}
+
+/* Grille 100x100 (optionnelle) */
+.grid-100x100 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    display: none; /* Masquée par défaut */
+}
+
+.grid-100x100.show {
+    display: block;
+}
+
+.grid-line {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.2);
+    pointer-events: none;
+}
+
+.grid-line.h {
+    width: 100%;
+    height: 1px;
+    top: calc(var(--pos) * 1%);
+    left: 0;
+}
+
+.grid-line.v {
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: calc(var(--pos) * 1%);
+}
+
+/* Conteneur des pièces de fusée */
+.rocket-parts-100x100 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+/* Pièces de fusée sur grille 100x100 */
+.rocket-piece {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 3;
+}
+
+.rocket-piece:hover {
+    transform: translate(-50%, -50%) scale(1.1) !important;
+    z-index: 10;
+}
+
+/* Atelier fixe */
+.workshop-fixed {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+}
+
+.workshop-image {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+.workshop-label {
+    color: white;
+    font-size: 0.7rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    margin-top: 4px;
+}
+
+/* Images des pièces */
+.rocket-piece img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+/* Animation de pulsation pour les pièces nouvelles */
+@keyframes pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+.rocket-piece.new {
+    animation: pulse 0.5s ease;
+}
+
+
+/* Médaille cliquable */
+.medal {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    transition: all 0.2s ease;
+    z-index: 100;
+}
+
+.medal:hover {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+.medal:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.medal-emoji {
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Bouton de lancement */
+.launch-button {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+    transition: all 0.2s ease;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.launch-button:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 68, 68, 0.6);
+}
+
+.launch-button:active {
+    transform: translateX(-50%) translateY(0);
+}
+
+.launch-button:disabled {
+    background: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.launch-button-icon {
+    font-size: 1.2rem;
+}
+
+.launch-button-text {
+    font-size: 0.9rem;
+}
+
+/* Compteurs */
+.counters {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 16px;
+    border-radius: 10px;
+}
+
+.counter {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.counter span {
+    color: #ffd700;
+}
+
+/* Barre des upgrades */
+.upgrades-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.upgrades-title {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.upgrades-container-center {
+    display: flex;
+    gap: 10px;
+    margin-left: 20px;
+}
