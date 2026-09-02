@@ -1902,8 +1902,9 @@ function updateConstructionScene() {
             piece.style.display = 'flex';
             piece.style.alignItems = 'center';
             piece.style.justifyContent = 'center';
+            piece.style.flexDirection = 'column';
             
-            // Use image if available, fallback to emoji
+            // Use image if available, fallback to emoji (sauf pour workshop qui a toujours une image)
             if (part.imgPath) {
                 const img = document.createElement('img');
                 img.src = part.imgPath;
