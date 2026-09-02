@@ -1878,11 +1878,18 @@ function updateConstructionScene() {
     const container = document.getElementById('rocket-parts-container');
     if (!container) return;
 
-    container.innerHTML = '';
+    // Ne pas vider le conteneur, on va juste ajouter les nouvelles pièces
+    // container.innerHTML = '';
 
     ROCKET_PARTS.forEach(part => {
         // L'atelier s'affiche toujours, les autres pièces si count > 0
-        if (part.id === "workshop" || part.count > 0) {
+        const shouldDisplay = part.id === "workshop" || part.count > 0;
+        
+        // Vérifier si la pièce existe déjà dans le DOM
+        const existingPiece = container.querySelector(`.rocket-piece.${part.id}`);
+        
+        if (shouldDisplay && !existingPiece) {
+            // La pièce n'existe pas encore, la créer
             const piece = document.createElement('div');
             piece.className = `rocket-piece ${part.id}`;
             piece.title = part.name;
@@ -1904,7 +1911,7 @@ function updateConstructionScene() {
             piece.style.justifyContent = 'center';
             piece.style.flexDirection = 'column';
             
-            // Use image if available, fallback to emoji (sauf pour workshop qui a toujours une image)
+            // Use image if available, fallback to emoji
             if (part.imgPath) {
                 const img = document.createElement('img');
                 img.src = part.imgPath;
@@ -1924,7 +1931,7 @@ function updateConstructionScene() {
                 piece.appendChild(label);
             }
             
-            // Animation d'apparition
+            // Animation d'apparition UNIQUEMENT pour les nouvelles pièces
             piece.style.opacity = '0';
             piece.style.transform = 'translate(-50%, -50%) scale(0.5)';
             
@@ -1934,7 +1941,7 @@ function updateConstructionScene() {
                 piece.style.transform = 'translate(-50%, -50%) scale(1)';
             });
             
-            // Trigger animation if newly constructed
+            // Marquer comme construite
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
                 piece.classList.add('new', 'unlocked');
