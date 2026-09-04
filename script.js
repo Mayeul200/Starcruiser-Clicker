@@ -782,7 +782,6 @@ function renderBuilding(building) {
         <div class="building-left">
             <div class="building-name-icon">
                 <span class="building-name">${building.name}</span>
-                <span class="building-icon">${building.image}</span>
             </div>
             <div class="building-ownership">
                 Owned: ${building.count}
