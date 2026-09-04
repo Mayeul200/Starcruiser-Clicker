@@ -44,7 +44,7 @@ const BUILDING_UPDATE_INTERVAL_MS = 500;
 // Hauteur totale: 454px (centrée verticalement)
 // ============================================
 const ROCKET_PARTS = [
-    { id: "workshop", name: "Atelier", description: "Fabrique des pieces: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "\ud83d\udee0\ufe0f", imgPath: "images/rocket/workshop.png", x: 50, y: 701, width: 40, height: 40, order: 1, unlockCondition: () => true, totalGenerated: 0 }
+    { id: "workshop", name: "Atelier", description: "Fabrique des pieces: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "\ud83d\udee0\ufe0f", imgPath: "images/rocket/workshop.png", x: 50, y: 701, width: 40, height: 40, order: 1, unlockCondition: () => true, totalGenerated: 0 },
     { id: "nozzles", name: "Tuyères", description: "Propulsion: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100, gain: 1, count: 0, image: "\ud83c\udfaf", imgPath: "images/rocket/nozzles.PNG", x: 50, y: 641, width: 40, height: 20, order: 2, unlockCondition: () => score >= 50, totalGenerated: 0 },
     { id: "engines", name: "Moteurs", description: "Moteurs principaux: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "\ud83d\udd25", imgPath: "images/rocket/engines.png", x: 50, y: 590, width: 40, height: 51, order: 3, unlockCondition: () => score >= 500, totalGenerated: 0 },
     { id: "fuel-tank", name: "Réservoir", description: "Carburant: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "\u26fd", imgPath: "images/rocket/fuel-tank.png", x: 50, y: 532, width: 40, height: 58, order: 4, unlockCondition: () => score >= 5000, totalGenerated: 0 },
@@ -55,7 +55,6 @@ const ROCKET_PARTS = [
     { id: "shield", name: "Bouclier", description: "Protection: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000000, gain: 1000000, count: 0, image: "\ud83d\udee1\ufe0f", imgPath: "images/rocket/shield.png", x: 50, y: 240, width: 40, height: 52, order: 8, unlockCondition: () => score >= 10000000, totalGenerated: 0 },
     { id: "launch-pad", name: "Pas de tir", description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "\ud83d\ude80", imgPath: "images/rocket/launch-pad.png", x: 50, y: 661, width: 40, height: 40, order: 9, unlockCondition: () => score >= 100000000, totalGenerated: 0 },
     { id: "astronaut", name: "Astronaute", description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "\ud83d\udc69\u200d\ud83d\ude80", imgPath: "images/rocket/astronaut.png", x: 50, y: 200, width: 40, height: 40, order: 10, unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
-    
 ];
 
 // Alias pour compatibilité
