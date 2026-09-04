@@ -1363,9 +1363,11 @@ body {
 }
 
 .rocket-piece img {
-    width: 100%;
-    height: auto; /* Conserve les proportions */
-    object-fit: contain;
+    max-width: 100%; /* Ne dépasse pas la largeur du conteneur */
+    max-height: 100%; /* Ne dépasse pas la hauteur du conteneur */
+    width: auto;
+    height: auto;
+    object-fit: contain; /* Garde les proportions sans déformation */
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
 }
 
