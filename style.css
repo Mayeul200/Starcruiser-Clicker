@@ -1368,12 +1368,6 @@ body {
     width: auto;
     height: auto;
     object-fit: contain; /* Garde les proportions sans déformation */
-    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
-}
-
-.rocket-piece:hover {
-    transform: translate(-50%, -50%) scale(1.1) !important;
-    z-index: 10;
 }
 
 /* Animation de pulsation pour les pièces nouvelles */
