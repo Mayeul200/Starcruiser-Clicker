@@ -449,6 +449,8 @@ body {
     transform: rotate(65deg);
     transform-origin: center;
     margin-left: -10px;
+    height: 100%;
+    max-height: 84px;
     opacity: 0.7;
 }
 
