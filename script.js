@@ -1842,6 +1842,13 @@ function updateBonusTimer() {
 function init() {
     initGlobals();
     loadGame();
+    
+    // ===== DEBUG: DONNER TOUTES LES PIÈCES POUR TESTER =====
+    // À SUPPRIMER APRES LES TESTS
+    ROCKET_PARTS.forEach(part => {
+        part.count = 1;
+    });
+    
     updateDisplay();
     renderBuildings();
     renderUpgrades();
