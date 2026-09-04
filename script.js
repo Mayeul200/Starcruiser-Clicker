@@ -774,6 +774,10 @@ function renderBuilding(building) {
     buildingElement.id = `building-${building.id}`;
     buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
+    // Créer la structure avec l'image du bâtiment en arrière-plan
+    const imageUrl = building.imgPath || '';
+    const imageHtml = imageUrl ? `<img src="${imageUrl}" class="building-image" alt="${building.name}">` : '';
+
     buildingElement.innerHTML = `
         <div class="building-left">
             <div class="building-name-icon">
@@ -783,6 +787,9 @@ function renderBuilding(building) {
             <div class="building-ownership">
                 Owned: ${building.count}
             </div>
+        </div>
+        <div class="building-center">
+            ${imageHtml}
         </div>
         <div class="building-right">
             <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
