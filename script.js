@@ -1929,6 +1929,10 @@ function updateConstructionScene() {
                 img.src = part.imgPath;
                 img.alt = part.name;
                 img.loading = 'lazy';
+                // Ajouter la classe tall si la pièce est trop haute
+                if (part.height > 100) {
+                    piece.classList.add('tall');
+                }
                 piece.appendChild(img);
             } else {
                 piece.textContent = part.image;

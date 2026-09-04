@@ -1458,6 +1458,13 @@ body {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    filter: blur(0.5px);
+}
+
+/* Pièces trop hautes - rotation de 45 degrés */
+.rocket-piece.tall img {
+    transform: rotate(45deg);
+    transform-origin: center;
 }
 /* Animation de pulsation pour les pièces nouvelles */
 @keyframes pulse {
