@@ -428,10 +428,16 @@ body {
     filter: blur(0.5px);
 }
 
-/* Pièces trop hautes en diagonale (sauf launch-pad) */
+/* Pièces trop hautes en diagonale (sauf launch-pad et workshop) */
 .building-item.tall .building-image {
-    transform: rotate(45deg);
+    transform: rotate(65deg) scale(1.5);
     transform-origin: center;
+    filter: blur(0.5px);
+}
+
+/* Atelier reste droit */
+.building-item.workshop .building-image {
+    transform: none;
     filter: blur(0.5px);
 }
 

@@ -770,7 +770,7 @@ function renderBuilding(building) {
     const isAffordable = score >= currentCost;
 
     const buildingElement = document.createElement('div');
-    buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '') + (building.id !== 'launch-pad' && building.height > 100 ? ' tall' : '');
+    buildingElement.className = 'building-item' + (building.count === 0 ? ' not-purchased' : '') + (building.id !== 'launch-pad' && building.id !== 'workshop' && building.height > 100 ? ' tall' : '') + (building.id === 'workshop' ? ' workshop' : '');
     buildingElement.id = `building-${building.id}`;
     buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
