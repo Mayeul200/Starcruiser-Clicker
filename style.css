@@ -429,6 +429,35 @@ body {
     filter: blur(0.5px);
 }
 
+/* Styles spécifiques pour les images des bâtiments */
+.building-item.nozzles .building-image {
+    height: 60%;
+    width: auto;
+    max-height: 56px;
+}
+
+.building-item.workshop .building-image {
+    height: 100%;
+    width: auto;
+    max-height: 84px;
+    margin: 0;
+}
+
+.building-item.rocket-body .building-image,
+.building-item.boosters-left .building-image,
+.building-item.boosters-right .building-image {
+    transform: rotate(65deg);
+    transform-origin: center;
+    margin-left: -10px;
+    opacity: 0.7;
+}
+
+/* Transparence générale sur les images des bâtiments */
+.building-image {
+    opacity: 0.7;
+}
+
+
 /* Images des bâtiments avec transparence */
 .building-image {
     opacity: 0.7;
