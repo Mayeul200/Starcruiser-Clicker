@@ -598,12 +598,16 @@ body {
 }
 .click-effect {
     position: absolute;
-    color: var(--accent-light);
-    font-size: 1.3rem;
-    font-weight: 600;
-    text-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
+    color: #ffd700;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 0, 0, 0.6);
+    background: rgba(30, 58, 138, 0.7);
+    padding: 2px 8px;
+    border-radius: 4px;
     animation: floatUp 1s forwards;
     opacity: 0;
+    z-index: 1000;
 }
 .toast {
     position: fixed;
