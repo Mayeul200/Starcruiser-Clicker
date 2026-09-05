@@ -1521,9 +1521,9 @@ function showClickEffect(value) {
     const centerX = medalRect.left + medalRect.width / 2;
     const centerY = medalRect.top + medalRect.height / 2;
 
-    // Envoyer dans tous les sens avec plus de variation
+    // Envoyer dans toutes les directions (N, S, E, W) depuis le centre
     const angle = Math.random() * Math.PI * 2;
-    const distance = 80 + Math.random() * 100;  // Plus loin
+    const distance = 100 + Math.random() * 150;
     const offsetX = Math.cos(angle) * distance;
     const offsetY = Math.sin(angle) * distance;
 
