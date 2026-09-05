@@ -379,7 +379,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     min-height: 70px;
-    height: 80px;
+    height: 100px;
     position: relative;
 }
 .building-item:hover {
@@ -403,9 +403,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 80px;
+    flex: 0 0 100px;
     padding: 0 10px;
-    height: 80px;
+    height: 100px;
 }
 .building-name-icon {
     display: flex;
@@ -422,7 +422,7 @@ body {
 .building-image {
     height: 80%;
     width: auto;
-    max-height: 80px;
+    max-height: 100px;
     object-fit: contain;
     opacity: 0.7;
     pointer-events: none;
@@ -450,7 +450,7 @@ body {
     transform-origin: center;
     margin-left: -10px;
     height: 120%;
-    max-height: 96px;
+    max-height: 100px;
     opacity: 0.7;
 }
 
@@ -677,7 +677,7 @@ body {
 }
 @media (max-width: 768px) {
     .top-bar { height: 12vh; min-height: 70px;
-    height: 80px; }
+    height: 100px; }
     .medal { width: 180px; height: 180px; }
     .medal-emoji { font-size: 5.5rem; }
     .counters { margin-top: 16px; }
