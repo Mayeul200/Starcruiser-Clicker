@@ -295,6 +295,10 @@ body {
     z-index: 1;
 }
 .medal {
+    position: absolute;
+    right: 10%;
+    top: 25%;
+    transform: translateY(-50%);
     width: 220px;
     height: 220px;
     background: linear-gradient(135deg, var(--primary), var(--accent), var(--primary-dark));
