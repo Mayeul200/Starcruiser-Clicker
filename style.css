@@ -1516,7 +1516,7 @@ body {
 .medal {
     position: absolute;
     right: 10%;
-    top: 50%;
+    top: 25%;
     transform: translateY(-50%);
     width: 120px;
     height: 120px;

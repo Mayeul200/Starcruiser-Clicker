@@ -1523,7 +1523,7 @@ function showClickEffect(value) {
 
     // Envoyer dans toutes les directions (N, S, E, W) depuis le centre
     const angle = Math.random() * Math.PI * 2;
-    const distance = 100 + Math.random() * 150;
+    const distance = 50 + Math.random() * 100;  // 50-150px
     const offsetX = Math.cos(angle) * distance;
     const offsetY = Math.sin(angle) * distance;
 
