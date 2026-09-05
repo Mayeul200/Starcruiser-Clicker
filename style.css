@@ -379,6 +379,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     min-height: 70px;
+    height: 80px;
     position: relative;
 }
 .building-item:hover {
@@ -402,8 +403,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 90px;
+    flex: 0 0 80px;
     padding: 0 10px;
+    height: 80px;
 }
 .building-name-icon {
     display: flex;
@@ -674,7 +676,8 @@ body {
     .control-button { width: 36px; height: 36px; font-size: 14px; }
 }
 @media (max-width: 768px) {
-    .top-bar { height: 12vh; min-height: 70px; }
+    .top-bar { height: 12vh; min-height: 70px;
+    height: 80px; }
     .medal { width: 180px; height: 180px; }
     .medal-emoji { font-size: 5.5rem; }
     .counters { margin-top: 16px; }
