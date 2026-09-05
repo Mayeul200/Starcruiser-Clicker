@@ -420,9 +420,9 @@ body {
 }
 
 .building-image {
-    height: 80%;
+    height: 90%;
     width: auto;
-    max-height: 100px;
+    max-height: 90px;
     object-fit: contain;
     opacity: 0.7;
     pointer-events: none;
@@ -435,12 +435,14 @@ body {
 .building-item.nozzles .building-image {
     height: 70%;
     width: auto;
+    max-height: 70px;
 }
 
 .building-item.workshop .building-image {
     height: 80%;
     width: auto;
     margin: 0;
+    max-height: 80px;
 }
 
 .building-item.rocket-body .building-image,
@@ -449,8 +451,8 @@ body {
     transform: rotate(65deg);
     transform-origin: center;
     margin-left: -10px;
-    height: 120%;
-    max-height: 100px;
+    height: 90%;
+    max-height: 90px;
     opacity: 0.7;
 }
 
