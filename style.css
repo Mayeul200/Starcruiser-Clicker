@@ -436,7 +436,7 @@ body {
 
 /* Styles spécifiques pour les images des bâtiments */
 .building-item.nozzles .building-image {
-    height: 60%;
+    height: 50%;
     width: auto;
     max-height: 56px;
 }
@@ -454,10 +454,10 @@ body {
 .building-item.boosters-right .building-image {
     transform: rotate(65deg);
     transform-origin: center;
-    margin-left: -10px;
     height: 100%;
     max-height: 84px;
     opacity: 0.7;
+    margin: 0 auto;
 }
 
 /* Transparence générale sur les images des bâtiments */
