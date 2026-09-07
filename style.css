@@ -435,11 +435,21 @@ body {
 }
 
 /* Styles spécifiques pour les images des bâtiments */
+.building-item.nozzles .building-image,
+.building-item.workshop .building-image,
+.building-item.engines .building-image,
+.building-item.fuel-tank .building-image,
+.building-item.cockpit .building-image,
+.building-item.shield .building-image,
+.building-item.launch-pad .building-image,
+.building-item.astronaut .building-image {
+    margin-left: -15px;
+}
+
 .building-item.nozzles .building-image {
     height: 50%;
     width: auto;
     max-height: 56px;
-    margin-left: -15px;
 }
 
 .building-item.workshop .building-image {
@@ -447,7 +457,6 @@ body {
     width: auto;
     max-width: 100%;
     max-height: 84px;
-    margin-left: -15px;
 }
 
 .building-item.rocket-body .building-image,
