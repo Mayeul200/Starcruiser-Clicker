@@ -1947,13 +1947,12 @@ function updateConstructionScene() {
             piece.style.opacity = '0';
             piece.style.transform = 'translate(-50%, 0) scale(0.5)';
             
-            requestAnimationFrame(() => {
-                piece.style.transition = 'all 0.3s ease';
-                piece.style.opacity = '1';
-                piece.style.transform = 'translate(-50%, 0) scale(1)';
-            });
+            container.appendChild(piece);
             
-            // Marquer comme construite
+            // Forcer le reflow pour que le style initial soit bien appliqué
+            void piece.offsetHeight;
+            
+            // Ajouter la classe qui déclenche l'animation
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
                 piece.classList.add('new', 'unlocked');
@@ -1961,6 +1960,8 @@ function updateConstructionScene() {
                     piece.classList.remove('new');
                 }, 800);
             } else {
+                piece.style.opacity = '1';
+                piece.style.transform = 'translate(-50%, 0) scale(1)';
                 piece.classList.add('unlocked');
             }
             
