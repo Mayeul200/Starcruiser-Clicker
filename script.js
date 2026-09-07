@@ -1945,12 +1945,12 @@ function updateConstructionScene() {
             
             // Animation d'apparition UNIQUEMENT pour les nouvelles pièces
             piece.style.opacity = '0';
-            piece.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            piece.style.transform = 'translate(-50%, 0) scale(0.5)';
             
             requestAnimationFrame(() => {
                 piece.style.transition = 'all 0.3s ease';
                 piece.style.opacity = '1';
-                piece.style.transform = 'translate(-50%, -50%) scale(1)';
+                piece.style.transform = 'translate(-50%, 0) scale(1)';
             });
             
             // Marquer comme construite
