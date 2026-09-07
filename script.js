@@ -1943,28 +1943,28 @@ function updateConstructionScene() {
                 piece.appendChild(label);
             }
             
-            // Animation d'apparition UNIQUEMENT pour les nouvelles pièces
+            // État de départ, avec la MÊME ancre que le CSS (-50%, -50%)
+            piece.style.transition = 'none';
             piece.style.opacity = '0';
-            piece.style.transform = 'translate(-50%, 0) scale(0.5)';
-            
-            requestAnimationFrame(() => {
-                piece.style.transition = 'all 0.3s ease';
-                piece.style.opacity = '1';
-                piece.style.transform = 'translate(-50%, 0) scale(1)';
-            });
+            piece.style.transform = 'translate(-50%, -50%) scale(0.5)';
             
             // Marquer comme construite
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
                 piece.classList.add('new', 'unlocked');
-                setTimeout(() => {
-                    piece.classList.remove('new');
-                }, 800);
+                setTimeout(() => piece.classList.remove('new'), 800);
             } else {
                 piece.classList.add('unlocked');
             }
             
             container.appendChild(piece);
+            
+            // Forcer le navigateur à "commiter" l'état de départ avant de transitionner
+            void piece.offsetHeight;
+            
+            piece.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            piece.style.opacity = '1';
+            piece.style.transform = 'translate(-50%, -50%) scale(1)';
         }
     });
     
