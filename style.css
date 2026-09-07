@@ -1202,7 +1202,7 @@ body {
     color: var(--text);
     text-shadow: 0 0 5px var(--text);
 }
-/* Animation d'apparition */
+/* Animation d'apparition (désactivée pour éviter le layout shift) */
 @keyframes partAppear {
     0% {
         opacity: 0;
@@ -1220,9 +1220,9 @@ body {
         filter: blur(0px);
     }
 }
-.rocket-piece.new {
+/* .rocket-piece.new {
     animation: partAppear 0.8s ease-out forwards;
-}
+} */
 /* Animation de décollage */
 @keyframes rocketLiftoff {
     0% {
