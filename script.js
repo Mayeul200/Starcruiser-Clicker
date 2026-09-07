@@ -776,7 +776,7 @@ function renderBuilding(building) {
 
     // Créer la structure avec l'image du bâtiment en arrière-plan
     const imageUrl = building.imgPath || '';
-    const imageHtml = imageUrl ? `<img src="${imageUrl}" class="building-image" alt="${building.name}" width="84" height="84">` : '';
+    const imageHtml = imageUrl ? `<img src="${imageUrl}" class="building-image" alt="${building.name}" width="${building.width || 84}" height="${building.height || 84}">` : '';
 
     buildingElement.innerHTML = `
         <div class="building-left">
