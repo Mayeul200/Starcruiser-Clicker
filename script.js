@@ -41,7 +41,7 @@ const BUILDING_UPDATE_INTERVAL_MS = 500;
 // ============================================
 // ============================================
 // ROCKET_PARTS avec tailles proportionnelles
-// Hauteur totale: 454px (centrée verticalement)
+// Hauteur totale: 400px (centrée verticalement)
 // ============================================
 const ROCKET_PARTS = [
     { id: "workshop", name: "Atelier", description: "Fabrique des pieces: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "\ud83d\udee0\ufe0f", imgPath: "images/rocket/workshop.png", x: 20, y: 550, width: 220, height: 220, order: 1, unlockCondition: () => true, totalGenerated: 0 },
