@@ -1442,13 +1442,12 @@ body {
 
 /* Animation de pulsation pour les pièces nouvelles */
 @keyframes pulse {
-    0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
-    50% { transform: translate(-50%, 0) scale(1.05); }
-    100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.05); }
 }
 
 .rocket-piece.new {
-    animation: pulse 0.5s ease forwards;
+    animation: pulse 0.5s ease;
 }
 
 .rocket-piece.unlocked {
