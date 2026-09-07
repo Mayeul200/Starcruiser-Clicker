@@ -457,7 +457,7 @@ body {
     height: 100%;
     max-height: 84px;
     opacity: 0.7;
-    margin: 0 auto;
+    margin-left: -5px;
 }
 
 /* Transparence générale sur les images des bâtiments */
