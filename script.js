@@ -1944,13 +1944,18 @@ function updateConstructionScene() {
             }
             
             // Animation d'apparition UNIQUEMENT pour les nouvelles pièces
-            piece.style.opacity = '0';
-            piece.style.transform = 'translate(-50%, 0) scale(0.5)';
-            
-            // Ajouter la classe qui déclenche l'animation
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
-                piece.classList.add('new', 'unlocked');
+                piece.style.opacity = '0';
+                piece.style.transform = 'translate(-50%, 0) scale(0.5)';
+                piece.classList.add('unlocked');
+                container.appendChild(piece);
+                
+                // Forcer le reflow pour appliquer le style initial
+                void piece.offsetHeight;
+                
+                // Déclencher l'animation
+                piece.classList.add('new');
                 setTimeout(() => {
                     piece.classList.remove('new');
                 }, 800);
@@ -1958,9 +1963,8 @@ function updateConstructionScene() {
                 piece.style.opacity = '1';
                 piece.style.transform = 'translate(-50%, 0) scale(1)';
                 piece.classList.add('unlocked');
+                container.appendChild(piece);
             }
-            
-            container.appendChild(piece);
         }
     });
     
