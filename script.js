@@ -1947,11 +1947,6 @@ function updateConstructionScene() {
             piece.style.opacity = '0';
             piece.style.transform = 'translate(-50%, 0) scale(0.5)';
             
-            container.appendChild(piece);
-            
-            // Forcer le reflow pour que le style initial soit bien appliqué
-            void piece.offsetHeight;
-            
             // Ajouter la classe qui déclenche l'animation
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
