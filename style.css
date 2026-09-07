@@ -439,6 +439,7 @@ body {
     height: 50%;
     width: auto;
     max-height: 56px;
+    margin-left: -5px;
 }
 
 .building-item.workshop .building-image {
@@ -446,7 +447,7 @@ body {
     width: auto;
     max-width: 100%;
     max-height: 84px;
-    margin: 0 auto;
+    margin-left: -5px;
 }
 
 .building-item.rocket-body .building-image,
