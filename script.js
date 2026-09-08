@@ -1895,6 +1895,9 @@ function updateConstructionScene() {
     const container = document.getElementById('rocket-parts-container');
     if (!container) return;
 
+    // Récupérer la largeur du conteneur pour convertir x% en pixels
+    const containerWidth = container.offsetWidth;
+
     // Ne pas vider le conteneur, on va juste ajouter les nouvelles pièces
     // container.innerHTML = '';
 
@@ -1917,9 +1920,14 @@ function updateConstructionScene() {
             const width = part.width || 150;
             const height = part.height || 150;
             
-            // Appliquer les styles de position
-            piece.style.left = x + '%';
-            piece.style.top = y + 'px';
+            // Convertir x% en pixels
+            const x_px = (x / 100) * containerWidth;
+            const y_px = y;
+            
+            // Positionner avec transform pour placement pixel-parfait
+            piece.style.left = '0';
+            piece.style.top = '0';
+            piece.style.transform = `translate(${x_px}px, ${y_px}px)`;
             piece.style.width = width + 'px';
             piece.style.height = height + 'px';
             piece.style.zIndex = '3';
@@ -1945,12 +1953,12 @@ function updateConstructionScene() {
             
             // Animation d'apparition UNIQUEMENT pour les nouvelles pièces
             piece.style.opacity = '0';
-            piece.style.transform = 'translate(-50%, 0) scale(0.5)';
+            piece.style.transform = `translate(${x_px}px, ${y_px}px) scale(0.5)`;
             
             requestAnimationFrame(() => {
                 piece.style.transition = 'all 0.3s ease';
                 piece.style.opacity = '1';
-                piece.style.transform = 'translate(-50%, 0) scale(1)';
+                piece.style.transform = `translate(${x_px}px, ${y_px}px) scale(1)`;
             });
             
             // Marquer comme construite
