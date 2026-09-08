@@ -1215,7 +1215,7 @@ function updateSpaceProgress() {
     }
     if (sidebarPlanets) {
         const unlockedCount = unlockedPlanets.size;
-        sidebarPlanets.textContent = unlockedCount + '/11';
+        sidebarPlanets.textContent = unlockedCount + '/10';
     }
 }
 
