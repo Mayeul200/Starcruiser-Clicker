@@ -49,12 +49,12 @@ const ROCKET_PARTS = [
     { id: "engines", name: "Moteurs", description: "Moteurs principaux: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "\ud83d\udd25", imgPath: "images/rocket/engines.png", x: 50, y: 595, width: 40, height: 51, order: 3, unlockCondition: () => score >= 500, totalGenerated: 0 },
     { id: "fuel-tank", name: "Réservoir", description: "Carburant: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "\u26fd", imgPath: "images/rocket/fuel-tank.png", x: 50, y: 537, width: 40, height: 58, order: 4, unlockCondition: () => score >= 5000, totalGenerated: 0 },
     { id: "rocket-body", name: "Corps", description: "Structure: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000, gain: 1000, count: 0, image: "\ud83d\udfeb", imgPath: "images/rocket/body.png", x: 50, y: 337, width: 40, height: 200, order: 5, unlockCondition: () => score >= 25000, totalGenerated: 0 },
-    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "\ud83d\ude80", imgPath: "images/rocket/boosters-left.png", x: 45.8, y: 373, width: 50, height: 300, order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "boosters-right", name: "Boosters Droit", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "\ud83d\ude80", imgPath: "images/rocket/boosters-right.png", x: 54.2, y: 373, width: 50, height: 300, order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "cockpit", name: "Cockpit", description: "Poste de pilotage: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000, gain: 100000, count: 0, image: "\ud83d\udc68\u200d\ud83d\ude80", imgPath: "images/rocket/cockpit.png", x: 50, y: 292, width: 45, height: 45, order: 7, unlockCondition: () => score >= 1000000, totalGenerated: 0 },
+    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🚀", imgPath: "images/rocket/boosters-left.png", x: 45.8, y: 373, width: 50, height: 300, order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
+    { id: "boosters-right", name: "Boosters Droit", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🚀", imgPath: "images/rocket/boosters-right.png", x: 54.2, y: 373, width: 50, height: 300, order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
+    { id: "cockpit", name: "Cockpit", description: "Poste de pilotage: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000, gain: 100000, count: 0, image: "\ud83d\udc68\u200d🚀", imgPath: "images/rocket/cockpit.png", x: 50, y: 292, width: 45, height: 45, order: 7, unlockCondition: () => score >= 1000000, totalGenerated: 0 },
     { id: "shield", name: "Bouclier", description: "Protection: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000000, gain: 1000000, count: 0, image: "\ud83d\udee1\ufe0f", imgPath: "images/rocket/shield.png", x: 50, y: 233, width: 45, height: 59, order: 8, unlockCondition: () => score >= 10000000, totalGenerated: 0 },
-    { id: "launch-pad", name: "Pas de tir", description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "\ud83d\ude80", imgPath: "images/rocket/launch-pad.png",x: 60.2, y: 205, width: 190, height: 481, order: 9, unlockCondition: () => score >= 100000000, totalGenerated: 0 },
-    { id: "astronaut", name: "Astronaute", description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "\ud83d\udc69\u200d\ud83d\ude80", imgPath: "images/rocket/astronaut.png", x: 40, y: 635, width: 25, height: 60, order: 10, unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+    { id: "launch-pad", name: "Pas de tir", description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "🚀", imgPath: "images/rocket/launch-pad.png",x: 60.2, y: 205, width: 190, height: 481, order: 9, unlockCondition: () => score >= 100000000, totalGenerated: 0 },
+    { id: "astronaut", name: "Astronaute", description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "\ud83d\udc69\u200d🚀", imgPath: "images/rocket/astronaut.png", x: 40, y: 635, width: 25, height: 60, order: 10, unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
 ];
 
 // Alias pour compatibilité
@@ -1226,10 +1226,32 @@ function updateMiniSpaceMap(distance) {
     container.innerHTML = '';
     
     const progress = calculatePlanetProgress(distance);
-    const nextTwoPlanets = getNextTwoPlanets(distance);
     
-    // Dessiner uniquement les 2 prochaines planètes
-    nextTwoPlanets.forEach((planet, index) => {
+    // Position des planètes dans la mini-map
+    // Planète 1: à gauche avec décalage (15%)
+    // Planète 2: au centre (50%)
+    // Planète 3: proche du bord droit (85%)
+    const planetPositions = [15, 50, 85];
+    
+    // Dessiner jusqu'à 3 planètes (celle en cours + les 2 prochaines)
+    const planetsToShow = [];
+    if (progress.currentPlanet) {
+        const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
+        if (currentIndex !== -1) {
+            // Ajouter la planète actuelle et les 2 suivantes
+            planetsToShow.push(PLANETS[currentIndex]);
+            if (currentIndex + 1 < PLANETS.length) planetsToShow.push(PLANETS[currentIndex + 1]);
+            if (currentIndex + 2 < PLANETS.length) planetsToShow.push(PLANETS[currentIndex + 2]);
+        }
+    } else {
+        // Avant la première planète, afficher les 3 premières
+        planetsToShow.push(PLANETS[0]);
+        if (PLANETS.length > 1) planetsToShow.push(PLANETS[1]);
+        if (PLANETS.length > 2) planetsToShow.push(PLANETS[2]);
+    }
+    
+    // Dessiner les planètes
+    planetsToShow.forEach((planet, index) => {
         const planetElement = document.createElement('div');
         planetElement.className = 'space-planet';
         
@@ -1247,56 +1269,71 @@ function updateMiniSpaceMap(distance) {
         }
         planetElement.style.setProperty('--planet-color', planet.color);
         
-        // Positionner les planètes (0% et 100% pour les 2 prochaines)
-        const position = index === 0 ? 0 : 100;
+        // Positionner la planète
+        const position = planetPositions[index] || (index * 40 + 15);
         planetElement.style.left = `${position}%`;
-        
-        // Ajouter la ligne de connexion entre les 2 planètes
-        if (index === 0 && nextTwoPlanets.length > 1) {
-            const line = document.createElement('div');
-            line.className = 'space-connection';
-            const isNextUnlocked = unlockedPlanets.has(nextTwoPlanets[1].id) || distance >= nextTwoPlanets[1].distanceRequired;
-            
-            if (isUnlocked && isNextUnlocked) {
-                line.classList.add('active');
-            }
-            line.style.left = '0%';
-            line.style.width = '100%';
-            container.appendChild(line);
-        }
         
         container.appendChild(planetElement);
     });
     
-    // Ajouter le vaisseau spatial
+    // Ajouter les lignes de connexion entre les planètes
+    for (let i = 0; i < planetsToShow.length - 1; i++) {
+        const currentPlanet = planetsToShow[i];
+        const nextPlanet = planetsToShow[i + 1];
+        
+        const isCurrentUnlocked = unlockedPlanets.has(currentPlanet.id) || distance >= currentPlanet.distanceRequired;
+        const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
+        
+        const line = document.createElement('div');
+        line.className = 'space-connection';
+        if (isCurrentUnlocked && isNextUnlocked) {
+            line.classList.add('active');
+        }
+        
+        const startPos = planetPositions[i] || (i * 40 + 15);
+        const endPos = planetPositions[i + 1] || ((i + 1) * 40 + 15);
+        line.style.left = `${startPos}%`;
+        line.style.width = `${endPos - startPos}%`;
+        container.appendChild(line);
+    }
+    
+    // Ajouter le vaisseau spatial (émoji fusée)
     if (progress.currentPlanet || progress.progressPercent > 0) {
         const spaceship = document.createElement('div');
         spaceship.className = 'spaceship';
         spaceship.innerHTML = '🚀';
         
-        // Calculer la position du vaisseau entre les 2 prochaines planètes
-        let shipPosition = 0;
-        const nextTwoPlanets = getNextTwoPlanets(distance);
+        // Calculer la position du vaisseau
+        let shipPosition = 15; // Position de départ (première planète)
         
-        if (nextTwoPlanets.length === 0) {
-            shipPosition = 0;
-        } else if (nextTwoPlanets.length === 1) {
-            // Si une seule planète (dernière), le vaisseau est à la fin
-            shipPosition = 100;
-        } else {
-            // Position entre les 2 planètes
-            const firstPlanet = nextTwoPlanets[0];
-            const secondPlanet = nextTwoPlanets[1];
+        if (progress.currentPlanet) {
+            const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
             
-            if (progress.currentPlanet && progress.currentPlanet.id === secondPlanet.id) {
-                shipPosition = 100; // Sur la deuxième planète
-            } else if (progress.currentPlanet && progress.currentPlanet.id === firstPlanet.id) {
-                // Entre la première et la deuxième
-                shipPosition = progress.progressPercent;
+            if (currentIndex > 0 && progress.nextPlanet) {
+                // Entre deux planètes
+                const nextIndex = PLANETS.findIndex(p => p.id === progress.nextPlanet.id);
+                
+                if (nextIndex > currentIndex && nextIndex < currentIndex + 3) {
+                    // Calculer la position entre les deux planètes
+                    const startPos = planetPositions[0] || 15;
+                    const endPos = planetPositions[1] || 50;
+                    shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
+                } else {
+                    // Position sur la planète actuelle
+                    shipPosition = planetPositions[Math.min(currentIndex, 2)] || 50;
+                }
+            } else if (currentIndex === 0) {
+                // Sur Terre (0 km), position à 15%
+                shipPosition = 15;
             } else {
-                // Avant la première planète
-                shipPosition = 0;
+                // Sur la dernière planète visible
+                shipPosition = planetPositions[Math.min(currentIndex, 2)] || 85;
             }
+        } else {
+            // Avant d'atteindre la première planète
+            const firstPlanetPos = planetPositions[0] || 15;
+            const secondPlanetPos = planetPositions[1] || 50;
+            shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
         }
         
         spaceship.style.left = `${shipPosition}%`;
