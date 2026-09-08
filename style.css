@@ -1060,7 +1060,7 @@ body {
 }
 .mini-space-map .space-connection {
     position: absolute;
-    top: 35%;
+    top: 30%;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--border-light), transparent);
     transform: translateY(-50%);
