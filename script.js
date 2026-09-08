@@ -191,6 +191,7 @@ let isLaunching = false;
 // SPACE MAP SYSTEM (Planets & Bonuses)
 // ============================================
 const PLANETS = [
+    { id: 'earth', name: 'Earth', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
     { id: 'moon', name: 'Moon', emoji: '\uD83D\uDD11', distanceRequired: 384000, bonusPercent: 1, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
     { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 225000000, bonusPercent: 2, color: '#ef4444', imgPath: 'images/planets/mars.png' },
     { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 4500000000, bonusPercent: 3, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
@@ -1214,7 +1215,7 @@ function updateSpaceProgress() {
     }
     if (sidebarPlanets) {
         const unlockedCount = unlockedPlanets.size;
-        sidebarPlanets.textContent = unlockedCount + '/10';
+        sidebarPlanets.textContent = unlockedCount + '/11';
     }
 }
 
