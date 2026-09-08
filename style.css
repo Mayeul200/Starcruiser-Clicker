@@ -1088,7 +1088,7 @@ body {
 }
 .mini-space-map .spaceship {
     position: absolute;
-    top: calc(50% - 25px);
+    top: 30%;
     transform: translateX(-50%) rotate(90deg);
     font-size: 1.2rem;
     z-index: 3;
