@@ -1088,20 +1088,30 @@ body {
 }
 .mini-space-map .spaceship {
     position: absolute;
-    top: 45%;
-    transform: translate(-50%, -50%);
-    font-size: 1rem;
+    top: 55%;
+    transform: translateX(-50%) rotate(90deg);
+    font-size: 1.2rem;
     z-index: 3;
     color: var(--accent-light);
 }
 
 /* Planet images in mini map */
 .mini-space-map .planet-image {
-    width: 24px;
-    height: 24px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     object-fit: cover;
     filter: drop-shadow(0 0 3px var(--planet-color));
+}
+
+/* Planet names in mini map */
+.mini-space-map .planet-name {
+    font-size: 0.7rem;
+    color: var(--text);
+    text-align: center;
+    margin-top: 4px;
+    white-space: nowrap;
+    text-shadow: 0 0 2px var(--text);
 }
 /* Space Stats */
 .space-stats {

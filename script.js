@@ -1262,16 +1262,22 @@ function updateMiniSpaceMap(distance) {
         if (isCurrent) planetElement.classList.add('current');
         
         // Utiliser l'image si disponible, sinon l'emoji
+        let planetHtml = '';
         if (planet.imgPath) {
-            planetElement.innerHTML = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}">`;
+            planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}">`;
         } else {
-            planetElement.innerHTML = `<span class="planet-emoji">${planet.emoji}</span>`;
+            planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
         }
+        planetHtml += `<div class="planet-name">${planet.name}</div>`;
+        
+        planetElement.innerHTML = planetHtml;
         planetElement.style.setProperty('--planet-color', planet.color);
         
         // Positionner la planète
         const position = planetPositions[index] || (index * 40 + 15);
         planetElement.style.left = `${position}%`;
+        planetElement.style.transform = 'translateX(-50%)';
+        planetElement.style.textAlign = 'center';
         
         container.appendChild(planetElement);
     });
