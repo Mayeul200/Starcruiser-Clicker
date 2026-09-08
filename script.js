@@ -191,17 +191,21 @@ let isLaunching = false;
 // SPACE MAP SYSTEM (Planets & Bonuses)
 // ============================================
 const PLANETS = [
-    { id: 'mercure', name: 'Mercure', emoji: '\u263f', distanceRequired: 500, bonusPercent: 1, color: '#a9a9a9' },
-    { id: 'venus', name: 'V\u00e9nus', emoji: '\u2640', distanceRequired: 2000, bonusPercent: 2, color: '#f5c842' },
-    { id: 'terre', name: 'Terre', emoji: '\u2641', distanceRequired: 10000, bonusPercent: 3, color: '#10b981' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 50000, bonusPercent: 5, color: '#ef4444' },
-    { id: 'jupiter', name: 'Jupiter', emoji: '\u2643', distanceRequired: 200000, bonusPercent: 8, color: '#f59e0b' },
-    { id: 'saturne', name: 'Saturne', emoji: '\u2644', distanceRequired: 800000, bonusPercent: 12, color: '#8b5cf6' },
-    { id: 'uranus', name: 'Uranus', emoji: '\u2645', distanceRequired: 2000000, bonusPercent: 20, color: '#06b6d4' }
+    { id: 'lune', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384000, bonusPercent: 1, color: '#a9a9a9', imgPath: 'images/planets/lune.png' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 225000000, bonusPercent: 2, color: '#ef4444', imgPath: 'images/planets/mars.png' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 4500000000, bonusPercent: 3, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
+    { id: 'pluton', name: 'Pluton', emoji: '\u2646', distanceRequired: 5900000000, bonusPercent: 5, color: '#8b5cf6', imgPath: 'images/planets/pluton.png' },
+    { id: 'nuage-oort', name: 'Nuage d\'Oort', emoji: '\u2728', distanceRequired: 9461000000000, bonusPercent: 8, color: '#f59e0b', imgPath: 'images/planets/nuage-oort.png' },
+    { id: 'proxima-centauri', name: 'Proxima du Centaure', emoji: '\u2609', distanceRequired: 40130000000000, bonusPercent: 12, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 81400000000000, bonusPercent: 15, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
+    { id: 'centre-voie-lactee', name: 'Centre de la Voie lact\u00e9e', emoji: '\uD83C\uDF0C', distanceRequired: 246000000000000, bonusPercent: 20, color: '#fbbf24', imgPath: 'images/planets/centre-voie-lactee.png' },
+    { id: 'andromede', name: 'Galaxie d\'Androm\u00e8de', emoji: '\uD83C\uDF0C', distanceRequired: 23650000000000000, bonusPercent: 25, color: '#ec4899', imgPath: 'images/planets/andromede.png' },
+    { id: 'amas-vierge', name: 'Amas de la Vierge', emoji: '\u2728', distanceRequired: 51300000000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/amas-vierge.png' }
 ];
 
 let unlockedPlanets = new Set();
 let planetBonuses = {}; // {planetId: bonusMultiplier}
+let lastLaunchDistance = 0;
 
 // ============================================
 // UTILITY FUNCTIONS
@@ -828,6 +832,11 @@ function calculateDistance() {
     return baseDistance * multiplier;
 }
 
+function getCurrentDistance() {
+    // Retourne la dernière distance calculée au lancement
+    return lastLaunchDistance;
+}
+
 function launchRocket() {
     if (!checkRocketReady()) {
         showToast("❌ Fusée pas encore prête ! Il manque des pièces.");
@@ -911,7 +920,7 @@ function calculatePlanetProgress(distance) {
     }
 
     if (currentPlanetIndex === -1) {
-        // Pas encore atteint Mercure
+        // Pas encore atteint la Lune
         return {
             currentPlanet: null,
             nextPlanet: PLANETS[0],
@@ -920,7 +929,7 @@ function calculatePlanetProgress(distance) {
     }
 
     if (currentPlanetIndex === PLANETS.length - 1) {
-        // Uranus atteint (max)
+        // Amas de la Vierge atteint (max)
         return {
             currentPlanet: PLANETS[currentPlanetIndex],
             nextPlanet: null,
@@ -940,6 +949,27 @@ function calculatePlanetProgress(distance) {
         nextPlanet: nextPlanet,
         progressPercent: progressPercent
     };
+}
+
+function getNextTwoPlanets(distance) {
+    // Retourne uniquement les 2 prochaines planètes à atteindre
+    const progress = calculatePlanetProgress(distance);
+    const currentIndex = progress.currentPlanet ? PLANETS.findIndex(p => p.id === progress.currentPlanet.id) : -1;
+    
+    let nextPlanets = [];
+    
+    if (currentIndex === -1) {
+        // Pas encore atteint la Lune, afficher Lune et Mars
+        nextPlanets = [PLANETS[0], PLANETS[1]];
+    } else if (currentIndex >= PLANETS.length - 2) {
+        // A atteint ou dépassé l'avant-dernière planète
+        nextPlanets = [PLANETS[PLANETS.length - 2], PLANETS[PLANETS.length - 1]];
+    } else {
+        // Afficher la planète actuelle et la prochaine
+        nextPlanets = [PLANETS[currentIndex], PLANETS[currentIndex + 1]];
+    }
+    
+    return nextPlanets;
 }
 
 function checkNewPlanetsUnlocked(distance) {
@@ -1033,8 +1063,17 @@ function drawSpaceMap(distance) {
         if (isNext) className += ' next';
         
         planetElement.className = className;
+        
+        // Utiliser l'image si disponible, sinon l'emoji
+        let planetHtml = '';
+        if (planet.imgPath) {
+            planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}" style="width: 40px; height: 40px;">`;
+        } else {
+            planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
+        }
+        
         planetElement.innerHTML = `
-            <span class="planet-emoji">${planet.emoji}</span>
+            ${planetHtml}
             <span class="planet-name">${planet.name}</span>
             <span class="planet-distance">${formatNumber(planet.distanceRequired)} km</span>
         `;
@@ -1141,8 +1180,8 @@ function closeSpaceMap() {
 // ============================================
 
 function updateSpaceProgress() {
-    // Calculer la distance actuelle (simulée si pas encore lancé)
-    const distance = lastLaunchDistance > 0 ? lastLaunchDistance : calculateDistance();
+    // Utiliser uniquement la distance du dernier lancement
+    const distance = lastLaunchDistance > 0 ? lastLaunchDistance : 0;
     const progress = calculatePlanetProgress(distance);
     
     // Mettre à jour l'affichage de la planète actuelle
@@ -1176,7 +1215,7 @@ function updateSpaceProgress() {
     }
     if (sidebarPlanets) {
         const unlockedCount = unlockedPlanets.size;
-        sidebarPlanets.textContent = unlockedCount + '/7';
+        sidebarPlanets.textContent = unlockedCount + '/10';
     }
 }
 
@@ -1187,9 +1226,10 @@ function updateMiniSpaceMap(distance) {
     container.innerHTML = '';
     
     const progress = calculatePlanetProgress(distance);
+    const nextTwoPlanets = getNextTwoPlanets(distance);
     
-    // Dessiner les planètes
-    PLANETS.forEach((planet, index) => {
+    // Dessiner uniquement les 2 prochaines planètes
+    nextTwoPlanets.forEach((planet, index) => {
         const planetElement = document.createElement('div');
         planetElement.className = 'space-planet';
         
@@ -1199,25 +1239,29 @@ function updateMiniSpaceMap(distance) {
         if (isUnlocked) planetElement.classList.add('unlocked');
         if (isCurrent) planetElement.classList.add('current');
         
-        planetElement.innerHTML = `<span class="planet-emoji">${planet.emoji}</span>`;
+        // Utiliser l'image si disponible, sinon l'emoji
+        if (planet.imgPath) {
+            planetElement.innerHTML = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}">`;
+        } else {
+            planetElement.innerHTML = `<span class="planet-emoji">${planet.emoji}</span>`;
+        }
         planetElement.style.setProperty('--planet-color', planet.color);
         
-        // Positionner les planètes
-        const position = (index / (PLANETS.length - 1)) * 100;
+        // Positionner les planètes (0% et 100% pour les 2 prochaines)
+        const position = index === 0 ? 0 : 100;
         planetElement.style.left = `${position}%`;
         
-        // Ajouter la ligne de connexion
-        if (index < PLANETS.length - 1) {
-            const nextPlanet = PLANETS[index + 1];
-            const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
-            
+        // Ajouter la ligne de connexion entre les 2 planètes
+        if (index === 0 && nextTwoPlanets.length > 1) {
             const line = document.createElement('div');
             line.className = 'space-connection';
+            const isNextUnlocked = unlockedPlanets.has(nextTwoPlanets[1].id) || distance >= nextTwoPlanets[1].distanceRequired;
+            
             if (isUnlocked && isNextUnlocked) {
                 line.classList.add('active');
             }
-            line.style.left = `${position}%`;
-            line.style.width = `${100 / (PLANETS.length - 1)}%`;
+            line.style.left = '0%';
+            line.style.width = '100%';
             container.appendChild(line);
         }
         
@@ -1230,23 +1274,29 @@ function updateMiniSpaceMap(distance) {
         spaceship.className = 'spaceship';
         spaceship.innerHTML = '🚀';
         
-        // Calculer la position du vaisseau
+        // Calculer la position du vaisseau entre les 2 prochaines planètes
         let shipPosition = 0;
-        if (progress.currentPlanet) {
-            const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
-            const nextIndex = currentIndex + 1;
-            
-            if (nextIndex < PLANETS.length && progress.nextPlanet) {
-                const startPos = (currentIndex / (PLANETS.length - 1)) * 100;
-                const endPos = (nextIndex / (PLANETS.length - 1)) * 100;
-                shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
-            } else {
-                shipPosition = 100;
-            }
+        const nextTwoPlanets = getNextTwoPlanets(distance);
+        
+        if (nextTwoPlanets.length === 0) {
+            shipPosition = 0;
+        } else if (nextTwoPlanets.length === 1) {
+            // Si une seule planète (dernière), le vaisseau est à la fin
+            shipPosition = 100;
         } else {
-            const firstPlanetPos = 0;
-            const secondPlanetPos = 100 / (PLANETS.length - 1);
-            shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
+            // Position entre les 2 planètes
+            const firstPlanet = nextTwoPlanets[0];
+            const secondPlanet = nextTwoPlanets[1];
+            
+            if (progress.currentPlanet && progress.currentPlanet.id === secondPlanet.id) {
+                shipPosition = 100; // Sur la deuxième planète
+            } else if (progress.currentPlanet && progress.currentPlanet.id === firstPlanet.id) {
+                // Entre la première et la deuxième
+                shipPosition = progress.progressPercent;
+            } else {
+                // Avant la première planète
+                shipPosition = 0;
+            }
         }
         
         spaceship.style.left = `${shipPosition}%`;

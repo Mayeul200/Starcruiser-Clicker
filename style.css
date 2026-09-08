@@ -892,6 +892,13 @@ body {
     font-size: 2rem;
     text-shadow: 0 0 10px var(--text);
 }
+.space-planet .planet-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: drop-shadow(0 0 5px var(--planet-color));
+}
 .space-planet .planet-name {
     font-size: 0.8rem;
     color: var(--text-light);
@@ -951,6 +958,14 @@ body {
 }
 .new-planet-item .planet-emoji {
     font-size: 1.5rem;
+}
+.new-planet-item .planet-image {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+    filter: drop-shadow(0 0 3px currentColor);
 }
 .new-planet-item .planet-name {
     color: var(--text);
@@ -1078,6 +1093,15 @@ body {
     font-size: 1rem;
     z-index: 3;
     color: var(--accent-light);
+}
+
+/* Planet images in mini map */
+.mini-space-map .planet-image {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: drop-shadow(0 0 3px var(--planet-color));
 }
 /* Space Stats */
 .space-stats {
