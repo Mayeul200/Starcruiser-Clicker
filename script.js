@@ -205,7 +205,6 @@ const PLANETS = [
 
 let unlockedPlanets = new Set();
 let planetBonuses = {}; // {planetId: bonusMultiplier}
-let lastLaunchDistance = 0;
 
 // ============================================
 // UTILITY FUNCTIONS
