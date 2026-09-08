@@ -191,16 +191,16 @@ let isLaunching = false;
 // SPACE MAP SYSTEM (Planets & Bonuses)
 // ============================================
 const PLANETS = [
-    { id: 'lune', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384000, bonusPercent: 1, color: '#a9a9a9', imgPath: 'images/planets/lune.png' },
+    { id: 'lune', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384000, bonusPercent: 1, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
     { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 225000000, bonusPercent: 2, color: '#ef4444', imgPath: 'images/planets/mars.png' },
     { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 4500000000, bonusPercent: 3, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluton', name: 'Pluton', emoji: '\u2646', distanceRequired: 5900000000, bonusPercent: 5, color: '#8b5cf6', imgPath: 'images/planets/pluton.png' },
-    { id: 'nuage-oort', name: 'Nuage d\'Oort', emoji: '\u2728', distanceRequired: 9461000000000, bonusPercent: 8, color: '#f59e0b', imgPath: 'images/planets/nuage-oort.png' },
+    { id: 'pluton', name: 'Pluton', emoji: '\u2646', distanceRequired: 5900000000, bonusPercent: 5, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
+    { id: 'nuage-oort', name: 'Nuage d\'Oort', emoji: '\u2728', distanceRequired: 9461000000000, bonusPercent: 8, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
     { id: 'proxima-centauri', name: 'Proxima du Centaure', emoji: '\u2609', distanceRequired: 40130000000000, bonusPercent: 12, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
     { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 81400000000000, bonusPercent: 15, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'centre-voie-lactee', name: 'Centre de la Voie lact\u00e9e', emoji: '\uD83C\uDF0C', distanceRequired: 246000000000000, bonusPercent: 20, color: '#fbbf24', imgPath: 'images/planets/centre-voie-lactee.png' },
-    { id: 'andromede', name: 'Galaxie d\'Androm\u00e8de', emoji: '\uD83C\uDF0C', distanceRequired: 23650000000000000, bonusPercent: 25, color: '#ec4899', imgPath: 'images/planets/andromede.png' },
-    { id: 'amas-vierge', name: 'Amas de la Vierge', emoji: '\u2728', distanceRequired: 51300000000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/amas-vierge.png' }
+    { id: 'centre-voie-lactee', name: 'Centre de la Voie lact\u00e9e', emoji: '\uD83C\uDF0C', distanceRequired: 246000000000000, bonusPercent: 20, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromede', name: 'Galaxie d\'Androm\u00e8de', emoji: '\uD83C\uDF0C', distanceRequired: 23650000000000000, bonusPercent: 25, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
+    { id: 'amas-vierge', name: 'Amas de la Vierge', emoji: '\u2728', distanceRequired: 51300000000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set();

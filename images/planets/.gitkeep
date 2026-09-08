@@ -1,12 +1,12 @@
-# Placeholder pour le dossier des images de planètes
+# Images des objectifs spatiaux
 # Ajoutez ici les images PNG pour chaque objectif :
-# - lune.png
-# - mars.png
-# - neptune.png
-# - pluton.png
-# - nuage-oort.png
-# - proxima-centauri.png
-# - sirius.png
-# - centre-voie-lactee.png
-# - andromede.png
-# - amas-vierge.png
+# - moon.png (Lune)
+# - mars.png (Mars)
+# - neptune.png (Neptune)
+# - pluto.png (Pluton)
+# - oort-cloud.png (Nuage d'Oort)
+# - proxima-centauri.png (Proxima du Centaure)
+# - sirius.png (Sirius)
+# - milky-way-center.png (Centre de la Voie lactée)
+# - andromeda.png (Galaxie d'Andromède)
+# - virgo-cluster.png (Amas de la Vierge)
