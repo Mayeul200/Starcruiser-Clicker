@@ -1088,7 +1088,7 @@ body {
 }
 .mini-space-map .spaceship {
     position: absolute;
-    top: 55%;
+    top: 30%;
     transform: translateX(-50%) rotate(90deg);
     font-size: 1.2rem;
     z-index: 3;
@@ -1102,6 +1102,7 @@ body {
     border-radius: 50%;
     object-fit: cover;
     filter: drop-shadow(0 0 3px var(--planet-color));
+    transform: translateY(-10px);
 }
 
 /* Planet names in mini map */
