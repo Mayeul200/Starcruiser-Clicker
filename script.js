@@ -1943,12 +1943,12 @@ function updateConstructionScene() {
                 piece.appendChild(label);
             }
             
-            // Animation d'apparition UNIQUEMENT pour les nouvelles pièces
+            // Animation de chute depuis le haut
             piece.style.opacity = '0';
-            piece.style.transform = 'translate(-50%, 0) scale(0.5)';
+            piece.style.transform = 'translate(-50%, -200px) scale(0.8)';
             
             requestAnimationFrame(() => {
-                piece.style.transition = 'all 0.3s ease';
+                piece.style.transition = 'all 0.6s ease-out';
                 piece.style.opacity = '1';
                 piece.style.transform = 'translate(-50%, 0) scale(1)';
             });
@@ -1959,7 +1959,7 @@ function updateConstructionScene() {
                 piece.classList.add('new', 'unlocked');
                 setTimeout(() => {
                     piece.classList.remove('new');
-                }, 800);
+                }, 600);
             } else {
                 piece.classList.add('unlocked');
             }
