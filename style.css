@@ -1088,15 +1088,15 @@ body {
 }
 
 @keyframes spaceshipBounce {
-    0%, 100% { transform: translateY(-50%) translateX(-50%) rotate(90deg) translateY(0); }
-    50% { transform: translateY(-50%) translateX(-50%) rotate(90deg) translateY(-5px); }
+    0%, 100% { transform: translateY(-50%) translateX(-50%) rotate(-45deg) translateY(0); }
+    50% { transform: translateY(-50%) translateX(-50%) rotate(-45deg) translateY(-5px); }
 }
 
 .mini-space-map .spaceship {
     animation: spaceshipBounce 2s ease-in-out infinite;
     position: absolute;
     top: 50%;
-    transform: translateY(-50%) translateX(-50%) rotate(90deg);
+    transform: translateY(-50%) translateX(-50%) rotate(-45deg);
     font-size: 1.2rem;
     z-index: 3;
     color: var(--accent-light);
