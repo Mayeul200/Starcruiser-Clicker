@@ -860,7 +860,7 @@ body {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
     box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
-    max-width: 800px;
+    max-width: 1200px;
     width: 95%;
 }
 .space-map-modal .modal-header {
