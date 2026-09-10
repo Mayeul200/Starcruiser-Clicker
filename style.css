@@ -896,9 +896,8 @@ body {
 /* Space Map Container */
 .space-map-container {
     position: relative;
-    min-height: 280px;
-    height: calc(100vh - 280px);
-    margin: 20px 0;
+    height: 200px;
+    margin: 20px auto;
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
     overflow-x: auto;
@@ -997,21 +996,25 @@ body {
 }
 /* New Planets Unlocked */
 .new-planets-unlocked {
-    margin: 20px 0;
+    margin: 20px auto;
     padding: 15px;
     background: rgba(16, 185, 129, 0.1);
     border-radius: var(--radius);
     border: 1px solid var(--accent);
+    text-align: center;
+    max-width: 400px;
 }
 .new-planet-item {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     padding: 10px;
-    margin: 5px 0;
+    margin: 5px auto;
     background: rgba(255, 255, 255, 0.05);
     border-radius: var(--radius);
     font-weight: 600;
+    max-width: 360px;
 }
 .new-planet-item .planet-emoji {
     font-size: 1.5rem;
