@@ -2056,14 +2056,7 @@ function updateConstructionScene() {
                 piece.textContent = part.image;
             }
             
-            // Ajouter le label pour l'atelier
-            if (part.id === "workshop") {
-                const label = document.createElement('span');
-                label.className = 'workshop-label';
-                label.textContent = part.name;
-                piece.appendChild(label);
-            }
-            
+
             // Animation de chute depuis le haut
             piece.style.opacity = '0';
             piece.style.transform = 'translate(-50%, -200px) scale(0.8)';
