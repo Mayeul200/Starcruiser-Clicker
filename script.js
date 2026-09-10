@@ -28,7 +28,7 @@ function hideTooltip() {
 const BUILDING_PRICE_GROWTH_RATE = 0.12;
 const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
-const BONUS_SPAWN_INTERVAL_MS = 60000;
+const BONUS_SPAWN_INTERVAL_MS = 5000;
 const SAVE_INTERVAL_MS = 30000;
 const TOAST_DURATION_MS = 3000;
 const MAX_BUILDING_DISPLAY = 100;
@@ -1570,17 +1570,22 @@ function spawnRandomBonus() {
     const bonus = RANDOM_BONUSES[bonusIndex];
     if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
 
-    // La comète traverse l'écran en diagonale de haut en bas
-    const startX = Math.random() * window.innerWidth * 0.6;
-    const endX = startX + 300 + Math.random() * 300;
+    // La comète traverse l'écran en diagonale à 45° de haut en bas
+    const startY = -60;
     const endY = window.innerHeight + 100;
+    const verticalTravel = endY - startY;
+    // À 45°, déplacement horizontal = déplacement vertical
+    const horizontalTravel = verticalTravel;
+    // Point de départ à gauche, suffisamment pour rester visible
+    const startX = Math.random() * Math.max(0, window.innerWidth - horizontalTravel);
+    const endX = startX + horizontalTravel;
     const duration = 6000;
 
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus comet ${bonus.colorClass}`;
     bonusElement.innerHTML = '\u2604\ufe0f';
     bonusElement.style.left = `${startX}px`;
-    bonusElement.style.top = `-60px`;
+    bonusElement.style.top = `${startY}px`;
 
     document.getElementById('random-bonuses').appendChild(bonusElement);
 
