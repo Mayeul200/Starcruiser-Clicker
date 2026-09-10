@@ -2030,6 +2030,190 @@ function updateBonusTimer() {
 }
 
 // ============================================
+// PLANETARY SURVEY MINI-GAME
+// ============================================
+
+const SURVEY_COST = 1;
+const SURVEY_PLANET_IMAGES = ['images/planets/moon.png', 'images/planets/mars.png', 'images/planets/neptune.png'];
+
+// Récompenses possibles (poids relatif)
+const SURVEY_REWARDS = [
+    { type: 'parts', weight: 35, minMult: 1, maxMult: 5, icon: '💰', label: 'Parts gagnés' },
+    { type: 'multiplier', weight: 25, minMult: 2, maxMult: 5, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire' },
+    { type: 'bigParts', weight: 10, minMult: 10, maxMult: 50, icon: '💎', label: 'Gros lot de Parts' },
+    { type: 'nothing', weight: 30, icon: '🌑', label: 'Rien' }
+];
+
+let surveyActive = false;
+let surveyRewardChosen = null;
+
+function openPlanetarySurvey() {
+    document.getElementById('planetary-survey-modal').classList.add('active');
+    resetPlanetarySurvey();
+}
+
+function closePlanetarySurvey() {
+    document.getElementById('planetary-survey-modal').classList.remove('active');
+    surveyActive = false;
+}
+
+function resetPlanetarySurvey() {
+    surveyActive = false;
+    surveyRewardChosen = null;
+    document.getElementById('survey-intro').style.display = 'block';
+    document.getElementById('survey-intro').textContent = 'Choisis une planète pour révéler un bonus mystère !';
+    document.getElementById('survey-cards').innerHTML = '';
+    document.getElementById('survey-result').textContent = '';
+    document.getElementById('survey-result').className = 'survey-result';
+    document.getElementById('survey-play-button').style.display = 'block';
+    document.getElementById('survey-replay-button').style.display = 'none';
+}
+
+function startPlanetarySurvey() {
+    if (score < SURVEY_COST) {
+        showToast(`❌ Pas assez de pièces ! Il faut ${SURVEY_COST} pièce.`);
+        return;
+    }
+    score -= SURVEY_COST;
+    updateDisplay();
+
+    surveyActive = true;
+    surveyRewardChosen = pickSurveyReward();
+
+    document.getElementById('survey-intro').style.display = 'none';
+    document.getElementById('survey-result').textContent = '';
+    document.getElementById('survey-play-button').style.display = 'none';
+    document.getElementById('survey-replay-button').style.display = 'none';
+
+    const container = document.getElementById('survey-cards');
+    container.innerHTML = '';
+
+    for (let i = 0; i < 3; i++) {
+        const card = document.createElement('div');
+        card.className = 'survey-card';
+        card.innerHTML = `
+            <div class="survey-card-inner">
+                <div class="survey-card-front">🪐</div>
+                <div class="survey-card-back">
+                    <div class="reward-icon">❓</div>
+                    <div class="reward-text">?</div>
+                </div>
+            </div>
+        `;
+        card.onclick = () => revealSurveyCard(card);
+        container.appendChild(card);
+    }
+}
+
+function pickSurveyReward() {
+    const totalWeight = SURVEY_REWARDS.reduce((sum, r) => sum + r.weight, 0);
+    let roll = Math.random() * totalWeight;
+    for (const reward of SURVEY_REWARDS) {
+        roll -= reward.weight;
+        if (roll <= 0) return reward;
+    }
+    return SURVEY_REWARDS[0];
+}
+
+function revealSurveyCard(chosenCard) {
+    if (!surveyActive) return;
+    surveyActive = false;
+
+    const allCards = document.querySelectorAll('.survey-card');
+    allCards.forEach(card => {
+        card.classList.add('disabled');
+        card.onclick = null;
+    });
+
+    // Révéler la carte choisie
+    chosenCard.classList.add('flipped');
+    applySurveyReward(chosenCard, surveyRewardChosen);
+
+    // Révéler les autres cartes après un délai
+    setTimeout(() => {
+        allCards.forEach(card => {
+            if (card !== chosenCard) {
+                const otherReward = pickSurveyReward();
+                card.classList.add('flipped');
+                const back = card.querySelector('.survey-card-back');
+                back.querySelector('.reward-icon').textContent = otherReward.icon;
+                back.querySelector('.reward-text').textContent = otherReward.label;
+                back.querySelector('.reward-amount') ? back.querySelector('.reward-amount').remove() : null;
+            }
+        });
+    }, 800);
+
+    document.getElementById('survey-replay-button').style.display = 'block';
+    checkTrophies();
+}
+
+function applySurveyReward(card, reward) {
+    const back = card.querySelector('.survey-card-back');
+    back.querySelector('.reward-icon').textContent = reward.icon;
+    back.querySelector('.reward-text').textContent = reward.label;
+
+    const result = document.getElementById('survey-result');
+
+    if (reward.type === 'nothing') {
+        const amountEl = document.createElement('div');
+        amountEl.className = 'reward-amount';
+        amountEl.textContent = 'Cette planète était vide...';
+        back.appendChild(amountEl);
+        result.textContent = '🌑 Aucune récompense cette fois !';
+        result.className = 'survey-result miss';
+    } else if (reward.type === 'parts') {
+        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        const baseAmount = Math.max(1, partsPerSecond * 30);
+        const amount = Math.floor(baseAmount * mult);
+        score += amount;
+        const amountEl = document.createElement('div');
+        amountEl.className = 'reward-amount';
+        amountEl.textContent = `+${formatNumber(amount)} Parts`;
+        back.appendChild(amountEl);
+        result.textContent = `💰 +${formatNumber(amount)} Parts !`;
+        result.className = 'survey-result win';
+        updateDisplay();
+    } else if (reward.type === 'bigParts') {
+        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        const baseAmount = Math.max(1, partsPerSecond * 120);
+        const amount = Math.floor(baseAmount * mult);
+        score += amount;
+        const amountEl = document.createElement('div');
+        amountEl.className = 'reward-amount';
+        amountEl.textContent = `+${formatNumber(amount)} Parts`;
+        back.appendChild(amountEl);
+        result.textContent = `💎 GROS LOT ! +${formatNumber(amount)} Parts !`;
+        result.className = 'survey-result win';
+        updateDisplay();
+    } else if (reward.type === 'multiplier') {
+        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        if (!autoMultipliers.includes(mult)) {
+            autoMultipliers.push(mult);
+            updateAutoMultiplier();
+        }
+        activeRandomBonuses.push({
+            id: 'survey-mult',
+            effect: 'multiplier',
+            multiplier: mult,
+            endTime: Date.now() + reward.duration
+        });
+        const amountEl = document.createElement('div');
+        amountEl.className = 'reward-amount';
+        amountEl.textContent = `×${mult} pendant ${reward.duration/1000}s`;
+        back.appendChild(amountEl);
+        result.textContent = `⭐ ×${mult} production pendant ${reward.duration/1000}s !`;
+        result.className = 'survey-result win';
+        updateDisplay();
+        setTimeout(() => {
+            activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== 'survey-mult');
+            autoMultipliers = autoMultipliers.filter(m => m !== mult);
+            updateAutoMultiplier();
+            updateDisplay();
+        }, reward.duration);
+    }
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 

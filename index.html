@@ -75,7 +75,30 @@
         </div>
     </div>
 
-
+    <!-- PLANETARY SURVEY MODAL -->
+    <div class="modal" id="planetary-survey-modal">
+        <div class="modal-content planetary-survey-modal">
+            <div class="modal-header">
+                <h2>🧑‍🔬 Sondage Planétaire</h2>
+                <span class="close-button" onclick="closePlanetarySurvey()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="survey-intro" id="survey-intro">
+                    Choisis une planète pour révéler un bonus mystère !
+                </div>
+                <div class="survey-cards" id="survey-cards"></div>
+                <div class="survey-result" id="survey-result"></div>
+                <div class="survey-actions">
+                    <button class="survey-play-button" id="survey-play-button" onclick="startPlanetarySurvey()">
+                        🚀 Lancer (1 pièce)
+                    </button>
+                    <button class="survey-replay-button" id="survey-replay-button" onclick="startPlanetarySurvey()" style="display:none;">
+                        🔄 Rejouer (1 pièce)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <!-- SETTINGS MODAL -->
     <div class="modal" id="settings-modal">
@@ -125,7 +148,12 @@
             <div class="mini-games-section">
                 <h4>🎮 Mini-Jeux</h4>
                 <div class="mini-games-container" id="mini-games-container">
-                    <p class="mini-games-placeholder">Mini-jeux à venir...</p>
+                    <div class="mini-game-card" onclick="openPlanetarySurvey()">
+                        <div class="game-icon">🧑‍🔬</div>
+                        <div class="game-name">Sondage Planétaire</div>
+                        <div class="game-description">Choisis une planète et révèle un bonus !</div>
+                        <div class="game-cost">💰 1 pièce</div>
+                    </div>
                 </div>
             </div>
         </div>
