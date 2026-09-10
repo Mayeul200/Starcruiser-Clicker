@@ -204,7 +204,7 @@ const PLANETS = [
     { id: 'virgo-cluster', name: 'Virgo Cluster', emoji: '\u2728', distanceRequired: 51300000000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
-let unlockedPlanets = new Set();
+let unlockedPlanets = new Set(['earth']);
 let planetBonuses = {}; // {planetId: bonusMultiplier}
 
 // ============================================
@@ -976,6 +976,7 @@ function checkNewPlanetsUnlocked(distance) {
     const newlyUnlocked = [];
     
     PLANETS.forEach(planet => {
+        if (planet.id === 'earth') return;
         if (distance >= planet.distanceRequired && !unlockedPlanets.has(planet.id)) {
             unlockedPlanets.add(planet.id);
             planetBonuses[planet.id] = planet.bonusPercent / 100;
@@ -1237,7 +1238,7 @@ function updateSpaceProgress() {
         sidebarBonus.textContent = 'x' + totalBonus.toFixed(2);
     }
     if (sidebarPlanets) {
-        const unlockedCount = unlockedPlanets.size;
+        const unlockedCount = unlockedPlanets.size - (unlockedPlanets.has('earth') ? 1 : 0);
         sidebarPlanets.textContent = unlockedCount + '/10';
     }
 }
