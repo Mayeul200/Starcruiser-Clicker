@@ -1570,29 +1570,30 @@ function spawnRandomBonus() {
     const bonus = RANDOM_BONUSES[bonusIndex];
     if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
 
-    const x = Math.random() * (window.innerWidth - 100) + 50;
-    const y = Math.random() * (window.innerHeight - 150) + 50;
+    // La comète traverse l'écran en diagonale de haut en bas
+    const startX = Math.random() * window.innerWidth * 0.6;
+    const endX = startX + 300 + Math.random() * 300;
+    const endY = window.innerHeight + 100;
+    const duration = 6000;
 
     const bonusElement = document.createElement('div');
-    bonusElement.className = `random-bonus ${bonus.colorClass}`;
-    bonusElement.innerHTML = bonus.symbol;
-    bonusElement.style.left = `${x}px`;
-    bonusElement.style.top = `${y}px`;
-    bonusElement.style.transform = 'scale(0.1)';
-    bonusElement.style.opacity = '0';
-    
+    bonusElement.className = `random-bonus comet ${bonus.colorClass}`;
+    bonusElement.innerHTML = '\u2604\ufe0f';
+    bonusElement.style.left = `${startX}px`;
+    bonusElement.style.top = `-60px`;
+
     document.getElementById('random-bonuses').appendChild(bonusElement);
 
-    setTimeout(() => {
-        bonusElement.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-in';
-        bonusElement.style.transform = 'scale(1)';
-        bonusElement.style.opacity = '1';
-    }, 10);
+    // Animation de traversée en diagonale
+    requestAnimationFrame(() => {
+        bonusElement.style.transition = `left ${duration}ms linear, top ${duration}ms linear`;
+        bonusElement.style.left = `${endX}px`;
+        bonusElement.style.top = `${endY}px`;
+    });
 
     const timeout = setTimeout(() => {
-        bonusElement.classList.add('clicked');
-        setTimeout(() => bonusElement.remove(), 500);
-    }, 10000);
+        bonusElement.remove();
+    }, duration);
 
     bonusElement.onclick = () => {
         clearTimeout(timeout);
