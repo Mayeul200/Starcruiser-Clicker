@@ -1204,8 +1204,8 @@ function closeSpaceMap() {
 // ============================================
 
 function updateSpaceProgress() {
-    // Utiliser uniquement la distance du dernier lancement
-    const distance = lastLaunchDistance > 0 ? lastLaunchDistance : 0;
+    // Distance en temps réel (pas seulement au lancement)
+    const distance = calculateDistance();
     const progress = calculatePlanetProgress(distance);
     
     // Mettre à jour l'affichage de la planète actuelle
