@@ -1468,16 +1468,32 @@ function renderUpgrades() {
     // Upgrades de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (totalPartsFromClicks >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+            const upgradeIndex = CLICK_UPGRADES.indexOf(upgrade);
+            const color = UPGRADE_COLORS[upgradeIndex % UPGRADE_COLORS.length];
+
             const upgradeElement = document.createElement('div');
             upgradeElement.className = 'upgrade-icon';
-            upgradeElement.innerHTML = '\ud83d\udcb0';
-            
+            upgradeElement.style.borderColor = color;
+            upgradeElement.style.boxShadow = `var(--shadow), 0 0 6px ${color}`;
+            upgradeElement.innerHTML = '';
+
+            const img = document.createElement('img');
+            img.className = 'upgrade-img';
+            img.src = 'images/cursor.svg';
+            img.alt = upgrade.name;
+            upgradeElement.appendChild(img);
+
+            const levelBadge = document.createElement('span');
+            levelBadge.className = 'upgrade-level';
+            levelBadge.textContent = upgrade.threshold;
+            upgradeElement.appendChild(levelBadge);
+
             upgradeElement.addEventListener('mouseenter', (e) => {
                 const rect = e.target.getBoundingClientRect();
-                showTooltip(`Multiplies x2 - ${formatNumber(upgrade.cost)} Parts`, rect.left + rect.width/2, rect.top);
+                showTooltip(`${upgrade.name} — ×2 clic — ${formatNumber(upgrade.cost)} Parts`, rect.left + rect.width/2, rect.top);
             });
             upgradeElement.addEventListener('mouseleave', hideTooltip);
-            
+
             upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
             container.appendChild(upgradeElement);
         }
