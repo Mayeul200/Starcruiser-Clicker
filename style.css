@@ -647,7 +647,7 @@ body {
     transition: opacity 1s ease-out, transform 1s ease-out;
 }
 .random-bonus:hover {
-    transform: scale(1.15) !important;
+    transform: none !important;
 }
 .random-bonus.clicked {
     opacity: 0;
