@@ -633,7 +633,7 @@ body {
     pointer-events: none;
 }
 .random-bonus.comet.reverse .comet-img {
-    transform: rotate(-45deg);
+    transform: rotate(135deg);
 }
 .random-bonus.comet::after {
     content: '';
