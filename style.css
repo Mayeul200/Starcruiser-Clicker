@@ -857,22 +857,22 @@ body {
    ============================================ */
 /* Space Map Modal */
 #space-map-modal {
-    max-width: 80vw;
-    width: 80vw;
-    max-height: 60vh;
-    height: 60vh;
+    max-width: 85vw;
+    width: 85vw;
+    max-height: 65vh;
+    height: 65vh;
 }
 .space-map-modal {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
     box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
-    max-width: 80vw;
-    width: 80vw;
-    max-height: 60vh;
-    height: 60vh;
+    max-width: 85vw;
+    width: 85vw;
+    max-height: 65vh;
+    height: 65vh;
 }
 .space-map-modal .modal-body {
-    max-height: calc(60vh - 70px);
+    max-height: calc(65vh - 70px);
 }
 .space-map-modal .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
