@@ -614,7 +614,7 @@ body {
 }
 .random-bonus {
     position: absolute;
-    width: 60px; height: 60px;
+    width: 180px; height: 180px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -624,17 +624,36 @@ body {
 }
 .random-bonus.comet {
     transition: none;
-    filter: drop-shadow(0 0 8px #fff);
 }
 .comet-img {
-    width: 60px;
-    height: 60px;
+    width: 180px;
+    height: 180px;
     object-fit: contain;
     transform: rotate(45deg);
     pointer-events: none;
 }
 .random-bonus.comet.reverse .comet-img {
     transform: rotate(-45deg);
+}
+.random-bonus.comet::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 70%;
+    width: 140px;
+    height: 10px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85));
+    border-radius: 5px;
+    transform: translateY(-50%) rotate(45deg);
+    transform-origin: right center;
+    filter: blur(2px);
+}
+.random-bonus.comet.reverse::after {
+    right: auto;
+    left: 70%;
+    background: linear-gradient(270deg, transparent, rgba(255,255,255,0.85));
+    transform: translateY(-50%) rotate(-45deg);
+    transform-origin: left center;
 }
 .random-bonus:hover {
     transform: scale(1.15) !important;
