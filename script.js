@@ -1606,12 +1606,28 @@ function spawnRandomBonus() {
         bonusElement.style.top = `${endY}px`;
     });
 
+    const trailInterval = setInterval(() => {
+        const rect = bonusElement.getBoundingClientRect();
+        const trail = document.createElement('div');
+        trail.className = 'comet-trail';
+        trail.style.left = `${rect.left + rect.width / 2}px`;
+        trail.style.top = `${rect.top + rect.height / 2}px`;
+        document.body.appendChild(trail);
+        requestAnimationFrame(() => {
+            trail.style.opacity = '0';
+            trail.style.transform = 'translate(-50%, -50%) scale(2.5)';
+        });
+        setTimeout(() => trail.remove(), 1000);
+    }, 80);
+
     const timeout = setTimeout(() => {
+        clearInterval(trailInterval);
         bonusElement.remove();
     }, duration);
 
     bonusElement.onclick = () => {
         clearTimeout(timeout);
+        clearInterval(trailInterval);
         bonusElement.classList.add('clicked');
         clickedBonusesCount++;
 

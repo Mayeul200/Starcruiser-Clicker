@@ -635,25 +635,16 @@ body {
 .random-bonus.comet.reverse .comet-img {
     transform: rotate(135deg);
 }
-.random-bonus.comet::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 70%;
-    width: 140px;
-    height: 10px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85));
-    border-radius: 5px;
-    transform: translateY(-50%) rotate(45deg);
-    transform-origin: right center;
-    filter: blur(2px);
-}
-.random-bonus.comet.reverse::after {
-    right: auto;
-    left: 70%;
-    background: linear-gradient(270deg, transparent, rgba(255,255,255,0.85));
-    transform: translateY(-50%) rotate(-45deg);
-    transform-origin: left center;
+.comet-trail {
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
+    pointer-events: none;
+    z-index: 55;
+    transform: translate(-50%, -50%);
+    transition: opacity 1s ease-out, transform 1s ease-out;
 }
 .random-bonus:hover {
     transform: scale(1.15) !important;
@@ -706,8 +697,6 @@ body {
     filter: blur(2px);
 }
 /* Styles for random bonuses */
-.random-bonus.meteor { background: linear-gradient(135deg, #374151, #1f2937); color: #fbbf24; }
-.random-bonus.flare { background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; }
 /* TROPHIES */
 .trophy-icon {
     width: 50px;
