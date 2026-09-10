@@ -615,35 +615,26 @@ body {
 .random-bonus {
     position: absolute;
     width: 60px; height: 60px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.2rem;
     cursor: pointer;
     pointer-events: all;
-    box-shadow: var(--shadow-lg), var(--glow);
     z-index: 60;
 }
 .random-bonus.comet {
     transition: none;
     filter: drop-shadow(0 0 8px #fff);
 }
-.random-bonus.comet::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    width: 80px;
-    height: 6px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
-    border-radius: 3px;
-    transform: translateY(-50%);
+.comet-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    transform: rotate(45deg);
+    pointer-events: none;
 }
-.random-bonus.comet.reverse::before {
-    right: auto;
-    left: 100%;
-    background: linear-gradient(270deg, transparent, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+.random-bonus.comet.reverse .comet-img {
+    transform: rotate(-45deg);
 }
 .random-bonus:hover {
     transform: scale(1.15) !important;

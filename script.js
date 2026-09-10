@@ -1593,7 +1593,7 @@ function spawnRandomBonus() {
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus comet ${bonus.colorClass}`;
     if (!goRight) bonusElement.classList.add('reverse');
-    bonusElement.innerHTML = '\u2604\ufe0f';
+    bonusElement.innerHTML = '<img src="images/effects/com\u00e8te.png" class="comet-img" alt="Comete">';
     bonusElement.style.left = `${startX}px`;
     bonusElement.style.top = `${startY}px`;
 
