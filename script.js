@@ -1493,12 +1493,24 @@ function renderUpgrades() {
                 
                 const upgradeElement = document.createElement('div');
                 upgradeElement.className = 'upgrade-icon';
-                upgradeElement.style.background = color;
-                upgradeElement.innerHTML = building.image;
+                upgradeElement.style.borderColor = color;
+                upgradeElement.style.boxShadow = `var(--shadow), 0 0 6px ${color}`;
+                upgradeElement.innerHTML = '';
+
+                const img = document.createElement('img');
+                img.className = 'upgrade-img';
+                img.src = building.imgPath || '';
+                img.alt = building.name;
+                upgradeElement.appendChild(img);
+
+                const levelBadge = document.createElement('span');
+                levelBadge.className = 'upgrade-level';
+                levelBadge.textContent = threshold;
+                upgradeElement.appendChild(levelBadge);
                 
                 upgradeElement.addEventListener('mouseenter', (e) => {
                     const rect = e.target.getBoundingClientRect();
-                    showTooltip(`Multiplies x2 - ${formatNumber(cost)} Parts`, rect.left + rect.width/2, rect.top);
+                    showTooltip(`${building.name} — Palier ${threshold} — ×2 production — ${formatNumber(cost)} Parts`, rect.left + rect.width/2, rect.top);
                 });
                 upgradeElement.addEventListener('mouseleave', hideTooltip);
                 
