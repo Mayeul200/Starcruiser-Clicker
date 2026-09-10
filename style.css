@@ -342,8 +342,11 @@ body {
     text-shadow: var(--glow);
 }
 .bonus-timer {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
     font-size: 1rem;
-    margin-top: 8px;
     color: var(--accent-light);
     font-weight: 600;
     background: rgba(245, 158, 11, 0.2);
