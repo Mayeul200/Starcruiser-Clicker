@@ -1566,26 +1566,36 @@ function renderUpgrades() {
 // ============================================
 
 function spawnRandomBonus() {
-    const bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
-    const bonus = RANDOM_BONUSES[bonusIndex];
-    if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
+    let bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
+    let bonus = RANDOM_BONUSES[bonusIndex];
+    // Si ce bonus est déjà actif, prendre l'autre pour ne pas bloquer le spawn
+    if (activeRandomBonuses.some(b => b.id === bonus.id)) {
+        bonusIndex = (bonusIndex + 1) % RANDOM_BONUSES.length;
+        bonus = RANDOM_BONUSES[bonusIndex];
+        if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
+    }
 
-    // La comète traverse l'écran en diagonale à 45° de haut en bas
-    const startY = -60;
-    const endY = window.innerHeight + 100;
+    // La comète traverse l'écran en diagonale de haut en bas
+    // La traînée part du haut et descend jusqu'en bas
+    const containerTopOffset = document.getElementById('random-bonuses').getBoundingClientRect().top;
+    const containerHeight = window.innerHeight - containerTopOffset;
+    const startY = -180;
+    const endY = containerHeight + 180;
     const verticalTravel = endY - startY;
-    // À 45°, déplacement horizontal = déplacement vertical
-    const horizontalTravel = verticalTravel;
+    // Angle plus doux que 45° pour rester visible plus longtemps
+    const horizontalTravel = verticalTravel * 0.7;
     // Direction aléatoire: gauche→droite ou droite→gauche
     const goRight = Math.random() < 0.5;
     let startX, endX;
     if (goRight) {
-        // Gauche→droite: départ à gauche, sans sortir à droite trop tôt
-        startX = Math.random() * Math.max(0, window.innerWidth - horizontalTravel);
+        // Gauche→droite: départ à gauche, visible jusqu'à la sortie à droite
+        const maxStartX = Math.max(0, window.innerWidth * 0.5 - 100);
+        startX = Math.random() * maxStartX;
         endX = startX + horizontalTravel;
     } else {
-        // Droite→gauche: départ à droite, sans sortir à gauche trop tôt
-        startX = Math.min(window.innerWidth, horizontalTravel) + Math.random() * Math.max(0, window.innerWidth - horizontalTravel);
+        // Droite→gauche: départ à droite, visible dès le début
+        const minStartX = window.innerWidth - window.innerWidth * 0.5;
+        startX = minStartX + Math.random() * Math.max(0, window.innerWidth - minStartX - 100);
         endX = startX - horizontalTravel;
     }
     const duration = 6000;
