@@ -640,6 +640,11 @@ body {
     border-radius: 3px;
     transform: translateY(-50%);
 }
+.random-bonus.comet.reverse::before {
+    right: auto;
+    left: 100%;
+    background: linear-gradient(270deg, transparent, rgba(255,255,255,0.6), rgba(255,255,255,0.2));
+}
 .random-bonus:hover {
     transform: scale(1.15) !important;
 }

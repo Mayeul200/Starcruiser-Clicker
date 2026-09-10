@@ -1576,13 +1576,23 @@ function spawnRandomBonus() {
     const verticalTravel = endY - startY;
     // À 45°, déplacement horizontal = déplacement vertical
     const horizontalTravel = verticalTravel;
-    // Point de départ à gauche, suffisamment pour rester visible
-    const startX = Math.random() * Math.max(0, window.innerWidth - horizontalTravel);
-    const endX = startX + horizontalTravel;
+    // Direction aléatoire: gauche→droite ou droite→gauche
+    const goRight = Math.random() < 0.5;
+    let startX, endX;
+    if (goRight) {
+        // Gauche→droite: départ à gauche, sans sortir à droite trop tôt
+        startX = Math.random() * Math.max(0, window.innerWidth - horizontalTravel);
+        endX = startX + horizontalTravel;
+    } else {
+        // Droite→gauche: départ à droite, sans sortir à gauche trop tôt
+        startX = Math.min(window.innerWidth, horizontalTravel) + Math.random() * Math.max(0, window.innerWidth - horizontalTravel);
+        endX = startX - horizontalTravel;
+    }
     const duration = 6000;
 
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus comet ${bonus.colorClass}`;
+    if (!goRight) bonusElement.classList.add('reverse');
     bonusElement.innerHTML = '\u2604\ufe0f';
     bonusElement.style.left = `${startX}px`;
     bonusElement.style.top = `${startY}px`;
