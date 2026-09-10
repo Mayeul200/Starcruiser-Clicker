@@ -856,6 +856,10 @@ body {
    SPACE MAP STYLES
    ============================================ */
 /* Space Map Modal */
+#space-map-modal {
+    max-width: 1200px;
+    width: 95%;
+}
 .space-map-modal {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
