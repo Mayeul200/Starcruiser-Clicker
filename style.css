@@ -896,7 +896,8 @@ body {
 /* Space Map Container */
 .space-map-container {
     position: relative;
-    height: 280px;
+    min-height: 280px;
+    height: calc(100vh - 280px);
     margin: 20px 0;
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
@@ -961,15 +962,21 @@ body {
 .space-planet.current .planet-name {
     color: var(--accent-light);
 }
-.space-planet.blurred .planet-image,
-.space-planet.blurred .planet-emoji {
-    filter: blur(8px);
-    opacity: 0.6;
+.space-planet.hidden .planet-unknown {
+    border-radius: 50%;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    border: 2px solid var(--border);
+    box-sizing: border-box;
 }
-.space-planet.blurred .planet-name,
-.space-planet.blurred .planet-distance {
-    filter: blur(6px);
-    opacity: 0.4;
+.space-planet.hidden .planet-name,
+.space-planet.hidden .planet-distance {
+    color: var(--text-dark);
 }
 @keyframes pulse {
     0%, 100% { transform: translate(-50%, -50%) scale(1); }

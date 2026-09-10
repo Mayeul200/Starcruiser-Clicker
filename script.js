@@ -1068,29 +1068,38 @@ function drawSpaceMap(distance) {
         const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
         const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
         const isNext = progress.nextPlanet && progress.nextPlanet.id === planet.id;
-        const isBlurred = index > currentPlanetIndex + 2;
+        const isHidden = index > currentPlanetIndex + 2;
         
         let className = 'space-planet';
         if (isUnlocked) className += ' unlocked';
         if (isCurrent) className += ' current';
         if (isNext) className += ' next';
-        if (isBlurred) className += ' blurred';
+        if (isHidden) className += ' hidden';
         
         planetElement.className = className;
         
-        // Utiliser l'image si disponible, sinon l'emoji
-        let planetHtml = '';
-        if (planet.imgPath) {
-            planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}" style="width: ${planetSize}px; height: ${planetSize}px;">`;
+        // Planètes cachées: cercle noir avec point d'interrogation
+        if (isHidden) {
+            planetElement.innerHTML = `
+                <div class="planet-unknown" style="width: ${planetSize}px; height: ${planetSize}px;">?</div>
+                <span class="planet-name">???</span>
+                <span class="planet-distance">???</span>
+            `;
         } else {
-            planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
+            // Utiliser l'image si disponible, sinon l'emoji
+            let planetHtml = '';
+            if (planet.imgPath) {
+                planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}" style="width: ${planetSize}px; height: ${planetSize}px;">`;
+            } else {
+                planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
+            }
+            
+            planetElement.innerHTML = `
+                ${planetHtml}
+                <span class="planet-name">${planet.name}</span>
+                <span class="planet-distance">${formatNumber(planet.distanceRequired)} km</span>
+            `;
         }
-        
-        planetElement.innerHTML = `
-            ${planetHtml}
-            <span class="planet-name">${planet.name}</span>
-            <span class="planet-distance">${formatNumber(planet.distanceRequired)} km</span>
-        `;
         
         planetElement.style.setProperty('--planet-color', planet.color);
         
