@@ -1049,6 +1049,13 @@ function drawSpaceMap(distance) {
     
     container.innerHTML = '';
     
+    // Espacement fixe entre planètes (px) pour éviter le chevauchement
+    const planetSpacing = 140;
+    const planetSize = 80;
+    const labelSpace = 50;
+    const totalWidth = PLANETS.length * planetSpacing;
+    container.style.width = `${totalWidth}px`;
+    
     PLANETS.forEach((planet, index) => {
         const planetElement = document.createElement('div');
         planetElement.className = 'space-planet';
@@ -1067,7 +1074,7 @@ function drawSpaceMap(distance) {
         // Utiliser l'image si disponible, sinon l'emoji
         let planetHtml = '';
         if (planet.imgPath) {
-            planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}" style="width: 40px; height: 40px;">`;
+            planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}" style="width: ${planetSize}px; height: ${planetSize}px;">`;
         } else {
             planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
         }
@@ -1080,9 +1087,9 @@ function drawSpaceMap(distance) {
         
         planetElement.style.setProperty('--planet-color', planet.color);
         
-        // Positionner les planètes (layout horizontal)
-        const position = (index / (PLANETS.length - 1)) * 100;
-        planetElement.style.left = `${position}%`;
+        // Positionner les planètes (layout horizontal en px)
+        const position = index * planetSpacing + planetSpacing / 2;
+        planetElement.style.left = `${position}px`;
         
         // Ajouter la ligne de connexion (sauf pour la dernière)
         if (index < PLANETS.length - 1) {
@@ -1094,8 +1101,8 @@ function drawSpaceMap(distance) {
             if (isUnlocked && isNextUnlocked) {
                 line.classList.add('active');
             }
-            line.style.left = `${position}%`;
-            line.style.width = `${100 / (PLANETS.length - 1)}%`;
+            line.style.left = `${position}px`;
+            line.style.width = `${planetSpacing}px`;
             container.appendChild(line);
         }
         
@@ -1109,28 +1116,28 @@ function drawSpaceMap(distance) {
         spaceship.innerHTML = '\u{1F680}';
         
         // Calculer la position du vaisseau
-        let shipPosition = 0;
+        let shipPosition = planetSpacing / 2;
         if (progress.currentPlanet) {
             const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
             const nextIndex = currentIndex + 1;
             
             if (nextIndex < PLANETS.length && progress.nextPlanet) {
                 // Entre deux planètes
-                const startPos = (currentIndex / (PLANETS.length - 1)) * 100;
-                const endPos = (nextIndex / (PLANETS.length - 1)) * 100;
+                const startPos = currentIndex * planetSpacing + planetSpacing / 2;
+                const endPos = nextIndex * planetSpacing + planetSpacing / 2;
                 shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
             } else {
                 // Sur la dernière planète
-                shipPosition = 100;
+                shipPosition = (PLANETS.length - 1) * planetSpacing + planetSpacing / 2;
             }
         } else {
             // Avant la première planète
-            const firstPlanetPos = 0;
-            const secondPlanetPos = 100 / (PLANETS.length - 1);
+            const firstPlanetPos = planetSpacing / 2;
+            const secondPlanetPos = planetSpacing + planetSpacing / 2;
             shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
         }
         
-        spaceship.style.left = `${shipPosition}%`;
+        spaceship.style.left = `${shipPosition}px`;
         container.appendChild(spaceship);
     }
 }

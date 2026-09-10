@@ -887,11 +887,12 @@ body {
 /* Space Map Container */
 .space-map-container {
     position: relative;
-    height: 200px;
+    height: 280px;
     margin: 20px 0;
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     border: 2px solid var(--border);
 }
 /* Space Connection Lines */
@@ -910,11 +911,11 @@ body {
 .space-planet {
     position: absolute;
     top: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     z-index: 2;
     transition: all 0.3s ease;
 }
@@ -923,8 +924,8 @@ body {
     text-shadow: 0 0 10px var(--text);
 }
 .space-planet .planet-image {
-    width: 40px;
-    height: 40px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: cover;
     filter: drop-shadow(0 0 5px var(--planet-color));
