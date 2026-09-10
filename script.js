@@ -1582,8 +1582,8 @@ function spawnRandomBonus() {
     const startY = -180;
     const endY = containerHeight + 180;
     const verticalTravel = endY - startY;
-    // Angle plus doux que 45° pour rester visible plus longtemps
-    const horizontalTravel = verticalTravel * 0.7;
+    // À 45°, déplacement horizontal = déplacement vertical
+    const horizontalTravel = verticalTravel;
     // Direction aléatoire: gauche→droite ou droite→gauche
     const goRight = Math.random() < 0.5;
     let startX, endX;
