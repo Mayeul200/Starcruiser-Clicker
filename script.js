@@ -1056,6 +1056,11 @@ function drawSpaceMap(distance) {
     const totalWidth = PLANETS.length * planetSpacing;
     container.style.width = `${totalWidth}px`;
     
+    // Index de la planète actuelle (base pour le flou des planètes lointaines)
+    const currentPlanetIndex = progress.currentPlanet
+        ? PLANETS.findIndex(p => p.id === progress.currentPlanet.id)
+        : 0;
+    
     PLANETS.forEach((planet, index) => {
         const planetElement = document.createElement('div');
         planetElement.className = 'space-planet';
@@ -1063,11 +1068,13 @@ function drawSpaceMap(distance) {
         const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
         const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
         const isNext = progress.nextPlanet && progress.nextPlanet.id === planet.id;
+        const isBlurred = index > currentPlanetIndex + 2;
         
         let className = 'space-planet';
         if (isUnlocked) className += ' unlocked';
         if (isCurrent) className += ' current';
         if (isNext) className += ' next';
+        if (isBlurred) className += ' blurred';
         
         planetElement.className = className;
         
