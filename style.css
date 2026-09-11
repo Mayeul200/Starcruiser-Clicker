@@ -1235,8 +1235,8 @@ body {
    MINI-GAMES SECTION STYLES
    ============================================ */
 .mini-games-section {
-    margin-top: 20px;
-    padding-top: 15px;
+    margin-top: 12px;
+    padding-top: 10px;
     border-top: 1px solid var(--border);
 }
 .mini-games-section h4 {
@@ -1248,12 +1248,11 @@ body {
 .mini-games-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 10px;
+    gap: 6px;
+    padding: 6px;
     background: rgba(255, 255, 255, 0.02);
     border-radius: var(--radius);
     border: 1px dashed var(--border-light);
-    min-height: 100px;
 }
 .mini-games-placeholder {
     color: var(--text-dark);
@@ -1266,8 +1265,8 @@ body {
 .mini-game-card {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
+    gap: 4px;
+    padding: 8px;
     background: var(--bg-panel);
     border: 1px solid var(--border-light);
     border-radius: var(--radius);
@@ -1281,27 +1280,28 @@ body {
     box-shadow: var(--shadow);
 }
 .mini-game-card .game-icon {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     text-align: center;
 }
 .mini-game-card .game-name {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text);
     text-align: center;
 }
 .mini-game-card .game-description {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-dark);
     text-align: center;
+    line-height: 1.2;
 }
 .mini-game-card .game-cost {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--accent-light);
     text-align: center;
     font-weight: 600;
     border-top: 1px solid var(--border);
-    padding-top: 6px;
+    padding-top: 4px;
 }
 /* ============================================
    PLANETARY SURVEY MINI-GAME
