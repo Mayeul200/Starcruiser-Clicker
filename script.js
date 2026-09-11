@@ -1647,24 +1647,18 @@ function spawnRandomBonus() {
             showToast(`\u2705 ${bonus.name}: +${formatNumber(oneMinuteProduction)} Parts!`);
         } 
         else if (bonus.id === "flare") {
-            if (!autoMultipliers.includes(bonus.multiplier)) {
-                autoMultipliers.push(bonus.multiplier);
-                updateAutoMultiplier();
-            }
-
             activeRandomBonuses.push({
                 id: bonus.id,
                 effect: bonus.effect,
                 multiplier: bonus.multiplier,
                 endTime: Date.now() + bonus.duration
             });
-
+            rebuildAutoMultipliers();
             showToast(`\u2705 ${bonus.name}: ×${bonus.multiplier} Parts/s for ${bonus.duration/1000}s`);
 
             setTimeout(() => {
                 activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
-                autoMultipliers = autoMultipliers.filter(m => m !== bonus.multiplier);
-                updateAutoMultiplier();
+                rebuildAutoMultipliers();
                 updateDisplay();
                 showToast(`\u23f0 ${bonus.name} expir\u00e9`);
             }, bonus.duration);
@@ -2051,7 +2045,7 @@ const SURVEY_REWARDS = [
     { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés', imgPath: 'images/effects/casino/parts.svg' },
     { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire', imgPath: 'images/effects/casino/multiplier.svg' },
     { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts', imgPath: 'images/effects/casino/bigParts.svg' },
-    { type: 'nothing', weight: 37, icon: '🌑', label: 'Rien', imgPath: 'images/effects/casino/nothing.svg' }
+    { type: 'nothing', weight: 37, icon: '🌑', label: 'Pot divisé par 2', imgPath: 'images/effects/casino/nothing.svg' }
 ];
 
 // Malus: apparaît à partir du palier 1 (tour 6+), de plus en plus avec la difficulté
@@ -2267,7 +2261,7 @@ function revealSurveyCard(chosenCard) {
         result.className = 'survey-result miss';
     } else if (reward.type === 'nothing') {
         surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
-        result.textContent = '🌑 Mauvaise planète ! Le pot diminue.';
+        result.textContent = '🌑 Pot divisé par 2 !';
         result.className = 'survey-result miss';
     } else if (reward.type === 'parts' || reward.type === 'bigParts') {
         const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
@@ -2324,23 +2318,33 @@ function surveyCollectWinnings() {
     resetPlanetarySurvey();
 }
 
+function rebuildAutoMultipliers() {
+    resetMultipliers();
+    activeRandomBonuses.forEach(bonus => {
+        if ((bonus.effect === 'auto' || bonus.effect === 'both' || bonus.effect === 'multiplier') && bonus.multiplier) {
+            autoMultipliers.push(bonus.multiplier);
+        }
+        if ((bonus.effect === 'click' || bonus.effect === 'both') && bonus.multiplier) {
+            clickMultipliers.push(bonus.multiplier);
+        }
+    });
+    updateAutoMultiplier();
+    updateClickMultiplier();
+}
+
 function applySurveyMultiplier(mult, duration) {
-    if (!autoMultipliers.includes(mult)) {
-        autoMultipliers.push(mult);
-        updateAutoMultiplier();
-    }
-    const bonusId = 'survey-mult-' + Date.now();
+    const bonusId = 'survey-mult-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
     activeRandomBonuses.push({
         id: bonusId,
         effect: 'multiplier',
         multiplier: mult,
         endTime: Date.now() + duration
     });
+    rebuildAutoMultipliers();
     updateDisplay();
     setTimeout(() => {
         activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonusId);
-        autoMultipliers = autoMultipliers.filter(m => m !== mult);
-        updateAutoMultiplier();
+        rebuildAutoMultipliers();
         updateDisplay();
     }, duration);
 }
