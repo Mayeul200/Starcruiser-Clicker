@@ -2007,19 +2007,20 @@ function updateDisplay() {
 function updateBonusTimer() {
     const timerElement = document.getElementById('bonus-timer');
     if (!timerElement) return;
-    
-    const activeBonuses = activeRandomBonuses.filter(b => b.id === 'flare');
+
+    const activeBonuses = activeRandomBonuses.filter(b => b.effect === 'multiplier' || b.id === 'flare');
     if (activeBonuses.length === 0) {
         timerElement.textContent = '';
         timerElement.style.display = 'none';
         return;
     }
-    
-    const bonus = activeBonuses[0];
-    const remainingTime = Math.max(0, bonus.endTime - Date.now());
-    const seconds = Math.ceil(remainingTime / 1000);
-    
-    timerElement.textContent = `\u23f3 x${bonus.multiplier} (${seconds}s)`;
+
+    const labels = activeBonuses.map(bonus => {
+        const remainingTime = Math.max(0, bonus.endTime - Date.now());
+        const seconds = Math.ceil(remainingTime / 1000);
+        return `\u23f3 \u00d7${bonus.multiplier} (${seconds}s)`;
+    });
+    timerElement.innerHTML = labels.join('<br>');
     timerElement.style.display = 'block';
 }
 
