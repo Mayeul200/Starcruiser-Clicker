@@ -2054,24 +2054,34 @@ const SURVEY_REWARDS = [
     { type: 'nothing', weight: 37, icon: '🌑', label: 'Rien', imgPath: 'images/effects/casino/nothing.svg' }
 ];
 
-// Malus: apparaît à partir du palier 1 (tour 4+), de plus en plus avec la difficulté
+// Malus: apparaît à partir du palier 1 (tour 6+), de plus en plus avec la difficulté
 const SURVEY_MALUS = [
     { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !', imgPath: 'images/effects/casino/bust.svg' },
     { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié', imgPath: 'images/effects/casino/halve.svg' }
 ];
 
-// Palier de difficulté (tous les 3 tours): 0 = début, 1 = tour 4-6, 2 = tour 7-9, etc.
+// Palier de difficulté (tous les 5 tours): 0 = tour 1-5, 1 = tour 6-10, 2 = tour 11-15, etc.
 function getSurveyDifficulty(round) {
-    return Math.floor((round - 1) / 3);
+    return Math.floor((round - 1) / 5);
 }
-// Nombre de cartes: 3 + palier (capé)
+// Nombre de cartes: 3 + palier (capé à 8)
 function getSurveyCardCount(round) {
     return Math.min(8, 3 + getSurveyDifficulty(round));
 }
-// Probabilité de tirer un malus augmente avec la difficulté
+// Probabilité de tirer un malus augmente avec la difficulté (0 au palier 0)
 function getSurveyMalusChance(round) {
     const diff = getSurveyDifficulty(round);
-    return diff === 0 ? 0 : Math.min(0.5, 0.1 * diff);
+    return diff === 0 ? 0 : Math.min(0.55, 0.08 * diff);
+}
+// Bonus de puissance des récompenses selon le palier
+function getSurveyRewardMultiplier(round) {
+    const diff = getSurveyDifficulty(round);
+    return 1 + diff * 0.5;
+}
+// Durée du multiplicateur temporaire selon le palier
+function getSurveyMultiplierDuration(round) {
+    const diff = getSurveyDifficulty(round);
+    return 30000 + diff * 10000;
 }
 
 let surveyState = {
@@ -2198,13 +2208,21 @@ function pickSurveyMalus() {
 }
 
 function pickSurveyReward() {
-    const totalWeight = SURVEY_REWARDS.reduce((sum, r) => sum + r.weight, 0);
+    const diff = getSurveyDifficulty(surveyState.round);
+    const adjusted = SURVEY_REWARDS.map(r => {
+        let w = r.weight;
+        if (r.type === 'bigParts') w = r.weight + (diff === 0 ? 12 : Math.max(0, 6 - diff));
+        else if (r.type === 'multiplier') w = r.weight + (diff === 0 ? 8 : Math.max(0, 4 - diff));
+        else if (r.type === 'nothing') w = r.weight + diff * 6;
+        return { ...r, weight: Math.max(1, w) };
+    });
+    const totalWeight = adjusted.reduce((sum, r) => sum + r.weight, 0);
     let roll = Math.random() * totalWeight;
-    for (const reward of SURVEY_REWARDS) {
+    for (const reward of adjusted) {
         roll -= reward.weight;
         if (roll <= 0) return reward;
     }
-    return SURVEY_REWARDS[0];
+    return adjusted[0];
 }
 
 function revealSurveyCard(chosenCard) {
@@ -2251,16 +2269,20 @@ function revealSurveyCard(chosenCard) {
         result.textContent = '🌑 Mauvaise planète ! Le pot diminue.';
         result.className = 'survey-result miss';
     } else if (reward.type === 'parts' || reward.type === 'bigParts') {
-        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
+        const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        const mult = Math.floor(baseMult * rewardBonus);
         surveyState.pot = Math.floor(surveyState.pot * mult);
         result.textContent = `${reward.icon} ×${mult} ! Le pot augmente !`;
         result.className = 'survey-result win';
     } else if (reward.type === 'multiplier') {
-        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
+        const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        const mult = Math.floor(baseMult * rewardBonus);
         surveyState.pot = Math.floor(surveyState.pot * mult);
         result.textContent = `${reward.icon} ×${mult} ! Bonus de production encaissé.`;
         result.className = 'survey-result win';
-        applySurveyMultiplier(mult, reward.duration);
+        applySurveyMultiplier(mult, getSurveyMultiplierDuration(surveyState.round));
     }
 
     document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
