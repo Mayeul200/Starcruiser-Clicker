@@ -224,12 +224,12 @@ function findBuildingById(buildingId) {
 
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier;
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier();
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier;
+    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier();
 }
 
 function getBuildingUpgradeMultiplier(buildingId) {
@@ -365,6 +365,7 @@ function saveGame() {
         rocketsLaunched: rocketsLaunched,
         unlockedPlanets: Array.from(unlockedPlanets),
         planetBonuses: {...planetBonuses},
+        cardCollection: {...cardCollection},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
             effect: bonus.effect,
@@ -422,6 +423,10 @@ function loadGame() {
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
         gameStartTime = parsed.gameStartTime || 0;
+
+        if (parsed.cardCollection) {
+            cardCollection = {...parsed.cardCollection};
+        }
 
         // Charger les multiplicateurs
         autoMultipliers = parsed.autoMultipliers || [1];
@@ -2364,6 +2369,229 @@ function applySurveyMultiplier(mult, duration) {
         }
     });
 })();
+
+// ============================================
+// CARD COLLECTION MINI-GAME
+// ============================================
+
+const CARD_RARITIES = {
+    common:    { name: 'Commune',    color: '#94a3b8', glow: 'rgba(148,163,184,0.4)', bonusMult: 0.01 },
+    rare:      { name: 'Rare',       color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.03 },
+    epic:      { name: 'Épique',    color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.08 },
+    legendary: { name: 'Légendaire', color: '#fbbf24', glow: 'rgba(251,191,36,0.7)',  bonusMult: 0.20 }
+};
+
+const COLLECTIBLE_CARDS = [
+    { id: 'earth-card',     setId: 'planets',    name: 'Terre',            rarity: 'common',    icon: '🌍' },
+    { id: 'moon-card',      setId: 'planets',    name: 'Lune',             rarity: 'common',    icon: '🌙' },
+    { id: 'mars-card',      setId: 'planets',    name: 'Mars',             rarity: 'rare',      icon: '💫' },
+    { id: 'neptune-card',   setId: 'planets',    name: 'Neptune',          rarity: 'rare',      icon: '💫' },
+    { id: 'pluto-card',     setId: 'planets',    name: 'Pluton',           rarity: 'epic',      icon: '💫' },
+    { id: 'oort-card',      setId: 'planets',    name: 'Nuage d\'Oort',     rarity: 'epic',      icon: '🌀' },
+    { id: 'proxima-card',   setId: 'planets',    name: 'Proxima Centauri', rarity: 'legendary', icon: '☀️' },
+    { id: 'sirius-card',    setId: 'planets',    name: 'Sirius',           rarity: 'legendary', icon: '🌟' },
+    { id: 'wrench-card',    setId: 'buildings',  name: 'Atelier',          rarity: 'common',    icon: '🔧' },
+    { id: 'factory-card',   setId: 'buildings',  name: 'Usine',            rarity: 'common',    icon: '🏭' },
+    { id: 'lab-card',       setId: 'buildings',  name: 'Laboratoire',      rarity: 'rare',      icon: '🧪' },
+    { id: 'launchpad-card', setId: 'buildings',  name: 'Pas de tir',       rarity: 'rare',      icon: '🚀' },
+    { id: 'hq-card',        setId: 'buildings',  name: 'QG Spatial',       rarity: 'epic',      icon: '🏛' },
+    { id: 'mining-card',    setId: 'buildings',  name: 'Mine stellaire',   rarity: 'legendary', icon: '⛏️' },
+    { id: 'meteor-card',    setId: 'events',     name: 'Pluie de météores', rarity: 'common',   icon: '💫' },
+    { id: 'flare-card',     setId: 'events',     name: 'Éruption solaire', rarity: 'rare',      icon: '☀️' },
+    { id: 'comet-card',     setId: 'events',     name: 'Comète',          rarity: 'rare',      icon: '💫' },
+    { id: 'nova-card',      setId: 'events',     name: 'Nova',             rarity: 'epic',      icon: '🌟' },
+    { id: 'blackhole-card', setId: 'events',     name: 'Trou noir',        rarity: 'epic',      icon: '🌀' },
+    { id: 'supernova-card', setId: 'events',     name: 'Supernova',        rarity: 'legendary', icon: '🌟' }
+];
+
+const CARD_SETS = {
+    planets:   { name: 'Planètes',   icon: '🌌', completeBonus: 0.10 },
+    buildings: { name: 'Bâtiments',  icon: '🏭', completeBonus: 0.08 },
+    events:    { name: 'Événements', icon: '💫', completeBonus: 0.06 }
+};
+
+const BOOSTERS = {
+    standard:  { name: 'Standard',   cardCount: 3, cost: () => Math.max(100, Math.floor(partsPerSecond * 60)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
+    premium:   { name: 'Premium',    cardCount: 5, cost: () => Math.max(500, Math.floor(partsPerSecond * 300)),    rarities: { common: 0.55, rare: 0.33, epic: 0.10, legendary: 0.02 } },
+    legendary: { name: 'Légendaire', cardCount: 5, cost: () => Math.max(2000, Math.floor(partsPerSecond * 1800)), rarities: { common: 0.30, rare: 0.40, epic: 0.22, legendary: 0.08 } }
+};
+
+let cardCollection = {};
+
+function openCardCollection() {
+    document.getElementById('card-collection-modal').classList.add('active');
+    updateCardCollectionDisplay();
+    showCardShop();
+}
+
+function closeCardCollection() {
+    document.getElementById('card-collection-modal').classList.remove('active');
+}
+
+function showCardShop() {
+    document.getElementById('cc-booster-screen').style.display = 'block';
+    document.getElementById('cc-reveal-screen').style.display = 'none';
+    document.getElementById('cc-album-screen').style.display = 'none';
+    updateBoosterPrices();
+}
+
+function showCardAlbum() {
+    document.getElementById('cc-booster-screen').style.display = 'none';
+    document.getElementById('cc-reveal-screen').style.display = 'none';
+    document.getElementById('cc-album-screen').style.display = 'block';
+    renderCardAlbum();
+}
+
+function updateBoosterPrices() {
+    for (const key in BOOSTERS) {
+        const costEl = document.getElementById('cc-cost-' + key);
+        if (costEl) costEl.textContent = '💰 ' + formatNumber(BOOSTERS[key].cost());
+    }
+}
+
+function updateCardCollectionDisplay() {
+    const collected = Object.keys(cardCollection).filter(id => cardCollection[id] > 0);
+    document.getElementById('cc-collected-count').textContent = collected.length;
+    document.getElementById('cc-total-count').textContent = COLLECTIBLE_CARDS.length;
+    const completed = Object.keys(CARD_SETS).filter(setId => isSetComplete(setId));
+    document.getElementById('cc-completed-sets').textContent = completed.length;
+    document.getElementById('cc-total-sets').textContent = Object.keys(CARD_SETS).length;
+    document.getElementById('cc-bonus-display').textContent = '×' + (1 + getCollectionBonus()).toFixed(2);
+}
+
+function isSetComplete(setId) {
+    const setCards = COLLECTIBLE_CARDS.filter(c => c.setId === setId);
+    return setCards.every(c => cardCollection[c.id] > 0);
+}
+
+function getCollectionBonus() {
+    let bonus = 0;
+    for (const card of COLLECTIBLE_CARDS) {
+        if (cardCollection[card.id] > 0) {
+            bonus += CARD_RARITIES[card.rarity].bonusMult;
+        }
+    }
+    for (const setId in CARD_SETS) {
+        if (isSetComplete(setId)) {
+            bonus += CARD_SETS[setId].completeBonus;
+        }
+    }
+    return bonus;
+}
+
+function getCollectionMultiplier() {
+    return 1 + getCollectionBonus();
+}
+
+function buyBooster(type) {
+    const booster = BOOSTERS[type];
+    if (!booster) return;
+    const cost = booster.cost();
+    if (score < cost) {
+        showToast('❌ Pas assez de Parts pour ce booster !');
+        return;
+    }
+    score -= cost;
+    updateDisplay();
+
+    const drawn = [];
+    for (let i = 0; i < booster.cardCount; i++) {
+        drawn.push(drawCard(booster.rarities));
+    }
+
+    for (const card of drawn) {
+        cardCollection[card.id] = (cardCollection[card.id] || 0) + 1;
+    }
+
+    renderRevealCards(drawn);
+    document.getElementById('cc-booster-screen').style.display = 'none';
+    document.getElementById('cc-reveal-screen').style.display = 'block';
+    updateCardCollectionDisplay();
+    saveGame();
+}
+
+function drawCard(rarities) {
+    const roll = Math.random();
+    let cumul = 0;
+    let chosenRarity = 'common';
+    for (const rarity in rarities) {
+        cumul += rarities[rarity];
+        if (roll < cumul) { chosenRarity = rarity; break; }
+    }
+    const pool = COLLECTIBLE_CARDS.filter(c => c.rarity === chosenRarity);
+    if (pool.length === 0) {
+        const fallback = COLLECTIBLE_CARDS.filter(c => c.rarity === 'common');
+        return fallback[Math.floor(Math.random() * fallback.length)];
+    }
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function renderRevealCards(cards) {
+    const container = document.getElementById('cc-reveal-cards');
+    container.innerHTML = '';
+    cards.forEach((card, idx) => {
+        const rarity = CARD_RARITIES[card.rarity];
+        const isNew = (cardCollection[card.id] || 0) <= 1;
+        const el = document.createElement('div');
+        el.className = 'cc-reveal-card rarity-' + card.rarity;
+        el.style.animationDelay = (idx * 0.15) + 's';
+        el.innerHTML =
+            '<div class="cc-card-rarity">' + rarity.name + '</div>' +
+            '<div class="cc-card-icon">' + card.icon + '</div>' +
+            '<div class="cc-card-name">' + card.name + '</div>' +
+            (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '') +
+            '<div class="cc-card-bonus">+' + (rarity.bonusMult * 100).toFixed(0) + '% prod</div>';
+        container.appendChild(el);
+    });
+}
+
+function renderCardAlbum() {
+    const tabsContainer = document.getElementById('cc-album-tabs');
+    const grid = document.getElementById('cc-album-grid');
+    tabsContainer.innerHTML = '';
+    grid.innerHTML = '';
+
+    const sets = Object.keys(CARD_SETS);
+    let activeSet = sets[0];
+
+    const renderSet = (setId) => {
+        grid.innerHTML = '';
+        const cards = COLLECTIBLE_CARDS.filter(c => c.setId === setId);
+        const complete = isSetComplete(setId);
+        if (complete) {
+            const banner = document.createElement('div');
+            banner.className = 'cc-set-complete';
+            banner.textContent = CARD_SETS[setId].icon + ' Série ' + CARD_SETS[setId].name + ' complète ! +' + (CARD_SETS[setId].completeBonus * 100) + '% prod';
+            grid.appendChild(banner);
+        }
+        cards.forEach(card => {
+            const rarity = CARD_RARITIES[card.rarity];
+            const owned = cardCollection[card.id] > 0;
+            const el = document.createElement('div');
+            el.className = 'cc-album-card' + (owned ? '' : ' locked') + ' rarity-' + card.rarity;
+            el.innerHTML =
+                '<div class="cc-card-icon">' + (owned ? card.icon : '?') + '</div>' +
+                '<div class="cc-card-name">' + (owned ? card.name : '???') + '</div>' +
+                '<div class="cc-card-rarity">' + (owned ? rarity.name : '') + '</div>' +
+                (owned ? '<div class="cc-card-count">×' + cardCollection[card.id] + '</div>' : '');
+            grid.appendChild(el);
+        });
+    };
+
+    sets.forEach((setId, idx) => {
+        const tab = document.createElement('button');
+        tab.className = 'cc-tab' + (idx === 0 ? ' active' : '');
+        tab.textContent = CARD_SETS[setId].icon + ' ' + CARD_SETS[setId].name;
+        tab.onclick = () => {
+            document.querySelectorAll('.cc-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            renderSet(setId);
+        };
+        tabsContainer.appendChild(tab);
+    });
+
+    renderSet(activeSet);
+}
 
 // ============================================
 // INITIALIZATION

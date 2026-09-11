@@ -1841,3 +1841,279 @@ body {
     gap: 10px;
     margin-left: 20px;
 }
+/* CARD COLLECTION MODAL */
+.card-collection-modal {
+    max-width: 700px;
+    width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+.card-collection-modal .modal-body {
+    overflow-y: auto;
+    flex: 1;
+}
+.card-collection-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+    padding: 10px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: var(--radius);
+}
+.card-stat {
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 600;
+}
+.card-stat span {
+    color: var(--accent-light);
+}
+.cc-intro {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+.cc-booster-options {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+.cc-booster-btn {
+    flex: 1;
+    min-width: 180px;
+    max-width: 220px;
+    background: linear-gradient(135deg, #1e3a8a, #1e1b4b);
+    border: 2px solid var(--primary-light);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    color: var(--text);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.cc-booster-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+    border-color: var(--accent);
+}
+.cc-booster-btn:active {
+    transform: translateY(-2px);
+}
+.cc-booster-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+.cc-booster-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.cc-booster-info {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+.cc-booster-cost {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-light);
+}
+.cc-view-album-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 24px;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid #a855f7;
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.cc-view-album-btn:hover {
+    background: rgba(168, 85, 247, 0.25);
+}
+.cc-reveal-intro {
+    text-align: center;
+    color: var(--accent-light);
+    font-weight: 600;
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+.cc-reveal-cards {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.cc-reveal-card {
+    width: 120px;
+    height: 170px;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px;
+    box-sizing: border-box;
+    opacity: 0;
+    animation: cc-reveal 0.5s ease forwards;
+}
+@keyframes cc-reveal {
+    from { opacity: 0; transform: scale(0.5) rotateY(180deg); }
+    to   { opacity: 1; transform: scale(1) rotateY(0deg); }
+}
+.cc-reveal-card.rarity-common,
+.cc-album-card.rarity-common {
+    background: linear-gradient(135deg, #475569, #1e293b);
+    border: 2px solid #94a3b8;
+    box-shadow: 0 0 12px rgba(148, 163, 184, 0.3);
+}
+.cc-reveal-card.rarity-rare,
+.cc-album-card.rarity-rare {
+    background: linear-gradient(135deg, #1e3a8a, #1e1b4b);
+    border: 2px solid #3b82f6;
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.4);
+}
+.cc-reveal-card.rarity-epic,
+.cc-album-card.rarity-epic {
+    background: linear-gradient(135deg, #581c87, #1e1b4b);
+    border: 2px solid #a855f7;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+}
+.cc-reveal-card.rarity-legendary,
+.cc-album-card.rarity-legendary {
+    background: linear-gradient(135deg, #78350f, #1e1b4b);
+    border: 2px solid #fbbf24;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+}
+.cc-card-rarity {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+.cc-card-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+}
+.cc-card-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+.cc-card-new {
+    font-size: 0.65rem;
+    color: #fbbf24;
+    font-weight: 700;
+    background: rgba(251, 191, 36, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.cc-card-bonus {
+    font-size: 0.7rem;
+    color: var(--accent-light);
+    font-weight: 600;
+}
+.cc-reveal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+.cc-action-btn {
+    padding: 10px 20px;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid var(--primary-light);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+.cc-action-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+}
+.cc-album-tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.cc-tab {
+    padding: 8px 16px;
+    background: rgba(30, 58, 138, 0.3);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s, border-color 0.2s;
+}
+.cc-tab.active {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: var(--accent);
+}
+.cc-tab:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+.cc-album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+}
+.cc-album-card {
+    height: 150px;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+.cc-album-card.locked {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border: 2px dashed #334155;
+    opacity: 0.6;
+}
+.cc-album-card.locked .cc-card-icon {
+    color: #334155;
+}
+.cc-card-count {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+.cc-set-complete {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 10px;
+    background: rgba(251, 191, 36, 0.15);
+    border: 1px solid #fbbf24;
+    border-radius: var(--radius);
+    color: #fbbf24;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.cc-back-btn {
+    display: block;
+    margin: 18px auto 0;
+    padding: 8px 20px;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid var(--primary-light);
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+}

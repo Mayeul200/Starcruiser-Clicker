@@ -117,6 +117,57 @@
         </div>
     </div>
 
+<!-- CARD COLLECTION MODAL -->
+    <div class="modal" id="card-collection-modal">
+        <div class="modal-content card-collection-modal">
+            <div class="modal-header">
+                <h2>📦 Collection de Cartes</h2>
+                <span class="close-button" onclick="closeCardCollection()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="card-collection-stats">
+                    <div class="card-stat">Cartes: <span id="cc-collected-count">0</span>/<span id="cc-total-count">0</span></div>
+                    <div class="card-stat">Séries complètes: <span id="cc-completed-sets">0</span>/<span id="cc-total-sets">0</span></div>
+                    <div class="card-stat">Bonus global: <span id="cc-bonus-display">×1.00</span></div>
+                </div>
+                <div class="cc-screen" id="cc-booster-screen">
+                    <div class="cc-intro" id="cc-intro">Achète des boosters pour récolter des cartes. Chaque carte possédée donne un bonus passif. Complète une série pour un bonus supplémentaire !</div>
+                    <div class="cc-booster-options">
+                        <button class="cc-booster-btn" data-booster="standard" onclick="buyBooster('standard')">
+                            <div class="cc-booster-name">📦 Booster Standard</div>
+                            <div class="cc-booster-info">3 cartes — 80% commune / 18% rare / 2% épique</div>
+                            <div class="cc-booster-cost" id="cc-cost-standard">💰 —</div>
+                        </button>
+                        <button class="cc-booster-btn" data-booster="premium" onclick="buyBooster('premium')">
+                            <div class="cc-booster-name">💎 Booster Premium</div>
+                            <div class="cc-booster-info">5 cartes — 55% commune / 33% rare / 10% épique / 2% légendaire</div>
+                            <div class="cc-booster-cost" id="cc-cost-premium">💰 —</div>
+                        </button>
+                        <button class="cc-booster-btn" data-booster="legendary" onclick="buyBooster('legendary')">
+                            <div class="cc-booster-name">🏆 Booster Légendaire</div>
+                            <div class="cc-booster-info">5 cartes — garantie 1 épique + chance légendaire</div>
+                            <div class="cc-booster-cost" id="cc-cost-legendary">💰 —</div>
+                        </button>
+                    </div>
+                    <button class="cc-view-album-btn" onclick="showCardAlbum()">📚 Voir mon album</button>
+                </div>
+                <div class="cc-screen" id="cc-reveal-screen" style="display:none;">
+                    <div class="cc-reveal-intro">Tu as obtenu ces cartes !</div>
+                    <div class="cc-reveal-cards" id="cc-reveal-cards"></div>
+                    <div class="cc-reveal-actions">
+                        <button class="cc-action-btn" onclick="showCardShop()">🛒 Autre booster</button>
+                        <button class="cc-action-btn" onclick="showCardAlbum()">📚 Voir l'album</button>
+                    </div>
+                </div>
+                <div class="cc-screen" id="cc-album-screen" style="display:none;">
+                    <div class="cc-album-tabs" id="cc-album-tabs"></div>
+                    <div class="cc-album-grid" id="cc-album-grid"></div>
+                    <button class="cc-back-btn" onclick="showCardShop()">← Retour aux boosters</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <!-- SETTINGS MODAL -->
     <div class="modal" id="settings-modal">
         <div class="modal-content">
@@ -170,6 +221,12 @@
                         <div class="game-name">Casino Planétaire</div>
                         <div class="game-description">Choisis une carte et révèle un bonus !</div>
                         <div class="game-cost">💰 Mise variable</div>
+                    </div>
+                    <div class="mini-game-card" onclick="openCardCollection()">
+                        <div class="game-icon">📦</div>
+                        <div class="game-name">Collection de Cartes</div>
+                        <div class="game-description">Ouvre des boosters et complète ton album !</div>
+                        <div class="game-cost">💰 Boosters payants</div>
                     </div>
                 </div>
             </div>
