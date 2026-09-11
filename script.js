@@ -2055,16 +2055,16 @@ function getSurveyBetAmount(type) {
 
 // Récompenses possibles (poids relatif). Les multiplicateurs de Parts sont appliqués à la mise.
 const SURVEY_REWARDS = [
-    { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés', imgPath: 'images/effects/casino/parts.svg' },
-    { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire', imgPath: 'images/effects/casino/multiplier.svg' },
-    { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts', imgPath: 'images/effects/casino/bigParts.svg' },
-    { type: 'nothing', weight: 37, icon: '🌑', label: 'Pot divisé par 2', imgPath: 'images/effects/casino/nothing.svg' }
+    { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés', imgPath: 'images/cards/casino/parts.svg' },
+    { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire', imgPath: 'images/cards/casino/multiplier.svg' },
+    { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts', imgPath: 'images/cards/casino/bigParts.svg' },
+    { type: 'nothing', weight: 37, icon: '🌑', label: 'Pot divisé par 2', imgPath: 'images/cards/casino/nothing.svg' }
 ];
 
 // Malus: apparaît à partir du palier 1 (tour 6+), de plus en plus avec la difficulté
 const SURVEY_MALUS = [
-    { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !', imgPath: 'images/effects/casino/bust.svg' },
-    { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié', imgPath: 'images/effects/casino/halve.svg' }
+    { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !', imgPath: 'images/cards/casino/bust.svg' },
+    { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié', imgPath: 'images/cards/casino/halve.svg' }
 ];
 
 // Palier de difficulté (tous les 5 tours): 0 = tour 1-5, 1 = tour 6-10, 2 = tour 11-15, etc.
@@ -2188,7 +2188,7 @@ function nextSurveyRound() {
         card.className = 'survey-card';
         card.innerHTML = `
             <div class="survey-card-inner">
-                <div class="survey-card-front"><img src="images/effects/casino/card-back.svg" class="survey-card-img" alt="Carte"></div>
+                <div class="survey-card-front"><img src="images/cards/backs/card-back.svg" class="survey-card-img" alt="Carte"></div>
                 <div class="survey-card-back">
                     <div class="reward-icon">❓</div>
                     <div class="reward-text">?</div>
@@ -2389,26 +2389,26 @@ const CARD_RARITIES = {
 };
 
 const COLLECTIBLE_CARDS = [
-    { id: 'earth-card',     setId: 'planets',    name: 'Terre',            rarity: 'common',    icon: '🌍' },
-    { id: 'moon-card',      setId: 'planets',    name: 'Lune',             rarity: 'common',    icon: '🌙' },
-    { id: 'mars-card',      setId: 'planets',    name: 'Mars',             rarity: 'rare',      icon: '💫' },
-    { id: 'neptune-card',   setId: 'planets',    name: 'Neptune',          rarity: 'rare',      icon: '💫' },
-    { id: 'pluto-card',     setId: 'planets',    name: 'Pluton',           rarity: 'epic',      icon: '💫' },
-    { id: 'oort-card',      setId: 'planets',    name: 'Nuage d\'Oort',     rarity: 'epic',      icon: '🌀' },
-    { id: 'proxima-card',   setId: 'planets',    name: 'Proxima Centauri', rarity: 'legendary', icon: '☀️' },
-    { id: 'sirius-card',    setId: 'planets',    name: 'Sirius',           rarity: 'legendary', icon: '🌟' },
-    { id: 'wrench-card',    setId: 'buildings',  name: 'Atelier',          rarity: 'common',    icon: '🔧' },
-    { id: 'factory-card',   setId: 'buildings',  name: 'Usine',            rarity: 'common',    icon: '🏭' },
-    { id: 'lab-card',       setId: 'buildings',  name: 'Laboratoire',      rarity: 'rare',      icon: '🧪' },
-    { id: 'launchpad-card', setId: 'buildings',  name: 'Pas de tir',       rarity: 'rare',      icon: '🚀' },
-    { id: 'hq-card',        setId: 'buildings',  name: 'QG Spatial',       rarity: 'epic',      icon: '🏛' },
-    { id: 'mining-card',    setId: 'buildings',  name: 'Mine stellaire',   rarity: 'legendary', icon: '⛏️' },
-    { id: 'meteor-card',    setId: 'events',     name: 'Pluie de météores', rarity: 'common',   icon: '💫' },
-    { id: 'flare-card',     setId: 'events',     name: 'Éruption solaire', rarity: 'rare',      icon: '☀️' },
-    { id: 'comet-card',     setId: 'events',     name: 'Comète',          rarity: 'rare',      icon: '💫' },
-    { id: 'nova-card',      setId: 'events',     name: 'Nova',             rarity: 'epic',      icon: '🌟' },
-    { id: 'blackhole-card', setId: 'events',     name: 'Trou noir',        rarity: 'epic',      icon: '🌀' },
-    { id: 'supernova-card', setId: 'events',     name: 'Supernova',        rarity: 'legendary', icon: '🌟' }
+    { id: 'earth-card',     setId: 'planets',    name: 'Terre',            rarity: 'common',    icon: '🌍' , imgPath: 'images/cards/collection/earth-card.svg' },
+    { id: 'moon-card',      setId: 'planets',    name: 'Lune',             rarity: 'common',    icon: '🌙' , imgPath: 'images/cards/collection/moon-card.svg' },
+    { id: 'mars-card',      setId: 'planets',    name: 'Mars',             rarity: 'rare',      icon: '💫' , imgPath: 'images/cards/collection/mars-card.svg' },
+    { id: 'neptune-card',   setId: 'planets',    name: 'Neptune',          rarity: 'rare',      icon: '💫' , imgPath: 'images/cards/collection/neptune-card.svg' },
+    { id: 'pluto-card',     setId: 'planets',    name: 'Pluton',           rarity: 'epic',      icon: '💫' , imgPath: 'images/cards/collection/pluto-card.svg' },
+    { id: 'oort-card',      setId: 'planets',    name: 'Nuage d\'Oort',     rarity: 'epic',      icon: '🌀' , imgPath: 'images/cards/collection/oort-card.svg' },
+    { id: 'proxima-card',   setId: 'planets',    name: 'Proxima Centauri', rarity: 'legendary', icon: '☀️' , imgPath: 'images/cards/collection/proxima-card.svg' },
+    { id: 'sirius-card',    setId: 'planets',    name: 'Sirius',           rarity: 'legendary', icon: '🌟' , imgPath: 'images/cards/collection/sirius-card.svg' },
+    { id: 'wrench-card',    setId: 'buildings',  name: 'Atelier',          rarity: 'common',    icon: '🔧' , imgPath: 'images/cards/collection/wrench-card.svg' },
+    { id: 'factory-card',   setId: 'buildings',  name: 'Usine',            rarity: 'common',    icon: '🏭' , imgPath: 'images/cards/collection/factory-card.svg' },
+    { id: 'lab-card',       setId: 'buildings',  name: 'Laboratoire',      rarity: 'rare',      icon: '🧪' , imgPath: 'images/cards/collection/lab-card.svg' },
+    { id: 'launchpad-card', setId: 'buildings',  name: 'Pas de tir',       rarity: 'rare',      icon: '🚀' , imgPath: 'images/cards/collection/launchpad-card.svg' },
+    { id: 'hq-card',        setId: 'buildings',  name: 'QG Spatial',       rarity: 'epic',      icon: '🏛' , imgPath: 'images/cards/collection/hq-card.svg' },
+    { id: 'mining-card',    setId: 'buildings',  name: 'Mine stellaire',   rarity: 'legendary', icon: '⛏️' , imgPath: 'images/cards/collection/mining-card.svg' },
+    { id: 'meteor-card',    setId: 'events',     name: 'Pluie de météores', rarity: 'common',   icon: '💫' , imgPath: 'images/cards/collection/meteor-card.svg' },
+    { id: 'flare-card',     setId: 'events',     name: 'Éruption solaire', rarity: 'rare',      icon: '☀️' , imgPath: 'images/cards/collection/flare-card.svg' },
+    { id: 'comet-card',     setId: 'events',     name: 'Comète',          rarity: 'rare',      icon: '💫' , imgPath: 'images/cards/collection/comet-card.svg' },
+    { id: 'nova-card',      setId: 'events',     name: 'Nova',             rarity: 'epic',      icon: '🌟' , imgPath: 'images/cards/collection/nova-card.svg' },
+    { id: 'blackhole-card', setId: 'events',     name: 'Trou noir',        rarity: 'epic',      icon: '🌀' , imgPath: 'images/cards/collection/blackhole-card.svg' },
+    { id: 'supernova-card', setId: 'events',     name: 'Supernova',        rarity: 'legendary', icon: '🌟' , imgPath: 'images/cards/collection/supernova-card.svg' }
 ];
 
 const CARD_SETS = {
@@ -2544,7 +2544,7 @@ function renderRevealCards(cards) {
         el.style.animationDelay = (idx * 0.15) + 's';
         el.innerHTML =
             '<div class="cc-card-rarity">' + rarity.name + '</div>' +
-            '<div class="cc-card-icon">' + card.icon + '</div>' +
+            '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' +
             '<div class="cc-card-name">' + card.name + '</div>' +
             (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '') +
             '<div class="cc-card-bonus">+' + (rarity.bonusMult * 100).toFixed(0) + '% prod</div>';
@@ -2577,7 +2577,7 @@ function renderCardAlbum() {
             const el = document.createElement('div');
             el.className = 'cc-album-card' + (owned ? '' : ' locked') + ' rarity-' + card.rarity;
             el.innerHTML =
-                '<div class="cc-card-icon">' + (owned ? card.icon : '?') + '</div>' +
+                (owned ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' : '<div class="cc-card-icon">?</div>') +
                 '<div class="cc-card-name">' + (owned ? card.name : '???') + '</div>' +
                 '<div class="cc-card-rarity">' + (owned ? rarity.name : '') + '</div>' +
                 (owned ? '<div class="cc-card-count">×' + cardCollection[card.id] + '</div>' : '');

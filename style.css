@@ -2014,6 +2014,12 @@ body {
     font-size: 2.4rem;
     line-height: 1;
 }
+.cc-card-img {
+    width: 100px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+}
 .cc-card-name {
     font-size: 0.8rem;
     font-weight: 600;
