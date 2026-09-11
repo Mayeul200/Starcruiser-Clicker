@@ -2048,16 +2048,16 @@ function getSurveyBetAmount(type) {
 
 // Récompenses possibles (poids relatif). Les multiplicateurs de Parts sont appliqués à la mise.
 const SURVEY_REWARDS = [
-    { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés' },
-    { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire' },
-    { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts' },
-    { type: 'nothing', weight: 37, icon: '🌑', label: 'Rien' }
+    { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés', imgPath: 'images/effects/casino/parts.svg' },
+    { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire', imgPath: 'images/effects/casino/multiplier.svg' },
+    { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts', imgPath: 'images/effects/casino/bigParts.svg' },
+    { type: 'nothing', weight: 37, icon: '🌑', label: 'Rien', imgPath: 'images/effects/casino/nothing.svg' }
 ];
 
 // Malus: apparaît à partir du palier 1 (tour 4+), de plus en plus avec la difficulté
 const SURVEY_MALUS = [
-    { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !' },
-    { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié' }
+    { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !', imgPath: 'images/effects/casino/bust.svg' },
+    { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié', imgPath: 'images/effects/casino/halve.svg' }
 ];
 
 // Palier de difficulté (tous les 3 tours): 0 = début, 1 = tour 4-6, 2 = tour 7-9, etc.
@@ -2282,7 +2282,10 @@ function revealSurveyCard(chosenCard) {
 
 function displayRewardOnCard(card, reward) {
     const back = card.querySelector('.survey-card-back');
-    back.querySelector('.reward-icon').textContent = reward.icon;
+    const iconEl = back.querySelector('.reward-icon');
+    iconEl.innerHTML = reward.imgPath
+        ? `<img src="${reward.imgPath}" class="survey-reward-img" alt="${reward.label}">`
+        : reward.icon;
     back.querySelector('.reward-text').textContent = reward.label;
     const existing = back.querySelector('.reward-amount');
     if (existing) existing.remove();

@@ -1420,6 +1420,14 @@ body {
 }
 .survey-card-back .reward-icon {
     font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.survey-reward-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
 }
 .survey-card-back .reward-text {
     font-size: 0.8rem;
