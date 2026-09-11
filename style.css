@@ -1963,16 +1963,16 @@ body {
     margin-bottom: 16px;
 }
 .cc-reveal-card {
-    width: 120px;
-    height: 170px;
+    width: 160px;
+    height: 224px;
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 10px;
+    padding: 4px;
     box-sizing: border-box;
+    position: relative;
     opacity: 0;
     animation: cc-reveal 0.5s ease forwards;
 }
@@ -2015,10 +2015,11 @@ body {
     line-height: 1;
 }
 .cc-card-img {
-    width: 100px;
-    height: 140px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
+    display: block;
 }
 .cc-card-name {
     font-size: 0.8rem;
@@ -2026,12 +2027,18 @@ body {
     text-align: center;
 }
 .cc-card-new {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
     font-size: 0.65rem;
     color: #fbbf24;
     font-weight: 700;
-    background: rgba(251, 191, 36, 0.2);
-    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 3px 8px;
     border-radius: 4px;
+    z-index: 2;
+    white-space: nowrap;
 }
 .cc-card-bonus {
     font-size: 0.7rem;
@@ -2082,19 +2089,19 @@ body {
 }
 .cc-album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px;
 }
 .cc-album-card {
-    height: 150px;
+    height: 196px;
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 8px;
+    padding: 4px;
     box-sizing: border-box;
+    position: relative;
 }
 .cc-album-card.locked {
     background: linear-gradient(135deg, #0f172a, #1e293b);
@@ -2105,9 +2112,16 @@ body {
     color: #334155;
 }
 .cc-card-count {
-    font-size: 0.7rem;
-    color: var(--text-light);
-    font-weight: 600;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-size: 0.75rem;
+    color: #f1f5f9;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 8px;
+    border-radius: 10px;
+    z-index: 2;
 }
 .cc-set-complete {
     grid-column: 1 / -1;

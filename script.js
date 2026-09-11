@@ -2543,11 +2543,8 @@ function renderRevealCards(cards) {
         el.className = 'cc-reveal-card rarity-' + card.rarity;
         el.style.animationDelay = (idx * 0.15) + 's';
         el.innerHTML =
-            '<div class="cc-card-rarity">' + rarity.name + '</div>' +
             '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' +
-            '<div class="cc-card-name">' + card.name + '</div>' +
-            (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '') +
-            '<div class="cc-card-bonus">+' + (rarity.bonusMult * 100).toFixed(0) + '% prod</div>';
+            (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '');
         container.appendChild(el);
     });
 }
@@ -2577,10 +2574,9 @@ function renderCardAlbum() {
             const el = document.createElement('div');
             el.className = 'cc-album-card' + (owned ? '' : ' locked') + ' rarity-' + card.rarity;
             el.innerHTML =
-                (owned ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' : '<div class="cc-card-icon">?</div>') +
-                '<div class="cc-card-name">' + (owned ? card.name : '???') + '</div>' +
-                '<div class="cc-card-rarity">' + (owned ? rarity.name : '') + '</div>' +
-                (owned ? '<div class="cc-card-count">×' + cardCollection[card.id] + '</div>' : '');
+                (owned
+                    ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '"><div class="cc-card-count">\u00d7' + cardCollection[card.id] + '</div>'
+                    : '<div class="cc-card-icon">?</div>');
             grid.appendChild(el);
         });
     };
