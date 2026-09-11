@@ -2211,8 +2211,9 @@ function pickSurveyReward() {
     const diff = getSurveyDifficulty(surveyState.round);
     const adjusted = SURVEY_REWARDS.map(r => {
         let w = r.weight;
-        if (r.type === 'bigParts') w = r.weight + (diff === 0 ? 12 : Math.max(0, 6 - diff));
-        else if (r.type === 'multiplier') w = r.weight + (diff === 0 ? 8 : Math.max(0, 4 - diff));
+        if (r.type === 'parts') w = r.weight + (diff === 0 ? 18 : Math.max(0, 10 - diff));
+        else if (r.type === 'bigParts') w = r.weight + diff * 4;
+        else if (r.type === 'multiplier') w = r.weight + diff * 3;
         else if (r.type === 'nothing') w = r.weight + diff * 6;
         return { ...r, weight: Math.max(1, w) };
     });
@@ -2271,14 +2272,14 @@ function revealSurveyCard(chosenCard) {
     } else if (reward.type === 'parts' || reward.type === 'bigParts') {
         const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
         const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        const mult = Math.floor(baseMult * rewardBonus);
+        const mult = Math.max(2, Math.floor(baseMult * rewardBonus));
         surveyState.pot = Math.floor(surveyState.pot * mult);
         result.textContent = `${reward.icon} ×${mult} ! Le pot augmente !`;
         result.className = 'survey-result win';
     } else if (reward.type === 'multiplier') {
         const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
         const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        const mult = Math.floor(baseMult * rewardBonus);
+        const mult = Math.max(2, Math.floor(baseMult * rewardBonus));
         surveyState.pot = Math.floor(surveyState.pot * mult);
         result.textContent = `${reward.icon} ×${mult} ! Bonus de production encaissé.`;
         result.className = 'survey-result win';
