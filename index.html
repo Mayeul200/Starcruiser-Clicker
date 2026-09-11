@@ -83,18 +83,42 @@
                 <span class="close-button" onclick="closePlanetarySurvey()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="survey-intro" id="survey-intro">
-                    Choisis une planète pour révéler un bonus mystère !
+                <!-- Écran de sélection de mise -->
+                <div class="survey-screen" id="survey-bet-screen">
+                    <div class="survey-intro" id="survey-intro">
+                        Choisis ta mise et sonde 3 planètes pour révéler des bonus mystères !
+                    </div>
+                    <div class="survey-bet-options" id="survey-bet-options">
+                        <button class="survey-bet-btn" data-bet="1">💰 1 pièce</button>
+                        <button class="survey-bet-btn" data-bet="10">💰 10 pièces</button>
+                        <button class="survey-bet-btn" data-bet="100">💰 100 pièces</button>
+                    </div>
                 </div>
-                <div class="survey-cards" id="survey-cards"></div>
-                <div class="survey-result" id="survey-result"></div>
-                <div class="survey-actions">
-                    <button class="survey-play-button" id="survey-play-button" onclick="startPlanetarySurvey()">
-                        🚀 Lancer (1 pièce)
-                    </button>
-                    <button class="survey-replay-button" id="survey-replay-button" onclick="startPlanetarySurvey()" style="display:none;">
-                        🔄 Rejouer (1 pièce)
-                    </button>
+
+                <!-- Écran de jeu (manches) -->
+                <div class="survey-screen" id="survey-play-screen" style="display:none;">
+                    <div class="survey-status">
+                        <div class="survey-status-item">Manche: <span id="survey-round">1</span>/3</div>
+                        <div class="survey-status-item">Pot: <span id="survey-pot">0</span></div>
+                    </div>
+                    <div class="survey-intro" id="survey-play-intro">Choisis une planète !</div>
+                    <div class="survey-cards" id="survey-cards"></div>
+                    <div class="survey-result" id="survey-result"></div>
+                    <div class="survey-actions">
+                        <button class="survey-action-btn" id="survey-keep-btn" onclick="surveyKeepCurrent()" style="display:none;">✅ Garder le bonus</button>
+                        <button class="survey-action-btn" id="survey-exchange-btn" onclick="surveyExchangeCard()" style="display:none;">🔄 Échanger (risqué)</button>
+                    </div>
+                </div>
+
+                <!-- Écran de fin -->
+                <div class="survey-screen" id="survey-end-screen" style="display:none;">
+                    <div class="survey-result" id="survey-final-result"></div>
+                    <div class="survey-pot-display" id="survey-pot-display"></div>
+                    <div class="survey-actions">
+                        <button class="survey-action-btn" id="survey-collect-btn" onclick="surveyCollectWinnings()">💰 Encaisser le pot</button>
+                        <button class="survey-action-btn" id="survey-double-btn" onclick="surveyDoubleOrNothing()" style="display:none;">🎲 Tout remiser (doubler)</button>
+                        <button class="survey-action-btn" id="survey-replay-btn" onclick="resetPlanetarySurvey()" style="display:none;">🔄 Rejouer</button>
+                    </div>
                 </div>
             </div>
         </div>

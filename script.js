@@ -2033,19 +2033,25 @@ function updateBonusTimer() {
 // PLANETARY SURVEY MINI-GAME
 // ============================================
 
-const SURVEY_COST = 1;
-const SURVEY_PLANET_IMAGES = ['images/planets/moon.png', 'images/planets/mars.png', 'images/planets/neptune.png'];
+const SURVEY_BET_OPTIONS = [1, 10, 100];
+const SURVEY_MAX_ROUNDS = 3;
 
-// Récompenses possibles (poids relatif)
+// Récompenses possibles (poids relatif). Les multiplicateurs de Parts sont appliqués à la mise.
 const SURVEY_REWARDS = [
-    { type: 'parts', weight: 35, minMult: 1, maxMult: 5, icon: '💰', label: 'Parts gagnés' },
-    { type: 'multiplier', weight: 25, minMult: 2, maxMult: 5, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire' },
-    { type: 'bigParts', weight: 10, minMult: 10, maxMult: 50, icon: '💎', label: 'Gros lot de Parts' },
-    { type: 'nothing', weight: 30, icon: '🌑', label: 'Rien' }
+    { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés' },
+    { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire' },
+    { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts' },
+    { type: 'nothing', weight: 37, icon: '🌑', label: 'Rien' }
 ];
 
-let surveyActive = false;
-let surveyRewardChosen = null;
+let surveyState = {
+    bet: 0,
+    round: 0,
+    pot: 0,
+    currentReward: null,
+    canChoose: false,
+    doubling: false
+};
 
 function openPlanetarySurvey() {
     document.getElementById('planetary-survey-modal').classList.add('active');
@@ -2054,36 +2060,57 @@ function openPlanetarySurvey() {
 
 function closePlanetarySurvey() {
     document.getElementById('planetary-survey-modal').classList.remove('active');
-    surveyActive = false;
 }
 
 function resetPlanetarySurvey() {
-    surveyActive = false;
-    surveyRewardChosen = null;
-    document.getElementById('survey-intro').style.display = 'block';
-    document.getElementById('survey-intro').textContent = 'Choisis une planète pour révéler un bonus mystère !';
-    document.getElementById('survey-cards').innerHTML = '';
-    document.getElementById('survey-result').textContent = '';
-    document.getElementById('survey-result').className = 'survey-result';
-    document.getElementById('survey-play-button').style.display = 'block';
-    document.getElementById('survey-replay-button').style.display = 'none';
+    surveyState = { bet: 0, round: 0, pot: 0, currentReward: null, canChoose: false, doubling: false };
+    showSurveyScreen('bet');
+    document.getElementById('survey-intro').textContent = 'Choisis ta mise et sonde 3 planètes pour révéler des bonus mystères !';
+    updateBetButtons();
 }
 
-function startPlanetarySurvey() {
-    if (score < SURVEY_COST) {
-        showToast(`❌ Pas assez de pièces ! Il faut ${SURVEY_COST} pièce.`);
+function updateBetButtons() {
+    document.querySelectorAll('.survey-bet-btn').forEach(btn => {
+        const bet = parseInt(btn.dataset.bet);
+        btn.disabled = score < bet;
+    });
+}
+
+function showSurveyScreen(screen) {
+    document.getElementById('survey-bet-screen').style.display = screen === 'bet' ? 'block' : 'none';
+    document.getElementById('survey-play-screen').style.display = screen === 'play' ? 'block' : 'none';
+    document.getElementById('survey-end-screen').style.display = screen === 'end' ? 'block' : 'none';
+}
+
+function startPlanetarySurveyWithBet(bet) {
+    if (score < bet) {
+        showToast(`❌ Pas assez de pièces !`);
         return;
     }
-    score -= SURVEY_COST;
+    score -= bet;
     updateDisplay();
 
-    surveyActive = true;
-    surveyRewardChosen = pickSurveyReward();
+    surveyState.bet = bet;
+    surveyState.round = 0;
+    surveyState.pot = bet;
+    surveyState.doubling = false;
 
-    document.getElementById('survey-intro').style.display = 'none';
+    showSurveyScreen('play');
+    nextSurveyRound();
+}
+
+function nextSurveyRound() {
+    surveyState.round++;
+    surveyState.canChoose = true;
+    surveyState.currentReward = null;
+
+    document.getElementById('survey-round').textContent = surveyState.round;
+    document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
+    document.getElementById('survey-play-intro').textContent = `Manche ${surveyState.round}/${SURVEY_MAX_ROUNDS} — Choisis une planète !`;
     document.getElementById('survey-result').textContent = '';
-    document.getElementById('survey-play-button').style.display = 'none';
-    document.getElementById('survey-replay-button').style.display = 'none';
+    document.getElementById('survey-result').className = 'survey-result';
+    document.getElementById('survey-keep-btn').style.display = 'none';
+    document.getElementById('survey-exchange-btn').style.display = 'none';
 
     const container = document.getElementById('survey-cards');
     container.innerHTML = '';
@@ -2100,6 +2127,7 @@ function startPlanetarySurvey() {
                 </div>
             </div>
         `;
+        card.dataset.reward = JSON.stringify(pickSurveyReward());
         card.onclick = () => revealSurveyCard(card);
         container.appendChild(card);
     }
@@ -2116,8 +2144,8 @@ function pickSurveyReward() {
 }
 
 function revealSurveyCard(chosenCard) {
-    if (!surveyActive) return;
-    surveyActive = false;
+    if (!surveyState.canChoose) return;
+    surveyState.canChoose = false;
 
     const allCards = document.querySelectorAll('.survey-card');
     allCards.forEach(card => {
@@ -2125,93 +2153,151 @@ function revealSurveyCard(chosenCard) {
         card.onclick = null;
     });
 
-    // Révéler la carte choisie
-    chosenCard.classList.add('flipped');
-    applySurveyReward(chosenCard, surveyRewardChosen);
+    const reward = JSON.parse(chosenCard.dataset.reward);
+    surveyState.currentReward = reward;
 
-    // Révéler les autres cartes après un délai
+    chosenCard.classList.add('flipped');
+    displayRewardOnCard(chosenCard, reward);
+
+    // Révéler les autres cartes
     setTimeout(() => {
         allCards.forEach(card => {
             if (card !== chosenCard) {
-                const otherReward = pickSurveyReward();
+                const otherReward = JSON.parse(card.dataset.reward);
                 card.classList.add('flipped');
-                const back = card.querySelector('.survey-card-back');
-                back.querySelector('.reward-icon').textContent = otherReward.icon;
-                back.querySelector('.reward-text').textContent = otherReward.label;
-                back.querySelector('.reward-amount') ? back.querySelector('.reward-amount').remove() : null;
+                displayRewardOnCard(card, otherReward);
             }
         });
-    }, 800);
+    }, 600);
 
-    document.getElementById('survey-replay-button').style.display = 'block';
-    checkTrophies();
+    // Calculer l'effet sur le pot
+    const result = document.getElementById('survey-result');
+    if (reward.type === 'nothing') {
+        surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
+        result.textContent = '🌑 Mauvaise planète ! Le pot diminue.';
+        result.className = 'survey-result miss';
+    } else if (reward.type === 'parts' || reward.type === 'bigParts') {
+        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        surveyState.pot = Math.floor(surveyState.pot * mult);
+        result.textContent = `${reward.icon} ×${mult} ! Le pot augmente !`;
+        result.className = 'survey-result win';
+    } else if (reward.type === 'multiplier') {
+        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
+        surveyState.pot = Math.floor(surveyState.pot * mult);
+        result.textContent = `${reward.icon} ×${mult} ! Bonus de production encaissé.`;
+        result.className = 'survey-result win';
+        applySurveyMultiplier(mult, reward.duration);
+    }
+
+    document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
+    updateDisplay();
+
+    // Proposer garder ou échanger (sauf dernière manche)
+    setTimeout(() => {
+        if (surveyState.round < SURVEY_MAX_ROUNDS) {
+            document.getElementById('survey-keep-btn').style.display = 'block';
+            document.getElementById('survey-exchange-btn').style.display = 'block';
+        } else {
+            endSurveyGame();
+        }
+    }, 1200);
 }
 
-function applySurveyReward(card, reward) {
+function displayRewardOnCard(card, reward) {
     const back = card.querySelector('.survey-card-back');
     back.querySelector('.reward-icon').textContent = reward.icon;
     back.querySelector('.reward-text').textContent = reward.label;
+    const existing = back.querySelector('.reward-amount');
+    if (existing) existing.remove();
+}
 
-    const result = document.getElementById('survey-result');
+function surveyKeepCurrent() {
+    // Garder le bonus actuel et passer à la suite sans risquer
+    nextSurveyRound();
+}
 
-    if (reward.type === 'nothing') {
-        const amountEl = document.createElement('div');
-        amountEl.className = 'reward-amount';
-        amountEl.textContent = 'Cette planète était vide...';
-        back.appendChild(amountEl);
-        result.textContent = '🌑 Aucune récompense cette fois !';
+function surveyExchangeCard() {
+    // Échanger: relance la manche avec de nouvelles cartes (le pot reste tel quel)
+    nextSurveyRound();
+}
+
+function endSurveyGame() {
+    showSurveyScreen('end');
+    const result = document.getElementById('survey-final-result');
+    const potDisplay = document.getElementById('survey-pot-display');
+    if (surveyState.pot > 0) {
+        result.textContent = `🎉 Partie terminée ! Tu gagnes ${formatNumber(surveyState.pot)} Parts.`;
+        result.className = 'survey-result win';
+        potDisplay.textContent = `Pot final: ${formatNumber(surveyState.pot)} Parts`;
+        document.getElementById('survey-collect-btn').style.display = 'block';
+        document.getElementById('survey-double-btn').style.display = 'block';
+        document.getElementById('survey-replay-btn').style.display = 'none';
+    } else {
+        result.textContent = '💔 Partie perdue... le pot est vide.';
         result.className = 'survey-result miss';
-    } else if (reward.type === 'parts') {
-        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        const baseAmount = Math.max(1, partsPerSecond * 30);
-        const amount = Math.floor(baseAmount * mult);
-        score += amount;
-        const amountEl = document.createElement('div');
-        amountEl.className = 'reward-amount';
-        amountEl.textContent = `+${formatNumber(amount)} Parts`;
-        back.appendChild(amountEl);
-        result.textContent = `💰 +${formatNumber(amount)} Parts !`;
-        result.className = 'survey-result win';
-        updateDisplay();
-    } else if (reward.type === 'bigParts') {
-        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        const baseAmount = Math.max(1, partsPerSecond * 120);
-        const amount = Math.floor(baseAmount * mult);
-        score += amount;
-        const amountEl = document.createElement('div');
-        amountEl.className = 'reward-amount';
-        amountEl.textContent = `+${formatNumber(amount)} Parts`;
-        back.appendChild(amountEl);
-        result.textContent = `💎 GROS LOT ! +${formatNumber(amount)} Parts !`;
-        result.className = 'survey-result win';
-        updateDisplay();
-    } else if (reward.type === 'multiplier') {
-        const mult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        if (!autoMultipliers.includes(mult)) {
-            autoMultipliers.push(mult);
-            updateAutoMultiplier();
-        }
-        activeRandomBonuses.push({
-            id: 'survey-mult',
-            effect: 'multiplier',
-            multiplier: mult,
-            endTime: Date.now() + reward.duration
-        });
-        const amountEl = document.createElement('div');
-        amountEl.className = 'reward-amount';
-        amountEl.textContent = `×${mult} pendant ${reward.duration/1000}s`;
-        back.appendChild(amountEl);
-        result.textContent = `⭐ ×${mult} production pendant ${reward.duration/1000}s !`;
-        result.className = 'survey-result win';
-        updateDisplay();
-        setTimeout(() => {
-            activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== 'survey-mult');
-            autoMultipliers = autoMultipliers.filter(m => m !== mult);
-            updateAutoMultiplier();
-            updateDisplay();
-        }, reward.duration);
+        potDisplay.textContent = '';
+        document.getElementById('survey-collect-btn').style.display = 'none';
+        document.getElementById('survey-double-btn').style.display = 'none';
+        document.getElementById('survey-replay-btn').style.display = 'block';
     }
 }
+
+function surveyCollectWinnings() {
+    if (surveyState.pot > 0) {
+        score += surveyState.pot;
+        showToast(`💰 Tu encaisses ${formatNumber(surveyState.pot)} Parts !`);
+        surveyState.pot = 0;
+        updateDisplay();
+    }
+    resetPlanetarySurvey();
+}
+
+function surveyDoubleOrNothing() {
+    // Tout remiser: nouveau sondage avec le pot actuel comme mise
+    if (surveyState.pot <= 0) return;
+    surveyState.doubling = true;
+    const newBet = surveyState.pot;
+    surveyState.bet = newBet;
+    surveyState.round = 0;
+    surveyState.pot = newBet;
+
+    showSurveyScreen('play');
+    document.getElementById('survey-final-result').textContent = '';
+    showToast(`🎲 Tout remisé ! Nouveau sondage avec ${formatNumber(newBet)} Parts.`);
+    nextSurveyRound();
+}
+
+function applySurveyMultiplier(mult, duration) {
+    if (!autoMultipliers.includes(mult)) {
+        autoMultipliers.push(mult);
+        updateAutoMultiplier();
+    }
+    const bonusId = 'survey-mult-' + Date.now();
+    activeRandomBonuses.push({
+        id: bonusId,
+        effect: 'multiplier',
+        multiplier: mult,
+        endTime: Date.now() + duration
+    });
+    updateDisplay();
+    setTimeout(() => {
+        activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonusId);
+        autoMultipliers = autoMultipliers.filter(m => m !== mult);
+        updateAutoMultiplier();
+        updateDisplay();
+    }, duration);
+}
+
+// Attacher les boutons de mise
+(function attachSurveyBetButtons() {
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.survey-bet-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                startPlanetarySurveyWithBet(parseInt(btn.dataset.bet));
+            });
+        });
+    });
+})();
 
 // ============================================
 // INITIALIZATION

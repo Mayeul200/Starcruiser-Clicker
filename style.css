@@ -1427,9 +1427,11 @@ body {
 .survey-actions {
     display: flex;
     justify-content: center;
+    gap: 12px;
     margin-top: 16px;
+    flex-wrap: wrap;
 }
-.survey-play-button, .survey-replay-button {
+.survey-play-button, .survey-replay-button, .survey-action-btn {
     padding: 12px 24px;
     border: none;
     border-radius: var(--radius);
@@ -1440,15 +1442,82 @@ body {
     cursor: pointer;
     transition: all 0.2s;
 }
-.survey-play-button:hover, .survey-replay-button:hover {
+.survey-play-button:hover, .survey-replay-button:hover, .survey-action-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--glow);
 }
-.survey-play-button:disabled, .survey-replay-button:disabled {
+.survey-play-button:disabled, .survey-replay-button:disabled, .survey-action-btn:disabled {
     background: #666;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+}
+.survey-action-btn.exchange {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+.survey-action-btn.double {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+}
+.survey-action-btn.collect {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+/* Mise */
+.survey-bet-options {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+.survey-bet-btn {
+    padding: 14px 22px;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.survey-bet-btn:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+.survey-bet-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+/* Statut (manche/pot) */
+.survey-status {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+    padding: 10px;
+    background: rgba(30, 58, 138, 0.15);
+    border-radius: var(--radius);
+}
+.survey-status-item {
+    font-size: 1rem;
+    color: var(--text);
+    font-weight: 600;
+}
+.survey-status-item span {
+    color: var(--accent-light);
+    font-weight: 700;
+}
+.survey-pot-display {
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--accent-light);
+    font-weight: 700;
+    margin: 16px 0;
+    padding: 15px;
+    background: rgba(245, 158, 11, 0.1);
+    border-radius: var(--radius);
+    border: 1px solid var(--accent);
 }
 /* Responsive for mini-games */
 @media (max-width: 768px) {
