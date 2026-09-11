@@ -2034,7 +2034,6 @@ function updateBonusTimer() {
 // ============================================
 
 const SURVEY_BET_OPTIONS = [1, 10, 100];
-const SURVEY_MAX_ROUNDS = 3;
 
 // Récompenses possibles (poids relatif). Les multiplicateurs de Parts sont appliqués à la mise.
 const SURVEY_REWARDS = [
@@ -2079,7 +2078,6 @@ function updateBetButtons() {
 function showSurveyScreen(screen) {
     document.getElementById('survey-bet-screen').style.display = screen === 'bet' ? 'block' : 'none';
     document.getElementById('survey-play-screen').style.display = screen === 'play' ? 'block' : 'none';
-    document.getElementById('survey-end-screen').style.display = screen === 'end' ? 'block' : 'none';
 }
 
 function startPlanetarySurveyWithBet(bet) {
@@ -2106,11 +2104,11 @@ function nextSurveyRound() {
 
     document.getElementById('survey-round').textContent = surveyState.round;
     document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
-    document.getElementById('survey-play-intro').textContent = `Manche ${surveyState.round}/${SURVEY_MAX_ROUNDS} — Choisis une planète !`;
+    document.getElementById('survey-play-intro').textContent = `Tour ${surveyState.round} — Choisis une planète !`;
     document.getElementById('survey-result').textContent = '';
     document.getElementById('survey-result').className = 'survey-result';
-    document.getElementById('survey-keep-btn').style.display = 'none';
-    document.getElementById('survey-exchange-btn').style.display = 'none';
+    document.getElementById('survey-collect-btn').style.display = 'none';
+    document.getElementById('survey-continue-btn').style.display = 'none';
 
     const container = document.getElementById('survey-cards');
     container.innerHTML = '';
@@ -2192,13 +2190,16 @@ function revealSurveyCard(chosenCard) {
     document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
     updateDisplay();
 
-    // Proposer garder ou échanger (sauf dernière manche)
+    // Proposer encaisser ou remiser (mode infini)
     setTimeout(() => {
-        if (surveyState.round < SURVEY_MAX_ROUNDS) {
-            document.getElementById('survey-keep-btn').style.display = 'block';
-            document.getElementById('survey-exchange-btn').style.display = 'block';
+        if (surveyState.pot > 0) {
+            document.getElementById('survey-collect-btn').style.display = 'block';
+            document.getElementById('survey-continue-btn').style.display = 'block';
         } else {
-            endSurveyGame();
+            // Pot vide: partie perdue, retour à la mise
+            document.getElementById('survey-result').textContent = '💔 Partie perdue... le pot est vide.';
+            document.getElementById('survey-result').className = 'survey-result miss';
+            setTimeout(() => resetPlanetarySurvey(), 1800);
         }
     }, 1200);
 }
@@ -2211,37 +2212,6 @@ function displayRewardOnCard(card, reward) {
     if (existing) existing.remove();
 }
 
-function surveyKeepCurrent() {
-    // Garder le bonus actuel et passer à la suite sans risquer
-    nextSurveyRound();
-}
-
-function surveyExchangeCard() {
-    // Échanger: relance la manche avec de nouvelles cartes (le pot reste tel quel)
-    nextSurveyRound();
-}
-
-function endSurveyGame() {
-    showSurveyScreen('end');
-    const result = document.getElementById('survey-final-result');
-    const potDisplay = document.getElementById('survey-pot-display');
-    if (surveyState.pot > 0) {
-        result.textContent = `🎉 Partie terminée ! Tu gagnes ${formatNumber(surveyState.pot)} Parts.`;
-        result.className = 'survey-result win';
-        potDisplay.textContent = `Pot final: ${formatNumber(surveyState.pot)} Parts`;
-        document.getElementById('survey-collect-btn').style.display = 'block';
-        document.getElementById('survey-double-btn').style.display = 'block';
-        document.getElementById('survey-replay-btn').style.display = 'none';
-    } else {
-        result.textContent = '💔 Partie perdue... le pot est vide.';
-        result.className = 'survey-result miss';
-        potDisplay.textContent = '';
-        document.getElementById('survey-collect-btn').style.display = 'none';
-        document.getElementById('survey-double-btn').style.display = 'none';
-        document.getElementById('survey-replay-btn').style.display = 'block';
-    }
-}
-
 function surveyCollectWinnings() {
     if (surveyState.pot > 0) {
         score += surveyState.pot;
@@ -2250,21 +2220,6 @@ function surveyCollectWinnings() {
         updateDisplay();
     }
     resetPlanetarySurvey();
-}
-
-function surveyDoubleOrNothing() {
-    // Tout remiser: nouveau sondage avec le pot actuel comme mise
-    if (surveyState.pot <= 0) return;
-    surveyState.doubling = true;
-    const newBet = surveyState.pot;
-    surveyState.bet = newBet;
-    surveyState.round = 0;
-    surveyState.pot = newBet;
-
-    showSurveyScreen('play');
-    document.getElementById('survey-final-result').textContent = '';
-    showToast(`🎲 Tout remisé ! Nouveau sondage avec ${formatNumber(newBet)} Parts.`);
-    nextSurveyRound();
 }
 
 function applySurveyMultiplier(mult, duration) {
