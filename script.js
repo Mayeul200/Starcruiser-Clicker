@@ -2171,7 +2171,7 @@ function nextSurveyRound() {
         card.className = 'survey-card';
         card.innerHTML = `
             <div class="survey-card-inner">
-                <div class="survey-card-front">🪐</div>
+                <div class="survey-card-front"><img src="images/effects/casino/card-back.svg" class="survey-card-img" alt="Carte"></div>
                 <div class="survey-card-back">
                     <div class="reward-icon">❓</div>
                     <div class="reward-text">?</div>
