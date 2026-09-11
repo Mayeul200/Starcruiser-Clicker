@@ -1350,6 +1350,13 @@ body {
     cursor: default;
     opacity: 0.4;
 }
+.survey-card.malus .survey-card-back {
+    background: linear-gradient(135deg, #450a0a, #7f1d1d);
+    border-color: #ef4444;
+}
+.survey-card.malus .reward-text {
+    color: #fca5a5;
+}
 .survey-card.disabled:hover {
     transform: none;
     box-shadow: none;

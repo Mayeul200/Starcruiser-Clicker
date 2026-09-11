@@ -2054,6 +2054,26 @@ const SURVEY_REWARDS = [
     { type: 'nothing', weight: 37, icon: '🌑', label: 'Rien' }
 ];
 
+// Malus: apparaît à partir du palier 1 (tour 4+), de plus en plus avec la difficulté
+const SURVEY_MALUS = [
+    { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !' },
+    { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié' }
+];
+
+// Palier de difficulté (tous les 3 tours): 0 = début, 1 = tour 4-6, 2 = tour 7-9, etc.
+function getSurveyDifficulty(round) {
+    return Math.floor((round - 1) / 3);
+}
+// Nombre de cartes: 3 + palier (capé)
+function getSurveyCardCount(round) {
+    return Math.min(8, 3 + getSurveyDifficulty(round));
+}
+// Probabilité de tirer un malus augmente avec la difficulté
+function getSurveyMalusChance(round) {
+    const diff = getSurveyDifficulty(round);
+    return diff === 0 ? 0 : Math.min(0.5, 0.1 * diff);
+}
+
 let surveyState = {
     bet: 0,
     round: 0,
@@ -2130,9 +2150,14 @@ function nextSurveyRound() {
     surveyState.canChoose = true;
     surveyState.currentReward = null;
 
+    const difficulty = getSurveyDifficulty(surveyState.round);
+    const cardCount = getSurveyCardCount(surveyState.round);
+    const malusChance = getSurveyMalusChance(surveyState.round);
+
     document.getElementById('survey-round').textContent = surveyState.round;
     document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
-    document.getElementById('survey-play-intro').textContent = `Tour ${surveyState.round} — Choisis une carte !`;
+    const diffLabel = difficulty > 0 ? ` (Palier ${difficulty + 1})` : '';
+    document.getElementById('survey-play-intro').textContent = `Tour ${surveyState.round}${diffLabel} — Choisis une carte !`;
     document.getElementById('survey-result').textContent = '';
     document.getElementById('survey-result').className = 'survey-result';
     document.getElementById('survey-collect-btn').style.display = 'none';
@@ -2141,7 +2166,7 @@ function nextSurveyRound() {
     const container = document.getElementById('survey-cards');
     container.innerHTML = '';
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < cardCount; i++) {
         const card = document.createElement('div');
         card.className = 'survey-card';
         card.innerHTML = `
@@ -2153,10 +2178,23 @@ function nextSurveyRound() {
                 </div>
             </div>
         `;
-        card.dataset.reward = JSON.stringify(pickSurveyReward());
+        // Tirer un malus selon la probabilité, sinon une récompense
+        const isMalus = Math.random() < malusChance;
+        card.dataset.reward = JSON.stringify(isMalus ? pickSurveyMalus() : pickSurveyReward());
+        card.dataset.isMalus = isMalus ? '1' : '0';
         card.onclick = () => revealSurveyCard(card);
         container.appendChild(card);
     }
+}
+
+function pickSurveyMalus() {
+    const totalWeight = SURVEY_MALUS.reduce((sum, m) => sum + m.weight, 0);
+    let roll = Math.random() * totalWeight;
+    for (const malus of SURVEY_MALUS) {
+        roll -= malus.weight;
+        if (roll <= 0) return malus;
+    }
+    return SURVEY_MALUS[0];
 }
 
 function pickSurveyReward() {
@@ -2183,6 +2221,7 @@ function revealSurveyCard(chosenCard) {
     surveyState.currentReward = reward;
 
     chosenCard.classList.add('flipped');
+    if (chosenCard.dataset.isMalus === '1') chosenCard.classList.add('malus');
     displayRewardOnCard(chosenCard, reward);
 
     // Révéler les autres cartes
@@ -2191,6 +2230,7 @@ function revealSurveyCard(chosenCard) {
             if (card !== chosenCard) {
                 const otherReward = JSON.parse(card.dataset.reward);
                 card.classList.add('flipped');
+                if (card.dataset.isMalus === '1') card.classList.add('malus');
                 displayRewardOnCard(card, otherReward);
             }
         });
@@ -2198,7 +2238,15 @@ function revealSurveyCard(chosenCard) {
 
     // Calculer l'effet sur le pot
     const result = document.getElementById('survey-result');
-    if (reward.type === 'nothing') {
+    if (reward.type === 'bust') {
+        surveyState.pot = 0;
+        result.textContent = '💀 TOUT PERDU ! Le pot est vide.';
+        result.className = 'survey-result miss';
+    } else if (reward.type === 'halve') {
+        surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
+        result.textContent = '⚔️ Malus ! Le pot est réduit de moitié.';
+        result.className = 'survey-result miss';
+    } else if (reward.type === 'nothing') {
         surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
         result.textContent = '🌑 Mauvaise planète ! Le pot diminue.';
         result.className = 'survey-result miss';
