@@ -881,7 +881,7 @@ function launchRocket() {
         updateSpaceProgress();
         updateRocketConstruction();
         isLaunching = false;
-        showToast(`🚀 Mission réussie ! Distance: ${formatNumber(distance)} km`);
+        showToast(`🚀 Fusée lancée ! Distance atteinte: ${formatNumber(distance)} km`);
     }, 2500);
 }
 
@@ -1209,34 +1209,41 @@ function closeSpaceMap() {
 // ============================================
 
 function updateSpaceProgress() {
-    // Distance en temps réel (pas seulement au lancement)
-    const distance = calculateDistance();
-    const progress = calculatePlanetProgress(distance);
-    
-    // Mettre à jour l'affichage de la planète actuelle
+    // Distance atteignable en temps réel (estimation)
+    const reachableDistance = calculateDistance();
+    // Distance réellement parcourue (ne change qu'au lancement)
+    const traveledDistance = maxDistance;
+    const progress = calculatePlanetProgress(reachableDistance);
+
+    // Mettre à jour l'affichage de la planète actuelle (basé sur distance parcourue)
     const planetDisplay = document.getElementById('current-planet-display');
     if (planetDisplay) {
-        if (progress.currentPlanet) {
-            if (progress.nextPlanet) {
-                planetDisplay.innerHTML = `${progress.currentPlanet.emoji} ${progress.currentPlanet.name}: ${progress.progressPercent}%`;
+        const traveledProgress = calculatePlanetProgress(traveledDistance);
+        if (traveledProgress.currentPlanet) {
+            if (traveledProgress.nextPlanet) {
+                planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: ${traveledProgress.progressPercent}%`;
             } else {
-                planetDisplay.innerHTML = `${progress.currentPlanet.emoji} ${progress.currentPlanet.name}: 100%`;
+                planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: 100%`;
             }
         } else {
-            planetDisplay.innerHTML = `🌌 En route: ${progress.progressPercent}%`;
+            planetDisplay.innerHTML = `🌍 Terre: 0%`;
         }
     }
-    
-    // Mettre à jour la mini-carte
-    updateMiniSpaceMap(distance);
-    
+
+    // Mettre à jour la mini-carte (basé sur distance parcourue)
+    updateMiniSpaceMap(traveledDistance);
+
     // Mettre à jour les stats
     const sidebarDistance = document.getElementById('sidebar-distance');
+    const sidebarDistanceMax = document.getElementById('sidebar-distance-max');
     const sidebarBonus = document.getElementById('sidebar-bonus');
     const sidebarPlanets = document.getElementById('sidebar-planets');
-    
+
     if (sidebarDistance) {
-        sidebarDistance.textContent = formatNumber(distance) + ' km';
+        sidebarDistance.textContent = formatNumber(reachableDistance) + ' km';
+    }
+    if (sidebarDistanceMax) {
+        sidebarDistanceMax.textContent = formatNumber(traveledDistance) + ' km';
     }
     if (sidebarBonus) {
         const totalBonus = getTotalPlanetBonus();
