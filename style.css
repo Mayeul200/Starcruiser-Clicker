@@ -1842,16 +1842,24 @@ body {
     margin-left: 20px;
 }
 /* CARD COLLECTION MODAL */
-.card-collection-modal {
-    max-width: 700px;
+#card-collection-modal {
+    max-width: 750px;
     width: 90vw;
-    max-height: 80vh;
+    max-height: 85vh;
+    height: 85vh;
+}
+.card-collection-modal {
+    max-width: 750px;
+    width: 90vw;
+    max-height: 85vh;
+    height: 85vh;
     display: flex;
     flex-direction: column;
 }
 .card-collection-modal .modal-body {
     overflow-y: auto;
     flex: 1;
+    padding: 16px;
 }
 .card-collection-stats {
     display: flex;
