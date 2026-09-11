@@ -2035,6 +2035,17 @@ function updateBonusTimer() {
 
 const SURVEY_BET_OPTIONS = [1, 10, 100];
 
+// Mises calquées sur la production: 1s, 30s, 5min
+function getSurveyBetAmount(type) {
+    const pps = Math.max(1, partsPerSecond);
+    switch (type) {
+        case '1s': return Math.max(1, Math.floor(pps * 1));
+        case '30s': return Math.max(1, Math.floor(pps * 30));
+        case '5m': return Math.max(1, Math.floor(pps * 300));
+        default: return Math.max(1, Math.floor(pps * 1));
+    }
+}
+
 // Récompenses possibles (poids relatif). Les multiplicateurs de Parts sont appliqués à la mise.
 const SURVEY_REWARDS = [
     { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés' },
@@ -2064,14 +2075,15 @@ function closePlanetarySurvey() {
 function resetPlanetarySurvey() {
     surveyState = { bet: 0, round: 0, pot: 0, currentReward: null, canChoose: false, doubling: false };
     showSurveyScreen('bet');
-    document.getElementById('survey-intro').textContent = 'Choisis ta mise et sonde 3 planètes pour révéler des bonus mystères !';
+    document.getElementById('survey-intro').textContent = 'Choisis une carte et révèle un bonus ! Mode infini : encaisse ou remise à chaque tour.';
     updateBetButtons();
 }
 
 function updateBetButtons() {
-    document.querySelectorAll('.survey-bet-btn').forEach(btn => {
-        const bet = parseInt(btn.dataset.bet);
-        btn.disabled = score < bet;
+    document.querySelectorAll('.survey-bet-btn[data-bet-type]').forEach(btn => {
+        const amount = getSurveyBetAmount(btn.dataset.betType);
+        btn.textContent = `${btn.dataset.betType === '1s' ? '⏱️ 1s' : btn.dataset.betType === '30s' ? '⏱️ 30s' : '⏱️ 5 min'} (${formatNumber(amount)})`;
+        btn.disabled = score < amount;
     });
 }
 
@@ -2081,8 +2093,9 @@ function showSurveyScreen(screen) {
 }
 
 function startPlanetarySurveyWithBet(bet) {
+    bet = Math.max(1, Math.floor(bet));
     if (score < bet) {
-        showToast(`❌ Pas assez de pièces !`);
+        showToast(`❌ Pas assez de pièces ! Il faut ${formatNumber(bet)} Parts.`);
         return;
     }
     score -= bet;
@@ -2097,6 +2110,21 @@ function startPlanetarySurveyWithBet(bet) {
     nextSurveyRound();
 }
 
+function startPlanetarySurveyFromType(type) {
+    startPlanetarySurveyWithBet(getSurveyBetAmount(type));
+}
+
+function startPlanetarySurveyCustom() {
+    const input = document.getElementById('survey-custom-bet-input');
+    const val = parseInt(input.value);
+    if (!val || val < 1) {
+        showToast('❌ Entre une mise valide.');
+        return;
+    }
+    input.value = '';
+    startPlanetarySurveyWithBet(val);
+}
+
 function nextSurveyRound() {
     surveyState.round++;
     surveyState.canChoose = true;
@@ -2104,7 +2132,7 @@ function nextSurveyRound() {
 
     document.getElementById('survey-round').textContent = surveyState.round;
     document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
-    document.getElementById('survey-play-intro').textContent = `Tour ${surveyState.round} — Choisis une planète !`;
+    document.getElementById('survey-play-intro').textContent = `Tour ${surveyState.round} — Choisis une carte !`;
     document.getElementById('survey-result').textContent = '';
     document.getElementById('survey-result').className = 'survey-result';
     document.getElementById('survey-collect-btn').style.display = 'none';
@@ -2246,11 +2274,15 @@ function applySurveyMultiplier(mult, duration) {
 // Attacher les boutons de mise
 (function attachSurveyBetButtons() {
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.survey-bet-btn').forEach(btn => {
+        document.querySelectorAll('.survey-bet-btn[data-bet-type]').forEach(btn => {
             btn.addEventListener('click', () => {
-                startPlanetarySurveyWithBet(parseInt(btn.dataset.bet));
+                startPlanetarySurveyFromType(btn.dataset.betType);
             });
         });
+        const customBtn = document.getElementById('survey-custom-bet-btn');
+        if (customBtn) {
+            customBtn.addEventListener('click', startPlanetarySurveyCustom);
+        }
     });
 })();
 

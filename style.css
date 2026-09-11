@@ -1490,6 +1490,28 @@ body {
     cursor: not-allowed;
     transform: none;
 }
+.survey-custom-bet {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    margin-top: 8px;
+}
+#survey-custom-bet-input {
+    width: 140px;
+    padding: 12px 14px;
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius);
+    background: var(--bg-panel);
+    color: var(--text);
+    font-size: 1rem;
+}
+#survey-custom-bet-input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+}
 /* Statut (manche/pot) */
 .survey-status {
     display: flex;
