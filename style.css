@@ -59,6 +59,11 @@ body {
     width: auto;
     object-fit: contain;
 }
+.top-logo-text-img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
 .top-bar-title {
     color: var(--accent-light);
     font-weight: 700;
