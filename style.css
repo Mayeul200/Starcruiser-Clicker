@@ -44,10 +44,26 @@ body {
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     padding: 0 16px;
     z-index: 1000;
     box-shadow: var(--shadow);
+}
+.top-bar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.top-logo-img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+}
+.top-bar-title {
+    color: var(--accent-light);
+    font-weight: 700;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
 }
 /* UPGRADES BAR (in center) */
 .upgrades-bar {
