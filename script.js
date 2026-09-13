@@ -33,6 +33,8 @@ const SAVE_INTERVAL_MS = 30000;
 const TOAST_DURATION_MS = 3000;
 const MAX_BUILDING_DISPLAY = 100;
 const BUILDING_UPDATE_INTERVAL_MS = 500;
+const SPACE_UPDATE_INTERVAL_MS = 500;
+const ROCKET_UPDATE_INTERVAL_MS = 1000;
 
 // ============================================
 // GAME DATA
@@ -153,6 +155,8 @@ let unlockedBuildings = new Set();
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
+let lastSpaceProgressUpdate = 0;
+let lastRocketConstructionUpdate = 0;
 let gameStartTime = 0;
 let buyMultiplier = 1;
 let clickedBonusesCount = 0;
@@ -1754,8 +1758,14 @@ function gameLoop() {
         updateAllBuildingButtons();
     }
     updateDisplay();
+    if (Date.now() - lastSpaceProgressUpdate > SPACE_UPDATE_INTERVAL_MS) {
+        lastSpaceProgressUpdate = Date.now();
         updateSpaceProgress();
+    }
+    if (Date.now() - lastRocketConstructionUpdate > ROCKET_UPDATE_INTERVAL_MS) {
+        lastRocketConstructionUpdate = Date.now();
         updateRocketConstruction();
+    }
     checkBuildingUnlocks();
     checkTrophies();
 }
