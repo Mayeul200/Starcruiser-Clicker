@@ -1778,8 +1778,8 @@ body {
     height: 85vh;
 }
 #card-collection-modal.modal {
-    width: 55%;
-    max-width: 55%;
+    width: calc(55% + 20px);
+    max-width: calc(55% + 20px);
     top: var(--top-height);
     left: 50%;
     transform: translateX(-50%);
