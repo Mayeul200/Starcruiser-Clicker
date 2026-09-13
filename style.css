@@ -71,43 +71,6 @@ body {
     letter-spacing: 0.5px;
 }
 /* UPGRADES BAR (in center) */
-.upgrades-bar {
-    height: 48px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    overflow: visible;
-    padding: 0 15px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg-panel);
-    position: relative;
-    z-index: 200;
-    box-shadow: var(--shadow);
-}
-.upgrades-title {
-    color: var(--accent-light);
-    font-weight: 600;
-    font-size: 0.95rem;
-    margin-right: 12px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-shadow: var(--glow);
-}
-.upgrades-container-center {
-    display: flex;
-    gap: 6px;
-    height: 100%;
-    align-items: center;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0 0 0 10px;
-    margin-left: 0;
-    flex: 1;
-    min-width: 0;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
 .upgrades-container-center::-webkit-scrollbar {
     display: none;
 }
@@ -301,16 +264,6 @@ body {
     overflow: visible;
 }
 /* LEFT PANEL */
-.left-panel {
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-    color: var(--text);
-}
 .left-panel h3 {
     color: var(--accent-light);
     margin-bottom: 8px;
@@ -338,24 +291,6 @@ body {
     position: relative;
     z-index: 1;
 }
-.medal {
-    position: absolute;
-    right: 10%;
-    top: 25%;
-    transform: translateY(-50%);
-    width: 220px;
-    height: 220px;
-    background: linear-gradient(135deg, var(--primary), var(--accent), var(--primary-dark));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 3px solid var(--primary-light);
-    box-shadow: var(--shadow-lg), var(--glow);
-    transition: all 0.2s;
-    animation: pulse 3s infinite;
-}
 @keyframes pulse {
     0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
     50% { box-shadow: 0 0 20px rgba(30, 58, 138, 0.8), var(--shadow-lg); }
@@ -366,18 +301,6 @@ body {
 }
 .medal:active {
     transform: scale(0.95);
-}
-.medal-emoji {
-    font-size: 7rem;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.7));
-}
-.counters {
-    text-align: center;
-}
-.counter {
-    font-size: 1.3rem;
-    margin: 4px 0;
-    color: var(--text);
 }
 .counter span {
     color: var(--accent-light);
@@ -476,7 +399,6 @@ body {
     opacity: 0.7;
     pointer-events: none;
     display: block;
-    margin: 0 auto;
     filter: blur(0.5px);
 }
 
@@ -515,18 +437,6 @@ body {
     opacity: 0.7;
     margin-left: -5px;
 }
-
-/* Transparence générale sur les images des bâtiments */
-.building-image {
-    opacity: 0.7;
-}
-
-
-/* Images des bâtiments avec transparence */
-.building-image {
-    opacity: 0.7;
-}
-
 
 .building-ownership {
     font-size: 0.9rem;
@@ -781,24 +691,6 @@ body {
    ROCKET LAUNCH SYSTEM
    ============================================ */
 /* Launch Button */
-.launch-button {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 20px auto;
-    box-shadow: var(--shadow-lg), 0 0 20px rgba(239, 68, 68, 0.4);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
 .launch-button:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg), 0 0 30px rgba(239, 68, 68, 0.6);
@@ -812,12 +704,6 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
-}
-.launch-button-icon {
-    font-size: 1.5rem;
-}
-.launch-button-text {
-    letter-spacing: 1px;
 }
 /* Launch Results Modal */
 .launch-modal {
@@ -1120,6 +1006,10 @@ body {
     border-right: 1px solid var(--border);
     padding: 15px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--text);
 }
 .left-panel h3 {
     color: var(--text);
@@ -1751,6 +1641,7 @@ body {
     transition: all 0.2s ease;
     z-index: 100;
     border: 2px solid var(--border-light);
+    animation: pulse 3s infinite;
 }
 .medal:hover {
     transform: translateY(-50%) scale(1.05);
@@ -1786,6 +1677,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    overflow: hidden;
 }
 .launch-button:hover {
     transform: translateX(-50%) translateY(-2px);
@@ -1804,6 +1696,7 @@ body {
 }
 .launch-button-text {
     font-size: 0.9rem;
+    letter-spacing: 1px;
 }
 /* Compteurs */
 .counters {
@@ -1850,16 +1743,32 @@ body {
     display: flex;
     align-items: center;
     padding: 0 10px;
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: visible;
 }
 .upgrades-title {
     color: white;
     font-size: 0.9rem;
     font-weight: bold;
+    margin-right: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-shadow: var(--glow);
 }
 .upgrades-container-center {
     display: flex;
     gap: 10px;
     margin-left: 20px;
+    height: 100%;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0 0 10px;
+    flex: 1;
+    min-width: 0;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 /* CARD COLLECTION MODAL */
 #card-collection-modal {
