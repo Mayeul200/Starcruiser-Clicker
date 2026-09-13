@@ -1777,7 +1777,7 @@ body {
     max-height: 85vh;
     height: 85vh;
 }
-.card-collection-modal {
+#card-collection-modal.modal {
     width: 55%;
     max-width: 55%;
     top: var(--top-height);
@@ -1785,6 +1785,10 @@ body {
     transform: translateX(-50%);
     height: calc(100vh - var(--top-height));
     max-height: calc(100vh - var(--top-height));
+}
+.card-collection-modal {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
