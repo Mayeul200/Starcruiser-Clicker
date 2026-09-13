@@ -1216,18 +1216,21 @@ body {
 /* ============================================
    PLANETARY SURVEY MINI-GAME
    ============================================ */
-#planetary-survey-modal {
-    max-width: 600px;
-    width: 90%;
-    max-height: 80vh;
-    height: 80vh;
+#planetary-survey-modal.modal {
+    width: calc(55% + 20px);
+    max-width: calc(55% + 20px);
+    top: var(--top-height);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(100vh - var(--top-height));
+    max-height: calc(100vh - var(--top-height));
 }
 .planetary-survey-modal {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
     box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
-    max-height: 80vh;
-    height: 80vh;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
