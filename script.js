@@ -1515,7 +1515,7 @@ function renderUpgrades() {
 
             const img = document.createElement('img');
             img.className = 'upgrade-img';
-            img.src = 'images/cursor.png';
+            img.src = 'images/cursor.svg';
             img.alt = upgrade.name;
             upgradeElement.appendChild(img);
 
