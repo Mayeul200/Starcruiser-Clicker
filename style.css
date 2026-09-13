@@ -1778,10 +1778,13 @@ body {
     height: 85vh;
 }
 .card-collection-modal {
-    max-width: 750px;
-    width: 90vw;
-    max-height: 85vh;
-    height: 85vh;
+    width: 55%;
+    max-width: 55%;
+    top: var(--top-height);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(100vh - var(--top-height));
+    max-height: calc(100vh - var(--top-height));
     display: flex;
     flex-direction: column;
 }
