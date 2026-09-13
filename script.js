@@ -2304,9 +2304,9 @@ const CARD_SETS = {
 };
 
 const BOOSTERS = {
-    standard:  { name: 'Standard',   cardCount: 3, cost: () => Math.max(100, Math.floor(partsPerSecond * 60)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
-    premium:   { name: 'Premium',    cardCount: 5, cost: () => Math.max(500, Math.floor(partsPerSecond * 300)),    rarities: { common: 0.55, rare: 0.33, epic: 0.10, legendary: 0.02 } },
-    legendary: { name: 'Légendaire', cardCount: 5, cost: () => Math.max(2000, Math.floor(partsPerSecond * 1800)), rarities: { common: 0.30, rare: 0.40, epic: 0.21, legendary: 0.08, alternative: 0.01 } }
+    standard:  { name: 'Standard',   cardCount: 1, cost: () => Math.max(100, Math.floor(partsPerSecond * 30)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
+    premium:   { name: 'Premium',    cardCount: 2, cost: () => Math.max(500, Math.floor(partsPerSecond * 150)),    rarities: { common: 0.50, rare: 0.30, epic: 0.15, legendary: 0.04, alternative: 0.01 } },
+    legendary: { name: 'Légendaire', cardCount: 3, cost: () => Math.max(2000, Math.floor(partsPerSecond * 600)),  rarities: { common: 0.25, rare: 0.30, epic: 0.25, legendary: 0.15, alternative: 0.05 } }
 };
 
 let cardCollection = {};
