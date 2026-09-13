@@ -2269,33 +2269,34 @@ function applySurveyMultiplier(mult, duration) {
 // ============================================
 
 const CARD_RARITIES = {
-    common:    { name: 'Commune',    color: '#94a3b8', glow: 'rgba(148,163,184,0.4)', bonusMult: 0.01 },
-    rare:      { name: 'Rare',       color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.03 },
-    epic:      { name: 'Épique',    color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.08 },
-    legendary: { name: 'Légendaire', color: '#fbbf24', glow: 'rgba(251,191,36,0.7)',  bonusMult: 0.20 }
+    common:     { name: 'Commune',     color: '#94a3b8', glow: 'rgba(148,163,184,0.4)', bonusMult: 0.01 },
+    rare:       { name: 'Rare',        color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.03 },
+    epic:       { name: 'Épique',     color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.08 },
+    legendary:  { name: 'Légendaire',  color: '#fbbf24', glow: 'rgba(251,191,36,0.7)', bonusMult: 0.20 },
+    alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
 };
 
 const COLLECTIBLE_CARDS = [
-    { id: 'earth-card',     setId: 'beginning',    name: 'Terre',            rarity: 'common',    icon: '🌍' , imgPath: 'images/cards/collection/earth-card.png' },
-    { id: 'moon-card',      setId: 'beginning',    name: 'Lune',             rarity: 'common',    icon: '🌙' , imgPath: 'images/cards/collection/moon-card.png' },
-    { id: 'mars-card',      setId: 'beginning',    name: 'Mars',             rarity: 'rare',      icon: '💫' , imgPath: 'images/cards/collection/mars-card.png' },
-    { id: 'neptune-card',   setId: 'beginning',    name: 'Neptune',          rarity: 'rare',      icon: '💫' , imgPath: 'images/cards/collection/neptune-card.png' },
-    { id: 'pluto-card',     setId: 'beginning',    name: 'Pluton',           rarity: 'epic',      icon: '💫' , imgPath: 'images/cards/collection/pluto-card.png' },
-    { id: 'oort-card',      setId: 'beginning',    name: 'Nuage d\'Oort',     rarity: 'epic',      icon: '🌀' , imgPath: 'images/cards/collection/oort-card.png' },
-    { id: 'proxima-card',   setId: 'beginning',    name: 'Proxima Centauri', rarity: 'legendary', icon: '☀️' , imgPath: 'images/cards/collection/proxima-card.png' },
-    { id: 'sirius-card',    setId: 'beginning',    name: 'Sirius',           rarity: 'legendary', icon: '🌟' , imgPath: 'images/cards/collection/sirius-card.png' },
-    { id: 'wrench-card',    setId: 'beginning',  name: 'Atelier',          rarity: 'common',    icon: '🔧' , imgPath: 'images/cards/collection/wrench-card.png' },
-    { id: 'factory-card',   setId: 'beginning',  name: 'Usine',            rarity: 'common',    icon: '🏭' , imgPath: 'images/cards/collection/factory-card.png' },
-    { id: 'lab-card',       setId: 'beginning',  name: 'Laboratoire',      rarity: 'rare',      icon: '🧪' , imgPath: 'images/cards/collection/lab-card.png' },
-    { id: 'launchpad-card', setId: 'beginning',  name: 'Pas de tir',       rarity: 'rare',      icon: '🚀' , imgPath: 'images/cards/collection/launchpad-card.png' },
-    { id: 'hq-card',        setId: 'beginning',  name: 'QG Spatial',       rarity: 'epic',      icon: '🏛' , imgPath: 'images/cards/collection/hq-card.png' },
-    { id: 'mining-card',    setId: 'beginning',  name: 'Mine stellaire',   rarity: 'legendary', icon: '⛏️' , imgPath: 'images/cards/collection/mining-card.png' },
-    { id: 'meteor-card',    setId: 'beginning',     name: 'Pluie de météores', rarity: 'common',   icon: '💫' , imgPath: 'images/cards/collection/meteor-card.png' },
-    { id: 'flare-card',     setId: 'beginning',     name: 'Éruption solaire', rarity: 'rare',      icon: '☀️' , imgPath: 'images/cards/collection/flare-card.png' },
-    { id: 'comet-card',     setId: 'beginning',     name: 'Comète',          rarity: 'rare',      icon: '💫' , imgPath: 'images/cards/collection/comet-card.png' },
-    { id: 'nova-card',      setId: 'beginning',     name: 'Nova',             rarity: 'epic',      icon: '🌟' , imgPath: 'images/cards/collection/nova-card.png' },
-    { id: 'blackhole-card', setId: 'beginning',     name: 'Trou noir',        rarity: 'epic',      icon: '🌀' , imgPath: 'images/cards/collection/blackhole-card.png' },
-    { id: 'supernova-card', setId: 'beginning',     name: 'Supernova',        rarity: 'legendary', icon: '🌟' , imgPath: 'images/cards/collection/supernova-card.png' }
+    { id: 'earth-card',     setId: 'beginning', name: 'Terre',            rarity: 'common',      icon: '🌍', imgPath: 'images/cards/collection/earth-card.png' },
+    { id: 'moon-card',      setId: 'beginning', name: 'Lune',             rarity: 'common',      icon: '🌙', imgPath: 'images/cards/collection/moon-card.png' },
+    { id: 'meteor-card',    setId: 'beginning', name: 'Pluie de météores', rarity: 'common',      icon: '💫', imgPath: 'images/cards/collection/meteor-card.png' },
+    { id: 'wrench-card',    setId: 'beginning', name: 'Atelier',          rarity: 'common',      icon: '🔧', imgPath: 'images/cards/collection/wrench-card.png' },
+    { id: 'factory-card',   setId: 'beginning', name: 'Usine',            rarity: 'common',      icon: '🏭', imgPath: 'images/cards/collection/factory-card.png' },
+    { id: 'hq-card',        setId: 'beginning', name: 'QG Spatial',       rarity: 'common',      icon: '🏛️', imgPath: 'images/cards/collection/hq-card.png' },
+    { id: 'nova-card',      setId: 'beginning', name: 'Nova',             rarity: 'common',      icon: '🌟', imgPath: 'images/cards/collection/nova-card.png' },
+    { id: 'mining-card',    setId: 'beginning', name: 'Mine stellaire',   rarity: 'common',      icon: '⛏️', imgPath: 'images/cards/collection/mining-card.png' },
+    { id: 'mars-card',      setId: 'beginning', name: 'Mars',             rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/mars-card.png' },
+    { id: 'neptune-card',   setId: 'beginning', name: 'Neptune',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/neptune-card.png' },
+    { id: 'lab-card',       setId: 'beginning', name: 'Laboratoire',      rarity: 'rare',        icon: '🧪', imgPath: 'images/cards/collection/lab-card.png' },
+    { id: 'launchpad-card', setId: 'beginning', name: 'Pas de tir',       rarity: 'rare',        icon: '🚀', imgPath: 'images/cards/collection/launchpad-card.png' },
+    { id: 'flare-card',     setId: 'beginning', name: 'Éruption solaire', rarity: 'rare',   icon: '☀️', imgPath: 'images/cards/collection/flare-card.png' },
+    { id: 'comet-card',     setId: 'beginning', name: 'Comète',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/comet-card.png' },
+    { id: 'pluto-card',     setId: 'beginning', name: 'Pluton',           rarity: 'epic',        icon: '💫', imgPath: 'images/cards/collection/pluto-card.png' },
+    { id: 'oort-card',      setId: 'beginning', name: 'Nuage d\'Oort',     rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/oort-card.png' },
+    { id: 'blackhole-card', setId: 'beginning', name: 'Trou noir',        rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/blackhole-card.png' },
+    { id: 'proxima-card',   setId: 'beginning', name: 'Proxima Centauri', rarity: 'legendary',   icon: '☀️', imgPath: 'images/cards/collection/proxima-card.png' },
+    { id: 'supernova-card', setId: 'beginning', name: 'Supernova',        rarity: 'legendary',   icon: '🌟', imgPath: 'images/cards/collection/supernova-card.png' },
+    { id: 'sirius-card',    setId: 'beginning', name: 'Sirius',           rarity: 'alternative', icon: '⭐', imgPath: 'images/cards/collection/sirius-card.png' }
 ];
 
 const CARD_SETS = {
@@ -2305,7 +2306,7 @@ const CARD_SETS = {
 const BOOSTERS = {
     standard:  { name: 'Standard',   cardCount: 3, cost: () => Math.max(100, Math.floor(partsPerSecond * 60)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
     premium:   { name: 'Premium',    cardCount: 5, cost: () => Math.max(500, Math.floor(partsPerSecond * 300)),    rarities: { common: 0.55, rare: 0.33, epic: 0.10, legendary: 0.02 } },
-    legendary: { name: 'Légendaire', cardCount: 5, cost: () => Math.max(2000, Math.floor(partsPerSecond * 1800)), rarities: { common: 0.30, rare: 0.40, epic: 0.22, legendary: 0.08 } }
+    legendary: { name: 'Légendaire', cardCount: 5, cost: () => Math.max(2000, Math.floor(partsPerSecond * 1800)), rarities: { common: 0.30, rare: 0.40, epic: 0.21, legendary: 0.08, alternative: 0.01 } }
 };
 
 let cardCollection = {};

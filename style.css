@@ -1967,6 +1967,10 @@ body {
 .cc-album-card.rarity-legendary {
     background: linear-gradient(135deg, #78350f, #1e1b4b);
 }
+.cc-reveal-card.rarity-alternative,
+.cc-album-card.rarity-alternative {
+    background: linear-gradient(135deg, #881337, #1e1b4b);
+}
 
 /* Glow par rareté — uniquement sur la face avant (reveal back / album) */
 .cc-reveal-card.rarity-common .cc-reveal-back,
@@ -1984,6 +1988,10 @@ body {
 .cc-reveal-card.rarity-legendary .cc-reveal-back,
 .cc-album-card.rarity-legendary {
     box-shadow: 0 0 20px rgba(251, 191, 36, 0.7);
+}
+.cc-reveal-card.rarity-alternative .cc-reveal-back,
+.cc-album-card.rarity-alternative {
+    box-shadow: 0 0 24px rgba(244, 63, 94, 0.8);
 }
 .cc-card-rarity {
     font-size: 0.7rem;
