@@ -1935,7 +1935,6 @@ body {
     justify-content: center;
 }
 .cc-reveal-front {
-    border: 2px solid var(--primary-light);
     box-shadow: var(--shadow);
 }
 .cc-reveal-back {
@@ -1946,26 +1945,36 @@ body {
 .cc-reveal-card.rarity-common,
 .cc-album-card.rarity-common {
     background: linear-gradient(135deg, #475569, #1e293b);
-    border: 2px solid #94a3b8;
-    box-shadow: 0 0 12px rgba(148, 163, 184, 0.3);
 }
 .cc-reveal-card.rarity-rare,
 .cc-album-card.rarity-rare {
     background: linear-gradient(135deg, #1e3a8a, #1e1b4b);
-    border: 2px solid #3b82f6;
-    box-shadow: 0 0 14px rgba(59, 130, 246, 0.4);
 }
 .cc-reveal-card.rarity-epic,
 .cc-album-card.rarity-epic {
     background: linear-gradient(135deg, #581c87, #1e1b4b);
-    border: 2px solid #a855f7;
-    box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
 }
 .cc-reveal-card.rarity-legendary,
 .cc-album-card.rarity-legendary {
     background: linear-gradient(135deg, #78350f, #1e1b4b);
-    border: 2px solid #fbbf24;
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+}
+
+/* Glow par rareté — uniquement sur la face avant (reveal back / album) */
+.cc-reveal-card.rarity-common .cc-reveal-back,
+.cc-album-card.rarity-common {
+    box-shadow: 0 0 12px rgba(148, 163, 184, 0.4);
+}
+.cc-reveal-card.rarity-rare .cc-reveal-back,
+.cc-album-card.rarity-rare {
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
+}
+.cc-reveal-card.rarity-epic .cc-reveal-back,
+.cc-album-card.rarity-epic {
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.6);
+}
+.cc-reveal-card.rarity-legendary .cc-reveal-back,
+.cc-album-card.rarity-legendary {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.7);
 }
 .cc-card-rarity {
     font-size: 0.7rem;
@@ -2068,7 +2077,6 @@ body {
 }
 .cc-album-card.locked {
     background: linear-gradient(135deg, #0f172a, #1e293b);
-    border: 2px dashed #334155;
     opacity: 0.6;
 }
 .cc-album-card.locked .cc-card-icon {
