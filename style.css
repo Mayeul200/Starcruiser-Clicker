@@ -1987,19 +1987,53 @@ body {
     width: 160px;
     height: 224px;
     border-radius: var(--radius);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
+    padding: 0;
     box-sizing: border-box;
     position: relative;
     opacity: 0;
+    perspective: 1000px;
+    cursor: pointer;
     animation: cc-reveal 0.5s ease forwards;
+    transition: transform 0.2s;
+}
+.cc-reveal-card:hover:not(.flipped) {
+    transform: translateY(-6px) scale(1.04);
 }
 @keyframes cc-reveal {
-    from { opacity: 0; transform: scale(0.5) rotateY(180deg); }
-    to   { opacity: 1; transform: scale(1) rotateY(0deg); }
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.cc-reveal-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s ease;
+    transform-style: preserve-3d;
+}
+.cc-reveal-card.flipped .cc-reveal-inner {
+    transform: rotateY(180deg);
+}
+.cc-reveal-front,
+.cc-reveal-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cc-reveal-front {
+    border: 2px solid var(--primary-light);
+    box-shadow: var(--shadow);
+}
+.cc-reveal-back {
+    transform: rotateY(180deg);
+    padding: 4px;
+    box-sizing: border-box;
 }
 .cc-reveal-card.rarity-common,
 .cc-album-card.rarity-common {

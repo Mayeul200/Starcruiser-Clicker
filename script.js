@@ -2537,15 +2537,28 @@ function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
     cards.forEach((card, idx) => {
-        const rarity = CARD_RARITIES[card.rarity];
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
         el.className = 'cc-reveal-card rarity-' + card.rarity;
         el.style.animationDelay = (idx * 0.15) + 's';
         el.innerHTML =
-            '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' +
-            (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '');
+            '<div class="cc-reveal-inner">' +
+                '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
+                '<div class="cc-reveal-back">' +
+                    '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' +
+                    (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '') +
+                '</div>' +
+            '</div>';
+        el.addEventListener('click', function () {
+            el.classList.add('flipped');
+        });
         container.appendChild(el);
+    });
+}
+
+function revealAllCards() {
+    document.querySelectorAll('#cc-reveal-cards .cc-reveal-card:not(.flipped)').forEach(function (el) {
+        el.classList.add('flipped');
     });
 }
 
