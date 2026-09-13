@@ -34,7 +34,6 @@ const TOAST_DURATION_MS = 3000;
 const MAX_BUILDING_DISPLAY = 100;
 const BUILDING_UPDATE_INTERVAL_MS = 500;
 const SPACE_UPDATE_INTERVAL_MS = 500;
-const ROCKET_UPDATE_INTERVAL_MS = 1000;
 
 // ============================================
 // GAME DATA
@@ -156,7 +155,6 @@ let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
 let lastSpaceProgressUpdate = 0;
-let lastRocketConstructionUpdate = 0;
 let gameStartTime = 0;
 let buyMultiplier = 1;
 let clickedBonusesCount = 0;
@@ -185,9 +183,6 @@ const ROCKET_PART_POSITIONS = {
     'launch-pad': { position: 'bottom', emoji: '♁', name: 'Pas de tir', class: 'rocket-engine' },
     'astronaut': { position: 'top', emoji: '♁', name: 'Astronaute', class: 'rocket-nose' }
 };
-
-// Track which parts have been unlocked/built
-let rocketPartsBuilt = new Set();
 
 let isLaunching = false;
 
@@ -617,14 +612,6 @@ function buyBuilding(buildingId) {
         checkBuildingUnlocks();
         const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
         showToast(`\u2705 +${buildingsToBuy} ${building.name}${maxText}`);
-        // Mettre à jour la scène de construction
-        updateConstructionScene();
-        // Mettre à jour la construction de la fusée
-        if (building.count === buildingsToBuy) {
-            highlightNewRocketPart(building.id);
-        } else {
-            updateRocketConstruction();
-        }
         checkTrophies();
     } else {
         showToast("\u274c Pas assez de Parts");
@@ -883,7 +870,7 @@ function launchRocket() {
         lastLaunchDistance = distance;
         showSpaceMap(distance);
         updateSpaceProgress();
-        updateRocketConstruction();
+        updateConstructionScene();
         isLaunching = false;
         showToast(`🚀 Fusée lancée ! Distance atteinte: ${formatNumber(distance)} km`);
     }, 2500);
@@ -1201,7 +1188,7 @@ function confirmSpaceMapAndReset() {
     showLaunchResults(lastLaunchDistance);
     isLaunching = false;
         updateSpaceProgress();
-        updateRocketConstruction();
+        updateConstructionScene();
 }
 
 function closeSpaceMap() {
@@ -1387,112 +1374,6 @@ function updateMiniSpaceMap(distance) {
     }
 }
 
-// ============================================
-// ROCKET CONSTRUCTION FUNCTIONS
-// ============================================
-
-function updateRocketConstruction() {
-    const rocketBase = document.getElementById('rocket-base');
-    if (!rocketBase) return;
-    
-    // Clear existing parts
-    rocketBase.innerHTML = '';
-    
-    // Add rocket structure
-    const rocketStructure = document.createElement('div');
-    rocketStructure.className = 'rocket-structure';
-    
-    // Add each part that has been built (count > 0)
-    ROCKET_PARTS.forEach(part => {
-        // Skip workshop (it's the atelier, not part of the rocket)
-        if (part.id === 'workshop') return;
-        
-        if (part.count > 0 && !rocketPartsBuilt.has(part.id)) {
-            rocketPartsBuilt.add(part.id);
-        }
-        
-        if (rocketPartsBuilt.has(part.id)) {
-            const partElement = document.createElement('div');
-            partElement.className = 'section-part unlocked';
-            partElement.innerHTML = part.image;
-            partElement.title = part.name;
-            
-            // Position based on part type
-            if (part.id === 'wings') {
-                // Wings go on both sides
-                const leftWing = partElement.cloneNode(true);
-                leftWing.classList.add('rocket-wings');
-                rocketStructure.appendChild(leftWing);
-                
-                const rightWing = partElement.cloneNode(true);
-                rightWing.classList.add('rocket-wings', 'right');
-                rocketStructure.appendChild(rightWing);
-            } else {
-                partElement.classList.add(getRocketPartClass(part.id));
-                rocketStructure.appendChild(partElement);
-            }
-        }
-    });
-    
-    rocketBase.appendChild(rocketStructure);
-    
-    // Add floating parts list
-    addFloatingPartsList();
-}
-
-function getRocketPartClass(partId) {
-    const positions = {
-        'nozzles': 'rocket-engine',
-        'engines': 'rocket-engine',
-        'fuel-tank': 'rocket-body',
-        'rocket-body': 'rocket-body',
-        'cockpit': 'rocket-nose',
-        'shield': 'rocket-nose',
-        'launch-pad': 'rocket-engine',
-        'astronaut': 'rocket-nose'
-    };
-    return positions[partId] || 'rocket-body';
-}
-
-function addFloatingPartsList() {
-    const rocketBase = document.getElementById('rocket-base');
-    if (!rocketBase) return;
-    
-    // Create floating parts list
-    const partsList = document.createElement('div');
-    partsList.className = 'rocket-parts-list';
-    partsList.style.marginTop = '15px';
-    partsList.style.display = 'flex';
-    partsList.style.flexWrap = 'wrap';
-    partsList.style.gap = '8px';
-    partsList.style.justifyContent = 'center';
-    
-    // Add each built part
-    ROCKET_PARTS.forEach(part => {
-        if (part.id === 'workshop') return; // Skip workshop
-        
-        if (rocketPartsBuilt.has(part.id)) {
-            const partElement = document.createElement('div');
-            partElement.className = 'rocket-part';
-            partElement.innerHTML = `
-                <span class="part-emoji">${part.image}</span>
-                <span class="part-name">${part.name}</span>
-                <span class="part-count">x${part.count}</span>
-            `;
-            partsList.appendChild(partElement);
-        }
-    });
-    
-    rocketBase.appendChild(partsList);
-}
-
-function highlightNewRocketPart(partId) {
-    // Add visual feedback when a new part is bought
-    if (partId === 'workshop') return; // Skip workshop
-    
-    // Update rocket construction display
-    updateRocketConstruction();
-}
 
 
 
@@ -1761,10 +1642,6 @@ function gameLoop() {
     if (Date.now() - lastSpaceProgressUpdate > SPACE_UPDATE_INTERVAL_MS) {
         lastSpaceProgressUpdate = Date.now();
         updateSpaceProgress();
-    }
-    if (Date.now() - lastRocketConstructionUpdate > ROCKET_UPDATE_INTERVAL_MS) {
-        lastRocketConstructionUpdate = Date.now();
-        updateRocketConstruction();
     }
     checkBuildingUnlocks();
     checkTrophies();
