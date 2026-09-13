@@ -1825,15 +1825,18 @@ body {
 }
 .cc-booster-options {
     display: flex;
-    gap: 12px;
+    gap: 18px;
     justify-content: center;
     flex-wrap: wrap;
     margin-bottom: 18px;
 }
 .cc-booster-btn {
     flex: 1;
-    min-width: 180px;
-    max-width: 220px;
+    min-width: 200px;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background: linear-gradient(135deg, #1e3a8a, #1e1b4b);
     border: 2px solid var(--primary-light);
     border-radius: var(--radius);
@@ -1855,6 +1858,19 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
+}
+.cc-booster-btn:disabled .cc-booster-img {
+    filter: grayscale(0.8);
+}
+.cc-booster-img {
+    width: 100%;
+    max-width: 160px;
+    height: auto;
+    aspect-ratio: 540 / 920;
+    object-fit: contain;
+    border-radius: calc(var(--radius) - 4px);
+    margin-bottom: 10px;
+    pointer-events: none;
 }
 .cc-booster-name {
     font-size: 1.1rem;
