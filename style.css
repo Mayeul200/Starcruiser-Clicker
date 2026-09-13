@@ -1809,7 +1809,7 @@ body {
 /* Compteurs */
 .counters {
     position: absolute;
-    top: 0;
+    top: 48px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
