@@ -2060,11 +2060,13 @@ body {
 }
 .cc-album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+    grid-template-columns: repeat(auto-fill, 192px);
     gap: 14px;
+    justify-content: center;
 }
 .cc-album-card {
-    height: 235px;
+    width: 192px;
+    height: 269px;
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
