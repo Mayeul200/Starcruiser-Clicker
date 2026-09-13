@@ -1892,8 +1892,8 @@ body {
     margin-bottom: 16px;
 }
 .cc-reveal-card {
-    width: 160px;
-    height: 224px;
+    width: 192px;
+    height: 269px;
     border-radius: var(--radius);
     padding: 0;
     box-sizing: border-box;
@@ -1939,7 +1939,6 @@ body {
 }
 .cc-reveal-back {
     transform: rotateY(180deg);
-    padding: 4px;
     box-sizing: border-box;
 }
 .cc-reveal-card.rarity-common,
@@ -2061,19 +2060,19 @@ body {
 }
 .cc-album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
     gap: 14px;
 }
 .cc-album-card {
-    height: 196px;
+    height: 235px;
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4px;
     box-sizing: border-box;
     position: relative;
+    overflow: hidden;
 }
 .cc-album-card.locked {
     background: linear-gradient(135deg, #0f172a, #1e293b);
