@@ -2285,31 +2285,27 @@ const CARD_RARITIES = {
 };
 
 const COLLECTIBLE_CARDS = [
-    { id: 'earth-card',     setId: 'beginning', name: 'Terre',            rarity: 'common',      icon: '🌍', imgPath: 'images/cards/collection/earth-card.png' },
-    { id: 'moon-card',      setId: 'beginning', name: 'Lune',             rarity: 'common',      icon: '🌙', imgPath: 'images/cards/collection/moon-card.png' },
-    { id: 'meteor-card',    setId: 'beginning', name: 'Pluie de météores', rarity: 'common',      icon: '💫', imgPath: 'images/cards/collection/meteor-card.png' },
-    { id: 'wrench-card',    setId: 'beginning', name: 'Atelier',          rarity: 'common',      icon: '🔧', imgPath: 'images/cards/collection/wrench-card.png' },
-    { id: 'factory-card',   setId: 'beginning', name: 'Usine',            rarity: 'common',      icon: '🏭', imgPath: 'images/cards/collection/factory-card.png' },
-    { id: 'hq-card',        setId: 'beginning', name: 'QG Spatial',       rarity: 'common',      icon: '🏛️', imgPath: 'images/cards/collection/hq-card.png' },
-    { id: 'nova-card',      setId: 'beginning', name: 'Nova',             rarity: 'common',      icon: '🌟', imgPath: 'images/cards/collection/nova-card.png' },
-    { id: 'mining-card',    setId: 'beginning', name: 'Mine stellaire',   rarity: 'common',      icon: '⛏️', imgPath: 'images/cards/collection/mining-card.png' },
-    { id: 'mars-card',      setId: 'beginning', name: 'Mars',             rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/mars-card.png' },
-    { id: 'neptune-card',   setId: 'beginning', name: 'Neptune',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/neptune-card.png' },
-    { id: 'lab-card',       setId: 'beginning', name: 'Laboratoire',      rarity: 'rare',        icon: '🧪', imgPath: 'images/cards/collection/lab-card.png' },
-    { id: 'launchpad-card', setId: 'beginning', name: 'Pas de tir',       rarity: 'rare',        icon: '🚀', imgPath: 'images/cards/collection/launchpad-card.png' },
-    { id: 'flare-card',     setId: 'beginning', name: 'Éruption solaire', rarity: 'rare',   icon: '☀️', imgPath: 'images/cards/collection/flare-card.png' },
-    { id: 'comet-card',     setId: 'beginning', name: 'Comète',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/comet-card.png' },
-    { id: 'pluto-card',     setId: 'beginning', name: 'Pluton',           rarity: 'epic',        icon: '💫', imgPath: 'images/cards/collection/pluto-card.png' },
-    { id: 'oort-card',      setId: 'beginning', name: 'Nuage d\'Oort',     rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/oort-card.png' },
-    { id: 'blackhole-card', setId: 'beginning', name: 'Trou noir',        rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/blackhole-card.png' },
-    { id: 'proxima-card',   setId: 'beginning', name: 'Proxima Centauri', rarity: 'legendary',   icon: '☀️', imgPath: 'images/cards/collection/proxima-card.png' },
-    { id: 'supernova-card', setId: 'beginning', name: 'Supernova',        rarity: 'legendary',   icon: '🌟', imgPath: 'images/cards/collection/supernova-card.png' },
-    { id: 'sirius-card',    setId: 'beginning', name: 'Sirius',           rarity: 'alternative', icon: '⭐', imgPath: 'images/cards/collection/sirius-card.png' }
+    { id: 'earth-card',     name: 'Terre',            rarity: 'common',      icon: '🌍', imgPath: 'images/cards/collection/earth-card.png' },
+    { id: 'moon-card',      name: 'Lune',             rarity: 'common',      icon: '🌙', imgPath: 'images/cards/collection/moon-card.png' },
+    { id: 'meteor-card',    name: 'Pluie de météores', rarity: 'common',      icon: '💫', imgPath: 'images/cards/collection/meteor-card.png' },
+    { id: 'wrench-card',    name: 'Atelier',          rarity: 'common',      icon: '🔧', imgPath: 'images/cards/collection/wrench-card.png' },
+    { id: 'factory-card',   name: 'Usine',            rarity: 'common',      icon: '🏭', imgPath: 'images/cards/collection/factory-card.png' },
+    { id: 'hq-card',        name: 'QG Spatial',       rarity: 'common',      icon: '🏛️', imgPath: 'images/cards/collection/hq-card.png' },
+    { id: 'nova-card',      name: 'Nova',             rarity: 'common',      icon: '🌟', imgPath: 'images/cards/collection/nova-card.png' },
+    { id: 'mining-card',    name: 'Mine stellaire',   rarity: 'common',      icon: '⛏️', imgPath: 'images/cards/collection/mining-card.png' },
+    { id: 'mars-card',      name: 'Mars',             rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/mars-card.png' },
+    { id: 'neptune-card',   name: 'Neptune',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/neptune-card.png' },
+    { id: 'lab-card',       name: 'Laboratoire',      rarity: 'rare',        icon: '🧪', imgPath: 'images/cards/collection/lab-card.png' },
+    { id: 'launchpad-card', name: 'Pas de tir',       rarity: 'rare',        icon: '🚀', imgPath: 'images/cards/collection/launchpad-card.png' },
+    { id: 'flare-card',     name: 'Éruption solaire', rarity: 'rare',   icon: '☀️', imgPath: 'images/cards/collection/flare-card.png' },
+    { id: 'comet-card',     name: 'Comète',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/comet-card.png' },
+    { id: 'pluto-card',     name: 'Pluton',           rarity: 'epic',        icon: '💫', imgPath: 'images/cards/collection/pluto-card.png' },
+    { id: 'oort-card',      name: 'Nuage d\'Oort',     rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/oort-card.png' },
+    { id: 'blackhole-card', name: 'Trou noir',        rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/blackhole-card.png' },
+    { id: 'proxima-card',   name: 'Proxima Centauri', rarity: 'legendary',   icon: '☀️', imgPath: 'images/cards/collection/proxima-card.png' },
+    { id: 'supernova-card', name: 'Supernova',        rarity: 'legendary',   icon: '🌟', imgPath: 'images/cards/collection/supernova-card.png' },
+    { id: 'sirius-card',    name: 'Sirius',           rarity: 'alternative', icon: '⭐', imgPath: 'images/cards/collection/sirius-card.png' }
 ];
-
-const CARD_SETS = {
-    beginning: { name: 'The Beginning', icon: '🚀', completeBonus: 0.20 }
-};
 
 const BOOSTERS = {
     standard:  { name: 'Standard',   cardCount: 1, cost: () => Math.max(100, Math.floor(partsPerSecond * 30)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
@@ -2333,6 +2329,7 @@ function showCardShop() {
     document.getElementById('cc-booster-screen').style.display = 'block';
     document.getElementById('cc-reveal-screen').style.display = 'none';
     document.getElementById('cc-album-screen').style.display = 'none';
+    document.getElementById('cc-back-btn').style.display = 'none';
     updateBoosterPrices();
 }
 
@@ -2340,7 +2337,15 @@ function showCardAlbum() {
     document.getElementById('cc-booster-screen').style.display = 'none';
     document.getElementById('cc-reveal-screen').style.display = 'none';
     document.getElementById('cc-album-screen').style.display = 'block';
+    document.getElementById('cc-back-btn').style.display = 'inline-flex';
     renderCardAlbum();
+}
+
+function showCardReveal() {
+    document.getElementById('cc-booster-screen').style.display = 'none';
+    document.getElementById('cc-reveal-screen').style.display = 'flex';
+    document.getElementById('cc-album-screen').style.display = 'none';
+    document.getElementById('cc-back-btn').style.display = 'inline-flex';
 }
 
 function updateBoosterPrices() {
@@ -2354,15 +2359,11 @@ function updateCardCollectionDisplay() {
     const collected = Object.keys(cardCollection).filter(id => cardCollection[id] > 0);
     document.getElementById('cc-collected-count').textContent = collected.length;
     document.getElementById('cc-total-count').textContent = COLLECTIBLE_CARDS.length;
-    const completed = Object.keys(CARD_SETS).filter(setId => isSetComplete(setId));
-    document.getElementById('cc-completed-sets').textContent = completed.length;
-    document.getElementById('cc-total-sets').textContent = Object.keys(CARD_SETS).length;
     document.getElementById('cc-bonus-display').textContent = '×' + (1 + getCollectionBonus()).toFixed(2);
 }
 
-function isSetComplete(setId) {
-    const setCards = COLLECTIBLE_CARDS.filter(c => c.setId === setId);
-    return setCards.every(c => cardCollection[c.id] > 0);
+function isCollectionComplete() {
+    return COLLECTIBLE_CARDS.every(c => cardCollection[c.id] > 0);
 }
 
 function getCollectionBonus() {
@@ -2372,10 +2373,8 @@ function getCollectionBonus() {
             bonus += CARD_RARITIES[card.rarity].bonusMult;
         }
     }
-    for (const setId in CARD_SETS) {
-        if (isSetComplete(setId)) {
-            bonus += CARD_SETS[setId].completeBonus;
-        }
+    if (isCollectionComplete()) {
+        bonus += 0.20;
     }
     return bonus;
 }
@@ -2405,8 +2404,7 @@ function buyBooster(type) {
     }
 
     renderRevealCards(drawn);
-    document.getElementById('cc-booster-screen').style.display = 'none';
-    document.getElementById('cc-reveal-screen').style.display = 'block';
+    showCardReveal();
     updateCardCollectionDisplay();
     saveGame();
 }
@@ -2457,50 +2455,26 @@ function revealAllCards() {
 }
 
 function renderCardAlbum() {
-    const tabsContainer = document.getElementById('cc-album-tabs');
     const grid = document.getElementById('cc-album-grid');
-    tabsContainer.innerHTML = '';
     grid.innerHTML = '';
 
-    const sets = Object.keys(CARD_SETS);
-    let activeSet = sets[0];
-
-    const renderSet = (setId) => {
-        grid.innerHTML = '';
-        const cards = COLLECTIBLE_CARDS.filter(c => c.setId === setId);
-        const complete = isSetComplete(setId);
-        if (complete) {
-            const banner = document.createElement('div');
-            banner.className = 'cc-set-complete';
-            banner.textContent = CARD_SETS[setId].icon + ' Série ' + CARD_SETS[setId].name + ' complète ! +' + (CARD_SETS[setId].completeBonus * 100) + '% prod';
-            grid.appendChild(banner);
-        }
-        cards.forEach(card => {
-            const rarity = CARD_RARITIES[card.rarity];
-            const owned = cardCollection[card.id] > 0;
-            const el = document.createElement('div');
-            el.className = 'cc-album-card' + (owned ? '' : ' locked') + ' rarity-' + card.rarity;
-            el.innerHTML =
-                (owned
-                    ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '"><div class="cc-card-count">\u00d7' + cardCollection[card.id] + '</div>'
-                    : '<div class="cc-card-icon">?</div>');
-            grid.appendChild(el);
-        });
-    };
-
-    sets.forEach((setId, idx) => {
-        const tab = document.createElement('button');
-        tab.className = 'cc-tab' + (idx === 0 ? ' active' : '');
-        tab.textContent = CARD_SETS[setId].icon + ' ' + CARD_SETS[setId].name;
-        tab.onclick = () => {
-            document.querySelectorAll('.cc-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            renderSet(setId);
-        };
-        tabsContainer.appendChild(tab);
+    const complete = isCollectionComplete();
+    if (complete) {
+        const banner = document.createElement('div');
+        banner.className = 'cc-set-complete';
+        banner.textContent = '🚀 Collection complète ! +20% prod';
+        grid.appendChild(banner);
+    }
+    COLLECTIBLE_CARDS.forEach(card => {
+        const owned = cardCollection[card.id] > 0;
+        const el = document.createElement('div');
+        el.className = 'cc-album-card' + (owned ? '' : ' locked') + ' rarity-' + card.rarity;
+        el.innerHTML =
+            (owned
+                ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '"><div class="cc-card-count">\u00d7' + cardCollection[card.id] + '</div>'
+                : '<div class="cc-card-icon">?</div>');
+        grid.appendChild(el);
     });
-
-    renderSet(activeSet);
 }
 
 // ============================================

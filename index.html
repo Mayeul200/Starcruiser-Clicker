@@ -129,12 +129,12 @@
             <div class="modal-header">
                 <h2>📦 Collection de Cartes</h2>
                 <div class="modal-parts-counter"><span class="modal-parts-value">0</span> Parts · +<span class="modal-parts-gain">0</span>/s</div>
+                <button class="cc-back-btn" id="cc-back-btn" onclick="showCardShop()" style="display:none;">← Retour</button>
                 <span class="close-button" onclick="closeCardCollection()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="card-collection-stats">
                     <div class="card-stat">Cartes: <span id="cc-collected-count">0</span>/<span id="cc-total-count">0</span></div>
-                    <div class="card-stat">Séries complètes: <span id="cc-completed-sets">0</span>/<span id="cc-total-sets">0</span></div>
                     <div class="card-stat">Bonus global: <span id="cc-bonus-display">×1.00</span></div>
                 </div>
                 <div class="cc-screen" id="cc-booster-screen">
@@ -171,9 +171,7 @@
                     </div>
                 </div>
                 <div class="cc-screen" id="cc-album-screen" style="display:none;">
-                    <div class="cc-album-tabs" id="cc-album-tabs"></div>
                     <div class="cc-album-grid" id="cc-album-grid"></div>
-                    <button class="cc-back-btn" onclick="showCardShop()">← Retour aux boosters</button>
                 </div>
             </div>
         </div>
