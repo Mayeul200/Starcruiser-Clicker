@@ -714,7 +714,6 @@ body {
     .building-item { min-height: 45px; padding: 8px; }
     .building-name { font-size: 0.85rem; }
     .rocket-parts-shop { width: 140px; }
-    .center-content { padding-left: 140px; }
     .galactic-shop-btn { font-size: 0.68rem; padding: 6px 8px; }
     .building-item button {
         width: 100%; padding: 6px 10px; font-size: 0.8rem; 
@@ -1567,7 +1566,6 @@ body {
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    padding-left: 190px;
 }
 .construction-scene-100x100 {
     position: relative;
