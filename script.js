@@ -2758,16 +2758,20 @@ function renderRocketPartsShop() {
         const isAffordable = score >= cost;
         const el = document.createElement('div');
         el.className = 'rocket-part-item' + (part.purchased ? ' purchased' : '') + (!isAffordable && !part.purchased ? ' locked' : '');
+        const imageUrl = part.imgPath || '';
+        const imageHtml = imageUrl
+            ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + part.name + '">'
+            : '<span class="rocket-part-icon-placeholder"></span>';
         el.innerHTML =
-            '<div class="rocket-part-icon">' + (part.image || '\ud83d\ude80') + '</div>' +
+            '<div class="rocket-part-left">' + imageHtml + '</div>' +
             '<div class="rocket-part-info">' +
                 '<span class="rocket-part-name">' + part.name + '</span>' +
                 (part.purchased
-                    ? '<span class="rocket-part-status">\u2705 Construit</span>'
+                    ? '<span class="rocket-part-status">Construit</span>'
                     : '<span class="rocket-part-cost">' + formatNumber(cost) + ' Parts</span>') +
             '</div>' +
             (part.purchased
-                ? ''
+                ? '<span class="rocket-part-check">\u2713</span>'
                 : '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + part.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>Construire</button>');
         container.appendChild(el);
     });

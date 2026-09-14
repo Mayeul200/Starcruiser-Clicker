@@ -16,8 +16,6 @@
             <img src="images/logo2.png" class="top-logo-text-img" alt="Starship Clicker">
         </div>
         <div class="top-bar-controls">
-            <div class="stardust-display" title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></div>
-            <button class="control-button" onclick="toggleGalacticShop()" title="Atelier Galactique">✨</button>
             <button class="control-button" onclick="toggleStats()" title="Statistics">📊</button>
             <button class="control-button" onclick="toggleSettings()" title="Settings">⚙️</button>
         </div>
@@ -204,6 +202,10 @@
         <!-- LEFT PANEL (20%) - Space Progress -->
         <div class="left-panel">
             <h3>🌌 Progression Spatiale</h3>
+            <div class="space-progress-header-bar">
+                <div class="stardust-display" title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></div>
+                <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique">⚙ Atelier Galactique</button>
+            </div>
             <div class="space-progress-container" id="space-progress-sidebar">
                 <div class="space-progress-header">
                     <span class="current-planet-display" id="current-planet-display">
@@ -257,6 +259,8 @@
                 <span class="upgrades-title">Upgrades</span>
                 <div class="upgrades-container-center" id="upgrades-container"></div>
             </div>
+            <!-- Liste des pièces de fusée (achats uniques) - colonne verticale à gauche -->
+            <div class="rocket-parts-shop" id="rocket-parts-shop"></div>
             <div class="center-content" style="position: relative; width: 100%; height: calc(100% - 56px);">
                 <!-- CONSTRUCTION SCENE 100x100 -->
                 <div class="construction-scene-100x100" id="construction-scene" style="position: relative; width: 100%; height: 100%;">
@@ -291,9 +295,6 @@
                 <div class="medal" id="medal" onclick="addScore(1)" style="position: absolute; right: 5%; top: 25%; transform: translateY(-50%) scale(1.1);">
                     <div class="medal-emoji">🚀</div>
                 </div>
-
-                <!-- Liste des pièces de fusée (achats uniques) -->
-                <div class="rocket-parts-shop" id="rocket-parts-shop"></div>
 
                 <button class="launch-button" id="launch-button" onclick="launchRocket()" title="Lancer la fusée">
                     <span class="launch-button-icon">🚀</span>

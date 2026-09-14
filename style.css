@@ -713,6 +713,9 @@ body {
     .counter { font-size: 1.1rem; }
     .building-item { min-height: 45px; padding: 8px; }
     .building-name { font-size: 0.85rem; }
+    .rocket-parts-shop { width: 140px; }
+    .center-content { padding-left: 140px; }
+    .galactic-shop-btn { font-size: 0.68rem; padding: 6px 8px; }
     .building-item button {
         width: 100%; padding: 6px 10px; font-size: 0.8rem; 
     }
@@ -1048,11 +1051,37 @@ body {
 }
 .left-panel h3 {
     color: var(--text);
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 1.1rem;
     text-align: center;
     border-bottom: 2px solid var(--primary-light);
     padding-bottom: 10px;
+}
+.space-progress-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.galactic-shop-btn {
+    flex: 1;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+}
+.galactic-shop-btn:hover {
+    background: linear-gradient(135deg, #8b5cf6, #c084fc);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg), 0 0 12px rgba(168, 85, 247, 0.4);
 }
 .space-progress-container {
     display: flex;
@@ -1541,6 +1570,7 @@ body {
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    padding-left: 190px;
 }
 .construction-scene-100x100 {
     position: relative;
@@ -1730,63 +1760,114 @@ body {
     cursor: not-allowed;
     box-shadow: none;
 }
-/* Liste des pièces de fusée (achats uniques) */
+/* Liste des pièces de fusée (achats uniques) - colonne verticale à gauche */
 .rocket-parts-shop {
     position: absolute;
-    bottom: 78px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 8px;
-    padding: 8px 10px;
-    max-width: 92%;
-    overflow-x: auto;
-    z-index: 90;
-    scrollbar-width: thin;
-}
-.rocket-part-item {
-    flex: 0 0 auto;
-    width: 120px;
+    top: var(--top-height);
+    left: 0;
+    bottom: 0;
+    width: 190px;
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    overflow-y: auto;
+    z-index: 90;
+    scrollbar-width: thin;
+    background: rgba(15, 23, 42, 0.55);
+    border-right: 1px solid var(--border);
+}
+.rocket-part-item {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
     align-items: center;
-    gap: 4px;
-    padding: 6px 4px;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid var(--border-light);
+    gap: 8px;
+    padding: 8px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    text-align: center;
+    transition: all 0.2s;
+    min-height: 56px;
+}
+.rocket-part-item:hover:not(.locked) {
+    background: var(--secondary-light);
+    border-color: var(--primary-light);
 }
 .rocket-part-item.purchased {
     border-color: #10b981;
-    background: rgba(16, 185, 129, 0.12);
+    background: rgba(16, 185, 129, 0.15);
 }
 .rocket-part-item.locked {
     opacity: 0.55;
 }
+.rocket-part-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
 .rocket-part-icon {
-    font-size: 1.3rem;
-    line-height: 1;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    opacity: 0.85;
+    pointer-events: none;
+    display: block;
+}
+.rocket-part-icon-placeholder {
+    display: block;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius);
+    background: var(--secondary-light);
 }
 .rocket-part-info {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 2px;
-    width: 100%;
+    min-width: 0;
 }
 .rocket-part-name {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     font-weight: 600;
     color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+}
+.rocket-part-status {
+    font-size: 0.68rem;
+    color: #34d399;
+    font-weight: 600;
 }
 .rocket-part-cost {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     color: var(--accent-light);
+}
+.rocket-part-btn {
+    padding: 6px 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.72rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.rocket-part-btn:hover:not(:disabled) {
+    background: var(--primary-light);
+}
+.rocket-part-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.rocket-part-check {
+    color: #34d399;
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 .rocket-part-status {
     font-size: 0.65rem;
