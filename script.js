@@ -2890,44 +2890,32 @@ function buyRocketPart(partId) {
 function renderRocketPartsShop() {
     const container = document.getElementById('rocket-parts-shop');
     if (!container) return;
-    const existing = container.querySelectorAll('.rocket-part-item');
-    if (existing.length === ROCKET_PARTS.length) {
-        ROCKET_PARTS.forEach((part, i) => {
-            const el = existing[i];
-            const cost = getRocketPartCost(part);
-            const isAffordable = score >= cost;
-            el.className = 'rocket-part-item' + (part.purchased ? ' purchased' : '') + (!isAffordable && !part.purchased ? ' locked' : '');
-            const costEl = el.querySelector('.rocket-part-cost');
-            if (costEl) costEl.textContent = formatNumber(cost) + ' Parts';
-            const btn = el.querySelector('.rocket-part-btn');
-            if (btn) btn.disabled = !isAffordable;
-        });
+    const nextPart = ROCKET_PARTS.find(p => !p.purchased);
+    if (!nextPart) {
+        container.innerHTML =
+            '<div class="rocket-part-frame complete">' +
+                '<div class="rocket-part-frame-title">Pi\u00e8ces compl\u00e8tes</div>' +
+                '<div class="rocket-part-frame-complete">\u2713 Fus\u00e9e pr\u00eate \u00e0 lancer</div>' +
+            '</div>';
         return;
     }
-    container.innerHTML = '';
-    ROCKET_PARTS.forEach(part => {
-        const cost = getRocketPartCost(part);
-        const isAffordable = score >= cost;
-        const el = document.createElement('div');
-        el.className = 'rocket-part-item' + (part.purchased ? ' purchased' : '') + (!isAffordable && !part.purchased ? ' locked' : '');
-        el.setAttribute('data-part-id', part.id);
-        const imageUrl = part.imgPath || '';
-        const imageHtml = imageUrl
-            ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + part.name + '">'
-            : '<span class="rocket-part-icon-placeholder"></span>';
-        el.innerHTML =
+    const cost = getRocketPartCost(nextPart);
+    const isAffordable = score >= cost;
+    const imageUrl = nextPart.imgPath || '';
+    const imageHtml = imageUrl
+        ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + nextPart.name + '">'
+        : '<span class="rocket-part-icon-placeholder"></span>';
+    const purchasedCount = ROCKET_PARTS.filter(p => p.purchased).length;
+    container.innerHTML =
+        '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '">' +
+            '<div class="rocket-part-frame-title">Pi\u00e8ce ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length + '</div>' +
             '<div class="rocket-part-left">' + imageHtml + '</div>' +
             '<div class="rocket-part-info">' +
-                '<span class="rocket-part-name">' + part.name + '</span>' +
-                (part.purchased
-                    ? '<span class="rocket-part-status">Construit</span>'
-                    : '<span class="rocket-part-cost">' + formatNumber(cost) + ' Parts</span>') +
+                '<span class="rocket-part-name">' + nextPart.name + '</span>' +
+                '<span class="rocket-part-cost">' + formatNumber(cost) + ' Parts</span>' +
             '</div>' +
-            (part.purchased
-                ? '<span class="rocket-part-check">\u2713</span>'
-                : '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + part.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>Construire</button>');
-        container.appendChild(el);
-    });
+            '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + nextPart.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>Construire</button>' +
+        '</div>';
 }
 
 // ============================================
