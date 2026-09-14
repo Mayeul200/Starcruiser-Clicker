@@ -154,6 +154,23 @@ body {
     height: 100%;
     justify-content: center;
 }
+.stardust-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(168, 85, 247, 0.18);
+    border: 1px solid #a855f7;
+    border-radius: var(--radius);
+    color: #e9d5ff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+.stardust-display span {
+    color: #c4b5fd;
+    min-width: 1ch;
+}
 .control-button {
     width: 40px; height: 40px;
     border: none;

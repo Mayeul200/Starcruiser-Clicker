@@ -188,6 +188,7 @@ let maxDistance = 0;
 let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
 let lastLaunchDistance = 0;
+let starDust = 0; // Poussière d'Étoiles : monnaie de prestige persistante
 
 
 // ============================================
@@ -382,6 +383,7 @@ function saveGame() {
         unlockedTrophies: Array.from(unlockedTrophies),
         maxDistance: maxDistance,
         prestigeMultiplier: prestigeMultiplier,
+        starDust: starDust,
         rocketsLaunched: rocketsLaunched,
         unlockedPlanets: Array.from(unlockedPlanets),
         planetBonuses: {...planetBonuses},
@@ -442,6 +444,7 @@ function loadGame() {
         // Charger le système de prestige
         maxDistance = parsed.maxDistance || 0;
         prestigeMultiplier = parsed.prestigeMultiplier || 1;
+        starDust = parsed.starDust || 0;
         rocketsLaunched = parsed.rocketsLaunched || 0;
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
@@ -927,6 +930,11 @@ function showLaunchResults(distance) {
     distanceElement.textContent = formatNumber(safeDistance) + ' km';
     multiplierElement.textContent = safeMultiplier.toFixed(2);
     rocketsElement.textContent = safeRockets;
+    const stardustEl = document.getElementById('launch-results-stardust');
+    if (stardustEl) {
+        const dustGained = Math.floor(safeDistance / 1000000);
+        stardustEl.textContent = '+' + formatNumber(dustGained) + '  (total: ' + formatNumber(starDust) + ')';
+    }
     
     modal.classList.add('active');
 }
@@ -1205,6 +1213,12 @@ function confirmSpaceMapAndReset() {
     // Appliquer les bonus des planètes au prestigeMultiplier
     const planetBonus = getTotalPlanetBonus();
     prestigeMultiplier *= (isNaN(planetBonus) ? 1 : planetBonus);
+    
+    // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
+    const dustGained = Math.floor((isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) / 1000000);
+    if (dustGained > 0) {
+        starDust += dustGained;
+    }
     
     // Reset du score, des bâtiments et des pièces de fusée (garde les bonus/prestige)
     score = 0;
@@ -1947,6 +1961,7 @@ function updateDisplay() {
     document.getElementById('score-value').textContent = formatNumber(score, true);
     document.getElementById('gain-value').textContent = formatNumber(partsPerSecond);
     updateModalPartsCounter();
+    updateStardustDisplay();
     updateBonusTimer();
 }
 
@@ -1955,6 +1970,11 @@ function updateModalPartsCounter() {
     const gainText = formatNumber(partsPerSecond);
     document.querySelectorAll('.modal-parts-value').forEach(el => { el.textContent = scoreText; });
     document.querySelectorAll('.modal-parts-gain').forEach(el => { el.textContent = gainText; });
+}
+
+function updateStardustDisplay() {
+    const el = document.getElementById('stardust-value');
+    if (el) el.textContent = formatNumber(starDust);
 }
 
 function updateBonusTimer() {
