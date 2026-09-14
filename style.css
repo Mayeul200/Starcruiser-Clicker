@@ -1057,22 +1057,15 @@ body {
     border-bottom: 2px solid var(--primary-light);
     padding-bottom: 10px;
 }
-.space-progress-header-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 12px;
-}
 .galactic-shop-btn {
-    flex: 1;
-    padding: 8px 10px;
+    flex: 0 0 auto;
+    padding: 6px 10px;
     background: linear-gradient(135deg, #7c3aed, #a855f7);
     color: white;
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 600;
     transition: all 0.2s;
     box-shadow: var(--shadow);
@@ -1089,16 +1082,20 @@ body {
     gap: 15px;
 }
 .space-progress-header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 .current-planet-display {
-    font-size: 1.1rem;
+    flex: 1;
+    font-size: 0.95rem;
     font-weight: 600;
     color: var(--accent-light);
     background: rgba(245, 158, 11, 0.1);
-    padding: 8px 12px;
+    padding: 6px 10px;
     border-radius: var(--radius);
     border: 1px solid var(--accent);
+    text-align: center;
 }
 /* Mini Space Map */
 .mini-space-map {
@@ -1774,8 +1771,6 @@ body {
     overflow-y: auto;
     z-index: 90;
     scrollbar-width: thin;
-    background: rgba(15, 23, 42, 0.55);
-    border-right: 1px solid var(--border);
 }
 .rocket-part-item {
     display: grid;
