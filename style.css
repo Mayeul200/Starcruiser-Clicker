@@ -1788,7 +1788,8 @@ body {
 }
 .rocket-part-item.purchased {
     border-color: #10b981;
-    background: rgba(16, 185, 129, 0.15);
+    background: var(--secondary-light);
+    box-shadow: inset 0 0 0 100px rgba(16, 185, 129, 0.15);
 }
 .rocket-part-item.locked {
     opacity: 0.55;
