@@ -44,22 +44,42 @@ const SPACE_UPDATE_INTERVAL_MS = 500;
 // ROCKET_PARTS avec tailles proportionnelles
 // Hauteur totale: 454px (centrée verticalement)
 // ============================================
-const ROCKET_PARTS = [
-    { id: "workshop", name: "Atelier", description: "Fabrique des pieces: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10, gain: 0.1, count: 0, image: "\ud83d\udee0\ufe0f", imgPath: "images/rocket/workshop.png", x: 20, y: 555, width: 220, height: 220, order: 1, unlockCondition: () => true, totalGenerated: 0 },
-    { id: "nozzles", name: "Tuyères", description: "Propulsion: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100, gain: 1, count: 0, image: "\ud83c\udfaf", imgPath: "images/rocket/nozzles.PNG", x: 50, y: 646, width: 40, height: 20, order: 2, unlockCondition: () => score >= 50, totalGenerated: 0 },
-    { id: "engines", name: "Moteurs", description: "Moteurs principaux: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000, gain: 10, count: 0, image: "\ud83d\udd25", imgPath: "images/rocket/engines.png", x: 50, y: 595, width: 40, height: 51, order: 3, unlockCondition: () => score >= 500, totalGenerated: 0 },
-    { id: "fuel-tank", name: "Réservoir", description: "Carburant: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000, gain: 100, count: 0, image: "\u26fd", imgPath: "images/rocket/fuel-tank.png", x: 50, y: 537, width: 40, height: 58, order: 4, unlockCondition: () => score >= 5000, totalGenerated: 0 },
-    { id: "rocket-body", name: "Corps", description: "Structure: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000, gain: 1000, count: 0, image: "\ud83d\udfeb", imgPath: "images/rocket/body.png", x: 50, y: 337, width: 40, height: 200, order: 5, unlockCondition: () => score >= 25000, totalGenerated: 0 },
-    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🚀", imgPath: "images/rocket/boosters-left.png", x: 45.8, y: 373, width: 50, height: 300, order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "boosters-right", name: "Boosters Droit", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000, gain: 10000, count: 0, image: "🚀", imgPath: "images/rocket/boosters-right.png", x: 54.2, y: 373, width: 50, height: 300, order: 6, unlockCondition: () => score >= 100000, totalGenerated: 0 },
-    { id: "cockpit", name: "Cockpit", description: "Poste de pilotage: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000, gain: 100000, count: 0, image: "\ud83d\udc68\u200d🚀", imgPath: "images/rocket/cockpit.png", x: 50, y: 292, width: 45, height: 45, order: 7, unlockCondition: () => score >= 1000000, totalGenerated: 0 },
-    { id: "shield", name: "Bouclier", description: "Protection: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 100000000, gain: 1000000, count: 0, image: "\ud83d\udee1\ufe0f", imgPath: "images/rocket/shield.png", x: 50, y: 233, width: 45, height: 59, order: 8, unlockCondition: () => score >= 10000000, totalGenerated: 0 },
-    { id: "launch-pad", name: "Pas de tir", description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 1000000000, gain: 10000000, count: 0, image: "🚀", imgPath: "images/rocket/launch-pad.png",x: 60.2, y: 205, width: 190, height: 481, order: 9, unlockCondition: () => score >= 100000000, totalGenerated: 0 },
-    { id: "astronaut", name: "Astronaute", description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal genere: {total} Parts", baseCost: 10000000000, gain: 100000000, count: 0, image: "\ud83d\udc69\u200d🚀", imgPath: "images/rocket/astronaut.png", x: 40, y: 635, width: 25, height: 60, order: 10, unlockCondition: () => score >= 1000000000, totalGenerated: 0 },
+// ============================================
+// BÂTIMENTS DE PRODUCTION
+// Achetables en masse, génèrent des Parts/s. Boucle clicker.
+// ============================================
+const PRODUCTION_BUILDINGS = [
+    { id: "workshop",      name: "Atelier",                 description: "Fabrique des pièces: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 10,            gain: 0.1,      count: 0, image: "🛠️", imgPath: "images/rocket/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
+    { id: "factory",       name: "Usine",                   description: "Production de masse: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 100,           gain: 1,        count: 0, image: "🏭",       unlockCondition: () => score >= 50,       totalGenerated: 0 },
+    { id: "mine",          name: "Mine stellaire",          description: "Extraction de minerai: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1100,          gain: 8,        count: 0, image: "⛏️",       unlockCondition: () => score >= 500,      totalGenerated: 0 },
+    { id: "solar",         name: "Centrale solaire",        description: "Énergie: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 12000,         gain: 47,       count: 0, image: "☀️",       unlockCondition: () => score >= 6000,     totalGenerated: 0 },
+    { id: "lab",           name: "Laboratoire",             description: "Recherche: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 130000,        gain: 260,      count: 0, image: "🧪",       unlockCondition: () => score >= 65000,    totalGenerated: 0 },
+    { id: "foundry",       name: "Fonderie orbitale",       description: "Raffinage: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1400000,       gain: 1400,     count: 0, image: "🔥",       unlockCondition: () => score >= 700000,   totalGenerated: 0 },
+    { id: "station",       name: "Station spatiale",        description: "Logistique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 20000000,      gain: 7800,     count: 0, image: "🚀",       unlockCondition: () => score >= 10000000, totalGenerated: 0 },
+    { id: "nanoforge",     name: "Nanoforge",               description: "Fabrication avancée: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 330000000,     gain: 44000,    count: 0, image: "⚙️",       unlockCondition: () => score >= 150000000, totalGenerated: 0 },
+    { id: "synth",         name: "Synthétiseur de matière", description: "Matière exotique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 5100000000,    gain: 260000,   count: 0, image: "✨",       unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
+    { id: "antimatter",   name: "Collecteur d'antimatière", description: "Ressource ultime: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 75000000000,   gain: 1600000,  count: 0, image: "🌀",       unlockCondition: () => score >= 35000000000, totalGenerated: 0 }
 ];
 
-// Alias pour compatibilité
-const BUILDINGS = ROCKET_PARTS;
+// Bâtiments de production = liste utilisée par la boucle clicker (achat en masse, gain Parts/s)
+const BUILDINGS = PRODUCTION_BUILDINGS;
+
+// ============================================
+// PIÈCES DE FUSÉE
+// Achats uniques par run (payés en Parts). Compléter les 10 = lancement.
+// ============================================
+const ROCKET_PARTS = [
+    { id: "nozzles",       name: "Tuyères",        description: "Propulsion: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 100,            image: "🎯",       imgPath: "images/rocket/nozzles.PNG",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
+    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 1000,           image: "🔥",       imgPath: "images/rocket/engines.png",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
+    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 10000,          image: "⛽",       imgPath: "images/rocket/fuel-tank.png",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
+    { id: "rocket-body",   name: "Corps",          description: "Structure: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 100000,         image: "🏭",       imgPath: "images/rocket/body.png",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
+    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 1000000,        image: "🚀",       imgPath: "images/rocket/boosters-left.png", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 1000000,        image: "🚀",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 10000000,       image: "👨‍🚀", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
+    { id: "shield",        name: "Bouclier",       description: "Protection: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 100000000,      image: "🛡️",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
+    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 1000000000,     image: "🚀",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
+    { id: "astronaut",     name: "Astronaute",    description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 10000000000,   image: "👩‍🚀", imgPath: "images/rocket/astronaut.png",     x: 40,    y: 635, width: 25,  height: 60,  order: 10, purchased: false }
+];
 
 
 
@@ -375,6 +395,10 @@ function saveGame() {
             id: building.id,
             count: building.count
         })),
+        rocketParts: ROCKET_PARTS.map(part => ({
+            id: part.id,
+            purchased: part.purchased
+        })),
         lastSave: Date.now(),
         gameStartTime: gameStartTime,
         version: SAVE_VERSION
@@ -495,6 +519,16 @@ function loadGame() {
                         building.count = savedBuilding.count || 0;
                     }
                 });
+            });
+        }
+
+        // Charger l'état des pièces de fusée (achats uniques)
+        if (parsed.rocketParts) {
+            parsed.rocketParts.forEach(savedPart => {
+                const part = ROCKET_PARTS.find(p => p.id === savedPart.id);
+                if (part) {
+                    part.purchased = !!savedPart.purchased;
+                }
             });
         }
 
@@ -774,9 +808,11 @@ function renderBuilding(building) {
     buildingElement.id = `building-${building.id}`;
     buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
 
-    // Créer la structure avec l'image du bâtiment en arrière-plan
+    // Créer la structure avec l'image ou l'emoji du bâtiment
     const imageUrl = building.imgPath || '';
-    const imageHtml = imageUrl ? `<img src="${imageUrl}" class="building-image" alt="${building.name}" width="${building.width || 84}" height="${building.height || 84}">` : '';
+    const imageHtml = imageUrl
+        ? `<img src="${imageUrl}" class="building-image" alt="${building.name}" width="${building.width || 84}" height="${building.height || 84}">`
+        : `<span class="building-emoji">${building.image || ''}</span>`;
 
     buildingElement.innerHTML = `
         <div class="building-left">
@@ -810,13 +846,13 @@ function renderBuilding(building) {
 // ============================================
 
 function checkRocketReady() {
-    // Vérifier si toutes les pièces sont débloquées (count > 0)
-    return ROCKET_PARTS.every(part => part.count > 0);
+    // Vérifier si toutes les pièces de fusée sont achetées
+    return ROCKET_PARTS.every(part => part.purchased);
 }
 
 function calculateDistance() {
-    // Calculer la distance basée sur le score et le nombre de pièces
-    const partsUnlocked = ROCKET_PARTS.filter(part => part.count > 0).length;
+    // Calculer la distance basée sur le score et le nombre de pièces achetées
+    const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
     const totalScore = Math.max(score, 0) + 1; // Éviter les valeurs négatives
     const logDistance = Math.log(totalScore) * 1000;
     const partsBonus = partsUnlocked * 100;
@@ -1169,9 +1205,13 @@ function confirmSpaceMapAndReset() {
     const planetBonus = getTotalPlanetBonus();
     prestigeMultiplier *= (isNaN(planetBonus) ? 1 : planetBonus);
     
-    // Reset du score mais garder les pièces et les bonus
+    // Reset du score, des bâtiments et des pièces de fusée (garde les bonus/prestige)
     score = 0;
     BUILDINGS.forEach(b => b.count = 0);
+    ROCKET_PARTS.forEach(p => p.purchased = false);
+    constructedParts = new Set();
+    const scene = document.getElementById('rocket-parts-container');
+    if (scene) scene.innerHTML = '';
     unlockedBuildings = new Set();
     totalPartsFromClicks = 0;
     activatedClickUpgrades = [];
@@ -2503,7 +2543,7 @@ function init() {
     // ===== DEBUG: DONNER TOUTES LES PIÈCES POUR TESTER =====
     // À SUPPRIMER APRES LES TESTS
     ROCKET_PARTS.forEach(part => {
-        part.count = 1;
+        part.purchased = true;
     });
     
     updateDisplay();
@@ -2549,8 +2589,8 @@ function updateConstructionScene() {
     // container.innerHTML = '';
 
     ROCKET_PARTS.forEach(part => {
-        // L'atelier s'affiche toujours, les autres pièces si count > 0
-        const shouldDisplay = part.id === "workshop" || part.count > 0;
+        // Les pièces de fusée s'affichent une fois achetées
+        const shouldDisplay = part.purchased;
         
         // Vérifier si la pièce existe déjà dans le DOM
         const existingPiece = container.querySelector(`.rocket-piece.${part.id}`);
@@ -2616,10 +2656,9 @@ function updateConstructionScene() {
 }
 
 function checkRocketComplete() {
-    const allParts = ROCKET_PARTS.filter(p => p.id !== 'workshop');
-    const allConstructed = allParts.every(p => constructedParts.has(p.id));
+    const allConstructed = ROCKET_PARTS.every(p => constructedParts.has(p.id));
     
-    const scene = document.getElementById('construction-scene-100x100');
+    const scene = document.getElementById('construction-scene');
     if (allConstructed && scene) {
         scene.classList.add('rocket-complete');
         showToast("🚀 Fusée complète ! Prête pour le décollage !");
