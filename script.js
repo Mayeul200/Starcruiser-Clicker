@@ -174,6 +174,7 @@ let unlockedBuildings = new Set();
 let totalGeneratedByBuilding = {};
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
+let lastRocketPartsUpdate = 0;
 let lastSpaceProgressUpdate = 0;
 let gameStartTime = 0;
 let buyMultiplier = 1;
@@ -1678,6 +1679,10 @@ function gameLoop() {
     if (Date.now() - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastBuildingsUpdate = Date.now();
         updateAllBuildingButtons();
+    }
+    if (Date.now() - lastRocketPartsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
+        lastRocketPartsUpdate = Date.now();
+        renderRocketPartsShop();
     }
     updateDisplay();
     if (Date.now() - lastSpaceProgressUpdate > SPACE_UPDATE_INTERVAL_MS) {
