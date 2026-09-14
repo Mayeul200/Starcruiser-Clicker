@@ -2832,12 +2832,6 @@ function init() {
     loadGame();
     applyStartupBonus();
 
-    // ===== DEBUG: DONNER TOUTES LES PIÈCES POUR TESTER =====
-    // À SUPPRIMER APRES LES TESTS
-    ROCKET_PARTS.forEach(part => {
-        part.purchased = true;
-    });
-    
     updateDisplay();
     renderBuildings();
     renderUpgrades();
