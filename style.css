@@ -1713,6 +1713,89 @@ body {
     cursor: not-allowed;
     box-shadow: none;
 }
+/* Liste des pièces de fusée (achats uniques) */
+.rocket-parts-shop {
+    position: absolute;
+    bottom: 78px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    padding: 8px 10px;
+    max-width: 92%;
+    overflow-x: auto;
+    z-index: 90;
+    scrollbar-width: thin;
+}
+.rocket-part-item {
+    flex: 0 0 auto;
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 4px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    text-align: center;
+}
+.rocket-part-item.purchased {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.12);
+}
+.rocket-part-item.locked {
+    opacity: 0.55;
+}
+.rocket-part-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+.rocket-part-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+}
+.rocket-part-name {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.rocket-part-cost {
+    font-size: 0.65rem;
+    color: var(--accent-light);
+}
+.rocket-part-status {
+    font-size: 0.65rem;
+    color: #10b981;
+    font-weight: 600;
+}
+.rocket-part-btn {
+    margin-top: 2px;
+    padding: 3px 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+.rocket-part-btn:hover:not(:disabled) {
+    background: var(--primary-light);
+}
+.rocket-part-btn:disabled {
+    background: #475569;
+    cursor: not-allowed;
+}
 .launch-button-icon {
     font-size: 1.2rem;
 }

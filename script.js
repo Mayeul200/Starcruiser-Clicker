@@ -1223,6 +1223,7 @@ function confirmSpaceMapAndReset() {
     saveGame();
     renderBuildings();
     renderUpgrades();
+    renderRocketPartsShop();
     
     // Afficher le modal de résultats
     showLaunchResults(lastLaunchDistance);
@@ -2549,6 +2550,8 @@ function init() {
     updateDisplay();
     renderBuildings();
     renderUpgrades();
+    renderRocketPartsShop();
+    updateConstructionScene();
     checkBuildingUnlocks();
     checkTrophies();
 }
@@ -2573,6 +2576,49 @@ window.onload = function() {
 };
 
 
+// ============================================
+// ROCKET PARTS SHOP (achats uniques)
+// ============================================
+
+function buyRocketPart(partId) {
+    const part = ROCKET_PARTS.find(p => p.id === partId);
+    if (!part || part.purchased) return;
+    if (score < part.cost) {
+        showToast("\u274c Pas assez de Parts pour " + part.name);
+        return;
+    }
+    score -= part.cost;
+    part.purchased = true;
+    updateDisplay();
+    updateConstructionScene();
+    renderRocketPartsShop();
+    saveGame();
+    showToast("\u2705 " + part.name + " construit !");
+    checkTrophies();
+}
+
+function renderRocketPartsShop() {
+    const container = document.getElementById('rocket-parts-shop');
+    if (!container) return;
+    container.innerHTML = '';
+    ROCKET_PARTS.forEach(part => {
+        const isAffordable = score >= part.cost;
+        const el = document.createElement('div');
+        el.className = 'rocket-part-item' + (part.purchased ? ' purchased' : '') + (!isAffordable && !part.purchased ? ' locked' : '');
+        el.innerHTML =
+            '<div class="rocket-part-icon">' + (part.image || '\ud83d\ude80') + '</div>' +
+            '<div class="rocket-part-info">' +
+                '<span class="rocket-part-name">' + part.name + '</span>' +
+                (part.purchased
+                    ? '<span class="rocket-part-status">\u2705 Construit</span>'
+                    : '<span class="rocket-part-cost">' + formatNumber(part.cost) + ' Parts</span>') +
+            '</div>' +
+            (part.purchased
+                ? ''
+                : '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + part.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>Construire</button>');
+        container.appendChild(el);
+    });
+}
 
 // ============================================
 // ROCKET CONSTRUCTION SCENE
