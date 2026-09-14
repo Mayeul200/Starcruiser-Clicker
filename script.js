@@ -856,17 +856,19 @@ function checkRocketReady() {
     return ROCKET_PARTS.every(part => part.purchased);
 }
 
+const PIECE_DISTANCE_MULT = 1.6;
+const DISTANCE_SCORE_EXP = 0.5;
+const MOON_DISTANCE = 384000;
+
 function calculateDistance() {
-    // Calculer la distance basée sur le score et le nombre de pièces achetées
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
-    const totalScore = Math.max(score, 0) + 1; // Éviter les valeurs négatives
-    const logDistance = Math.log(totalScore) * 1000;
-    const partsBonus = partsUnlocked * 100;
-    const baseDistance = Math.floor(logDistance + partsBonus);
-    
-    // S'assurer que prestigeMultiplier est un nombre valide
+    const totalScore = Math.max(score, 0);
+    const partsMult = Math.pow(PIECE_DISTANCE_MULT, partsUnlocked);
+    const scoreFactor = totalScore > 0 ? Math.pow(totalScore, DISTANCE_SCORE_EXP) : 0;
+    const baseDistance = partsMult * scoreFactor;
+
     const multiplier = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
-    
+
     return baseDistance * multiplier;
 }
 
@@ -934,7 +936,7 @@ function showLaunchResults(distance) {
     rocketsElement.textContent = safeRockets;
     const stardustEl = document.getElementById('launch-results-stardust');
     if (stardustEl) {
-        const dustGained = Math.floor(safeDistance / 1000000);
+        const dustGained = Math.floor(Math.sqrt(safeDistance / MOON_DISTANCE));
         stardustEl.textContent = '+' + formatNumber(dustGained) + '  (total: ' + formatNumber(starDust) + ')';
     }
     
@@ -1210,14 +1212,13 @@ function confirmSpaceMapAndReset() {
         maxDistance = lastLaunchDistance;
     }
     rocketsLaunched++;
-    prestigeMultiplier = 1 + (isNaN(maxDistance) ? 0 : maxDistance / 1000000);
-    
-    // Appliquer les bonus des planètes au prestigeMultiplier
+    prestigeMultiplier = 1 + Math.sqrt((isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE);
+
     const planetBonus = getTotalPlanetBonus();
     prestigeMultiplier *= (isNaN(planetBonus) ? 1 : planetBonus);
-    
+
     // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
-    const dustGained = Math.floor((isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) / 1000000);
+    const dustGained = Math.floor(Math.sqrt((isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) / MOON_DISTANCE));
     if (dustGained > 0) {
         starDust += dustGained;
     }
