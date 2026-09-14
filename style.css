@@ -200,6 +200,24 @@ body {
 .modal-header h2 {
     font-size: 1.3rem;
 }
+.modal-parts-counter {
+    margin: 0 auto;
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius);
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+}
+.modal-parts-counter .modal-parts-value {
+    color: #ffd700;
+}
+.modal-parts-counter .modal-parts-gain {
+    color: #ffd700;
+}
 .close-button {
     font-size: 24px;
     cursor: pointer;

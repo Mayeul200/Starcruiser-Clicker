@@ -1900,7 +1900,15 @@ function toggleStats() {
 function updateDisplay() {
     document.getElementById('score-value').textContent = formatNumber(score, true);
     document.getElementById('gain-value').textContent = formatNumber(partsPerSecond);
+    updateModalPartsCounter();
     updateBonusTimer();
+}
+
+function updateModalPartsCounter() {
+    const scoreText = formatNumber(score, true);
+    const gainText = formatNumber(partsPerSecond);
+    document.querySelectorAll('.modal-parts-value').forEach(el => { el.textContent = scoreText; });
+    document.querySelectorAll('.modal-parts-gain').forEach(el => { el.textContent = gainText; });
 }
 
 function updateBonusTimer() {
