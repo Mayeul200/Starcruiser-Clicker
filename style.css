@@ -1950,8 +1950,8 @@ body {
     min-height: 0;
 }
 .cc-reveal-card {
-    width: 192px;
-    height: 269px;
+    width: 250px;
+    height: 350px;
     border-radius: var(--radius);
     padding: 0;
     box-sizing: border-box;
@@ -2088,13 +2088,14 @@ body {
     gap: 12px;
 }
 .cc-action-btn {
-    padding: 10px 20px;
+    padding: 15px 30px;
     background: rgba(59, 130, 246, 0.15);
     border: 1px solid var(--primary-light);
     border-radius: var(--radius);
     color: var(--text);
     cursor: pointer;
     font-weight: 600;
+    font-size: 1.5rem;
     transition: background 0.2s;
 }
 .cc-action-btn:hover {
