@@ -17,6 +17,7 @@
         </div>
         <div class="top-bar-controls">
             <div class="stardust-display" title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></div>
+            <button class="control-button" onclick="toggleGalacticShop()" title="Atelier Galactique">✨</button>
             <button class="control-button" onclick="toggleStats()" title="Statistics">📊</button>
             <button class="control-button" onclick="toggleSettings()" title="Settings">⚙️</button>
         </div>
@@ -319,6 +320,21 @@
                 </div>
             </div>
             <div class="buildings-list" id="buildings-list"></div>
+        </div>
+    </div>
+
+    <!-- ATELIER GALACTIQUE MODAL -->
+    <div class="modal" id="galactic-shop-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✨ Atelier Galactique</h2>
+                <div class="stardust-display">✨ <span id="stardust-value-2">0</span></div>
+                <span class="close-button" onclick="toggleGalacticShop()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="galactic-intro">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.</div>
+                <div class="galactic-shop-list" id="galactic-shop-list"></div>
+            </div>
         </div>
     </div>
 
