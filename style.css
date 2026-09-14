@@ -2342,79 +2342,166 @@ body {
     background: rgba(59, 130, 246, 0.4);
 }
 
-/* ATELIER GALACTIQUE */
+/* ATELIER GALACTIQUE - Arbre d'améliorations */
+#galactic-shop-modal.modal {
+    width: calc(55% + 20px);
+    max-width: calc(55% + 20px);
+    top: var(--top-height);
+    left: 50%;
+    transform: translateX(-50%);
+    height: calc(100vh - var(--top-height));
+    max-height: calc(100vh - var(--top-height));
+}
+#galactic-shop-modal .modal-content {
+    background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
+    border: 2px solid #a855f7;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#galactic-shop-modal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    max-height: none;
+}
 .galactic-intro {
     text-align: center;
     color: var(--text-light);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     margin-bottom: 16px;
     padding: 10px;
     background: rgba(168, 85, 247, 0.08);
     border-radius: var(--radius);
+    flex-shrink: 0;
 }
 .galactic-shop-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 18px;
+    flex: 1;
 }
-.galactic-item {
+.galactic-branch {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.galactic-branch-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px;
-    background: rgba(15, 23, 42, 0.6);
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--branch-color);
+    flex-shrink: 0;
+}
+.galactic-branch-icon {
+    font-size: 1.2rem;
+}
+.galactic-branch-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--branch-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.galactic-tree {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+.galactic-node {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    background: rgba(15, 23, 42, 0.7);
     border: 1px solid var(--border-light);
     border-radius: var(--radius);
+    border-left: 3px solid var(--branch-color);
+    transition: all 0.2s;
 }
-.galactic-item.maxed {
+.galactic-node:hover:not(.locked) {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: var(--branch-color);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.2);
+}
+.galactic-node.maxed {
     border-color: #fbbf24;
     background: rgba(251, 191, 36, 0.1);
 }
-.galactic-item.locked {
-    opacity: 0.6;
+.galactic-node.locked {
+    opacity: 0.45;
+    filter: grayscale(0.5);
 }
-.galactic-info {
+.galactic-node.too-expensive {
+    opacity: 0.7;
+}
+.galactic-node-top {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
-.galactic-name {
-    font-size: 1rem;
+.galactic-node-name {
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--text);
 }
-.galactic-desc {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
-.galactic-level {
+.galactic-node-max {
     font-size: 0.75rem;
-    color: #a855f7;
-    font-weight: 600;
-}
-.galactic-maxed {
-    font-size: 1rem;
     font-weight: 800;
     color: #fbbf24;
+    background: rgba(251, 191, 36, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+.galactic-node-desc {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    line-height: 1.4;
+    min-height: 2.4em;
+}
+.galactic-node-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+.galactic-node-level {
+    font-size: 0.7rem;
+    color: #a855f7;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.galactic-req {
+    font-size: 0.65rem;
+    color: var(--text-dark);
+    font-style: italic;
+    text-align: right;
 }
 .galactic-btn {
-    padding: 8px 14px;
+    padding: 6px 12px;
     border: none;
     border-radius: var(--radius);
     background: #a855f7;
     color: white;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.2s;
 }
 .galactic-btn:hover:not(:disabled) {
     background: #9333ea;
+    transform: scale(1.05);
 }
 .galactic-btn:disabled {
     background: #475569;
     cursor: not-allowed;
+    opacity: 0.6;
 }
