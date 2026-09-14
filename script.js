@@ -2890,12 +2890,27 @@ function buyRocketPart(partId) {
 function renderRocketPartsShop() {
     const container = document.getElementById('rocket-parts-shop');
     if (!container) return;
+    const existing = container.querySelectorAll('.rocket-part-item');
+    if (existing.length === ROCKET_PARTS.length) {
+        ROCKET_PARTS.forEach((part, i) => {
+            const el = existing[i];
+            const cost = getRocketPartCost(part);
+            const isAffordable = score >= cost;
+            el.className = 'rocket-part-item' + (part.purchased ? ' purchased' : '') + (!isAffordable && !part.purchased ? ' locked' : '');
+            const costEl = el.querySelector('.rocket-part-cost');
+            if (costEl) costEl.textContent = formatNumber(cost) + ' Parts';
+            const btn = el.querySelector('.rocket-part-btn');
+            if (btn) btn.disabled = !isAffordable;
+        });
+        return;
+    }
     container.innerHTML = '';
     ROCKET_PARTS.forEach(part => {
         const cost = getRocketPartCost(part);
         const isAffordable = score >= cost;
         const el = document.createElement('div');
         el.className = 'rocket-part-item' + (part.purchased ? ' purchased' : '') + (!isAffordable && !part.purchased ? ' locked' : '');
+        el.setAttribute('data-part-id', part.id);
         const imageUrl = part.imgPath || '';
         const imageHtml = imageUrl
             ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + part.name + '">'
