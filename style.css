@@ -1257,6 +1257,7 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    max-height: none;
 }
 .survey-intro {
     text-align: center;
@@ -1817,6 +1818,7 @@ body {
     overflow-y: auto;
     flex: 1;
     padding: 16px;
+    max-height: none;
 }
 .card-collection-stats {
     display: flex;
@@ -2145,6 +2147,7 @@ body {
     margin-bottom: 4px;
 }
 .cc-back-btn {
+    margin-right: 14px;
     padding: 6px 14px;
     background: rgba(59, 130, 246, 0.25);
     border: 1px solid var(--primary-light);
