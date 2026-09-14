@@ -2428,6 +2428,16 @@ function drawCard(rarities) {
 function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
+    document.getElementById('cc-reveal-shop-btn').style.display = 'none';
+    document.getElementById('cc-reveal-album-btn').style.display = 'none';
+    const total = cards.length;
+    let revealed = 0;
+    const checkAllRevealed = function () {
+        if (revealed >= total) {
+            document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
+            document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
+        }
+    };
     cards.forEach((card, idx) => {
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
@@ -2442,7 +2452,10 @@ function renderRevealCards(cards) {
                 '</div>' +
             '</div>';
         el.addEventListener('click', function () {
+            if (el.classList.contains('flipped')) return;
             el.classList.add('flipped');
+            revealed++;
+            checkAllRevealed();
         });
         container.appendChild(el);
     });
@@ -2452,6 +2465,8 @@ function revealAllCards() {
     document.querySelectorAll('#cc-reveal-cards .cc-reveal-card:not(.flipped)').forEach(function (el) {
         el.classList.add('flipped');
     });
+    document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
+    document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
 }
 
 function renderCardAlbum() {
