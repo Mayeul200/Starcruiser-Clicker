@@ -888,7 +888,7 @@ function checkRocketReady() {
 }
 
 const PIECE_DISTANCE_MULT = 1.5;
-const DISTANCE_SCORE_EXP = 1.0;
+const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
 const ROCKET_PART_COST_GROWTH = 4.5;
 
@@ -2613,13 +2613,13 @@ const GALACTIC_BRANCHES = [
 
 const GALACTIC_UPGRADES = [
     // === BRANCHE PRODUCTION (7) ===
-    { id: 'prod1',  branch: 'production', tier: 1, name: 'Réacteur à fusion',       desc: '+10% production globale par niveau.',                baseCost: 8,   costMult: 1.6, maxLevel: 15, effectPerLevel: 0.10 },
+    { id: 'prod1',  branch: 'production', tier: 1, name: 'Réacteur à fusion',       desc: '+3% production globale par niveau.',                baseCost: 8,   costMult: 1.6, maxLevel: 15, effectPerLevel: 0.03 },
     { id: 'prod2',  branch: 'production', tier: 2, name: 'Optimisation énergétique', desc: '-3% coût des bâtiments par niveau.',                 baseCost: 12,  costMult: 1.7, maxLevel: 10, effectPerLevel: 0.03, requires: ['prod1'] },
-    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',  desc: '+15% production par niveau (plus fort).',            baseCost: 25,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.15, requires: ['prod1'] },
-    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avancée',  desc: '+20% production par niveau (encore plus fort).',      baseCost: 50,  costMult: 1.9, maxLevel: 8,  effectPerLevel: 0.20, requires: ['prod2', 'prod3'] },
-    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',         desc: '+5% production par niveau, cumulable à l\'infini.',     baseCost: 100, costMult: 2.0, maxLevel: 20, effectPerLevel: 0.05, requires: ['prod4'] },
-    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synthèse de matière noire', desc: '+50% production globale (niveau unique).',            baseCost: 500, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.50, requires: ['prod5'] },
-    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularité technologique', desc: '+25% production par niveau (ultime).',               baseCost: 1000,costMult: 2.5, maxLevel: 5,  effectPerLevel: 0.25, requires: ['prod6'] },
+    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',  desc: '+5% production par niveau (plus fort).',            baseCost: 25,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.05, requires: ['prod1'] },
+    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avancée',  desc: '+6% production par niveau (encore plus fort).',      baseCost: 50,  costMult: 1.9, maxLevel: 8,  effectPerLevel: 0.06, requires: ['prod2', 'prod3'] },
+    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',         desc: '+2% production par niveau, cumulable à l\'infini.',     baseCost: 100, costMult: 2.0, maxLevel: 20, effectPerLevel: 0.02, requires: ['prod4'] },
+    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synthèse de matière noire', desc: '+15% production globale (niveau unique).',            baseCost: 500, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.15, requires: ['prod5'] },
+    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularité technologique', desc: '+8% production par niveau (ultime).',               baseCost: 1000,costMult: 2.5, maxLevel: 5,  effectPerLevel: 0.08, requires: ['prod6'] },
 
     // === BRANCHE FUSÉE (6) ===
     { id: 'rock1',  branch: 'rocket', tier: 1, name: 'Ingénierie optimisée',     desc: '-5% coût des pièces de fusée par niveau.',            baseCost: 6,   costMult: 1.5, maxLevel: 10, effectPerLevel: 0.05 },
