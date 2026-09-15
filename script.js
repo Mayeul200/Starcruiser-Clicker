@@ -25,7 +25,7 @@ function hideTooltip() {
 // ============================================
 // GLOBAL CONSTANTS
 // ============================================
-const BUILDING_PRICE_GROWTH_RATE = 0.15;
+const BUILDING_PRICE_GROWTH_RATE = 0.40;
 const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
 const BONUS_SPAWN_INTERVAL_MS = 20000;
@@ -271,7 +271,7 @@ function calculateUnitBuildingGain(building) {
 
 function getBuildingUpgradeMultiplier(buildingId) {
     const upgrades = buildingUpgrades[buildingId] || [];
-    return Math.pow(2, upgrades.length);
+    return Math.pow(1.4, upgrades.length);
 }
 
 function isBuildingUpgradeAvailable(buildingId, threshold) {
@@ -795,10 +795,22 @@ function updateAllBuildingButtons() {
     });
 }
 
+const BUILDINGS_PER_PART = 2;
+
+function getOwnedRocketPartsCount() {
+    return ROCKET_PARTS.filter(p => p.purchased).length;
+}
+
+function isBuildingUnlockedByParts(buildingIndex) {
+    if (buildingIndex === 0) return true;
+    const partsOwned = getOwnedRocketPartsCount();
+    return buildingIndex < (partsOwned + 1) * BUILDINGS_PER_PART;
+}
+
 function checkBuildingUnlocks() {
     let needsRerender = false;
-    BUILDINGS.forEach(building => {
-        if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+    BUILDINGS.forEach((building, index) => {
+        if (isBuildingUnlockedByParts(index) && !unlockedBuildings.has(building.id)) {
             unlockedBuildings.add(building.id);
             needsRerender = true;
         }
@@ -812,9 +824,9 @@ function renderBuildings() {
     const container = document.getElementById('buildings-list');
     container.innerHTML = '';
 
-    BUILDINGS.forEach(building => {
-        if (building.unlockCondition() || unlockedBuildings.has(building.id)) {
-            if (building.unlockCondition() && !unlockedBuildings.has(building.id)) {
+    BUILDINGS.forEach((building, index) => {
+        if (isBuildingUnlockedByParts(index) || unlockedBuildings.has(building.id)) {
+            if (isBuildingUnlockedByParts(index) && !unlockedBuildings.has(building.id)) {
                 unlockedBuildings.add(building.id);
             }
             renderBuilding(building);
@@ -876,8 +888,9 @@ function checkRocketReady() {
 }
 
 const PIECE_DISTANCE_MULT = 1.5;
-const DISTANCE_SCORE_EXP = 0.7;
+const DISTANCE_SCORE_EXP = 1.0;
 const MOON_DISTANCE = 384400;
+const ROCKET_PART_COST_GROWTH = 4.5;
 
 function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
@@ -1235,7 +1248,7 @@ function confirmSpaceMapAndReset() {
         maxDistance = lastLaunchDistance;
     }
     rocketsLaunched++;
-    prestigeMultiplier = 1 + Math.sqrt((isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE);
+    prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
 
     const planetBonus = getTotalPlanetBonus();
     prestigeMultiplier *= (isNaN(planetBonus) ? 1 : planetBonus);
@@ -1264,6 +1277,7 @@ function confirmSpaceMapAndReset() {
     
     updateDisplay();
     saveGame();
+    checkBuildingUnlocks();
     renderBuildings();
     renderUpgrades();
     renderRocketPartsShop();
@@ -2888,7 +2902,7 @@ window.onload = function() {
 
 function getRocketPartCost(part) {
     const discount = Math.min(0.5, getRocketPartDiscount());
-    return Math.floor(part.cost * (1 - discount));
+    return Math.floor(part.cost * Math.pow(ROCKET_PART_COST_GROWTH, rocketsLaunched) * (1 - discount));
 }
 
 function buyRocketPart(partId) {
@@ -2904,6 +2918,7 @@ function buyRocketPart(partId) {
     updateDisplay();
     updateConstructionScene();
     renderRocketPartsShop();
+    checkBuildingUnlocks();
     saveGame();
     showToast("\u2705 " + part.name + " construit !");
     checkTrophies();
