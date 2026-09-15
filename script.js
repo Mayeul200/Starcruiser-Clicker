@@ -1,6 +1,6 @@
 // ============================================
 // STARSHIP CLICKER - MAIN SCRIPT
-// Version 2.0.0
+// Version 2.1.0
 // ============================================
 
 // ============================================
@@ -25,7 +25,9 @@ function hideTooltip() {
 // ============================================
 // GLOBAL CONSTANTS
 // ============================================
-const BUILDING_PRICE_GROWTH_RATE = 0.40;
+// Croissance du prix d'un même bâtiment à l'achat : ×1.15 par bâtiment possédé
+// (identique à Cookie Clicker — le prix double tous les ~5 achats).
+const BUILDING_PRICE_GROWTH_RATE = 1.15;
 const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
 const BONUS_SPAWN_INTERVAL_MS = 20000;
@@ -122,7 +124,7 @@ const RANDOM_BONUSES = [
     { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
 ];
 
-const SAVE_VERSION = "2.0.0";
+const SAVE_VERSION = "2.1.0";
 
 // ============================================
 // TROPH\u0009ES
@@ -269,9 +271,11 @@ function calculateUnitBuildingGain(building) {
     return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost();
 }
 
+// Chaque upgrade de bâtiment double sa production (×2 par palier),
+// comme les tiered upgrades de Cookie Clicker.
 function getBuildingUpgradeMultiplier(buildingId) {
     const upgrades = buildingUpgrades[buildingId] || [];
-    return Math.pow(1.4, upgrades.length);
+    return Math.pow(2, upgrades.length);
 }
 
 function isBuildingUpgradeAvailable(buildingId, threshold) {
@@ -280,10 +284,6 @@ function isBuildingUpgradeAvailable(buildingId, threshold) {
     
     const upgrades = buildingUpgrades[buildingId] || [];
     const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-    
-    if (building.count >= threshold && !buildingUpgradeCosts[buildingId]?.[threshold]) {
-        getBuildingUpgradeFixedCost(buildingId, threshold);
-    }
     
     return building.count >= threshold &&
            !upgrades.includes(threshold) &&
@@ -300,30 +300,24 @@ function getBuildingTooltip(building) {
         .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
 }
 
+// Coût d'un upgrade de bâtiment au palier `threshold` : baseCost × 10^(index du palier)
+// (style Cookie Clicker : chaque palier coûte ~10× le précédent, proportionnel au bâtiment).
+// Déterministe : ne dépend d'aucun état de jeu, donc pas de cache figé.
+const BUILDING_UPGRADE_COST_GROWTH = 10;
+
 function getBuildingUpgradeFixedCost(buildingId, threshold) {
     const building = findBuildingById(buildingId);
     if (!building) return 0;
-    
-    if (buildingUpgradeCosts[buildingId] && buildingUpgradeCosts[buildingId][threshold] !== undefined) {
-        return buildingUpgradeCosts[buildingId][threshold];
-    }
-    
-    const unitGain = building.gain * getBuildingUpgradeMultiplier(building.id);
-    const cost = Math.floor(threshold * unitGain * 5);
-    
-    if (!buildingUpgradeCosts[buildingId]) {
-        buildingUpgradeCosts[buildingId] = {};
-    }
-    buildingUpgradeCosts[buildingId][threshold] = cost;
-    
-    return cost;
+    const tierIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
+    const tier = tierIndex === -1 ? 0 : tierIndex;
+    return Math.floor(building.baseCost * Math.pow(BUILDING_UPGRADE_COST_GROWTH, tier));
 }
 
+// Prix du prochain bâtiment : baseCost × 1.15^(bâtiments possédés)
+// (formule exacte de Cookie Clicker). Pour count=0 le multiplicateur vaut 1.
 function calculateBuildingCost(building) {
     const reduction = getBuildingCostReduction();
-    return building.count === 0
-        ? Math.floor(building.baseCost * (1 - reduction))
-        : Math.floor(building.baseCost * Math.exp(BUILDING_PRICE_GROWTH_RATE * building.count) * (1 - reduction));
+    return Math.floor(building.baseCost * Math.pow(BUILDING_PRICE_GROWTH_RATE, building.count) * (1 - reduction));
 }
 
 // Fonction de formatage optimisée
@@ -890,7 +884,10 @@ function checkRocketReady() {
 const PIECE_DISTANCE_MULT = 1.5;
 const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
-const ROCKET_PART_COST_GROWTH = 4.3;
+// Croissance du coût des pièces de fusée entre les lancements.
+// Plus douce que l'ancien ×4.3 pour une courbe de prestige progressive
+// (les pièces coûtent ~×2 de plus à chaque run, comme un palier de bâtiment).
+const ROCKET_PART_COST_GROWTH = 2.0;
 
 function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
