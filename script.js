@@ -225,15 +225,15 @@ let isLaunching = false;
 const PLANETS = [
     { id: 'earth', name: 'Earth', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
     { id: 'moon', name: 'Moon', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 1, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 78340000, bonusPercent: 2, color: '#ef4444', imgPath: 'images/planets/mars.png' },
-    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 4305000000, bonusPercent: 3, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluto', emoji: '\u2646', distanceRequired: 7304000000, bonusPercent: 5, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 40100000000000, bonusPercent: 8, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 81400000000000, bonusPercent: 12, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'oort-cloud', name: 'Oort Cloud', emoji: '\u2728', distanceRequired: 150000000000000, bonusPercent: 15, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'milky-way-center', name: 'Milky Way Center', emoji: '\uD83C\uDF0C', distanceRequired: 246000000000000000, bonusPercent: 20, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromeda', emoji: '\uD83C\uDF0C', distanceRequired: 23700000000000000000, bonusPercent: 25, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Virgo Cluster', emoji: '\u2728', distanceRequired: 550000000000000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 3844000, bonusPercent: 2, color: '#ef4444', imgPath: 'images/planets/mars.png' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 38440000, bonusPercent: 3, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
+    { id: 'pluto', name: 'Pluto', emoji: '\u2646', distanceRequired: 384400000, bonusPercent: 5, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 3844000000, bonusPercent: 8, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 38440000000, bonusPercent: 12, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
+    { id: 'oort-cloud', name: 'Oort Cloud', emoji: '\u2728', distanceRequired: 384400000000, bonusPercent: 15, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'milky-way-center', name: 'Milky Way Center', emoji: '\uD83C\uDF0C', distanceRequired: 3844000000000, bonusPercent: 20, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromeda', name: 'Andromeda', emoji: '\uD83C\uDF0C', distanceRequired: 38440000000000, bonusPercent: 25, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
+    { id: 'virgo-cluster', name: 'Virgo Cluster', emoji: '\u2728', distanceRequired: 384400000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
