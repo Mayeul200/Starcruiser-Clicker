@@ -28,7 +28,7 @@ function hideTooltip() {
 const BUILDING_PRICE_GROWTH_RATE = 0.15;
 const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
-const BONUS_SPAWN_INTERVAL_MS = 5000;
+const BONUS_SPAWN_INTERVAL_MS = 15000;
 const SAVE_INTERVAL_MS = 30000;
 const TOAST_DURATION_MS = 3000;
 const MAX_BUILDING_DISPLAY = 100;
@@ -119,7 +119,7 @@ const UPGRADE_COLORS = [
 
 const RANDOM_BONUSES = [
     { id: "meteor", symbol: "🌠", name: "Meteor Shower", effect: "instant", type: "meteor", colorClass: "meteor" },
-    { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 10, duration: 30000, colorClass: "flare" }
+    { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
 ];
 
 const SAVE_VERSION = "2.0.0";
@@ -1787,9 +1787,9 @@ function spawnRandomBonus() {
         clickedBonusesCount++;
 
         if (bonus.id === "meteor") {
-            const oneMinuteProduction = partsPerSecond * 60;
-            score += oneMinuteProduction;
-            showToast(`\u2705 ${bonus.name}: +${formatNumber(oneMinuteProduction)} Parts!`);
+            const instantProduction = partsPerSecond * 10;
+            score += instantProduction;
+            showToast(`\u2705 ${bonus.name}: +${formatNumber(instantProduction)} Parts!`);
         } 
         else if (bonus.id === "flare") {
             activeRandomBonuses.push({
