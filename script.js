@@ -333,12 +333,12 @@ function formatNumber(num, isTotalScore) {
     
     // Nombres < 1000
     if (absNum < 1000) {
-        return num % 1 === 0 ? Math.round(num).toLocaleString() : num.toFixed(1).toLocaleString();
+        return num % 1 === 0 ? Math.round(num).toLocaleString('fr-FR') : num.toFixed(1).toLocaleString('fr-FR');
     }
     
     // Nombres entre 1000 et 999999
     if (absNum < 1000000) {
-        return num % 1 === 0 ? Math.round(num).toLocaleString() : num.toFixed(1).toLocaleString();
+        return num % 1 === 0 ? Math.round(num).toLocaleString('fr-FR') : num.toFixed(1).toLocaleString('fr-FR');
     }
     
     // Nombres >= 1M avec suffixes
@@ -352,7 +352,7 @@ function formatNumber(num, isTotalScore) {
     const scaledAbs = Math.abs(scaled);
     const decimals = scaledAbs >= 100 ? (isTotalScore ? 3 : 2) : (scaledAbs >= 10 ? 3 : 3);
     
-    return scaled.toFixed(decimals).toLocaleString() + " " + suffix;
+    return scaled.toFixed(decimals).toLocaleString('fr-FR') + " " + suffix;
 }
 
 function updateAutoMultiplier() {
