@@ -890,7 +890,7 @@ function checkRocketReady() {
 const PIECE_DISTANCE_MULT = 1.5;
 const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
-const ROCKET_PART_COST_GROWTH = 4.5;
+const ROCKET_PART_COST_GROWTH = 4.3;
 
 function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
