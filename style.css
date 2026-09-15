@@ -657,8 +657,9 @@ body {
     opacity: 1;
 }
 /* Building blur effect for not purchased buildings */
-.building-item.not-purchased {
-    opacity: 0.5;
+.building-item.not-purchased .building-left,
+.building-item.not-purchased .building-center {
+    opacity: 0.6;
     filter: blur(2px);
 }
 /* Styles for random bonuses */
