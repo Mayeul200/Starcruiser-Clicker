@@ -171,6 +171,7 @@ const TROPHIES = [
 // ============================================
 let score = 0;
 let partsPerSecond = 0;
+let partsSinceLaunch = 0;
 let autoMultiplier = 1;
 let clickMultiplier = 1;
 let activeRandomBonuses = [];
@@ -385,6 +386,7 @@ function saveGame() {
     const saveData = {
         score: score,
         partsPerSecond: partsPerSecond,
+        partsSinceLaunch: partsSinceLaunch,
         autoMultiplier: autoMultiplier,
         clickMultiplier: clickMultiplier,
         totalPartsFromClicks: totalPartsFromClicks,
@@ -452,6 +454,7 @@ function loadGame() {
         // Charger les variables principales
         score = parsed.score || 0;
         partsPerSecond = parsed.partsPerSecond || parsed.autoGain || 0;
+        partsSinceLaunch = parsed.partsSinceLaunch || score;
         autoMultiplier = parsed.autoMultiplier || 1;
         clickMultiplier = parsed.clickMultiplier || 1;
         totalPartsFromClicks = parsed.totalPartsFromClicks || parsed.clickPartsTotal || 0;
@@ -872,20 +875,21 @@ function checkRocketReady() {
     return ROCKET_PARTS.every(part => part.purchased);
 }
 
-const PIECE_DISTANCE_MULT = 1.6;
-const DISTANCE_SCORE_EXP = 0.5;
+const PIECE_DISTANCE_MULT = 1.5;
+const DISTANCE_SCORE_EXP = 0.6;
 const MOON_DISTANCE = 384000;
 
 function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
-    const totalScore = Math.max(score, 0);
+    const totalParts = Math.max(partsSinceLaunch, 0);
     const partsMult = Math.pow(PIECE_DISTANCE_MULT, partsUnlocked);
-    const scoreFactor = totalScore > 0 ? Math.pow(totalScore, DISTANCE_SCORE_EXP) : 0;
+    const scoreFactor = totalParts > 0 ? Math.pow(totalParts, DISTANCE_SCORE_EXP) : 0;
     const baseDistance = partsMult * scoreFactor;
 
     const multiplier = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
+    const planetBonus = getTotalPlanetBonus();
 
-    return baseDistance * multiplier * getDistanceBonus();
+    return baseDistance * multiplier * getDistanceBonus() * planetBonus;
 }
 
 function getCurrentDistance() {
@@ -1253,6 +1257,7 @@ function confirmSpaceMapAndReset() {
     buildingUpgrades = {};
     buildingUpgradeCosts = {};
     totalGeneratedByBuilding = {};
+    partsSinceLaunch = 0;
     
     updateDisplay();
     saveGame();
@@ -1789,6 +1794,7 @@ function spawnRandomBonus() {
         if (bonus.id === "meteor") {
             const instantProduction = partsPerSecond * 10;
             score += instantProduction;
+            partsSinceLaunch += instantProduction;
             showToast(`\u2705 ${bonus.name}: +${formatNumber(instantProduction)} Parts!`);
         } 
         else if (bonus.id === "flare") {
@@ -1825,6 +1831,7 @@ function addScore(points) {
     const totalPoints = basePoints * clickMultiplier * getClickPowerBonus() * critMult;
 
     score += totalPoints;
+    partsSinceLaunch += totalPoints;
     totalPartsFromClicks += basePoints;
 
     showClickEffect(Math.round(totalPoints));
@@ -1881,7 +1888,9 @@ function gameLoop() {
     });
 
     partsPerSecond = totalGain;
-    score += partsPerSecond / GAME_LOOP_FPS;
+    const tickGain = partsPerSecond / GAME_LOOP_FPS;
+    score += tickGain;
+    partsSinceLaunch += tickGain;
 
     if (Date.now() - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastBuildingsUpdate = Date.now();
@@ -2478,6 +2487,7 @@ function displayRewardOnCard(card, reward) {
 function surveyCollectWinnings() {
     if (surveyState.pot > 0) {
         score += surveyState.pot;
+        partsSinceLaunch += surveyState.pot;
         showToast(`💰 Tu encaisses ${formatNumber(surveyState.pot)} Parts !`);
         surveyState.pot = 0;
         updateDisplay();
