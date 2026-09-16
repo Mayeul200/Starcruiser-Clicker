@@ -1520,127 +1520,129 @@ function updateMiniSpaceMap(distance) {
     const container = document.getElementById('mini-space-map');
     if (!container) return;
     
-    container.innerHTML = '';
-    
     const progress = calculatePlanetProgress(distance);
     
     // Position des planètes dans la mini-map
-    // Planète 1: à gauche avec décalage (15%)
-    // Planète 2: au centre (50%)
-    // Planète 3: proche du bord droit (85%)
     const planetPositions = [15, 50, 85];
     
-    // Dessiner jusqu'à 3 planètes (celle en cours + les 2 prochaines)
+    // Déterminer les planètes à afficher
     const planetsToShow = [];
     if (progress.currentPlanet) {
         const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
         if (currentIndex !== -1) {
-            // Ajouter la planète actuelle et les 2 suivantes
             planetsToShow.push(PLANETS[currentIndex]);
             if (currentIndex + 1 < PLANETS.length) planetsToShow.push(PLANETS[currentIndex + 1]);
             if (currentIndex + 2 < PLANETS.length) planetsToShow.push(PLANETS[currentIndex + 2]);
         }
     } else {
-        // Avant la première planète, afficher les 3 premières
         planetsToShow.push(PLANETS[0]);
         if (PLANETS.length > 1) planetsToShow.push(PLANETS[1]);
         if (PLANETS.length > 2) planetsToShow.push(PLANETS[2]);
     }
     
-    // Dessiner les planètes
-    planetsToShow.forEach((planet, index) => {
-        const planetElement = document.createElement('div');
-        planetElement.className = 'space-planet';
-        
-        const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
-        const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
-        
-        if (isUnlocked) planetElement.classList.add('unlocked');
-        if (isCurrent) planetElement.classList.add('current');
-        
-        // Utiliser l'image si disponible, sinon l'emoji
-        let planetHtml = '';
-        if (planet.imgPath) {
-            planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}">`;
-        } else {
-            planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
-        }
-        planetHtml += `<div class="planet-name">${planet.name}</div>`;
-        
-        planetElement.innerHTML = planetHtml;
-        planetElement.style.setProperty('--planet-color', planet.color);
-        
-        // Positionner la planète
-        const position = planetPositions[index] || (index * 40 + 15);
-        planetElement.style.left = `${position}%`;
-        planetElement.style.transform = 'translateX(-50%)';
-        planetElement.style.textAlign = 'center';
-        
-        container.appendChild(planetElement);
-    });
+    // Clé pour détecter si les planètes affichées ont changé
+    const planetsKey = planetsToShow.map(p => p.id).join(',');
     
-    // Ajouter les lignes de connexion entre les planètes
-    for (let i = 0; i < planetsToShow.length - 1; i++) {
-        const currentPlanet = planetsToShow[i];
-        const nextPlanet = planetsToShow[i + 1];
+    // Ne recréer le DOM (planètes + connexions) que si les planètes changent.
+    // Sinon, mettre à jour uniquement la position du vaisseau pour éviter
+    // que l'animation CSS ne redémarre toutes les 500ms.
+    if (container.dataset.planetsKey !== planetsKey) {
+        container.dataset.planetsKey = planetsKey;
+        container.innerHTML = '';
         
-        const isCurrentUnlocked = unlockedPlanets.has(currentPlanet.id) || distance >= currentPlanet.distanceRequired;
-        const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
+        // Dessiner les planètes
+        planetsToShow.forEach((planet, index) => {
+            const planetElement = document.createElement('div');
+            planetElement.className = 'space-planet';
+            
+            const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
+            const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
+            
+            if (isUnlocked) planetElement.classList.add('unlocked');
+            if (isCurrent) planetElement.classList.add('current');
+            
+            let planetHtml = '';
+            if (planet.imgPath) {
+                planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}">`;
+            } else {
+                planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
+            }
+            planetHtml += `<div class="planet-name">${planet.name}</div>`;
+            
+            planetElement.innerHTML = planetHtml;
+            planetElement.style.setProperty('--planet-color', planet.color);
+            
+            const position = planetPositions[index] || (index * 40 + 15);
+            planetElement.style.left = `${position}%`;
+            planetElement.style.transform = 'translateX(-50%)';
+            planetElement.style.textAlign = 'center';
+            
+            container.appendChild(planetElement);
+        });
         
-        const line = document.createElement('div');
-        line.className = 'space-connection';
-        if (isCurrentUnlocked && isNextUnlocked) {
-            line.classList.add('active');
+        // Ajouter les lignes de connexion entre les planètes
+        for (let i = 0; i < planetsToShow.length - 1; i++) {
+            const currentPlanet = planetsToShow[i];
+            const nextPlanet = planetsToShow[i + 1];
+            
+            const isCurrentUnlocked = unlockedPlanets.has(currentPlanet.id) || distance >= currentPlanet.distanceRequired;
+            const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
+            
+            const line = document.createElement('div');
+            line.className = 'space-connection';
+            if (isCurrentUnlocked && isNextUnlocked) {
+                line.classList.add('active');
+            }
+            
+            const startPos = planetPositions[i] || (i * 40 + 15);
+            const endPos = planetPositions[i + 1] || ((i + 1) * 40 + 15);
+            line.style.left = `${startPos}%`;
+            line.style.width = `${endPos - startPos}%`;
+            container.appendChild(line);
         }
-        
-        const startPos = planetPositions[i] || (i * 40 + 15);
-        const endPos = planetPositions[i + 1] || ((i + 1) * 40 + 15);
-        line.style.left = `${startPos}%`;
-        line.style.width = `${endPos - startPos}%`;
-        container.appendChild(line);
     }
     
-    // Ajouter le vaisseau spatial (émoji fusée)
-    if (progress.currentPlanet || progress.progressPercent > 0) {
-        const spaceship = document.createElement('div');
-        spaceship.className = 'spaceship';
-        spaceship.innerHTML = '🚀';
-        
+    // Mettre à jour ou créer le vaisseau
+    let spaceship = container.querySelector('.spaceship');
+    const shouldShowShip = progress.currentPlanet || progress.progressPercent > 0;
+    
+    if (shouldShowShip) {
         // Calculer la position du vaisseau
-        let shipPosition = 15; // Position de départ (première planète)
+        let shipPosition = 15;
         
         if (progress.currentPlanet) {
             const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
             
             if (currentIndex > 0 && progress.nextPlanet) {
-                // Entre deux planètes
                 const nextIndex = PLANETS.findIndex(p => p.id === progress.nextPlanet.id);
                 
                 if (nextIndex > currentIndex && nextIndex < currentIndex + 3) {
-                    // Calculer la position entre les deux planètes
                     const startPos = planetPositions[0] || 15;
                     const endPos = planetPositions[1] || 50;
                     shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
                 } else {
-                    // Position sur la planète actuelle
                     shipPosition = planetPositions[Math.min(currentIndex, 2)] || 50;
                 }
             } else if (currentIndex === 0) {
-                // Sur Terre (0 km), position à 15%
                 shipPosition = 15;
             } else {
-                // Sur la dernière planète visible
                 shipPosition = planetPositions[Math.min(currentIndex, 2)] || 85;
             }
         } else {
-            // Avant d'atteindre la première planète
             const firstPlanetPos = planetPositions[0] || 15;
             const secondPlanetPos = planetPositions[1] || 50;
             shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
         }
         
+        if (!spaceship) {
+            spaceship = document.createElement('div');
+            spaceship.className = 'spaceship';
+            spaceship.innerHTML = '\u{1F680}';
+            container.appendChild(spaceship);
+        }
         spaceship.style.left = `${shipPosition}%`;
-        container.appendChild(spaceship);
+    } else if (spaceship) {
+        spaceship.remove();
     }
 }
 
