@@ -2610,27 +2610,27 @@ const GALACTIC_BRANCHES = [
 
 const GALACTIC_UPGRADES = [
     // === BRANCHE PRODUCTION (7) ===
-    { id: 'prod1',  branch: 'production', tier: 1, name: 'Réacteur à fusion',       desc: '+3% production globale par niveau.',                baseCost: 8,   costMult: 1.6, maxLevel: 15, effectPerLevel: 0.03 },
+    { id: 'prod1',  branch: 'production', tier: 1, name: 'Réacteur à fusion',       desc: '+5% production globale par niveau.',                baseCost: 8,   costMult: 1.6, maxLevel: 15, effectPerLevel: 0.05 },
     { id: 'prod2',  branch: 'production', tier: 2, name: 'Optimisation énergétique', desc: '-3% coût des bâtiments par niveau.',                 baseCost: 12,  costMult: 1.7, maxLevel: 10, effectPerLevel: 0.03, requires: ['prod1'] },
-    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',  desc: '+5% production par niveau (plus fort).',            baseCost: 25,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.05, requires: ['prod1'] },
-    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avancée',  desc: '+6% production par niveau (encore plus fort).',      baseCost: 50,  costMult: 1.9, maxLevel: 8,  effectPerLevel: 0.06, requires: ['prod2', 'prod3'] },
-    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',         desc: '+2% production par niveau, cumulable à l\'infini.',     baseCost: 100, costMult: 2.0, maxLevel: 20, effectPerLevel: 0.02, requires: ['prod4'] },
-    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synthèse de matière noire', desc: '+15% production globale (niveau unique).',            baseCost: 500, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.15, requires: ['prod5'] },
-    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularité technologique', desc: '+8% production par niveau (ultime).',               baseCost: 1000,costMult: 2.5, maxLevel: 5,  effectPerLevel: 0.08, requires: ['prod6'] },
+    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',  desc: '+8% production par niveau (plus fort).',            baseCost: 25,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.08, requires: ['prod1'] },
+    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avancée',  desc: '+9% production par niveau (encore plus fort).',      baseCost: 50,  costMult: 1.9, maxLevel: 8,  effectPerLevel: 0.09, requires: ['prod2', 'prod3'] },
+    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',         desc: '+3% production par niveau, cumulable à l\'infini.',     baseCost: 100, costMult: 2.0, maxLevel: 20, effectPerLevel: 0.03, requires: ['prod4'] },
+    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synthèse de matière noire', desc: '+25% production globale (niveau unique).',            baseCost: 500, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.25, requires: ['prod5'] },
+    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularité technologique', desc: '+12% production par niveau (ultime).',               baseCost: 1000,costMult: 2.5, maxLevel: 5,  effectPerLevel: 0.12, requires: ['prod6'] },
 
     // === BRANCHE FUSÉE (6) ===
     { id: 'rock1',  branch: 'rocket', tier: 1, name: 'Ingénierie optimisée',     desc: '-5% coût des pièces de fusée par niveau.',            baseCost: 6,   costMult: 1.5, maxLevel: 10, effectPerLevel: 0.05 },
     { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Démarrage assisté',        desc: 'Commence chaque run avec N Ateliers gratuits.',       baseCost: 5,   costMult: 1.6, maxLevel: 10, effectPerLevel: 1, requires: ['rock1'] },
     { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Matériaux composites',     desc: '-8% coût des pièces de fusée par niveau (plus fort).', baseCost: 30,  costMult: 1.7, maxLevel: 8,  effectPerLevel: 0.08, requires: ['rock1'] },
-    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',     desc: '+10% distance de lancement par niveau.',             baseCost: 80,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.10, requires: ['rock2', 'rock3'] },
-    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'Téléportation spatiale',   desc: '+20% distance de lancement par niveau (plus fort).', baseCost: 300, costMult: 2.0, maxLevel: 5,  effectPerLevel: 0.20, requires: ['rock4'] },
-    { id: 'rock6',  branch: 'rocket', tier: 6, name: 'Moteur à distorsion',      desc: '+50% distance de lancement (niveau unique).',        baseCost: 2000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.50, requires: ['rock5'] },
+    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',     desc: '+15% distance de lancement par niveau.',             baseCost: 80,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.15, requires: ['rock2', 'rock3'] },
+    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'Téléportation spatiale',   desc: '+30% distance de lancement par niveau (plus fort).', baseCost: 300, costMult: 2.0, maxLevel: 5,  effectPerLevel: 0.30, requires: ['rock4'] },
+    { id: 'rock6',  branch: 'rocket', tier: 6, name: 'Moteur à distorsion',      desc: '+75% distance de lancement (niveau unique).',        baseCost: 2000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.75, requires: ['rock5'] },
 
     // === BRANCHE EXPLORATION (6) ===
     { id: 'exp1',   branch: 'exploration', tier: 1, name: 'Flotte de reconnaissance', desc: '+15% fréquence des comètes par niveau.',          baseCost: 4,   costMult: 1.5, maxLevel: 8,  effectPerLevel: 0.15 },
-    { id: 'exp2',   branch: 'exploration', tier: 2, name: 'Capteurs longue portée',   desc: '+25% gain de Poussière d\'Étoiles au lancement.',   baseCost: 15,  costMult: 1.6, maxLevel: 10, effectPerLevel: 0.25, requires: ['exp1'] },
+    { id: 'exp2',   branch: 'exploration', tier: 2, name: 'Capteurs longue portée',   desc: '+40% gain de Poussière d\'Étoiles au lancement.',   baseCost: 15,  costMult: 1.6, maxLevel: 10, effectPerLevel: 0.40, requires: ['exp1'] },
     { id: 'exp3',   branch: 'exploration', tier: 3, name: 'Boosters de lancement',   desc: '+20% fréquence des comètes par niveau (plus fort).', baseCost: 40,  costMult: 1.7, maxLevel: 6,  effectPerLevel: 0.20, requires: ['exp1'] },
-    { id: 'exp4',   branch: 'exploration', tier: 4, name: 'Cartographie stellaire',   desc: '+50% gain de Poussière d\'Étoiles (niveau unique).', baseCost: 200, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.50, requires: ['exp2', 'exp3'] },
+    { id: 'exp4',   branch: 'exploration', tier: 4, name: 'Cartographie stellaire',   desc: '+75% gain de Poussière d\'Étoiles (niveau unique).', baseCost: 200, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.75, requires: ['exp2', 'exp3'] },
     { id: 'exp5',   branch: 'exploration', tier: 5, name: 'Voyage interstellaire',   desc: '+30% fréquence des comètes (niveau unique).',       baseCost: 800, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.30, requires: ['exp4'] },
     { id: 'exp6',   branch: 'exploration', tier: 6, name: 'Trou de ver',              desc: '×2 gain de Poussière d\'Étoiles (niveau unique).',  baseCost: 5000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 1.0, requires: ['exp5'] },
 
