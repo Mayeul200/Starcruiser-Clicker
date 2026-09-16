@@ -952,18 +952,19 @@ function launchRocket() {
     
     // Animation de lancement (à améliorer plus tard)
     const medal = document.getElementById('medal');
-    medal.style.transform = 'scale(0.8)';
+    medal.classList.remove('bounce');
+    medal.style.transform = 'translateY(-50%) scale(0.8)';
     medal.style.transition = 'transform 0.5s';
     
     setTimeout(() => {
-        medal.style.transform = 'translateY(-200px) scale(1.5)';
+        medal.style.transform = 'translateY(-50%) translateY(-200px) scale(1.5)';
         medal.style.opacity = '0';
         medal.style.transition = 'all 2s';
     }, 500);
     
     // Après l'animation, afficher la carte spatiale AVANT le reset
     setTimeout(() => {
-        medal.style.transform = 'scale(1)';
+        medal.style.transform = 'translateY(-50%)';
         medal.style.opacity = '1';
         medal.style.transition = 'none';
         
@@ -1895,8 +1896,9 @@ function addScore(points) {
     showClickEffect(Math.round(totalPoints));
 
     const medal = document.getElementById('medal');
-    medal.style.transform = 'scale(0.95)';
-    setTimeout(() => { medal.style.transform = 'scale(1)'; }, 100);
+    medal.classList.remove('bounce');
+    void medal.offsetWidth;
+    medal.classList.add('bounce');
 
     updateDisplay();
     saveGame();
