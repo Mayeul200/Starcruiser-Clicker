@@ -1538,10 +1538,10 @@ function updateMiniSpaceMap(distance) {
             if (currentIndex + 2 < PLANETS.length) planetsToShow.push(PLANETS[currentIndex + 2]);
         }
     } else {
-        // Avant la Lune : afficher Lune, Mars, Neptune (Earth = point de départ)
-        planetsToShow.push(PLANETS[1]);
+        // Avant la Lune : afficher Terre (départ), Lune, Mars
+        planetsToShow.push(PLANETS[0]);
+        if (PLANETS.length > 1) planetsToShow.push(PLANETS[1]);
         if (PLANETS.length > 2) planetsToShow.push(PLANETS[2]);
-        if (PLANETS.length > 3) planetsToShow.push(PLANETS[3]);
     }
     
     // Clé pour détecter si les planètes affichées ont changé
