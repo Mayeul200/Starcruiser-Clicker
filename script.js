@@ -128,7 +128,7 @@ const RANDOM_BONUSES = [
     { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
 ];
 
-const SAVE_VERSION = "2.1.0";
+const SAVE_VERSION = "2.2.0";
 
 // ============================================
 // TROPH\u0009ES
@@ -230,16 +230,16 @@ let isLaunching = false;
 // ============================================
 const PLANETS = [
     { id: 'earth', name: 'Earth', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
-    { id: 'moon', name: 'Moon', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 1, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 2, color: '#ef4444', imgPath: 'images/planets/mars.png' },
-    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 3, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluto', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 5, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 6100000000, bonusPercent: 8, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 12, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'oort-cloud', name: 'Oort Cloud', emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 15, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'milky-way-center', name: 'Milky Way Center', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 20, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromeda', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 25, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Virgo Cluster', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 30, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'moon', name: 'Moon', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 10, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 15, color: '#ef4444', imgPath: 'images/planets/mars.png' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 20, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
+    { id: 'pluto', name: 'Pluto', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 25, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 6100000000, bonusPercent: 30, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 35, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
+    { id: 'oort-cloud', name: 'Oort Cloud', emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 40, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'milky-way-center', name: 'Milky Way Center', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 50, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromeda', name: 'Andromeda', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 60, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
+    { id: 'virgo-cluster', name: 'Virgo Cluster', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 75, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -262,17 +262,20 @@ function findBuildingById(buildingId) {
 
 function getPrestigeProductionBoost() {
     const p = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
-    return 1 + Math.log(Math.max(1, p)) / 5;
+    return p;
+}
+function getPlanetProductionBonus() {
+    return 1 + getTotalPlanetBonus();
 }
 
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost();
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost();
+    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
 
 // Chaque upgrade de bâtiment double sa production (×2 par palier),
@@ -471,6 +474,14 @@ function loadGame() {
         prestigeMultiplier = parsed.prestigeMultiplier || 1;
         starDust = parsed.starDust || 0;
         galacticUpgrades = parsed.galacticUpgrades || {};
+        // V2.2: les upgrades galactiques sont uniques (maxLevel=1).
+        // Cap les niveaux anciens pour eviter des bonus excesifs.
+        Object.keys(galacticUpgrades).forEach(uid => {
+            const u = GALACTIC_UPGRADES.find(x => x.id === uid);
+            if (u && galacticUpgrades[uid] > u.maxLevel) {
+                galacticUpgrades[uid] = u.maxLevel;
+            }
+        });
         rocketsLaunched = parsed.rocketsLaunched || 0;
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
@@ -558,6 +569,16 @@ function loadGame() {
                 const part = ROCKET_PARTS.find(p => p.id === savedPart.id);
                 if (part) {
                     part.purchased = !!savedPart.purchased;
+                }
+            });
+        }
+
+        // Restaurer les planetes atteintes et leurs bonus de production
+        if (parsed.unlockedPlanets) {
+            unlockedPlanets = new Set(parsed.unlockedPlanets);
+            PLANETS.forEach(planet => {
+                if (unlockedPlanets.has(planet.id)) {
+                    planetBonuses[planet.id] = planet.bonusPercent / 100;
                 }
             });
         }
@@ -902,10 +923,9 @@ function calculateDistance() {
     // Le prestige aide la distance mais de façon amortie (logarithmique) pour que
     // chaque planète reste plus difficile à atteindre que la précédente.
     const prestige = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
-    const prestigeDistanceBoost = 1 + Math.log(Math.max(1, prestige)) / 3;
-    const planetBonus = getTotalPlanetBonus();
+    const prestigeDistanceBoost = 1 + (prestige - 1) / 2;
 
-    return baseDistance * prestigeDistanceBoost * getDistanceBonus() * planetBonus;
+    return baseDistance * prestigeDistanceBoost * getDistanceBonus();
 }
 
 function getCurrentDistance() {
@@ -1070,7 +1090,7 @@ function checkNewPlanetsUnlocked(distance) {
 }
 
 function getTotalPlanetBonus() {
-    let total = 1;
+    let total = 0;
     Object.values(planetBonuses).forEach(bonus => {
         total += bonus;
     });
@@ -1251,9 +1271,6 @@ function confirmSpaceMapAndReset() {
     rocketsLaunched++;
     prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
 
-    const planetBonus = getTotalPlanetBonus();
-    prestigeMultiplier *= (isNaN(planetBonus) ? 1 : planetBonus);
-
     // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
     const dustGained = Math.floor(Math.sqrt((isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) / MOON_DISTANCE) * getStardustGainBonus());
     if (dustGained > 0) {
@@ -1381,7 +1398,7 @@ function getBoosterDiscount() {
     return Math.min(0.50, getUpgradeEffect('coll4'));
 }
 function getCollectionUpgradeBonus() {
-    return getUpgradeEffect('coll3') + getUpgradeEffect('coll5') + getUpgradeEffect('coll6');
+    return getUpgradeEffect('coll3') + getUpgradeEffect('coll5');
 }
 function getRarityBoost() {
     return Math.min(0.50, getUpgradeEffect('coll2'));
@@ -1510,7 +1527,7 @@ function updateSpaceProgress() {
         sidebarDistanceMax.textContent = formatNumber(traveledDistance) + ' km';
     }
     if (sidebarBonus) {
-        const totalBonus = getTotalPlanetBonus();
+        const totalBonus = getPlanetProductionBonus();
         sidebarBonus.textContent = 'x' + totalBonus.toFixed(2);
     }
     if (sidebarPlanets) {
@@ -2622,7 +2639,7 @@ const BOOSTERS = {
 };
 
 // ============================================
-// ATELIER GALACTIQUE - Arbre de 30 upgrades en 5 branches
+// ATELIER GALACTIQUE - 29 upgrades uniques en 5 branches
 // Ne se reset jamais. Progression meta entre les runs.
 // ============================================
 const GALACTIC_BRANCHES = [
@@ -2634,45 +2651,44 @@ const GALACTIC_BRANCHES = [
 ];
 
 const GALACTIC_UPGRADES = [
-    // === BRANCHE PRODUCTION (7) ===
-    { id: 'prod1',  branch: 'production', tier: 1, name: 'Réacteur à fusion',       desc: '+5% production globale par niveau.',                baseCost: 8,   costMult: 1.6, maxLevel: 15, effectPerLevel: 0.05 },
-    { id: 'prod2',  branch: 'production', tier: 2, name: 'Optimisation énergétique', desc: '-3% coût des bâtiments par niveau.',                 baseCost: 12,  costMult: 1.7, maxLevel: 10, effectPerLevel: 0.03, requires: ['prod1'] },
-    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',  desc: '+8% production par niveau (plus fort).',            baseCost: 25,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.08, requires: ['prod1'] },
-    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avancée',  desc: '+9% production par niveau (encore plus fort).',      baseCost: 50,  costMult: 1.9, maxLevel: 8,  effectPerLevel: 0.09, requires: ['prod2', 'prod3'] },
-    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',         desc: '+3% production par niveau, cumulable à l\'infini.',     baseCost: 100, costMult: 2.0, maxLevel: 20, effectPerLevel: 0.03, requires: ['prod4'] },
-    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synthèse de matière noire', desc: '+25% production globale (niveau unique).',            baseCost: 500, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.25, requires: ['prod5'] },
-    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularité technologique', desc: '+12% production par niveau (ultime).',               baseCost: 1000,costMult: 2.5, maxLevel: 5,  effectPerLevel: 0.12, requires: ['prod6'] },
+    // === BRANCHE PRODUCTION (7) - upgrades uniques ===
+    { id: 'prod1',  branch: 'production', tier: 1, name: 'R\u00e9acteur \u00e0 fusion',       desc: '+25% production globale.',                  baseCost: 15,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25 },
+    { id: 'prod2',  branch: 'production', tier: 2, name: 'Optimisation \u00e9nerg\u00e9tique', desc: '-30% co\u00fbt des b\u00e2timents.',        baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['prod1'] },
+    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',  desc: '+50% production globale.',                  baseCost: 60,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['prod1'] },
+    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avanc\u00e9e',  desc: '+75% production globale.',                  baseCost: 120,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.75, requires: ['prod2', 'prod3'] },
+    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',         desc: '+100% production globale.',                 baseCost: 250,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['prod4'] },
+    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synth\u00e8se de mati\u00e8re noire', desc: '+150% production globale.',                baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.5, requires: ['prod5'] },
+    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularit\u00e9 technologique', desc: '+200% production globale.',                 baseCost: 1000, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['prod6'] },
 
-    // === BRANCHE FUSÉE (6) ===
-    { id: 'rock1',  branch: 'rocket', tier: 1, name: 'Ingénierie optimisée',     desc: '-5% coût des pièces de fusée par niveau.',            baseCost: 6,   costMult: 1.5, maxLevel: 10, effectPerLevel: 0.05 },
-    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Démarrage assisté',        desc: 'Commence chaque run avec N Ateliers gratuits.',       baseCost: 5,   costMult: 1.6, maxLevel: 10, effectPerLevel: 1, requires: ['rock1'] },
-    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Matériaux composites',     desc: '-8% coût des pièces de fusée par niveau (plus fort).', baseCost: 30,  costMult: 1.7, maxLevel: 8,  effectPerLevel: 0.08, requires: ['rock1'] },
-    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',     desc: '+15% distance de lancement par niveau.',             baseCost: 80,  costMult: 1.8, maxLevel: 10, effectPerLevel: 0.15, requires: ['rock2', 'rock3'] },
-    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'Téléportation spatiale',   desc: '+30% distance de lancement par niveau (plus fort).', baseCost: 300, costMult: 2.0, maxLevel: 5,  effectPerLevel: 0.30, requires: ['rock4'] },
-    { id: 'rock6',  branch: 'rocket', tier: 6, name: 'Moteur à distorsion',      desc: '+75% distance de lancement (niveau unique).',        baseCost: 2000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.75, requires: ['rock5'] },
+    // === BRANCHE FUS\u00c9E (6) - upgrades uniques ===
+    { id: 'rock1',  branch: 'rocket', tier: 1, name: 'Ing\u00e9nierie optimis\u00e9e',     desc: '-30% co\u00fbt des pi\u00e8ces de fus\u00e9e.',         baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30 },
+    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'D\u00e9marrage assist\u00e9',        desc: '+5 Ateliers gratuits au d\u00e9but de chaque run.', baseCost: 20,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock1'] },
+    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Mat\u00e9riaux composites',     desc: '-50% co\u00fbt des pi\u00e8ces de fus\u00e9e.',         baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['rock1'] },
+    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',     desc: '+100% distance de lancement.',              baseCost: 100,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['rock2', 'rock3'] },
+    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'T\u00e9l\u00e9portation spatiale',   desc: '+200% distance de lancement.',              baseCost: 300,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['rock4'] },
+    { id: 'rock6',  branch: 'rocket', tier: 6, name: 'Moteur \u00e0 distorsion',      desc: '+500% distance de lancement.',              baseCost: 800,  costMult: 1.0, maxLevel: 1, effectPerLevel: 5.0, requires: ['rock5'] },
 
-    // === BRANCHE EXPLORATION (6) ===
-    { id: 'exp1',   branch: 'exploration', tier: 1, name: 'Flotte de reconnaissance', desc: '+15% fréquence des comètes par niveau.',          baseCost: 4,   costMult: 1.5, maxLevel: 8,  effectPerLevel: 0.15 },
-    { id: 'exp2',   branch: 'exploration', tier: 2, name: 'Capteurs longue portée',   desc: '+40% gain de Poussière d\'Étoiles au lancement.',   baseCost: 15,  costMult: 1.6, maxLevel: 10, effectPerLevel: 0.40, requires: ['exp1'] },
-    { id: 'exp3',   branch: 'exploration', tier: 3, name: 'Boosters de lancement',   desc: '+20% fréquence des comètes par niveau (plus fort).', baseCost: 40,  costMult: 1.7, maxLevel: 6,  effectPerLevel: 0.20, requires: ['exp1'] },
-    { id: 'exp4',   branch: 'exploration', tier: 4, name: 'Cartographie stellaire',   desc: '+75% gain de Poussière d\'Étoiles (niveau unique).', baseCost: 200, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.75, requires: ['exp2', 'exp3'] },
-    { id: 'exp5',   branch: 'exploration', tier: 5, name: 'Voyage interstellaire',   desc: '+30% fréquence des comètes (niveau unique).',       baseCost: 800, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.30, requires: ['exp4'] },
-    { id: 'exp6',   branch: 'exploration', tier: 6, name: 'Trou de ver',              desc: '×2 gain de Poussière d\'Étoiles (niveau unique).',  baseCost: 5000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 1.0, requires: ['exp5'] },
+    // === BRANCHE EXPLORATION (6) - upgrades uniques ===
+    { id: 'exp1',   branch: 'exploration', tier: 1, name: 'Flotte de reconnaissance', desc: '+100% fr\u00e9quence des com\u00e8tes.',       baseCost: 8,    costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0 },
+    { id: 'exp2',   branch: 'exploration', tier: 2, name: 'Capteurs longue port\u00e9e',   desc: '+100% gain de Poussi\u00e8re d\'\u00c9toiles.', baseCost: 25,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['exp1'] },
+    { id: 'exp3',   branch: 'exploration', tier: 3, name: 'Boosters de lancement',   desc: '+150% fr\u00e9quence des com\u00e8tes.',      baseCost: 50,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1.5, requires: ['exp1'] },
+    { id: 'exp4',   branch: 'exploration', tier: 4, name: 'Cartographie stellaire',   desc: '+200% gain de Poussi\u00e8re d\'\u00c9toiles.', baseCost: 100,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['exp2', 'exp3'] },
+    { id: 'exp5',   branch: 'exploration', tier: 5, name: 'Voyage interstellaire',   desc: '+200% fr\u00e9quence des com\u00e8tes.',      baseCost: 250,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['exp4'] },
+    { id: 'exp6',   branch: 'exploration', tier: 6, name: 'Trou de ver',              desc: 'x3 gain de Poussi\u00e8re d\'\u00c9toiles.',   baseCost: 600,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['exp5'] },
 
-    // === BRANCHE COLLECTION (6) ===
-    { id: 'coll1',  branch: 'collection', tier: 1, name: 'Marché noir',           desc: '+1 carte par booster Premium/Légendaire au niveau max.', baseCost: 20,  costMult: 2.0, maxLevel: 3,  effectPerLevel: 1 },
-    { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+10% chance de rareté supérieure par niveau.',       baseCost: 30,  costMult: 1.8, maxLevel: 5,  effectPerLevel: 0.10, requires: ['coll1'] },
-    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Boosters renforcés',      desc: '+5% bonus de collection par niveau.',               baseCost: 50,  costMult: 1.7, maxLevel: 10, effectPerLevel: 0.05, requires: ['coll1'] },
-    { id: 'coll4',  branch: 'collection', tier: 4, name: 'Carte de commerçant',     desc: '-20% coût des boosters (niveau unique).',          baseCost: 150, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.20, requires: ['coll2', 'coll3'] },
-    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Collection dorée',       desc: '+15% bonus de collection par niveau (plus fort).', baseCost: 400, costMult: 2.0, maxLevel: 5,  effectPerLevel: 0.15, requires: ['coll4'] },
-    { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '×2 bonus de collection complet (niveau unique).',   baseCost: 3000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 1.0, requires: ['coll5'] },
+    // === BRANCHE COLLECTION (5) - upgrades uniques ===
+    { id: 'coll1',  branch: 'collection', tier: 1, name: 'March\u00e9 noir',           desc: '+2 cartes par booster Premium/L\u00e9gendaire.', baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
+    { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+25% chance de raret\u00e9 sup\u00e9rieure.',  baseCost: 60,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['coll1'] },
+    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Boosters renforc\u00e9s',      desc: '+50% bonus de collection.',              baseCost: 100,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['coll1'] },
+    { id: 'coll4',  branch: 'collection', tier: 4, name: 'Carte de commer\u00e7ant',     desc: '-40% co\u00fbt des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.40, requires: ['coll2', 'coll3'] },
+    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Album cosmique',          desc: 'x2 bonus de collection complet.',        baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['coll4'] },
 
-    // === BRANCHE CLIC (5) ===
-    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforcés',      desc: '+20% puissance de clic par niveau.',                baseCost: 6,   costMult: 1.6, maxLevel: 15, effectPerLevel: 0.20 },
-    { id: 'click2', branch: 'click', tier: 2, name: 'Main cybernétique',     desc: '+30% puissance de clic par niveau (plus fort).',     baseCost: 25,  costMult: 1.7, maxLevel: 10, effectPerLevel: 0.30, requires: ['click1'] },
-    { id: 'click3', branch: 'click', tier: 3, name: 'Frappe critique',       desc: '+10% chance de coup critique (×3) par niveau.',    baseCost: 60,  costMult: 1.8, maxLevel: 5,  effectPerLevel: 0.10, requires: ['click1'] },
-    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+50% puissance de clic (niveau unique).',         baseCost: 250, costMult: 1.0, maxLevel: 1,  effectPerLevel: 0.50, requires: ['click2', 'click3'] },
-    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: '×3 puissance de clic (niveau unique).',            baseCost: 2000,costMult: 1.0, maxLevel: 1,  effectPerLevel: 2.0, requires: ['click4'] }
+    // === BRANCHE CLIC (5) - upgrades uniques ===
+    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: '+50% puissance de clic.',                baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50 },
+    { id: 'click2', branch: 'click', tier: 2, name: 'Main cybern\u00e9tique',     desc: '+100% puissance de clic.',              baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['click1'] },
+    { id: 'click3', branch: 'click', tier: 3, name: 'Frappe critique',       desc: '+25% chance de coup critique (x3).',    baseCost: 80,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['click1'] },
+    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+200% puissance de clic.',              baseCost: 150,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['click2', 'click3'] },
+    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: 'x5 puissance de clic.',                 baseCost: 400,  costMult: 1.0, maxLevel: 1, effectPerLevel: 4.0, requires: ['click4'] }
 ];
 
 let galacticUpgrades = {};
@@ -2760,8 +2776,8 @@ function buyBooster(type) {
 
     const drawn = [];
     let cardCount = booster.cardCount;
-    if ((type === 'premium' || type === 'legendary') && getGalacticUpgradeLevel('booster') >= GALACTIC_UPGRADES.find(u => u.id === 'booster').maxLevel) {
-        cardCount += 1;
+    if (type === 'premium' || type === 'legendary') {
+        cardCount += getGalacticUpgradeLevel('coll1');
     }
     for (let i = 0; i < cardCount; i++) {
         drawn.push(drawCard(booster.rarities));
