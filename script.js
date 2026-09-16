@@ -1000,12 +1000,13 @@ function calculatePlanetProgress(distance) {
         }
     }
 
-    if (currentPlanetIndex === -1) {
-        // Pas encore atteint la Lune
+    // Earth (index 0) est le point de départ, pas un objectif.
+    // On la traite comme si on n'avait pas encore atteint de planète.
+    if (currentPlanetIndex <= 0) {
         return {
             currentPlanet: null,
-            nextPlanet: PLANETS[0],
-            progressPercent: Math.round((distance / PLANETS[0].distanceRequired) * 100)
+            nextPlanet: PLANETS[1],
+            progressPercent: Math.round((distance / PLANETS[1].distanceRequired) * 100)
         };
     }
 
@@ -1041,7 +1042,7 @@ function getNextTwoPlanets(distance) {
     
     if (currentIndex === -1) {
         // Pas encore atteint la Lune, afficher Lune et Mars
-        nextPlanets = [PLANETS[0], PLANETS[1]];
+        nextPlanets = [PLANETS[1], PLANETS[2]];
     } else if (currentIndex >= PLANETS.length - 2) {
         // A atteint ou dépassé l'avant-dernière planète
         nextPlanets = [PLANETS[PLANETS.length - 2], PLANETS[PLANETS.length - 1]];
@@ -1486,6 +1487,8 @@ function updateSpaceProgress() {
             } else {
                 planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: 100%`;
             }
+        } else if (traveledProgress.nextPlanet) {
+            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.emoji} ${traveledProgress.nextPlanet.name}: ${traveledProgress.progressPercent}%`;
         } else {
             planetDisplay.innerHTML = `🌍 Terre: 0%`;
         }
@@ -1535,9 +1538,10 @@ function updateMiniSpaceMap(distance) {
             if (currentIndex + 2 < PLANETS.length) planetsToShow.push(PLANETS[currentIndex + 2]);
         }
     } else {
-        planetsToShow.push(PLANETS[0]);
-        if (PLANETS.length > 1) planetsToShow.push(PLANETS[1]);
+        // Avant la Lune : afficher Lune, Mars, Neptune (Earth = point de départ)
+        planetsToShow.push(PLANETS[1]);
         if (PLANETS.length > 2) planetsToShow.push(PLANETS[2]);
+        if (PLANETS.length > 3) planetsToShow.push(PLANETS[3]);
     }
     
     // Clé pour détecter si les planètes affichées ont changé
