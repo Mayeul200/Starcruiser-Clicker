@@ -1891,7 +1891,7 @@ function getClickComponents() {
     return { baseCpC, buildingBonus, cpsBonus };
 }
 
-function addScore(points) {
+function addScore(points, event) {
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const critMult = (Math.random() < getCritChance()) ? 3 : 1;
@@ -1901,7 +1901,7 @@ function addScore(points) {
     partsSinceLaunch += totalPoints;
     totalPartsFromClicks += 1;
 
-    showClickEffect(Math.round(totalPoints));
+    showClickEffect(Math.round(totalPoints), event);
 
     const medal = document.getElementById('medal');
     medal.classList.remove('bounce');
@@ -1916,27 +1916,28 @@ function addScore(points) {
     checkTrophies();
 }
 
-function showClickEffect(value) {
+function showClickEffect(value, event) {
     const container = document.getElementById('click-effects');
-    const medal = document.getElementById('medal');
-    const medalRect = medal.getBoundingClientRect();
-    const centerX = medalRect.left + medalRect.width / 2;
-    const centerY = medalRect.top + medalRect.height / 2;
 
-    // Envoyer dans toutes les directions (N, S, E, W) depuis le centre
-    const angle = Math.random() * Math.PI * 2;
-    const distance = 50 + Math.random() * 100;  // 50-150px
-    const offsetX = Math.cos(angle) * distance;
-    const offsetY = Math.sin(angle) * distance;
+    let x, y;
+    if (event && event.clientX !== undefined) {
+        x = event.clientX;
+        y = event.clientY;
+    } else {
+        const medal = document.getElementById('medal');
+        const medalRect = medal.getBoundingClientRect();
+        x = medalRect.left + medalRect.width / 2;
+        y = medalRect.top + medalRect.height / 2;
+    }
 
     const effect = document.createElement('div');
     effect.className = 'click-effect';
     effect.textContent = `+${formatNumber(value)}`;
-    effect.style.left = `${centerX + offsetX}px`;
-    effect.style.top = `${centerY + offsetY}px`;
+    effect.style.left = `${x}px`;
+    effect.style.top = `${y}px`;
 
     container.appendChild(effect);
-    setTimeout(() => effect.remove(), 1000);
+    setTimeout(() => effect.remove(), 1200);
 }
 
 // ============================================

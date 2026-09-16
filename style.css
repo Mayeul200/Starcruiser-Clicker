@@ -614,8 +614,9 @@ body {
     pointer-events: none;
 }
 @keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-80px); }
+    0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    15% { transform: translate(-50%, -10px) scale(1.15); }
+    100% { opacity: 0; transform: translate(-50%, -120px) scale(0.9); }
 }
 .click-effect {
     position: absolute;
@@ -626,9 +627,11 @@ body {
     background: rgba(30, 58, 138, 0.7);
     padding: 2px 8px;
     border-radius: 4px;
-    animation: floatUp 1s forwards;
+    animation: floatUp 1.2s ease-out forwards;
     opacity: 0;
     z-index: 1000;
+    white-space: nowrap;
+    transform: translate(-50%, 0);
 }
 .toast {
     position: fixed;
