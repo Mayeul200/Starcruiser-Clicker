@@ -311,13 +311,14 @@ function getBuildingTooltip(building) {
 // (style Cookie Clicker : chaque palier coûte ~10× le précédent, proportionnel au bâtiment).
 // Déterministe : ne dépend d'aucun état de jeu, donc pas de cache figé.
 const BUILDING_UPGRADE_COST_GROWTH = 10;
+const BUILDING_UPGRADE_COST_DIVISOR = 2;
 
 function getBuildingUpgradeFixedCost(buildingId, threshold) {
     const building = findBuildingById(buildingId);
     if (!building) return 0;
     const tierIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
     const tier = tierIndex === -1 ? 0 : tierIndex;
-    return Math.floor(building.baseCost * Math.pow(BUILDING_UPGRADE_COST_GROWTH, tier));
+    return Math.floor(building.baseCost * Math.pow(BUILDING_UPGRADE_COST_GROWTH, tier) / BUILDING_UPGRADE_COST_DIVISOR);
 }
 
 // Prix du prochain bâtiment : baseCost × 1.15^(bâtiments possédés)
