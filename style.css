@@ -1118,7 +1118,7 @@ body {
 }
 /* Mini Space Map */
 .mini-space-map {
-    height: 120px;
+    height: 127px;
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
     border: 1px solid var(--border);
