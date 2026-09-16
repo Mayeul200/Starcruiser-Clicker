@@ -1657,40 +1657,25 @@ function renderUpgrades() {
     const container = document.getElementById('upgrades-container');
     container.innerHTML = '';
 
+    const available = [];
+
     // Upgrades de clic
     CLICK_UPGRADES.forEach(upgrade => {
         if (totalPartsFromClicks >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeIndex = CLICK_UPGRADES.indexOf(upgrade);
             const color = UPGRADE_COLORS[upgradeIndex % UPGRADE_COLORS.length];
-
-            const upgradeElement = document.createElement('div');
-            upgradeElement.className = 'upgrade-icon';
-            upgradeElement.style.borderColor = color;
-            upgradeElement.style.boxShadow = `var(--shadow), 0 0 6px ${color}`;
-            upgradeElement.innerHTML = '';
-
-            const img = document.createElement('img');
-            img.className = 'upgrade-img';
-            img.src = 'images/cursor.svg';
-            img.alt = upgrade.name;
-            upgradeElement.appendChild(img);
-
-            const levelBadge = document.createElement('span');
-            levelBadge.className = 'upgrade-level';
-            levelBadge.textContent = upgrade.threshold;
-            upgradeElement.appendChild(levelBadge);
-
-            upgradeElement.addEventListener('mouseenter', (e) => {
-                const rect = e.target.getBoundingClientRect();
-                showTooltip(`${upgrade.name} — ×2 clic — ${formatNumber(upgrade.cost)} Parts`, rect.left + rect.width/2, rect.top);
+            available.push({
+                cost: upgrade.cost,
+                render: () => {
+                    const el = createUpgradeElement(color, 'images/cursor.svg', upgrade.name, upgrade.threshold);
+                    attachTooltip(el, `${upgrade.name} — ×2 clic — ${formatNumber(upgrade.cost)} Parts`);
+                    el.onclick = () => buyClickUpgrade(upgrade.threshold);
+                    return el;
+                }
             });
-            upgradeElement.addEventListener('mouseleave', hideTooltip);
-
-            upgradeElement.onclick = () => buyClickUpgrade(upgrade.threshold);
-            container.appendChild(upgradeElement);
         }
     });
-    
+
     // Upgrades de buildings
     BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
         BUILDINGS.forEach(building => {
@@ -1698,35 +1683,50 @@ function renderUpgrades() {
                 const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
                 const color = UPGRADE_COLORS[thresholdIndex];
                 const cost = getBuildingUpgradeFixedCost(building.id, threshold);
-                
-                const upgradeElement = document.createElement('div');
-                upgradeElement.className = 'upgrade-icon';
-                upgradeElement.style.borderColor = color;
-                upgradeElement.style.boxShadow = `var(--shadow), 0 0 6px ${color}`;
-                upgradeElement.innerHTML = '';
-
-                const img = document.createElement('img');
-                img.className = 'upgrade-img';
-                img.src = building.imgPath || '';
-                img.alt = building.name;
-                upgradeElement.appendChild(img);
-
-                const levelBadge = document.createElement('span');
-                levelBadge.className = 'upgrade-level';
-                levelBadge.textContent = threshold;
-                upgradeElement.appendChild(levelBadge);
-                
-                upgradeElement.addEventListener('mouseenter', (e) => {
-                    const rect = e.target.getBoundingClientRect();
-                    showTooltip(`${building.name} — Palier ${threshold} — ×2 production — ${formatNumber(cost)} Parts`, rect.left + rect.width/2, rect.top);
+                available.push({
+                    cost,
+                    render: () => {
+                        const el = createUpgradeElement(color, building.imgPath || '', building.name, threshold);
+                        attachTooltip(el, `${building.name} — Palier ${threshold} — ×2 production — ${formatNumber(cost)} Parts`);
+                        el.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                        return el;
+                    }
                 });
-                upgradeElement.addEventListener('mouseleave', hideTooltip);
-                
-                upgradeElement.onclick = () => buyBuildingUpgrade(building.id, threshold);
-                container.appendChild(upgradeElement);
             }
         });
     });
+
+    // Tri du moins chere au plus chere
+    available.sort((a, b) => a.cost - b.cost);
+    available.forEach(item => container.appendChild(item.render()));
+}
+
+function createUpgradeElement(color, imgSrc, altText, levelBadgeText) {
+    const el = document.createElement('div');
+    el.className = 'upgrade-icon';
+    el.style.borderColor = color;
+    el.style.boxShadow = `var(--shadow), 0 0 6px ${color}`;
+
+    const img = document.createElement('img');
+    img.className = 'upgrade-img';
+    img.src = imgSrc;
+    img.alt = altText;
+    el.appendChild(img);
+
+    const levelBadge = document.createElement('span');
+    levelBadge.className = 'upgrade-level';
+    levelBadge.textContent = levelBadgeText;
+    el.appendChild(levelBadge);
+
+    return el;
+}
+
+function attachTooltip(element, text) {
+    element.addEventListener('mouseenter', (e) => {
+        const rect = e.target.getBoundingClientRect();
+        showTooltip(text, rect.left + rect.width / 2, rect.top);
+    });
+    element.addEventListener('mouseleave', hideTooltip);
 }
 
 // ============================================
