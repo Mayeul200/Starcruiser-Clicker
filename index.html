@@ -337,6 +337,15 @@
                 <span class="close-button" onclick="toggleGalacticShop()">&times;</span>
             </div>
             <div class="modal-body">
+                <div class="post-launch-banner" id="post-launch-banner" style="display:none;">
+                    <div class="post-launch-banner-title">🚀 Mission accomplie !</div>
+                    <div class="post-launch-banner-stats">
+                        <span>Distance: <strong id="post-launch-distance">0 km</strong></span>
+                        <span>✨ PE gagnés: <strong id="post-launch-stardust">+0</strong></span>
+                    </div>
+                    <div class="post-launch-banner-hint">Dépense tes PE maintenant pour en profiter dès ta prochaine mission.</div>
+                    <button class="post-launch-reset-btn" id="post-launch-reset-btn" onclick="performFinalReset()">🚀 Lancer la nouvelle mission</button>
+                </div>
                 <div class="galactic-intro">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.</div>
                 <div class="galactic-shop-list" id="galactic-shop-list"></div>
             </div>
