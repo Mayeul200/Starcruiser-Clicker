@@ -1357,6 +1357,21 @@ function buyGalacticUpgrade(upgradeId) {
     galacticUpgrades[upgradeId] = level + 1;
     updateStardustDisplay();
     renderGalacticShop();
+
+    // rock2 donne des ateliers gratuits: les ajouter immediatement en cours de run
+    if (upgradeId === 'rock2') {
+        const extra = getUpgradeEffect('rock2') - (level * (GALACTIC_UPGRADES.find(u => u.id === 'rock2').effectPerLevel));
+        if (extra > 0) {
+            const atelier = BUILDINGS.find(b => b.id === 'workshop');
+            if (atelier) {
+                atelier.count += extra;
+                unlockedBuildings.add(atelier.id);
+                renderBuildings();
+                updateDisplay();
+            }
+        }
+    }
+
     saveGame();
     showToast("\u2728 " + upgrade.name + " niveau " + (level + 1));
 }
