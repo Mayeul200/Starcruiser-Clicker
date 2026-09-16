@@ -2233,6 +2233,7 @@ function updateDisplay() {
     document.getElementById('gain-value').textContent = formatNumber(partsPerSecond);
     updateModalPartsCounter();
     updateStardustDisplay();
+    updateStardustPreview();
     updateBonusTimer();
 }
 
@@ -2246,6 +2247,21 @@ function updateModalPartsCounter() {
 function updateStardustDisplay() {
     const text = formatNumber(starDust);
     document.querySelectorAll('#stardust-value, #stardust-value-2').forEach(el => { el.textContent = text; });
+}
+
+function updateStardustPreview() {
+    const previewValue = document.getElementById('stardust-preview-value');
+    const previewBar = document.getElementById('stardust-preview-bar');
+    if (!previewValue || !previewBar) return;
+
+    const reachableDistance = calculateDistance();
+    const safeDistance = (isNaN(reachableDistance) || reachableDistance < 0) ? 0 : reachableDistance;
+    const potentialDust = Math.sqrt(safeDistance / MOON_DISTANCE) * getStardustGainBonus();
+    const intPart = Math.floor(potentialDust);
+    const fracPart = potentialDust - intPart;
+
+    previewValue.textContent = formatNumber(intPart);
+    previewBar.style.width = (fracPart * 100) + '%';
 }
 
 function updateBonusTimer() {

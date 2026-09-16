@@ -1091,6 +1091,33 @@ body {
 .galactic-shop-stardust span {
     color: #c4b5fd;
 }
+.galactic-shop-preview {
+    position: relative;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #a5f3fc;
+    padding: 1px 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    min-width: 70px;
+    text-align: center;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+}
+.galactic-shop-preview-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(34, 211, 238, 0.35), rgba(168, 85, 247, 0.45));
+    z-index: 0;
+    transition: width 0.3s ease;
+}
+.galactic-shop-preview-text {
+    position: relative;
+    z-index: 1;
+}
 .space-progress-container {
     display: flex;
     flex-direction: column;
