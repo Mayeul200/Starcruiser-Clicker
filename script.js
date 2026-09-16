@@ -881,12 +881,11 @@ function checkRocketReady() {
     return ROCKET_PARTS.every(part => part.purchased);
 }
 
-const PIECE_DISTANCE_MULT = 1.5;
+const PIECE_DISTANCE_MULT = 1.0;
 const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
 // Facteur de calibration : les parts générées sont divisées avant l'exposant
-// pour que la distance ne décolle pas trop vite en début de partie. Sans effet
-// notable en fin de partie (la production domine).
+// pour que la distance ne décolle pas trop vite en début de partie.
 const DISTANCE_PART_DIVISOR = 10;
 // Croissance du coût des pièces de fusée entre les lancements.
 // Douce (×1.15) pour que la fusée se reconstruise vite après un reset,
