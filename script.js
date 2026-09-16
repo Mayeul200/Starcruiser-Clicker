@@ -96,17 +96,21 @@ const ROCKET_PARTS = [
 
 
 
+// Ameliorations de clic inspirees de Cookie Clicker :
+// - Chacune double la valeur de base du clic (x2, comme Reinforced finger / Carpal tunnel).
+// - A partir de la 2e, debloque un bonus par bâtiment possede ( Thousand Fingers).
+// - Les couts suivent l'echelle ~x10 de Cookie Clicker.
 const CLICK_UPGRADES = [
-    { threshold: 50, name: "Basic Launch", cost: 50 },
-    { threshold: 100, name: "Precise Click", cost: 100 },
-    { threshold: 250, name: "Powerful Launch", cost: 250 },
-    { threshold: 500, name: "Expert Engineer", cost: 500 },
-    { threshold: 1000, name: "Rocket Scientist", cost: 1000 },
-    { threshold: 2500, name: "Space Pioneer", cost: 2500 },
-    { threshold: 5000, name: "Galactic Click", cost: 5000 },
-    { threshold: 10000, name: "Cosmic Master", cost: 10000 },
-    { threshold: 25000, name: "Interstellar Power", cost: 25000 },
-    { threshold: 50000, name: "Universal Click", cost: 50000 }
+    { threshold: 50,     name: "Doigt renforcé",        cost: 100 },
+    { threshold: 200,    name: "Précision laser",       cost: 500 },
+    { threshold: 500,    name: "Lancement puissant",   cost: 10000 },
+    { threshold: 1000,   name: "Ingénieur expert",     cost: 50000 },
+    { threshold: 2500,   name: "Scientifique spatial",  cost: 1000000 },
+    { threshold: 5000,   name: "Pionnier galactique",  cost: 5000000 },
+    { threshold: 10000,  name: "Click galactique",     cost: 100000000 },
+    { threshold: 25000, name: "Maître cosmique",      cost: 500000000 },
+    { threshold: 50000,  name: "Puissance interstellaire", cost: 10000000000 },
+    { threshold: 100000, name: "Main de l'univers",   cost: 50000000000 }
 ];
 
 const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
@@ -1838,15 +1842,28 @@ function spawnRandomBonus() {
 // VISUAL EFFECTS
 // ============================================
 
+function getClickComponents() {
+    const nbUpgrades = activatedClickUpgrades.length;
+    // Base qui double a chaque upgrade de clic (comme Reinforced finger / Carpal tunnel).
+    const baseCpC = Math.pow(2, nbUpgrades);
+    // Bonus par bâtiment possede (equivalent Thousand Fingers) : +0.1 par bâtiment,
+    // multiplie par un facteur croissant avec les upgrades (Million/Billion Fingers).
+    const fingerMult = nbUpgrades >= 2 ? (1 + (nbUpgrades - 1) * 0.5) : 0;
+    const buildingBonus = fingerMult * 0.1 * getTotalBuildingsOwned();
+    // Bonus lie a la production (1% des Parts/s par upgrade).
+    const cpsBonus = nbUpgrades * 0.01 * partsPerSecond;
+    return { baseCpC, buildingBonus, cpsBonus };
+}
+
 function addScore(points) {
-    const clickBonus = activatedClickUpgrades.length * 0.01 * partsPerSecond;
-    const basePoints = points + clickBonus;
+    const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
+    const basePoints = baseCpC + buildingBonus + cpsBonus;
     const critMult = (Math.random() < getCritChance()) ? 3 : 1;
-    const totalPoints = basePoints * clickMultiplier * getClickPowerBonus() * critMult;
+    const totalPoints = basePoints * getClickPowerBonus() * critMult;
 
     score += totalPoints;
     partsSinceLaunch += totalPoints;
-    totalPartsFromClicks += basePoints;
+    totalPartsFromClicks += 1;
 
     showClickEffect(Math.round(totalPoints));
 
@@ -1936,9 +1953,8 @@ function calculateTotalGenerated() {
 }
 
 function getClickPower() {
-    const basePower = 1;
-    const clickBonus = activatedClickUpgrades.length * 0.01 * partsPerSecond;
-    return (basePower + clickBonus) * clickMultiplier;
+    const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
+    return (baseCpC + buildingBonus + cpsBonus) * getClickPowerBonus();
 }
 
 function getTotalBuildingsOwned() {
