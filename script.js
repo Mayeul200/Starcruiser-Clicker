@@ -1564,6 +1564,7 @@ function updateMiniSpaceMap(distance) {
             
             if (isUnlocked) planetElement.classList.add('unlocked');
             if (isCurrent) planetElement.classList.add('current');
+            if (planet.id === 'earth') planetElement.classList.add('origin');
             
             let planetHtml = '';
             if (planet.imgPath) {
@@ -1572,6 +1573,9 @@ function updateMiniSpaceMap(distance) {
                 planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
             }
             planetHtml += `<div class="planet-name">${planet.name}</div>`;
+            const planetDist = planet.distanceRequired;
+            const distLabel = planet.id === 'earth' ? 'Départ' : `${formatNumber(planetDist)} km`;
+            planetHtml += `<div class="planet-distance">${distLabel}</div>`;
             
             planetElement.innerHTML = planetHtml;
             planetElement.style.setProperty('--planet-color', planet.color);
@@ -1608,7 +1612,7 @@ function updateMiniSpaceMap(distance) {
     
     // Mettre à jour ou créer le vaisseau
     let spaceship = container.querySelector('.spaceship');
-    const shouldShowShip = progress.currentPlanet || progress.progressPercent > 0;
+    const shouldShowShip = true;
     
     if (shouldShowShip) {
         // Calculer la position du vaisseau

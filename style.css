@@ -922,6 +922,9 @@ body {
 .space-planet.current .planet-name {
     color: var(--accent-light);
 }
+.space-planet.origin .planet-name {
+    color: #ffffff;
+}
 .space-planet.hidden .planet-unknown {
     border-radius: 50%;
     background: #000;
@@ -1183,6 +1186,13 @@ body {
     margin-top: 5px;
     white-space: nowrap;
     text-shadow: 0 0 2px var(--text);
+}
+.mini-space-map .planet-distance {
+    font-size: 0.6rem;
+    color: var(--text-light);
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0.8;
 }
 /* Space Stats */
 .space-stats {
