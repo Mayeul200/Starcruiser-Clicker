@@ -321,6 +321,10 @@ function calculateBuildingCost(building) {
 }
 
 // Fonction de formatage optimisée
+function groupThousands(n) {
+    return Math.round(n).toLocaleString('fr-FR').replace(/[\u202F\u00A0]/g, ' ');
+}
+
 function formatNumber(num, isTotalScore) {
     if (num === 0) return "0";
     
@@ -328,12 +332,15 @@ function formatNumber(num, isTotalScore) {
     
     // Nombres < 1000
     if (absNum < 1000) {
-        return num % 1 === 0 ? Math.round(num).toLocaleString('fr-FR') : num.toFixed(1).toLocaleString('fr-FR');
+        return num % 1 === 0 ? Math.round(num).toString() : num.toFixed(1);
     }
     
     // Nombres entre 1000 et 999999
     if (absNum < 1000000) {
-        return num % 1 === 0 ? Math.round(num).toLocaleString('fr-FR') : num.toFixed(1).toLocaleString('fr-FR');
+        if (num % 1 === 0) return groupThousands(num);
+        const intPart = Math.floor(num);
+        const decPart = (num - intPart).toFixed(1).slice(2);
+        return groupThousands(intPart) + '.' + decPart;
     }
     
     // Nombres >= 1M avec suffixes
@@ -347,7 +354,7 @@ function formatNumber(num, isTotalScore) {
     const scaledAbs = Math.abs(scaled);
     const decimals = scaledAbs >= 100 ? (isTotalScore ? 3 : 2) : (scaledAbs >= 10 ? 3 : 3);
     
-    return scaled.toFixed(decimals).toLocaleString('fr-FR') + " " + suffix;
+    return scaled.toFixed(decimals) + " " + suffix;
 }
 
 function updateAutoMultiplier() {
