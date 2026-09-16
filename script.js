@@ -1504,20 +1504,14 @@ function updateSpaceProgress() {
     const traveledDistance = maxDistance;
     const progress = calculatePlanetProgress(reachableDistance);
 
-    // Mettre à jour l'affichage de la planète actuelle (basé sur distance parcourue)
+    // Afficher la progression vers la PROCHAINE planète (basé sur distance parcourue)
     const planetDisplay = document.getElementById('current-planet-display');
     if (planetDisplay) {
         const traveledProgress = calculatePlanetProgress(traveledDistance);
-        if (traveledProgress.currentPlanet) {
-            if (traveledProgress.nextPlanet) {
-                planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: ${traveledProgress.progressPercent}%`;
-            } else {
-                planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: 100%`;
-            }
-        } else if (traveledProgress.nextPlanet) {
-            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.emoji} ${traveledProgress.nextPlanet.name}: ${traveledProgress.progressPercent}%`;
+        if (traveledProgress.nextPlanet) {
+            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.emoji} ${traveledProgress.nextPlanet.name}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
         } else {
-            planetDisplay.innerHTML = `🌍 Terre: 0%`;
+            planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: 100%`;
         }
     }
 
