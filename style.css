@@ -2452,58 +2452,6 @@ body {
     gap: 18px;
     flex: 1;
 }
-.post-launch-banner {
-    background: linear-gradient(135deg, rgba(34, 211, 238, 0.12), rgba(168, 85, 247, 0.12));
-    border: 1px solid rgba(34, 211, 238, 0.35);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 16px;
-    text-align: center;
-    flex-shrink: 0;
-}
-.post-launch-banner-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #a5f3fc;
-    margin-bottom: 10px;
-}
-.post-launch-banner-stats {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    flex-wrap: wrap;
-    color: var(--text);
-    font-size: 0.95rem;
-    margin-bottom: 10px;
-}
-.post-launch-banner-stats strong {
-    color: #fbbf24;
-}
-.post-launch-banner-hint {
-    color: var(--text-light);
-    font-size: 0.82rem;
-    margin-bottom: 14px;
-}
-.post-launch-reset-btn {
-    width: 100%;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    border: none;
-    border-radius: var(--radius);
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.post-launch-reset-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-}
-.post-launch-reset-btn:active {
-    transform: translateY(0);
-}
 .galactic-branch {
     display: flex;
     flex-direction: column;

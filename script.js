@@ -1271,48 +1271,23 @@ function drawSpaceMap(distance) {
     }
 }
 
-// Phase post-lancement: attribue les PE et ouvre l'atelier SANS resetter.
-// Le joueur peut y dépenser ses PE avant de lancer la nouvelle mission.
-let pendingLaunchDistance = 0;
-
 function confirmSpaceMapAndReset() {
     closeSpaceMap();
-
-    // Mémoriser la distance de cette mission (le reset viendra plus tard)
-    pendingLaunchDistance = lastLaunchDistance;
-
-    // Attribuer tout de suite les PE gagnés pour qu'ils soient dépensables
+    
+    // Appliquer le reset avec les bonus
     if (lastLaunchDistance > maxDistance) {
         maxDistance = lastLaunchDistance;
     }
+    rocketsLaunched++;
     prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
+
+    // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
     const dustGained = Math.floor(Math.sqrt((isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) / MOON_DISTANCE) * getStardustGainBonus());
     if (dustGained > 0) {
         starDust += dustGained;
     }
-
-    // Mettre à jour le bandeau post-lancement dans l'atelier
-    const banner = document.getElementById('post-launch-banner');
-    const distEl = document.getElementById('post-launch-distance');
-    const stardustEl = document.getElementById('post-launch-stardust');
-    if (banner) {
-        if (distEl) distEl.textContent = formatNumber(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) + ' km';
-        if (stardustEl) stardustEl.textContent = '+' + formatNumber(dustGained);
-        banner.style.display = 'block';
-    }
-
-    updateDisplay();
-    saveGame();
-
-    // Ouvrir l'atelier galactique pour dépenser les PE avant reset
-    renderGalacticShop();
-    document.getElementById('galactic-shop-modal').classList.add('active');
-}
-
-// Vrai reset déclenché depuis l'atelier post-lancement.
-function performFinalReset() {
-    // Appliquer le reset des compteurs (les PE restent)
-    rocketsLaunched++;
+    
+    // Reset du score, des bâtiments et des pièces de fusée (garde les bonus/prestige)
     score = 0;
     BUILDINGS.forEach(b => b.count = 0);
     ROCKET_PARTS.forEach(p => p.purchased = false);
@@ -1327,24 +1302,19 @@ function performFinalReset() {
     buildingUpgradeCosts = {};
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
-
-    // Masquer le bandeau et fermer l'atelier
-    const banner = document.getElementById('post-launch-banner');
-    if (banner) banner.style.display = 'none';
-    document.getElementById('galactic-shop-modal').classList.remove('active');
-
+    
     updateDisplay();
     saveGame();
     checkBuildingUnlocks();
     renderBuildings();
     renderUpgrades();
     renderRocketPartsShop();
-
+    
     // Afficher le modal de résultats
-    showLaunchResults(pendingLaunchDistance);
+    showLaunchResults(lastLaunchDistance);
     isLaunching = false;
-    updateSpaceProgress();
-    updateConstructionScene();
+        updateSpaceProgress();
+        updateConstructionScene();
 }
 
 function closeSpaceMap() {
@@ -1516,12 +1486,6 @@ function renderGalacticShop() {
 function toggleGalacticShop() {
     const modal = document.getElementById('galactic-shop-modal');
     if (modal.classList.contains('active')) {
-        // Empêcher de fermer l'atelier tant qu'un reset post-lancement est en attente
-        const banner = document.getElementById('post-launch-banner');
-        if (banner && banner.style.display !== 'none') {
-            showToast("\ud83d\ude80 Valide ta nouvelle mission pour continuer !");
-            return;
-        }
         modal.classList.remove('active');
     } else {
         renderGalacticShop();
