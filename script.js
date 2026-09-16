@@ -30,7 +30,7 @@ function hideTooltip() {
 const BUILDING_PRICE_GROWTH_RATE = 1.15;
 const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
-const BONUS_SPAWN_INTERVAL_MS = 20000;
+const BONUS_SPAWN_INTERVAL_MS = 5000; // TEST: comètes toutes les 5s (normalement 20000)
 const SAVE_INTERVAL_MS = 30000;
 const TOAST_DURATION_MS = 3000;
 const MAX_BUILDING_DISPLAY = 100;
