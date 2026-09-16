@@ -880,6 +880,10 @@ function checkRocketReady() {
 const PIECE_DISTANCE_MULT = 1.5;
 const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
+// Facteur de calibration : les parts générées sont divisées avant l'exposant
+// pour que la distance ne décolle pas trop vite en début de partie. Sans effet
+// notable en fin de partie (la production domine).
+const DISTANCE_PART_DIVISOR = 10;
 // Croissance du coût des pièces de fusée entre les lancements.
 // Plus douce que l'ancien ×4.3 pour une courbe de prestige progressive
 // (les pièces coûtent ~×2 de plus à chaque run, comme un palier de bâtiment).
@@ -889,7 +893,7 @@ function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
     const totalParts = Math.max(partsSinceLaunch, 0);
     const partsMult = Math.pow(PIECE_DISTANCE_MULT, partsUnlocked);
-    const scoreFactor = totalParts > 0 ? Math.pow(totalParts, DISTANCE_SCORE_EXP) : 0;
+    const scoreFactor = totalParts > 0 ? Math.pow(totalParts / DISTANCE_PART_DIVISOR, DISTANCE_SCORE_EXP) : 0;
     const baseDistance = partsMult * scoreFactor;
 
     // Le prestige aide la distance mais de façon amortie (logarithmique) pour que
