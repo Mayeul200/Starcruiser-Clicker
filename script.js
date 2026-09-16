@@ -789,22 +789,14 @@ function updateAllBuildingButtons() {
     });
 }
 
-const BUILDINGS_PER_PART = 2;
-
-function getOwnedRocketPartsCount() {
-    return ROCKET_PARTS.filter(p => p.purchased).length;
-}
-
-function isBuildingUnlockedByParts(buildingIndex) {
-    if (buildingIndex === 0) return true;
-    const partsOwned = getOwnedRocketPartsCount();
-    return buildingIndex < (partsOwned + 1) * BUILDINGS_PER_PART;
+function isBuildingUnlocked(building) {
+    return building.unlockCondition ? building.unlockCondition() : true;
 }
 
 function checkBuildingUnlocks() {
     let needsRerender = false;
-    BUILDINGS.forEach((building, index) => {
-        if (isBuildingUnlockedByParts(index) && !unlockedBuildings.has(building.id)) {
+    BUILDINGS.forEach((building) => {
+        if (isBuildingUnlocked(building) && !unlockedBuildings.has(building.id)) {
             unlockedBuildings.add(building.id);
             needsRerender = true;
         }
@@ -818,11 +810,8 @@ function renderBuildings() {
     const container = document.getElementById('buildings-list');
     container.innerHTML = '';
 
-    BUILDINGS.forEach((building, index) => {
-        if (isBuildingUnlockedByParts(index) || unlockedBuildings.has(building.id)) {
-            if (isBuildingUnlockedByParts(index) && !unlockedBuildings.has(building.id)) {
-                unlockedBuildings.add(building.id);
-            }
+    BUILDINGS.forEach((building) => {
+        if (isBuildingUnlocked(building) || unlockedBuildings.has(building.id)) {
             renderBuilding(building);
         }
     });
