@@ -2690,19 +2690,20 @@ body {
     .mini-games-section { display: flex !important; }
 
     /* --- Panneau droit (Bâtiments) --- */
-    .right-panel { padding: 0 10px calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
+    .right-panel { padding: 0 6px calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
     .buildings-header {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        gap: 8px;
-        height: auto;
-        padding: 10px 4px;
+        justify-content: space-between;
+        gap: 6px;
+        height: 44px;
+        padding: 0 4px;
     }
-    .buildings-header h3 { font-size: 1rem; text-align: center; margin: 0; }
-    .multiplier-buttons { justify-content: center; }
-    .multiplier-btn { padding: 6px 14px; font-size: 0.8rem; }
-    .buildings-list { gap: 8px; margin-top: 4px; }
+    .buildings-header h3 { font-size: 0.9rem; margin: 0; white-space: nowrap; }
+    .multiplier-buttons { gap: 3px; }
+    .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
+    .buildings-list { gap: 6px; margin-top: 2px; }
     .building-item {
         grid-template-columns: 56px 1fr;
         grid-template-areas:
