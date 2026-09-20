@@ -2174,7 +2174,7 @@ body {
 .cc-reveal-card {
     width: 240px;
     height: 360px;
-    border-radius: var(--radius);
+    border-radius: 36% / 24%;
     padding: 0;
     box-sizing: border-box;
     position: relative;
@@ -2206,7 +2206,7 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    border-radius: var(--radius);
+    border-radius: 36% / 24%;
     overflow: hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -2220,21 +2220,6 @@ body {
 .cc-reveal-back {
     transform: rotateY(180deg);
     box-sizing: border-box;
-}
-.cc-reveal-card.rarity-common {
-    background: linear-gradient(135deg, #475569, #1e293b);
-}
-.cc-reveal-card.rarity-rare {
-    background: linear-gradient(135deg, #1e3a8a, #1e1b4b);
-}
-.cc-reveal-card.rarity-epic {
-    background: linear-gradient(135deg, #581c87, #1e1b4b);
-}
-.cc-reveal-card.rarity-legendary {
-    background: linear-gradient(135deg, #78350f, #1e1b4b);
-}
-.cc-reveal-card.rarity-alternative {
-    background: linear-gradient(135deg, #881337, #1e1b4b);
 }
 
 /* Glow par rareté — uniquement sur la face avant (reveal back / album) */
@@ -2327,7 +2312,7 @@ body {
 .cc-album-card {
     width: 192px;
     height: 288px;
-    border-radius: var(--radius);
+    border-radius: 36% / 24%;
     display: flex;
     flex-direction: column;
     align-items: center;
