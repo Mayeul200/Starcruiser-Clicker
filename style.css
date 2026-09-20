@@ -394,6 +394,8 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     min-height: 70px;
+    max-height: 100px;
+    overflow: hidden;
     position: relative;
 }
 .building-item:hover {
@@ -2714,6 +2716,8 @@ body {
             "icon buy";
         grid-template-rows: auto auto;
         min-height: 0;
+        max-height: 100px;
+        overflow: hidden;
         padding: 10px;
         gap: 4px 10px;
         align-items: center;
