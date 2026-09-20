@@ -1490,10 +1490,14 @@ function getCritChance() {
     return Math.min(0.50, getUpgradeEffect('click2') + getUpgradeEffect('click4'));
 }
 function getBoosterDiscount() {
-    return Math.min(0.50, getUpgradeEffect('coll4'));
+    let discount = 1;
+    if (getGalacticUpgradeLevel('coll1') > 0) discount *= 0.90;
+    if (getGalacticUpgradeLevel('coll3') > 0) discount *= 0.90;
+    if (getGalacticUpgradeLevel('coll5') > 0) discount *= 0.85;
+    return 1 - discount;
 }
 function getCollectionUpgradeBonus() {
-    return getUpgradeEffect('coll3') + getUpgradeEffect('coll5');
+    return getUpgradeEffect('coll4');
 }
 function getRarityBoost() {
     return Math.min(0.50, getUpgradeEffect('coll2'));
@@ -2795,11 +2799,12 @@ const GALACTIC_UPGRADES = [
     { id: 'rock5',  branch: 'rocket', tier: 5, name: 'T\u00e9l\u00e9portation spatiale',     desc: '+200% distance de lancement.',       baseCost: 1000, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['rock4'] },
 
     // === BRANCHE COLLECTION (5) - upgrades uniques ===
-    { id: 'coll1',  branch: 'collection', tier: 1, name: 'March\u00e9 noir',           desc: '+2 cartes par booster Premium/L\u00e9gendaire.', baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
-    { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+25% chance de raret\u00e9 sup\u00e9rieure.',  baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['coll1'] },
-    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Boosters renforc\u00e9s',      desc: '+50% au bonus des cartes possédées.',              baseCost: 50,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['coll1'] },
-    { id: 'coll4',  branch: 'collection', tier: 4, name: 'Carte de commer\u00e7ant',     desc: '-40% co\u00fbt des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.40, requires: ['coll2', 'coll3'] },
-    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Album cosmique',          desc: 'Double le bonus des cartes possédées.',        baseCost: 400,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['coll4'] },
+    { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% coût des boosters.',          baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
+    { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+15% chance de rareté supérieure dans le booster Standard.',  baseCost: 8,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll1'] },
+    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Marché noir',           desc: '-10% coût des boosters.',          baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['coll2'] },
+    { id: 'coll4',  branch: 'collection', tier: 4, name: 'Boosters renforcés',      desc: '+20% au bonus des cartes possédées.',              baseCost: 80,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['coll3'] },
+    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Réseau de contrebande',  desc: '-15% coût des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll4'] },
+    { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '+1 carte dans tous les boosters.',     baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll5'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
     { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x2 puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
@@ -2901,9 +2906,7 @@ function buyBooster(type) {
 
     const drawn = [];
     let cardCount = booster.cardCount;
-    if (type === 'premium' || type === 'legendary') {
-        cardCount += getGalacticUpgradeLevel('coll1');
-    }
+    cardCount += getGalacticUpgradeLevel('coll6');
     for (let i = 0; i < cardCount; i++) {
         drawn.push(drawCard(booster.rarities));
     }
