@@ -12,15 +12,23 @@ document.body.appendChild(tooltip);
 
 function showTooltip(text, x, y) {
     tooltip.textContent = text;
-    tooltip.style.top = y + 'px';
-    tooltip.style.left = x + 'px';
     tooltip.style.transform = 'translate(-50%, -120%)';
     tooltip.classList.add('visible');
+    const rect = tooltip.getBoundingClientRect();
+    const margin = 8;
+    const clampedX = Math.max(rect.width / 2 + margin, Math.min(x, window.innerWidth - rect.width / 2 - margin));
+    tooltip.style.top = y + 'px';
+    tooltip.style.left = clampedX + 'px';
 }
 
 function hideTooltip() {
     tooltip.classList.remove('visible');
 }
+
+// Détection d'un écran tactile (mobile / tablette)
+const IS_TOUCH = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    || 'ontouchstart' in window
+    || navigator.maxTouchPoints > 0;
 
 // ============================================
 // GLOBAL CONSTANTS
@@ -900,6 +908,12 @@ function renderBuilding(building) {
     buildingElement.addEventListener('mouseenter', () => {
         buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
     });
+    if (IS_TOUCH) {
+        buildingElement.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            showTouchTooltip(buildingElement, getBuildingTooltip(building));
+        });
+    }
 
     container.appendChild(buildingElement);
 }
@@ -1787,12 +1801,41 @@ function createUpgradeElement(color, imgSrc, altText, levelBadgeText) {
 }
 
 function attachTooltip(element, text) {
-    element.addEventListener('mouseenter', (e) => {
-        const rect = e.target.getBoundingClientRect();
-        showTooltip(text, rect.left + rect.width / 2, rect.top);
-    });
-    element.addEventListener('mouseleave', hideTooltip);
+    if (!IS_TOUCH) {
+        element.addEventListener('mouseenter', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            showTooltip(text, rect.left + rect.width / 2, rect.top);
+        });
+        element.addEventListener('mouseleave', hideTooltip);
+    }
+    if (IS_TOUCH) {
+        element.addEventListener('click', (e) => {
+            if (touchTooltipElement !== element) {
+                // 1er tap : afficher l'info, bloquer l'achat
+                showTouchTooltip(element, text);
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            } else {
+                // 2e tap : acheter (laisser passer le onclick)
+                touchTooltipElement = null;
+            }
+        });
+    }
 }
+
+// Tooltip tactile : sur mobile, le 1er tap affiche l'info, le 2e achète.
+let touchTooltipElement = null;
+function showTouchTooltip(element, text) {
+    const rect = element.getBoundingClientRect();
+    showTooltip(text, rect.left + rect.width / 2, rect.top);
+    touchTooltipElement = element;
+}
+document.addEventListener('touchstart', (e) => {
+    if (!e.target.closest('.upgrade-icon') && !e.target.closest('.building-item')) {
+        hideTooltip();
+        touchTooltipElement = null;
+    }
+}, { passive: true });
 
 // ============================================
 // BONUSES MANAGEMENT
@@ -2945,6 +2988,84 @@ function renderCardAlbum() {
 }
 
 // ============================================
+// MOBILE / RESPONSIVE
+// ============================================
+// Vue active sur mobile : 'center' (fusée), 'right' (bâtiments), 'left' (espace)
+let mobileActiveView = 'center';
+
+function isMobileLayout() {
+    return window.matchMedia('(max-width: 1024px)').matches;
+}
+
+function setMobileView(view) {
+    mobileActiveView = view;
+    const grid = document.querySelector('.main-grid');
+    const nav = document.getElementById('mobile-nav');
+    if (!grid) return;
+    grid.classList.remove('mobile-view-left', 'mobile-view-center', 'mobile-view-right');
+    grid.classList.add('mobile-view-' + view);
+    if (nav) {
+        nav.querySelectorAll('button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === view);
+        });
+    }
+    if (view === 'center') applySceneScale();
+}
+
+// Mise à l'échelle de la scène de construction : la fusée fait ~700px
+// de haut en taille réelle (pièces positionnées en pixels fixes). On applique
+// un transform: scale() pour qu'elle tienne toujours dans l'écran.
+function applySceneScale() {
+    const container = document.getElementById('rocket-parts-container');
+    if (!container) return;
+    const scene = container.parentElement;
+    if (!scene) return;
+    const sceneHeight = scene.clientHeight;
+    const sceneWidth = scene.clientWidth;
+    if (!sceneHeight || !sceneWidth) return;
+    // Repère de la fusée dans la scène (positions px fixes des pièces)
+    const ROCKET_TOP = 205;
+    const ROCKET_BASE = 686;
+    const PAD = 12;
+    // Scène assez grande : layout d'origine inchangé (desktop)
+    if (sceneHeight >= ROCKET_BASE + PAD && sceneWidth >= 420) {
+        container.style.transform = '';
+        return;
+    }
+    const rocketHeight = ROCKET_BASE - ROCKET_TOP;
+    const fitY = (sceneHeight - PAD * 2) / rocketHeight;
+    const fitX = (sceneWidth - PAD * 2) / 420;
+    const scale = Math.min(1, fitY, fitX);
+    // Origine en haut au centre ; on place la base de la fusée
+    // juste au-dessus du bas de la scène.
+    const ty = sceneHeight - PAD - scale * ROCKET_BASE;
+    container.style.transformOrigin = '50% 0';
+    container.style.transform = 'translateY(' + ty + 'px) scale(' + scale + ')';
+}
+
+function initMobileNav() {
+    const nav = document.getElementById('mobile-nav');
+    if (!nav) return;
+    nav.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => setMobileView(btn.dataset.view));
+    });
+    if (isMobileLayout()) setMobileView(mobileActiveView);
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (isMobileLayout()) {
+                setMobileView(mobileActiveView);
+                applySceneScale();
+            }
+        }, 150);
+    });
+    window.addEventListener('orientationchange', () => {
+        setTimeout(applySceneScale, 250);
+    });
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 
@@ -2960,6 +3081,11 @@ function init() {
     updateConstructionScene();
     checkBuildingUnlocks();
     checkTrophies();
+    initMobileNav();
+    if (isMobileLayout()) {
+        setMobileView(mobileActiveView);
+        applySceneScale();
+    }
 }
 
 // ============================================
@@ -3407,6 +3533,7 @@ function updateConstructionScene() {
             piece.style.width = width + 'px';
             piece.style.height = height + 'px';
             piece.style.zIndex = '3';
+            applySceneScale();
             
             // Use image if available, fallback to emoji
             if (part.imgPath) {
