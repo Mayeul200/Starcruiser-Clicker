@@ -1480,14 +1480,14 @@ function getDistanceBonus() {
     return 1 + getUpgradeEffect('rock4') + getUpgradeEffect('rock5');
 }
 function getClickPowerBonus() {
-    return 1
-        + getUpgradeEffect('click1')
-        + getUpgradeEffect('click2')
-        + getUpgradeEffect('click4')
-        + getUpgradeEffect('click5');
+    let mult = 1;
+    if (getGalacticUpgradeLevel('click1') > 0) mult *= 2;
+    if (getGalacticUpgradeLevel('click3') > 0) mult *= 2.5;
+    if (getGalacticUpgradeLevel('click5') > 0) mult *= 3;
+    return mult;
 }
 function getCritChance() {
-    return Math.min(0.50, getUpgradeEffect('click3'));
+    return Math.min(0.50, getUpgradeEffect('click2') + getUpgradeEffect('click4'));
 }
 function getBoosterDiscount() {
     return Math.min(0.50, getUpgradeEffect('coll4'));
@@ -2004,6 +2004,9 @@ function addScore(points, event) {
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const critMult = (Math.random() < getCritChance()) ? 3 : 1;
     const totalPoints = basePoints * getClickPowerBonus() * critMult;
+    if (getGalacticUpgradeLevel('click6') > 0 && Math.random() < 0.05) {
+        spawnRandomBonus();
+    }
 
     score += totalPoints;
     partsSinceLaunch += totalPoints;
@@ -2799,11 +2802,12 @@ const GALACTIC_UPGRADES = [
     { id: 'coll5',  branch: 'collection', tier: 5, name: 'Album cosmique',          desc: 'Double le bonus des cartes possédées.',        baseCost: 400,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['coll4'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
-    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: '+50% puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50 },
-    { id: 'click2', branch: 'click', tier: 2, name: 'Main cybern\u00e9tique',     desc: '+100% puissance de clic.',              baseCost: 20,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['click1'] },
-    { id: 'click3', branch: 'click', tier: 3, name: 'Frappe critique',       desc: '+25% chance de coup critique (x3).',    baseCost: 45,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['click1'] },
-    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+200% puissance de clic.',              baseCost: 350, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['click2', 'click3'] },
-    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: 'x5 puissance de clic.',                 baseCost: 200, costMult: 1.0, maxLevel: 1, effectPerLevel: 4.0, requires: ['click4'] },
+    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x2 puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
+    { id: 'click2', branch: 'click', tier: 2, name: 'Frappe critique',       desc: '+5% chance de coup critique (x3).',     baseCost: 5,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click1'] },
+    { id: 'click3', branch: 'click', tier: 3, name: 'Main cybern\u00e9tique',     desc: 'x2.5 puissance de clic.',               baseCost: 25,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.5, requires: ['click2'] },
+    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+20% chance de coup critique (x3).',    baseCost: 60,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['click3'] },
+    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x3 puissance de clic.',                 baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 3, requires: ['click4'] },
+    { id: 'click6', branch: 'click', tier: 6, name: 'Appel cosmique',         desc: '5% de chance de d\u00e9clencher une com\u00e8te \u00e0 chaque clic.', baseCost: 400, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click5'] },
     // === BRANCHE HORS-LIGNE (5) - production pendant l'absence ===
     { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 1h apr\u00e8s fermeture du jeu.',  baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1 },
     { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',         desc: 'Production continue jusqu\u0027\u00e0 2h apr\u00e8s fermeture du jeu.',  baseCost: 3,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['off1'] },
