@@ -3011,7 +3011,15 @@ function debugSimulateTime(seconds) {
     } finally {
         Date.now = realNow;
     }
-    lastGameTick = Date.now();
+    // Resynchroniser toutes les horloges de throttling sur le temps reel,
+    // sinon elles restent bloquees dans le futur virtuel et les mises a jour
+    // UI (prix, distance, sauvegarde) s'arretent pendant des heures.
+    const now = Date.now();
+    lastGameTick = now;
+    lastBuildingsUpdate = 0;
+    lastRocketPartsUpdate = 0;
+    lastSpaceProgressUpdate = 0;
+    lastSaveTime = 0;
 }
 
 function debugRenderAll() {
