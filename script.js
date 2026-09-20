@@ -2805,11 +2805,11 @@ const GALACTIC_UPGRADES = [
     { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+200% puissance de clic.',              baseCost: 350, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['click2', 'click3'] },
     { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: 'x5 puissance de clic.',                 baseCost: 200, costMult: 1.0, maxLevel: 1, effectPerLevel: 4.0, requires: ['click4'] },
     // === BRANCHE HORS-LIGNE (5) - production pendant l'absence ===
-    { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 1h apr\u00e8s fermeture du jeu.',  baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1 },
-    { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',         desc: 'Production continue jusqu\u0027\u00e0 2h apr\u00e8s fermeture du jeu.',  baseCost: 60,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['off1'] },
-    { id: 'off3', branch: 'offline', tier: 3, name: 'IA de bord',                  desc: 'Production continue jusqu\u0027\u00e0 4h apr\u00e8s fermeture du jeu.',  baseCost: 250,  costMult: 1.0, maxLevel: 1, effectPerLevel: 4, requires: ['off2'] },
-    { id: 'off4', branch: 'offline', tier: 4, name: 'Colonie autonome',            desc: 'Production continue jusqu\u0027\u00e0 8h apr\u00e8s fermeture du jeu.',  baseCost: 900,  costMult: 1.0, maxLevel: 1, effectPerLevel: 8, requires: ['off3'] },
-    { id: 'off5', branch: 'offline', tier: 5, name: 'Civilisation robotis\u00e9e', desc: 'Production continue jusqu\u0027\u00e0 16h apr\u00e8s fermeture du jeu.', baseCost: 3000, costMult: 1.0, maxLevel: 1, effectPerLevel: 16, requires: ['off4'] }
+    { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 1h apr\u00e8s fermeture du jeu.',  baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1 },
+    { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',         desc: 'Production continue jusqu\u0027\u00e0 2h apr\u00e8s fermeture du jeu.',  baseCost: 3,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['off1'] },
+    { id: 'off3', branch: 'offline', tier: 3, name: 'IA de bord',                  desc: 'Production continue jusqu\u0027\u00e0 4h apr\u00e8s fermeture du jeu.',  baseCost: 8,  costMult: 1.0, maxLevel: 1, effectPerLevel: 4, requires: ['off2'] },
+    { id: 'off4', branch: 'offline', tier: 4, name: 'Colonie autonome',            desc: 'Production continue jusqu\u0027\u00e0 8h apr\u00e8s fermeture du jeu.',  baseCost: 20,  costMult: 1.0, maxLevel: 1, effectPerLevel: 8, requires: ['off3'] },
+    { id: 'off5', branch: 'offline', tier: 5, name: 'Civilisation robotis\u00e9e', desc: 'Production continue jusqu\u0027\u00e0 16h apr\u00e8s fermeture du jeu.', baseCost: 50, costMult: 1.0, maxLevel: 1, effectPerLevel: 16, requires: ['off4'] }
 ];
 
 let galacticUpgrades = {};
