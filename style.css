@@ -2219,24 +2219,19 @@ body {
     transform: rotateY(180deg);
     box-sizing: border-box;
 }
-.cc-reveal-card.rarity-common,
-.cc-album-card.rarity-common {
+.cc-reveal-card.rarity-common {
     background: linear-gradient(135deg, #475569, #1e293b);
 }
-.cc-reveal-card.rarity-rare,
-.cc-album-card.rarity-rare {
+.cc-reveal-card.rarity-rare {
     background: linear-gradient(135deg, #1e3a8a, #1e1b4b);
 }
-.cc-reveal-card.rarity-epic,
-.cc-album-card.rarity-epic {
+.cc-reveal-card.rarity-epic {
     background: linear-gradient(135deg, #581c87, #1e1b4b);
 }
-.cc-reveal-card.rarity-legendary,
-.cc-album-card.rarity-legendary {
+.cc-reveal-card.rarity-legendary {
     background: linear-gradient(135deg, #78350f, #1e1b4b);
 }
-.cc-reveal-card.rarity-alternative,
-.cc-album-card.rarity-alternative {
+.cc-reveal-card.rarity-alternative {
     background: linear-gradient(135deg, #881337, #1e1b4b);
 }
 
@@ -2338,9 +2333,10 @@ body {
     box-sizing: border-box;
     position: relative;
     overflow: hidden;
+    background: transparent;
 }
 .cc-album-card.locked {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
+    background: rgba(15, 23, 42, 0.5);
     opacity: 0.6;
 }
 .cc-album-card.locked .cc-card-icon {
