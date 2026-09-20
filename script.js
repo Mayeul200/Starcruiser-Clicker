@@ -1457,7 +1457,7 @@ function getBuildingCostReduction() {
     return 0;
 }
 function getRocketPartDiscount() {
-    return Math.min(0.50, getUpgradeEffect('rock2') + getUpgradeEffect('rock3'));
+    return 0;
 }
 function getStartupAteliers() {
     return getUpgradeEffect('rock1');
@@ -1477,7 +1477,10 @@ function calculateStardustGain(distanceKm) {
     return Math.floor(base * getStardustGainBonus());
 }
 function getDistanceBonus() {
-    return 1 + getUpgradeEffect('rock4') + getUpgradeEffect('rock5');
+    let mult = 1;
+    if (getGalacticUpgradeLevel('rock2') > 0) mult *= 1.20;
+    if (getGalacticUpgradeLevel('rock4') > 0) mult *= 1.30;
+    return mult;
 }
 function getClickPowerBonus() {
     let mult = 1;
@@ -1510,6 +1513,14 @@ function applyStartupBonus() {
         if (atelier) {
             atelier.count += freeAteliers;
             unlockedBuildings.add(atelier.id);
+        }
+    }
+    const freeUsines = getGalacticUpgradeLevel('rock3');
+    if (freeUsines > 0) {
+        const usine = BUILDINGS.find(b => b.id === 'factory');
+        if (usine) {
+            usine.count += freeUsines;
+            unlockedBuildings.add(usine.id);
         }
     }
 }
@@ -2793,10 +2804,9 @@ const GALACTIC_UPGRADES = [
 
     // === BRANCHE FUS\u00c9E (5) - upgrades uniques ===
     { id: 'rock1',  branch: 'rocket', tier: 1, name: 'D\u00e9marrage assist\u00e9',        desc: '+5 Ateliers gratuits au d\u00e9but de chaque run.', baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5 },
-    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Ing\u00e9nierie optimis\u00e9e',      desc: '-30% co\u00fbt des pi\u00e8ces de fus\u00e9e.',      baseCost: 2,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['rock1'] },
-    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Mat\u00e9riaux composites',      desc: '-20% co\u00fbt des pi\u00e8ces de fus\u00e9e.',      baseCost: 8,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['rock2'] },
-    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',      desc: '+100% distance de lancement.',       baseCost: 220,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['rock3'] },
-    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'T\u00e9l\u00e9portation spatiale',     desc: '+200% distance de lancement.',       baseCost: 1000, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['rock4'] },
+    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Propulsion am\u00e9lior\u00e9e',      desc: '+20% distance de lancement.',       baseCost: 3,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['rock1'] },
+    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Cha\u00eene de production',     desc: '+1 Usine gratuite au d\u00e9but de chaque run.',  baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['rock2'] },
+    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',      desc: '+30% distance de lancement.',       baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['rock3'] },
 
     // === BRANCHE COLLECTION (5) - upgrades uniques ===
     { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% coût des boosters.',          baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
