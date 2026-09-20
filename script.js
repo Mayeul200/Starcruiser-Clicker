@@ -2957,8 +2957,32 @@ function renderCardAlbum() {
             (owned
                 ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '"><div class="cc-card-count">\u00d7' + cardCollection[card.id] + '</div>'
                 : '<div class="cc-card-icon">?</div>');
+        if (owned) {
+            el.addEventListener('click', function () { openCardLightbox(card); });
+        }
         grid.appendChild(el);
     });
+}
+
+function openCardLightbox(card) {
+    const lightbox = document.getElementById('cc-lightbox');
+    const img = document.getElementById('cc-lightbox-img');
+    img.src = card.imgPath;
+    img.alt = card.name;
+    document.getElementById('cc-lightbox-name').textContent = card.icon + ' ' + card.name;
+    const rarity = CARD_RARITIES[card.rarity];
+    const bonus = Math.round(CARD_RARITIES[card.rarity].bonusMult * 100);
+    const count = cardCollection[card.id] || 0;
+    document.getElementById('cc-lightbox-sub').textContent = rarity.name + ' \u00b7 +' + bonus + '% production \u00b7 \u00d7' + count;
+    document.getElementById('cc-lightbox-name').style.color = rarity.color;
+    lightbox.classList.add('open');
+    lightbox.dataset.cardId = card.id;
+}
+
+function closeCardLightbox() {
+    const lightbox = document.getElementById('cc-lightbox');
+    lightbox.classList.remove('open');
+    lightbox.dataset.cardId = '';
 }
 
 // ============================================
@@ -3056,6 +3080,11 @@ function init() {
     checkBuildingUnlocks();
     checkTrophies();
     initMobileNav();
+    const ccLightbox = document.getElementById('cc-lightbox');
+    if (ccLightbox) {
+        ccLightbox.addEventListener('click', function (e) { if (e.target !== document.getElementById('cc-lightbox-img')) closeCardLightbox(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCardLightbox(); });
+    }
     if (isMobileLayout()) {
         setMobileView(mobileActiveView);
         applySceneScale();

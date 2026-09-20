@@ -2827,3 +2827,85 @@ body {
 @media (min-width: 1025px) {
     .mobile-nav { display: none; }
 }
+
+/* ============================================
+   CARDS LIGHTBOX (vue agrandie, album uniquement)
+   ============================================ */
+
+.cc-lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+}
+
+.cc-lightbox.open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cc-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(4px);
+}
+
+.cc-lightbox-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    max-width: min(92vw, 480px);
+    animation: cc-lightbox-in 0.25s ease;
+}
+
+@keyframes cc-lightbox-in {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.cc-lightbox-img {
+    width: 100%;
+    max-height: 72vh;
+    object-fit: contain;
+    border-radius: var(--radius);
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.35);
+    cursor: pointer;
+}
+
+.cc-lightbox-info {
+    text-align: center;
+}
+
+.cc-lightbox-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.cc-lightbox-sub {
+    font-size: 0.95rem;
+    color: var(--accent-light);
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+@media (max-width: 1024px) {
+    .cc-lightbox-body {
+        max-width: 88vw;
+        gap: 10px;
+    }
+    .cc-lightbox-img {
+        max-height: 62vh;
+    }
+    .cc-lightbox-name {
+        font-size: 1.2rem;
+    }
+    .cc-lightbox-sub {
+        font-size: 0.85rem;
+    }
+}
