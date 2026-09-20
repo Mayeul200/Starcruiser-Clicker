@@ -2981,7 +2981,137 @@ window.onload = function() {
     if (!gameStartTime) {
         gameStartTime = Date.now();
     }
+    initDebugMode();
 };
+
+// ============================================
+// MODE DEBUG (test de progression rapide)
+// Activer via ?debug=1 dans l'URL.
+// Commandes globales: Debug.addScore(n), Debug.addStardust(n),
+// Debug.buyAllParts(), Debug.launch(), Debug.fast(n),
+// Debug.giveBuildings(id, n), Debug.reset(), Debug.setPlanet(index)
+// ============================================
+const DEBUG_MODE = new URLSearchParams(window.location.search).has('debug');
+
+function debugSimulateTime(seconds) {
+    // Avance une horloge virtuelle et rejoue gameLoop pas a pas
+    // (gameLoop se base sur Date.now, on le decale d'un offset croissant).
+    const stepMs = 2000;
+    let remaining = seconds * 1000;
+    const realNow = Date.now;
+    let offset = 0;
+    Date.now = () => realNow() + offset;
+    try {
+        while (remaining > 0) {
+            const dt = Math.min(stepMs, remaining);
+            offset += dt;
+            gameLoop();
+            remaining -= dt;
+        }
+    } finally {
+        Date.now = realNow;
+    }
+    lastGameTick = Date.now();
+}
+
+function debugRenderAll() {
+    updateDisplay();
+    updateAllBuildingButtons();
+    renderBuildings();
+    renderUpgrades();
+    renderRocketPartsShop();
+    updateConstructionScene();
+    updateSpaceProgress();
+    updateStardustDisplay();
+    renderGalacticShop();
+}
+
+const Debug = {
+    addScore(n) {
+        score += n;
+        partsSinceLaunch += n;
+        updateDisplay();
+    },
+    addStardust(n) {
+        starDust += n;
+        updateStardustDisplay();
+        renderGalacticShop();
+    },
+    buyAllParts() {
+        ROCKET_PARTS.forEach(p => {
+            if (!p.purchased) {
+                p.purchased = true;
+                constructedParts = new Set(ROCKET_PARTS.map(x => x.id));
+                updateConstructionScene();
+            }
+        });
+        renderRocketPartsShop();
+    },
+    launch() {
+        if (!checkRocketReady()) { this.buyAllParts(); }
+        launchRocket();
+    },
+    fast(seconds) {
+        debugSimulateTime(seconds);
+        debugRenderAll();
+    },
+    giveBuildings(buildingId, n) {
+        const b = findBuildingById(buildingId);
+        if (!b) { console.warn('Bâtiment inconnu:', buildingId); return; }
+        b.count += n;
+        unlockedBuildings.add(b.id);
+        debugRenderAll();
+    },
+    reset() {
+        localStorage.removeItem('starshipClickerSave');
+        location.search = '?debug=1';
+    },
+    setPlanet(index) {
+        const p = PLANETS[index];
+        if (!p) { console.warn('Index invalide. 0=Terre ... ' + (PLANETS.length - 1) + '=' + PLANETS[PLANETS.length - 1].name); return; }
+        const dust = calculateStardustGain(p.distanceRequired);
+        if (dust > 0) starDust += dust;
+        maxDistance = Math.max(maxDistance, p.distanceRequired);
+        prestigeMultiplier = 1 + Math.log(1 + maxDistance / MOON_DISTANCE) / 2;
+        unlockedPlanets = new Set(PLANETS.slice(0, index + 1).map(x => x.id));
+        updateSpaceProgress();
+        updateStardustDisplay();
+        renderGalacticShop();
+        console.log('Positionné sur ' + p.name + ' (+' + dust + ' PE, prestige x' + prestigeMultiplier.toFixed(2) + ')');
+    }
+};
+
+window.Debug = Debug;
+
+function initDebugMode() {
+    if (!DEBUG_MODE) return;
+    const panel = document.createElement('div');
+    panel.id = 'debug-panel';
+    panel.style.cssText = 'position:fixed;bottom:10px;left:10px;z-index:99999;background:rgba(0,0,0,.85);color:#0f0;font-family:monospace;font-size:12px;padding:10px;border-radius:8px;display:flex;flex-direction:column;gap:6px;max-height:90vh;overflow:auto;';
+    const btn = (label, fn) => {
+        const b = document.createElement('button');
+        b.textContent = label;
+        b.onclick = fn;
+        b.style.cssText = 'background:#111;color:#0f0;border:1px solid #0f0;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:11px;';
+        return b;
+    };
+    panel.appendChild(btn('+100k Parts', () => Debug.addScore(1e5)));
+    panel.appendChild(btn('+1M Parts', () => Debug.addScore(1e6)));
+    panel.appendChild(btn('+100 PE', () => Debug.addStardust(100)));
+    panel.appendChild(btn('Toutes pièces fusée', () => Debug.buyAllParts()));
+    panel.appendChild(btn('Lancer la fusée', () => Debug.launch()));
+    panel.appendChild(btn('+1 min de jeu', () => Debug.fast(60)));
+    panel.appendChild(btn('+10 min de jeu', () => Debug.fast(600)));
+    panel.appendChild(btn('+1 h de jeu', () => Debug.fast(3600)));
+    panel.appendChild(btn('Reset complet', () => Debug.reset()));
+    const close = document.createElement('button');
+    close.textContent = '×';
+    close.onclick = () => panel.remove();
+    close.style.cssText = 'background:#111;color:#f00;border:1px solid #f00;padding:2px 6px;border-radius:4px;cursor:pointer;position:absolute;top:4px;right:4px;';
+    panel.appendChild(close);
+    document.body.appendChild(panel);
+    console.log('%c[DEBUG] mode test actif. Console: Debug.addScore(n), Debug.addStardust(n), Debug.buyAllParts(), Debug.launch(), Debug.fast(sec), Debug.giveBuildings(id, n), Debug.setPlanet(i), Debug.reset()', 'color:#0f0');
+}
 
 
 // ============================================
