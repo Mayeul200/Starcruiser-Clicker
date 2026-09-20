@@ -3026,6 +3026,141 @@ function debugRenderAll() {
     renderGalacticShop();
 }
 
+// --- Estimateur de temps reel jusqu'a la prochaine planete ---
+// Snapshot/restaure l'etat du jeu, simule l'avenir avec une politique
+// d'achat "meilleur rendement" et retourne le temps de jeu actif requis.
+function debugSnapshotState() {
+    return {
+        score, partsSinceLaunch, partsPerSecond, starDust,
+        maxDistance, prestigeMultiplier, rocketsLaunched, lastLaunchDistance,
+        buildings: BUILDINGS.map(b => ({ id: b.id, count: b.count })),
+        buildingUpgrades: JSON.parse(JSON.stringify(buildingUpgrades)),
+        parts: ROCKET_PARTS.map(p => ({ id: p.id, purchased: p.purchased })),
+        constructed: new Set(constructedParts),
+        galactic: JSON.parse(JSON.stringify(galacticUpgrades)),
+        clickUps: [...activatedClickUpgrades],
+        autoMultiplier, clickMultiplier
+    };
+}
+
+function debugRestoreState(s) {
+    score = s.score;
+    partsSinceLaunch = s.partsSinceLaunch;
+    partsPerSecond = s.partsPerSecond;
+    starDust = s.starDust;
+    maxDistance = s.maxDistance;
+    prestigeMultiplier = s.prestigeMultiplier;
+    rocketsLaunched = s.rocketsLaunched;
+    lastLaunchDistance = s.lastLaunchDistance;
+    s.buildings.forEach(sb => { const b = findBuildingById(sb.id); if (b) b.count = sb.count; });
+    buildingUpgrades = JSON.parse(JSON.stringify(s.buildingUpgrades));
+    s.parts.forEach(sp => { const p = ROCKET_PARTS.find(x => x.id === sp.id); if (p) p.purchased = sp.purchased; });
+    constructedParts = new Set(s.constructed);
+    galacticUpgrades = JSON.parse(JSON.stringify(s.galactic));
+    activatedClickUpgrades = [...s.clickUps];
+    autoMultiplier = s.autoMultiplier;
+    clickMultiplier = s.clickMultiplier;
+}
+
+// Politique d'achat du bot: a chaque pas, depense le score au meilleur
+// rendement (batiment le plus rentable, upgrade de batiment, piece de fusee).
+function debugSimulateToTarget(targetDistanceKm, clickRatePerSec = 4, maxHours = 24) {
+    const progress = calculatePlanetProgress(lastLaunchDistance);
+    const next = progress.nextPlanet;
+    const targetDist = targetDistanceKm || (next ? next.distanceRequired : null);
+    if (!targetDist) return { error: 'Plus de planète à atteindre.' };
+    // Cumul de parts requis: dist = (cum/10)^1.05 * boostDistance
+    const boost = (1 + (prestigeMultiplier - 1) / 2) * getDistanceBonus();
+    const cumRequired = 10 * Math.pow(targetDist / boost, 1 / 1.05);
+    if (partsSinceLaunch >= cumRequired) return { error: 'Objectif déjà atteint.' };
+
+    const dt = 1; // pas de 1 s
+    const maxSteps = maxHours * 3600;
+    let cum = partsSinceLaunch;
+    let scoreSpendable = score;
+    let steps = 0;
+    // copie des counts pour la simulation
+    const counts = BUILDINGS.map(b => b.count);
+    const ups = BUILDINGS.map(b => (buildingUpgrades[b.id] || []).length);
+    let partsBought = ROCKET_PARTS.filter(p => p.purchased).length;
+    const partCosts = ROCKET_PARTS.map(p => getRocketPartCost(p));
+    const clickUpsN = activatedClickUpgrades.length;
+
+    function prodPerSec() {
+        let total = 0;
+        BUILDINGS.forEach((b, i) => {
+            total += b.gain * counts[i] * Math.pow(2, ups[i]);
+        });
+        return total * autoMultiplier * getCollectionMultiplier() * getProductionBonus()
+             * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    }
+
+    for (steps = 0; steps < maxSteps && cum < cumRequired; steps++) {
+        const pps = prodPerSec();
+        // clics actifs (4/s) tant qu'ils sont significatifs (< 50% de la prod)
+        const totB = counts.reduce((a, b) => a + b, 0);
+        const fm = clickUpsN >= 2 ? (1 + (clickUpsN - 1) * 0.5) : 0;
+        const clickVal = Math.pow(2, clickUpsN) + fm * 0.1 * totB + clickUpsN * 0.01 * pps;
+        const inc = pps * dt + (clickRatePerSec * clickVal > pps * 0.1 ? clickRatePerSec * clickVal * dt : 0);
+        cum += inc;
+        scoreSpendable += inc;
+        // achats: on depense au mieux, ordonne par payback
+        // (batiment / upgrade de batiment / piece de fusee)
+        let bought = true;
+        while (bought) {
+            bought = false;
+            let bestPayback = Infinity, action = null;
+            BUILDINGS.forEach((b, i) => {
+                const c = Math.floor(b.baseCost * Math.pow(BUILDING_PRICE_GROWTH_RATE, counts[i]));
+                const unitGain = b.gain * Math.pow(2, ups[i]) * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getCollectionMultiplier();
+                if (scoreSpendable >= c && unitGain > 0) {
+                    const pb = c / unitGain;
+                    if (pb < bestPayback) { bestPayback = pb; action = { type: 'b', i, c }; }
+                }
+                // upgrade de batiment si palier atteint
+                if (counts[i] >= BUILDING_UPGRADE_THRESHOLDS[ups[i]]) {
+                    const uc = getBuildingUpgradeFixedCost(b.id, BUILDING_UPGRADE_THRESHOLDS[ups[i]]);
+                    const marginalGain = unitGain * counts[i]; // x2 la prod du batiment
+                    if (scoreSpendable >= uc && counts[i] > 0) {
+                        const pb = uc / marginalGain;
+                        if (pb < bestPayback) { bestPayback = pb; action = { type: 'u', i, c: uc }; }
+                    }
+                }
+            });
+            if (action) {
+                scoreSpendable -= action.c;
+                if (action.type === 'b') counts[action.i]++;
+                else ups[action.i]++;
+                bought = true;
+            }
+        }
+        // pieces de fusee des que le score le permet (objectif du run)
+        while (partsBought < 10 && scoreSpendable >= partCosts[partsBought]) {
+            scoreSpendable -= partCosts[partsBought];
+            partsBought++;
+        }
+    }
+    if (cum >= cumRequired) {
+        return { seconds: steps, planet: next ? next.name : '?', targetDistance: targetDist };
+    }
+    return { error: 'Non atteint en ' + maxHours + ' h de jeu actif.' };
+}
+
+function debugEstimateTime() {
+    const snap = debugSnapshotState();
+    let result;
+    try {
+        result = debugSimulateToTarget();
+    } finally {
+        debugRestoreState(snap);
+        debugRenderAll();
+    }
+    if (result.error) return result;
+    const h = Math.floor(result.seconds / 3600);
+    const m = Math.round((result.seconds % 3600) / 60);
+    return { ...result, formatted: h > 0 ? (h + 'h' + String(m).padStart(2, '0')) : (m + ' min') };
+}
+
 const Debug = {
     addScore(n) {
         score += n;
@@ -3066,6 +3201,13 @@ const Debug = {
         localStorage.removeItem('starshipClickerSave');
         location.search = '?debug=1';
     },
+    estimate() {
+        const r = debugEstimateTime();
+        if (r.error) { console.warn('[DEBUG] ' + r.error); showToast('[DEBUG] ' + r.error); return r; }
+        console.log('[DEBUG] Prochaine planète: ' + r.planet + ' dans ~' + r.formatted + ' de jeu actif');
+        showToast('[DEBUG] ' + r.planet + ' dans ~' + r.formatted);
+        return r;
+    },
     setPlanet(index) {
         const p = PLANETS[index];
         if (!p) { console.warn('Index invalide. 0=Terre ... ' + (PLANETS.length - 1) + '=' + PLANETS[PLANETS.length - 1].name); return; }
@@ -3103,6 +3245,7 @@ function initDebugMode() {
     panel.appendChild(btn('+1 min de jeu', () => Debug.fast(60)));
     panel.appendChild(btn('+10 min de jeu', () => Debug.fast(600)));
     panel.appendChild(btn('+1 h de jeu', () => Debug.fast(3600)));
+    panel.appendChild(btn('⏱ Temps réel estimé', () => Debug.estimate()));
     panel.appendChild(btn('Reset complet', () => Debug.reset()));
     const close = document.createElement('button');
     close.textContent = '×';
