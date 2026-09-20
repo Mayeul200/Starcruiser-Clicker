@@ -2606,7 +2606,7 @@ body {
     }
     .main-grid.mobile-view-left  > .left-panel  { display: flex; }
     .main-grid.mobile-view-center > .center-panel { display: flex; }
-    .main-grid.mobile-view-right > .right-panel { display: flex; overflow-y: auto; }
+    .main-grid.mobile-view-right > .right-panel { display: block; overflow-y: auto; }
 
     /* --- Barre du haut compacte --- */
     .top-bar { height: 54px !important; min-height: 54px; max-height: 54px; padding: 0 10px; }
@@ -2691,20 +2691,37 @@ body {
 
     /* --- Panneau droit (Bâtiments) --- */
     .right-panel { padding: 0 10px calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
-    .buildings-header { flex-wrap: wrap; height: auto; padding: 8px; gap: 6px; }
-    .buildings-header h3 { font-size: 0.9rem; }
-    .building-item {
-        grid-template-columns: 1fr 64px 1fr;
-        min-height: 64px;
-        padding: 8px;
-        gap: 4px;
+    .buildings-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        height: auto;
+        padding: 10px 4px;
     }
-    .building-image { max-height: 48px; filter: blur(0.3px); }
-    .building-name { font-size: 0.8rem; white-space: normal; }
-    .building-ownership { font-size: 0.7rem; }
-    .building-item button { width: 100%; padding: 8px 6px; font-size: 0.75rem; }
-    .building-production { font-size: 0.7rem; }
-    .multiplier-btn { padding: 4px 8px; font-size: 0.75rem; }
+    .buildings-header h3 { font-size: 1rem; text-align: center; margin: 0; }
+    .multiplier-buttons { justify-content: center; }
+    .multiplier-btn { padding: 6px 14px; font-size: 0.8rem; }
+    .buildings-list { gap: 8px; margin-top: 4px; }
+    .building-item {
+        grid-template-columns: 56px 1fr;
+        grid-template-areas:
+            "icon info"
+            "icon buy";
+        grid-template-rows: auto auto;
+        min-height: 0;
+        padding: 10px;
+        gap: 4px 10px;
+        align-items: center;
+    }
+    .building-left { grid-area: info; display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+    .building-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .building-ownership { font-size: 0.7rem; flex-shrink: 0; }
+    .building-center { grid-area: icon; display: flex; align-items: center; justify-content: center; }
+    .building-image { max-height: 52px; min-width: 40px; filter: blur(0.3px); }
+    .building-right { grid-area: buy; display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .building-item button { width: 100%; padding: 9px 6px; font-size: 0.78rem; }
+    .building-production { font-size: 0.72rem; white-space: nowrap; }
 
     /* --- Modales : plein écran --- */
     .modal {
@@ -2796,8 +2813,10 @@ body {
     .rocket-parts-shop { width: 128px; }
     .survey-card { width: 88px; height: 110px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: 1fr 52px 1fr; }
-    .building-image { max-height: 40px; }
+    .building-item { grid-template-columns: 48px 1fr; }
+    .building-image { max-height: 44px; min-width: 34px; }
+    .building-name { font-size: 0.78rem; }
+    .multiplier-btn { padding: 5px 10px; }
     .counters { width: 94vw; }
     .counter { font-size: 0.85rem; }
     .launch-button { width: 58px; height: 58px; }
