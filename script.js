@@ -914,6 +914,10 @@ function checkRocketReady() {
 const PIECE_DISTANCE_MULT = 1.0;
 const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
+// Gain de Poussière d'Étoiles par lancement : (distance / distance Lune)^0.44.
+// Calibré pour : Lune = 1 PE minimum, et arbre galactique complet (5816 PE)
+// atteignable à l'avant-dernière planète (Andromède) même en un seul lancement.
+const STARDUST_DISTANCE_EXP = 0.44;
 // Facteur de calibration : les parts générées sont divisées avant l'exposant
 // pour que la distance ne décolle pas trop vite en début de partie.
 const DISTANCE_PART_DIVISOR = 10;
@@ -1002,7 +1006,7 @@ function showLaunchResults(distance) {
     rocketsElement.textContent = safeRockets;
     const stardustEl = document.getElementById('launch-results-stardust');
     if (stardustEl) {
-        const dustGained = Math.floor(Math.sqrt(safeDistance / MOON_DISTANCE) * getStardustGainBonus());
+        const dustGained = calculateStardustGain(safeDistance);
         stardustEl.textContent = '+' + formatNumber(dustGained) + '  (total: ' + formatNumber(starDust) + ')';
     }
     
@@ -1282,7 +1286,7 @@ function confirmSpaceMapAndReset() {
     prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
 
     // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
-    const dustGained = Math.floor(Math.sqrt((isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance) / MOON_DISTANCE) * getStardustGainBonus());
+    const dustGained = calculateStardustGain(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance);
     if (dustGained > 0) {
         starDust += dustGained;
     }
@@ -1405,6 +1409,10 @@ function getCometFrequencyBonus() {
 }
 function getStardustGainBonus() {
     return 1 + getUpgradeEffect('exp2') + getUpgradeEffect('exp4') + getUpgradeEffect('exp6');
+}
+function calculateStardustGain(distanceKm) {
+    const safeDistance = (isNaN(distanceKm) || distanceKm < 0) ? 0 : distanceKm;
+    return Math.floor(Math.pow(safeDistance / MOON_DISTANCE, STARDUST_DISTANCE_EXP) * getStardustGainBonus());
 }
 function getDistanceBonus() {
     return 1 + getUpgradeEffect('rock4') + getUpgradeEffect('rock5') + getUpgradeEffect('rock6');
@@ -2272,7 +2280,7 @@ function updateStardustPreview() {
 
     const reachableDistance = calculateDistance();
     const safeDistance = (isNaN(reachableDistance) || reachableDistance < 0) ? 0 : reachableDistance;
-    const potentialDust = Math.sqrt(safeDistance / MOON_DISTANCE) * getStardustGainBonus();
+    const potentialDust = calculateStardustGain(safeDistance);
     const intPart = Math.floor(potentialDust);
     const fracPart = potentialDust - intPart;
 
