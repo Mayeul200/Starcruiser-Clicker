@@ -617,6 +617,7 @@ function loadGame() {
         if (clickMultipliers.length === 1) clickMultiplier = 1;
 
         initGlobals();
+        applyOfflineEarnings(parsed.lastSave);
 
     } catch (e) {
         console.error("Erreur de chargement :", e);
@@ -1396,6 +1397,47 @@ function buyGalacticUpgrade(upgradeId) {
 }
 
 // Getters d'effets (utilisés par la boucle de jeu)
+// ============================================
+// PRODUCTION HORS-LIGNE (atelier galactique, branche Hors-ligne)
+// Credit la production accumulée pendant l'absence, plafonnée au palier débloqué.
+// ============================================
+
+function getOfflineCapHours() {
+    let hours = 0;
+    for (const up of GALACTIC_UPGRADES) {
+        if (up.branch === 'offline' && getGalacticUpgradeLevel(up.id) > 0) {
+            hours = Math.max(hours, up.effectPerLevel);
+        }
+    }
+    return hours;
+}
+
+function applyOfflineEarnings(lastSave) {
+    if (!lastSave) return;
+    const capHours = getOfflineCapHours();
+    if (capHours <= 0) return;
+    const elapsedSec = (Date.now() - lastSave) / 1000;
+    if (elapsedSec < 60) return;
+    const cappedSec = Math.min(elapsedSec, capHours * 3600);
+    let totalGain = 0;
+    BUILDINGS.forEach(building => {
+        if (building.count > 0) {
+            const g = calculateBuildingGain(building) * cappedSec;
+            totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + g;
+            totalGain += g;
+        }
+    });
+    if (totalGain <= 0) return;
+    score += totalGain;
+    partsSinceLaunch += totalGain;
+    const capped = cappedSec < elapsedSec;
+    const hours = Math.floor(cappedSec / 3600);
+    const minutes = Math.floor((cappedSec % 3600) / 60);
+    const timeStr = hours > 0 ? hours + 'h' + String(minutes).padStart(2, '0') : minutes + ' min';
+    showToast('\ud83c\udf19 Production hors-ligne (' + timeStr + (capped ? ', plafonn\u00e9e) : +' : ') : +') + formatNumber(totalGain) + ' Parts');
+    updateDisplay();
+}
+
 function getUpgradeEffect(upgradeId) {
     const u = GALACTIC_UPGRADES.find(x => x.id === upgradeId);
     return u ? getGalacticUpgradeLevel(upgradeId) * u.effectPerLevel : 0;
@@ -2728,7 +2770,8 @@ const GALACTIC_BRANCHES = [
     { id: 'production',   name: 'Production',    icon: '\u2699',  color: '#3b82f6' },
     { id: 'rocket',       name: 'Fus\u00e9e',          icon: '\ud83d\ude80', color: '#f59e0b' },
     { id: 'collection',   name: 'Collection',     icon: '\ud83c\udccf', color: '#ec4899' },
-    { id: 'click',        name: 'Clic',            icon: '\ud83d\udc46', color: '#10b981' }
+    { id: 'click',        name: 'Clic',            icon: '\ud83d\udc46', color: '#10b981' },
+    { id: 'offline',      name: 'Hors-ligne',      icon: '\ud83c\udf19', color: '#64748b' }
 ];
 
 const GALACTIC_UPGRADES = [
@@ -2761,7 +2804,13 @@ const GALACTIC_UPGRADES = [
     { id: 'click2', branch: 'click', tier: 2, name: 'Main cybern\u00e9tique',     desc: '+100% puissance de clic.',              baseCost: 20,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['click1'] },
     { id: 'click3', branch: 'click', tier: 3, name: 'Frappe critique',       desc: '+25% chance de coup critique (x3).',    baseCost: 45,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['click1'] },
     { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+200% puissance de clic.',              baseCost: 350, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['click2', 'click3'] },
-    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: 'x5 puissance de clic.',                 baseCost: 200, costMult: 1.0, maxLevel: 1, effectPerLevel: 4.0, requires: ['click4'] }
+    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: 'x5 puissance de clic.',                 baseCost: 200, costMult: 1.0, maxLevel: 1, effectPerLevel: 4.0, requires: ['click4'] },
+    // === BRANCHE HORS-LIGNE (5) - production pendant l'absence ===
+    { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 1h apr\u00e8s fermeture du jeu.',  baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1 },
+    { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',         desc: 'Production continue jusqu\u0027\u00e0 2h apr\u00e8s fermeture du jeu.',  baseCost: 60,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['off1'] },
+    { id: 'off3', branch: 'offline', tier: 3, name: 'IA de bord',                  desc: 'Production continue jusqu\u0027\u00e0 4h apr\u00e8s fermeture du jeu.',  baseCost: 250,  costMult: 1.0, maxLevel: 1, effectPerLevel: 4, requires: ['off2'] },
+    { id: 'off4', branch: 'offline', tier: 4, name: 'Colonie autonome',            desc: 'Production continue jusqu\u0027\u00e0 8h apr\u00e8s fermeture du jeu.',  baseCost: 900,  costMult: 1.0, maxLevel: 1, effectPerLevel: 8, requires: ['off3'] },
+    { id: 'off5', branch: 'offline', tier: 5, name: 'Civilisation robotis\u00e9e', desc: 'Production continue jusqu\u0027\u00e0 16h apr\u00e8s fermeture du jeu.', baseCost: 3000, costMult: 1.0, maxLevel: 1, effectPerLevel: 16, requires: ['off4'] }
 ];
 
 let galacticUpgrades = {};
