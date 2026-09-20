@@ -1139,12 +1139,12 @@ function showSpaceMap(distance) {
     // Mettre à jour le texte de progression
     if (progress.currentPlanet) {
         if (progress.nextPlanet) {
-            progressText.innerHTML = `Tu as atteint <strong>${progress.currentPlanet.emoji} ${progress.currentPlanet.name}</strong> ! En route vers ${progress.nextPlanet.emoji} ${progress.nextPlanet.name} (${progress.progressPercent}%)`;
+            progressText.innerHTML = `Tu as atteint <strong>${progress.currentPlanet.name}</strong> ! En route vers ${progress.nextPlanet.name} (${progress.progressPercent}%)`;
         } else {
-            progressText.innerHTML = `F\u00e9licitations ! Tu as atteint <strong>${progress.currentPlanet.emoji} ${progress.currentPlanet.name}</strong>, la dernière planète !`;
+            progressText.innerHTML = `F\u00e9licitations ! Tu as atteint <strong>${progress.currentPlanet.name}</strong>, la dernière planète !`;
         }
     } else {
-        progressText.innerHTML = `En route vers <strong>${progress.nextPlanet.emoji} ${progress.nextPlanet.name}</strong> (${progress.progressPercent}%)`;
+        progressText.innerHTML = `En route vers <strong>${progress.nextPlanet.name}</strong> (${progress.progressPercent}%)`;
     }
     
     // Vérifier les nouvelles planètes débloquées
@@ -1157,7 +1157,6 @@ function showSpaceMap(distance) {
             const planetElement = document.createElement('div');
             planetElement.className = 'new-planet-item';
             planetElement.innerHTML = `
-                <span class="planet-emoji">${planet.emoji}</span>
                 <span class="planet-name">${planet.name}</span>
                 <span class="planet-bonus">+${planet.bonusPercent}% Parts/s</span>
             `;
@@ -1595,9 +1594,9 @@ function updateSpaceProgress() {
     if (planetDisplay) {
         const traveledProgress = calculatePlanetProgress(traveledDistance);
         if (traveledProgress.nextPlanet) {
-            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.emoji} ${traveledProgress.nextPlanet.name}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
+            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.name}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
         } else {
-            planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: 100%`;
+            planetDisplay.innerHTML = `${traveledProgress.currentPlanet.name}: 100%`;
         }
     }
 
