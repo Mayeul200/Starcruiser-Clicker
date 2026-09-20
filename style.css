@@ -2223,26 +2223,6 @@ body {
 }
 
 /* Glow par rareté — uniquement sur la face avant (reveal back / album) */
-.cc-reveal-card.rarity-common .cc-reveal-back,
-.cc-album-card.rarity-common {
-    box-shadow: 0 0 12px rgba(148, 163, 184, 0.4);
-}
-.cc-reveal-card.rarity-rare .cc-reveal-back,
-.cc-album-card.rarity-rare {
-    box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
-}
-.cc-reveal-card.rarity-epic .cc-reveal-back,
-.cc-album-card.rarity-epic {
-    box-shadow: 0 0 16px rgba(168, 85, 247, 0.6);
-}
-.cc-reveal-card.rarity-legendary .cc-reveal-back,
-.cc-album-card.rarity-legendary {
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.7);
-}
-.cc-reveal-card.rarity-alternative .cc-reveal-back,
-.cc-album-card.rarity-alternative {
-    box-shadow: 0 0 24px rgba(244, 63, 94, 0.8);
-}
 .cc-card-rarity {
     font-size: 0.7rem;
     text-transform: uppercase;
