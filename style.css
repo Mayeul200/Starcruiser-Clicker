@@ -2177,8 +2177,8 @@ body {
     min-height: 0;
 }
 .cc-reveal-card {
-    width: 288px;
-    height: 432px;
+    width: 346px;
+    height: 518px;
     border-radius: 14px;
     padding: 0;
     box-sizing: border-box;
@@ -2768,7 +2768,7 @@ body {
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .cc-album-card { width: 100%; height: auto; aspect-ratio: 2 / 3; }
     .cc-reveal-cards { gap: 8px; }
-    .cc-reveal-card { width: 156px; height: 234px; }
+    .cc-reveal-card { width: 187px; height: 281px; }
 
     /* Toast au-dessus de la nav */
     .toast { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); font-size: 0.9rem; padding: 10px 16px; max-width: 90vw; }
@@ -2848,7 +2848,7 @@ body {
     width: 100%;
     max-height: 72vh;
     object-fit: contain;
-    border-radius: 20px;
+    border-radius: 22px;
     box-shadow: 0 0 40px rgba(59, 130, 246, 0.35);
     cursor: pointer;
 }
