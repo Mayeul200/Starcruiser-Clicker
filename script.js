@@ -1959,16 +1959,23 @@ function gameLoop() {
     BUILDINGS.forEach(building => {
         const buildingGain = calculateBuildingGain(building);
         totalGain += buildingGain;
-
-        if (building.count > 0) {
-            totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (buildingGain * 0.1);
-        }
     });
 
     partsPerSecond = totalGain;
-    const tickGain = partsPerSecond / GAME_LOOP_FPS;
+    const now = Date.now();
+    const dtSeconds = (now - lastGameTick) / 1000;
+    lastGameTick = now;
+    const tickGain = partsPerSecond * dtSeconds;
     score += tickGain;
     partsSinceLaunch += tickGain;
+
+    if (dtSeconds > 0) {
+        BUILDINGS.forEach(building => {
+            if (building.count > 0) {
+                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (calculateBuildingGain(building) * dtSeconds);
+            }
+        });
+    }
 
     if (Date.now() - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastBuildingsUpdate = Date.now();
@@ -2957,6 +2964,8 @@ function scheduleBonusSpawn() {
     }, delay);
 }
 scheduleBonusSpawn();
+let lastGameTick = Date.now();
+
 setInterval(gameLoop, GAME_LOOP_INTERVAL_MS);
 setInterval(() => {
     if (Date.now() - lastSaveTime > SAVE_INTERVAL_MS) {
