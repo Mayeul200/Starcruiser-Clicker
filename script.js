@@ -2735,9 +2735,9 @@ const GALACTIC_UPGRADES = [
     // === BRANCHE COLLECTION (5) - upgrades uniques ===
     { id: 'coll1',  branch: 'collection', tier: 1, name: 'March\u00e9 noir',           desc: '+2 cartes par booster Premium/L\u00e9gendaire.', baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
     { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+25% chance de raret\u00e9 sup\u00e9rieure.',  baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['coll1'] },
-    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Boosters renforc\u00e9s',      desc: '+50% bonus de collection.',              baseCost: 50,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['coll1'] },
+    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Boosters renforc\u00e9s',      desc: '+50% au bonus des cartes possédées.',              baseCost: 50,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['coll1'] },
     { id: 'coll4',  branch: 'collection', tier: 4, name: 'Carte de commer\u00e7ant',     desc: '-40% co\u00fbt des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.40, requires: ['coll2', 'coll3'] },
-    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Album cosmique',          desc: 'x2 bonus de collection complet.',        baseCost: 400,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['coll4'] },
+    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Album cosmique',          desc: 'Double le bonus des cartes possédées.',        baseCost: 400,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['coll4'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
     { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: '+50% puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50 },
@@ -2795,7 +2795,7 @@ function updateCardCollectionDisplay() {
     const collected = Object.keys(cardCollection).filter(id => cardCollection[id] > 0);
     document.getElementById('cc-collected-count').textContent = collected.length;
     document.getElementById('cc-total-count').textContent = COLLECTIBLE_CARDS.length;
-    document.getElementById('cc-bonus-display').textContent = '×' + (1 + getCollectionBonus()).toFixed(2);
+    document.getElementById('cc-bonus-display').textContent = '×' + getCollectionMultiplier().toFixed(2);
 }
 
 function isCollectionComplete() {
@@ -2816,7 +2816,7 @@ function getCollectionBonus() {
 }
 
 function getCollectionMultiplier() {
-    return (1 + getCollectionBonus()) * (1 + getCollectionUpgradeBonus());
+    return 1 + getCollectionBonus() * (1 + getCollectionUpgradeBonus());
 }
 
 function buyBooster(type) {
@@ -3223,6 +3223,22 @@ const Debug = {
         console.log('[DEBUG] Prochaine planète: ' + r.planet + ' dans ~' + r.formatted + ' de jeu actif');
         showToast('[DEBUG] ' + r.planet + ' dans ~' + r.formatted);
         return r;
+    },
+    breakdown() {
+        const factors = {
+            temporaire: autoMultiplier,
+            cartes: getCollectionMultiplier(),
+            atelier_production: getProductionBonus(),
+            prestige: getPrestigeProductionBoost(),
+            planetes: getPlanetProductionBonus()
+        };
+        let total = 1;
+        Object.entries(factors).forEach(([k, v]) => {
+            total *= v;
+            console.log('[DEBUG] ' + k.padEnd(18) + ' x' + v.toFixed(2));
+        });
+        console.log('[DEBUG] TOTAL              x' + total.toFixed(2));
+        return { ...factors, total };
     },
     setPlanet(index) {
         const p = PLANETS[index];
