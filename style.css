@@ -483,13 +483,6 @@ body {
     max-height: 76px;
     margin: 0 auto;
 }
-.building-item.mine .building-image {
-    height: 76px;
-    width: 135px;
-    object-fit: cover;
-    object-position: 50% 40%;
-    filter: brightness(1.35) contrast(1.15) saturate(1.1);
-}
 
 .building-item.rocket-body .building-image,
 .building-item.boosters-left .building-image,
