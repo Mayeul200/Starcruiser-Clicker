@@ -623,6 +623,7 @@ body {
     height: 100%;
     object-fit: contain;
     display: block;
+    pointer-events: none;
     animation:
         coin-pop-in 0.22s ease-out both,
         coin-spin var(--fall-duration) var(--fall-delay, 0s) linear both;
@@ -633,10 +634,11 @@ body {
     from { rotate: 0deg; }
     to   { rotate: var(--fall-spin); }
 }
-/* Apparition sur place, sans vitesse initiale */
+/* Apparition sur place avec un leger tournoiement (transform: rotate
+   compose avec la propriete `rotate` du tournoiement lent) */
 @keyframes coin-pop-in {
-    from { scale: 0.4; opacity: 0; }
-    to   { scale: 1; opacity: 1; }
+    from { transform: rotate(-35deg); scale: 0.4; opacity: 0; }
+    to   { transform: rotate(0deg); scale: 1; opacity: 1; }
 }
 .random-bonus {
     position: absolute;
