@@ -2095,8 +2095,9 @@ function showClickEffect(value, event) {
     setTimeout(() => effect.remove(), 1200);
 }
 
-// Piece qui tombe depuis le point clique : apparait sur place, tombe a
-// vitesse constante en tournoyant, disparait hors ecran en bas.
+// Piece qui tombe depuis le point clique : apparait sur place (pop,
+// vitesse nulle), puis tombe avec une acceleration gravitationnelle en
+// tournoyant lentement, disparait hors ecran en bas.
 function spawnFallingCoin(event) {
     const container = document.getElementById('falling-coins');
     if (!container) return;
@@ -2112,33 +2113,41 @@ function spawnFallingCoin(event) {
         y = medalRect.top + medalRect.height / 2;
     }
 
-    const coin = document.createElement('img');
-    coin.src = 'images/parts.png';
+    const coin = document.createElement('div');
     coin.className = 'falling-coin';
-    coin.alt = '';
-    coin.draggable = false;
+
+    const img = document.createElement('img');
+    img.src = 'images/parts.png';
+    img.alt = '';
+    img.draggable = false;
+    coin.appendChild(img);
 
     const size = 38 + Math.random() * 20;
     const drift = (Math.random() - 0.5) * 90;
     const spinDir = Math.random() < 0.5 ? 1 : -1;
-    const rotations = 2 + Math.floor(Math.random() * 3);
+    // Rotation ralentie : 0.5 a 1 tour au total sur toute la chute
+    const rotations = 0.5 + Math.random() * 0.5;
     const distance = window.innerHeight - y + size + 20;
-    const speed = 420;
-    const duration = Math.max(0.5, distance / speed);
+    // Gravite : la piece part de 0 et accelere. Temps de chute calibre pour
+    // que la vitesse finale ~ distance/half-time^2 reste raisonnable.
+    const g = 2200;
+    const duration = Math.max(0.5, Math.sqrt(2 * distance / g));
+    const delay = 0.08 + Math.random() * 0.1;
 
     coin.style.width = size + 'px';
     coin.style.height = size + 'px';
     coin.style.left = x + 'px';
     coin.style.top = y + 'px';
-    const spinDeg = spinDir * rotations * 360;
     coin.style.setProperty('--fall-drift', drift + 'px');
     coin.style.setProperty('--fall-dist', distance + 'px');
-    coin.style.setProperty('--fall-spin', spinDeg + 'deg');
-    coin.style.setProperty('--fall-spin-start', (spinDeg * 0.08) + 'deg');
+    coin.style.setProperty('--fall-spin', (spinDir * rotations * 360) + 'deg');
     coin.style.setProperty('--fall-duration', duration + 's');
+    coin.style.setProperty('--fall-delay', delay + 's');
 
     container.appendChild(coin);
-    coin.addEventListener('animationend', () => coin.remove());
+    coin.addEventListener('animationend', (e) => {
+        if (e.target === coin) coin.remove();
+    });
 }
 
 // ============================================

@@ -600,7 +600,11 @@ body {
     z-index: 50;
 }
 
-/* Pieces qui tombent depuis le point clique */
+/* Pieces qui tombent depuis le point clique
+   3 proprietes separees pour 3 animations independantes :
+   - wrapper .falling-coin : transform translate (chute, gravite ease-in)
+   - img : rotate (tournoiement lent, lineaire)
+   - img : scale + opacity (apparition pop, rapide) */
 .falling-coins {
     position: fixed;
     top: var(--top-height);
@@ -611,25 +615,36 @@ body {
 }
 .falling-coin {
     position: absolute;
-    object-fit: contain;
+    transform: translate(-50%, -50%);
     pointer-events: none;
     user-select: none;
-    animation: coin-fall var(--fall-duration) linear forwards;
+    animation: coin-fall var(--fall-duration) var(--fall-delay, 0s) cubic-bezier(0.33, 0, 0.67, 0.33) both;
+}
+.falling-coin img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    animation:
+        coin-pop-in 0.22s ease-out both,
+        coin-spin var(--fall-duration) var(--fall-delay, 0s) linear both;
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
 }
+/* Chute gravitationnelle : vitesse nulle au depart, acceleration constante
+   (courbe t^2 approximee par cubic-bezier(0.33, 0, 0.67, 0.33)) */
 @keyframes coin-fall {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg) scale(0.5);
-        opacity: 0;
-    }
-    8% {
-        transform: translate(-50%, -50%) rotate(var(--fall-spin-start)) scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(calc(-50% + var(--fall-drift)), calc(-50% + var(--fall-dist))) rotate(var(--fall-spin)) scale(1);
-        opacity: 1;
-    }
+    from { transform: translate(-50%, -50%); }
+    to   { transform: translate(calc(-50% + var(--fall-drift)), calc(-50% + var(--fall-dist))); }
+}
+/* Tournoiement lent et regulier */
+@keyframes coin-spin {
+    from { rotate: 0deg; }
+    to   { rotate: var(--fall-spin); }
+}
+/* Apparition sur place, sans vitesse initiale */
+@keyframes coin-pop-in {
+    from { scale: 0.4; opacity: 0; }
+    to   { scale: 1; opacity: 1; }
 }
 .random-bonus {
     position: absolute;
