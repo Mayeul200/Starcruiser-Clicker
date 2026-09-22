@@ -196,6 +196,7 @@ let lastBuildingsUpdate = 0;
 let lastRocketPartsUpdate = 0;
 let lastSpaceProgressUpdate = 0;
 let gameStartTime = 0;
+let startupBonusApplied = false;
 let buyMultiplier = 1;
 let clickedBonusesCount = 0;
 let unlockedTrophies = new Set();
@@ -440,6 +441,7 @@ function saveGame() {
             id: part.id,
             purchased: part.purchased
         })),
+        startupBonusApplied: startupBonusApplied,
         lastSave: Date.now(),
         gameStartTime: gameStartTime,
         version: SAVE_VERSION
@@ -500,6 +502,7 @@ function loadGame() {
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
         gameStartTime = parsed.gameStartTime || 0;
+        startupBonusApplied = !!parsed.startupBonusApplied;
 
         if (parsed.cardCollection) {
             cardCollection = {...parsed.cardCollection};
@@ -1109,13 +1112,18 @@ function checkNewPlanetsUnlocked(distance) {
     PLANETS.forEach(planet => {
         if (planet.id === 'earth') return;
         if (distance >= planet.distanceRequired && !unlockedPlanets.has(planet.id)) {
-            unlockedPlanets.add(planet.id);
-            planetBonuses[planet.id] = planet.bonusPercent / 100;
             newlyUnlocked.push(planet);
         }
     });
     
     return newlyUnlocked;
+}
+
+function applyNewPlanets(newlyUnlocked) {
+    newlyUnlocked.forEach(planet => {
+        unlockedPlanets.add(planet.id);
+        planetBonuses[planet.id] = planet.bonusPercent / 100;
+    });
 }
 
 function getTotalPlanetBonus() {
@@ -1304,7 +1312,10 @@ function confirmSpaceMapAndReset() {
     if (dustGained > 0) {
         starDust += dustGained;
     }
-    
+
+    // Debloquer les planetes atteintes uniquement a la confirmation du reset
+    applyNewPlanets(checkNewPlanetsUnlocked(lastLaunchDistance));
+
     // Reset du score, des bâtiments et des pièces de fusée (garde les bonus/prestige)
     score = 0;
     BUILDINGS.forEach(b => b.count = 0);
@@ -1313,6 +1324,7 @@ function confirmSpaceMapAndReset() {
     const scene = document.getElementById('rocket-parts-container');
     if (scene) scene.innerHTML = '';
     unlockedBuildings = new Set();
+    startupBonusApplied = false;
     applyStartupBonus();
     totalPartsFromClicks = 0;
     activatedClickUpgrades = [];
@@ -1384,6 +1396,7 @@ function buyGalacticUpgrade(upgradeId) {
             if (atelier) {
                 atelier.count += extra;
                 unlockedBuildings.add(atelier.id);
+                startupBonusApplied = true;
                 renderBuildings();
                 updateDisplay();
             }
@@ -1507,12 +1520,12 @@ function getRarityBoost() {
 
 function applyStartupBonus() {
     const freeAteliers = getStartupAteliers();
-    if (freeAteliers > 0) {
-        const atelier = BUILDINGS.find(b => b.id === 'workshop');
-        if (atelier) {
-            atelier.count += freeAteliers;
-            unlockedBuildings.add(atelier.id);
-        }
+    if (startupBonusApplied || freeAteliers <= 0) return;
+    const atelier = BUILDINGS.find(b => b.id === 'workshop');
+    if (atelier) {
+        atelier.count += freeAteliers;
+        unlockedBuildings.add(atelier.id);
+        startupBonusApplied = true;
     }
     const freeUsines = getGalacticUpgradeLevel('rock3');
     if (freeUsines > 0) {
@@ -1962,6 +1975,8 @@ function spawnRandomBonus() {
     }, duration);
 
     bonusElement.onclick = () => {
+        if (bonusElement.dataset.collected === '1') return;
+        bonusElement.dataset.collected = '1';
         clearTimeout(timeout);
         clearInterval(trailInterval);
         bonusElement.classList.add('clicked');
