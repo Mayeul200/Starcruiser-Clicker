@@ -601,10 +601,9 @@ body {
 }
 
 /* Pieces qui tombent depuis le point clique
-   3 proprietes separees pour 3 animations independantes :
-   - wrapper .falling-coin : transform translate (chute, gravite ease-in)
-   - img : rotate (tournoiement lent, lineaire)
-   - img : scale + opacity (apparition pop, rapide) */
+   - wrapper .falling-coin : positionne ; la trajectoire balistique
+     (saut puis chute gravitationnelle) est pilotee en JS via WAAPI
+   - img : apparition pop + tournoiement tres lent */
 .falling-coins {
     position: fixed;
     top: var(--top-height);
@@ -618,7 +617,6 @@ body {
     transform: translate(-50%, -50%);
     pointer-events: none;
     user-select: none;
-    animation: coin-fall var(--fall-duration) var(--fall-delay, 0s) cubic-bezier(0.33, 0, 0.67, 0.33) both;
 }
 .falling-coin img {
     width: 100%;
@@ -630,13 +628,7 @@ body {
         coin-spin var(--fall-duration) var(--fall-delay, 0s) linear both;
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
 }
-/* Chute gravitationnelle : vitesse nulle au depart, acceleration constante
-   (courbe t^2 approximee par cubic-bezier(0.33, 0, 0.67, 0.33)) */
-@keyframes coin-fall {
-    from { transform: translate(-50%, -50%); }
-    to   { transform: translate(calc(-50% + var(--fall-drift)), calc(-50% + var(--fall-dist))); }
-}
-/* Tournoiement lent et regulier */
+/* Tournoiement tres lent et regulier */
 @keyframes coin-spin {
     from { rotate: 0deg; }
     to   { rotate: var(--fall-spin); }
