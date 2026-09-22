@@ -2095,9 +2095,15 @@ function showClickEffect(value, event) {
     setTimeout(() => effect.remove(), 1200);
 }
 
-// Piece qui tombe depuis le point clique : apparait sur place (pop,
-// vitesse nulle), puis tombe avec une acceleration gravitationnelle en
-// tournoyant lentement, disparait hors ecran en bas.
+// Piece qui tombe depuis le point clique : apparait sur place (pop),
+// saute de quelques pixels au-dessus du clic (vitesse initiale vers le haut
+// qui s'amortit), puis retombe tout doucement avec une acceleration
+// gravitationnelle, en tournoyant lentement. Disparait hors ecran en bas.
+// Gravite faible (~3x plus lente qu'avant en duree de chute).
+const FALL_GRAVITY = 260; // px/s^2
+const HOP_MIN = 18; // px
+const HOP_MAX = 40; // px
+
 function spawnFallingCoin(event) {
     const container = document.getElementById('falling-coins');
     if (!container) return;
@@ -2125,29 +2131,41 @@ function spawnFallingCoin(event) {
     const size = 38 + Math.random() * 20;
     const drift = (Math.random() - 0.5) * 90;
     const spinDir = Math.random() < 0.5 ? 1 : -1;
-    // Rotation ralentie : 0.5 a 1 tour au total sur toute la chute
+    // Rotation tres lente : 0.5 a 1 tour au total
     const rotations = 0.5 + Math.random() * 0.5;
-    const distance = window.innerHeight - y + size + 20;
-    // Gravite : la piece part de 0 et accelere. Temps de chute calibre pour
-    // que la vitesse finale ~ distance/half-time^2 reste raisonnable.
-    const g = 2200;
-    const duration = Math.max(0.5, Math.sqrt(2 * distance / g));
-    const delay = 0.08 + Math.random() * 0.1;
+    const spinDeg = spinDir * rotations * 360;
+
+    // Petit saut vers le haut depuis le point clique, puis chute douce
+    const hop = HOP_MIN + Math.random() * (HOP_MAX - HOP_MIN);
+    const fallDist = window.innerHeight - y + size + 20;
+    const tUp = Math.sqrt(2 * hop / FALL_GRAVITY);
+    const tDown = Math.sqrt(2 * (fallDist + hop) / FALL_GRAVITY);
+    const total = tUp + tDown;
+    const startDelay = 0.05 + Math.random() * 0.07;
 
     coin.style.width = size + 'px';
     coin.style.height = size + 'px';
     coin.style.left = x + 'px';
     coin.style.top = y + 'px';
     coin.style.setProperty('--fall-drift', drift + 'px');
-    coin.style.setProperty('--fall-dist', distance + 'px');
-    coin.style.setProperty('--fall-spin', (spinDir * rotations * 360) + 'deg');
-    coin.style.setProperty('--fall-duration', duration + 's');
-    coin.style.setProperty('--fall-delay', delay + 's');
+    coin.style.setProperty('--fall-spin', spinDeg + 'deg');
+    coin.style.setProperty('--fall-duration', total + 's');
+    coin.style.setProperty('--fall-delay', startDelay + 's');
 
     container.appendChild(coin);
-    coin.addEventListener('animationend', (e) => {
-        if (e.target === coin) coin.remove();
-    });
+
+    // Trajectoire balistique en 2 phases : montee amortie (ease-out) puis
+    // chute accelerante (ease-in). Les durees decoulent de la physique.
+    if (coin.animate) {
+        const anim = coin.animate([
+            { transform: 'translate(-50%, -50%)', easing: 'cubic-bezier(0.25, 0.6, 0.4, 1)' },
+            { transform: `translate(-50%, calc(-50% - ${hop.toFixed(1)}px))`, easing: 'cubic-bezier(0.5, 0, 0.85, 0.45)', offset: tUp / total },
+            { transform: `translate(calc(-50% + ${drift.toFixed(1)}px), calc(-50% + ${fallDist.toFixed(1)}px))`, offset: 1 }
+        ], { duration: total * 1000, delay: startDelay * 1000, fill: 'forwards' });
+        anim.onfinish = () => coin.remove();
+    } else {
+        setTimeout(() => coin.remove(), (startDelay + total) * 1000);
+    }
 }
 
 // ============================================
