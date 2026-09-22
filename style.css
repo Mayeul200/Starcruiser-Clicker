@@ -718,7 +718,6 @@ body {
 @media (max-width: 768px) {
     .top-bar { height: 12vh; min-height: 70px; }
     .medal { width: 180px; height: 180px; }
-    .medal-emoji { font-size: 5.5rem; }
     .counters { margin-top: 16px; }
     .counter { font-size: 1.1rem; }
     .building-item { min-height: 45px; padding: 8px; }
@@ -731,7 +730,6 @@ body {
 }
 @media (max-width: 480px) {
     .medal { width: 150px; height: 150px; }
-    .medal-emoji { font-size: 4.5rem; }
     .top-bar-controls { flex-direction: column; }
 }
 /* ============================================
@@ -1757,16 +1755,13 @@ body {
     top: 25%;
     width: 170px;
     height: 170px;
-    background: var(--secondary-light);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: var(--shadow-lg);
     transition: transform 0.2s ease;
     z-index: 100;
-    border: 2px solid var(--border-light);
     transform: translateY(-50%);
 }
 @keyframes medal-bounce {
@@ -1779,21 +1774,27 @@ body {
 }
 .medal:hover {
     transform: translateY(-50%) scale(1.12);
-    box-shadow: var(--shadow-lg), var(--glow);
-    border-color: var(--primary-light);
+}
+.medal:hover .medal-img {
+    filter: drop-shadow(0 0 14px rgba(120, 180, 255, 0.8));
 }
 .medal:active {
     transform: translateY(-50%) scale(0.98);
-    box-shadow: var(--shadow);
 }
 .medal.bounce {
     animation: medal-bounce 0.6s ease-out;
 }
-.medal-emoji {
-    font-size: 5rem;
-    text-shadow: none;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+.medal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
     pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    /* Compense les marges transparentes de l'image (contenu ~47% du canevas) */
+    transform: scale(1.75);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
 }
 /* Bouton de lancement */
 .launch-button {
