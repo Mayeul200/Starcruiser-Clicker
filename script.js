@@ -2131,9 +2131,6 @@ function spawnFallingCoin(event) {
     const size = 38 + Math.random() * 20;
     const drift = (Math.random() - 0.5) * 90;
     const spinDir = Math.random() < 0.5 ? 1 : -1;
-    // Rotation tres lente : 0.5 a 1 tour au total
-    const rotations = 0.5 + Math.random() * 0.5;
-    const spinDeg = spinDir * rotations * 360;
 
     // Petit saut vers le haut depuis le point clique, puis chute douce
     const hop = HOP_MIN + Math.random() * (HOP_MAX - HOP_MIN);
@@ -2142,6 +2139,10 @@ function spawnFallingCoin(event) {
     const tDown = Math.sqrt(2 * (fallDist + hop) / FALL_GRAVITY);
     const total = tUp + tDown;
     const startDelay = 0.05 + Math.random() * 0.07;
+    // Rotation reguliere : exactement 1 tour toutes les 12 secondes sur
+    // toute la duree de vie de la piece (chute ~2-4s -> ~0.2-0.3 tour)
+    const SPIN_PERIOD = 12;
+    const spinDeg = spinDir * 360 * (total / SPIN_PERIOD);
 
     coin.style.width = size + 'px';
     coin.style.height = size + 'px';
