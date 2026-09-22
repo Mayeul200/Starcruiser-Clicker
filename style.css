@@ -643,9 +643,10 @@ body {
     pointer-events: none;
 }
 @keyframes floatUp {
-    0% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-    15% { transform: translate(-50%, -10px) scale(1.15); }
-    100% { opacity: 0; transform: translate(-50%, -120px) scale(0.9); }
+    0% { opacity: 0; transform: translate(-50%, 6px) scale(0.6); }
+    12% { opacity: 1; transform: translate(-50%, -12px) scale(1.25); }
+    25% { transform: translate(-50%, -16px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -110px) scale(0.92); }
 }
 .click-effect {
     position: absolute;
@@ -1735,6 +1736,10 @@ body {
 }
 
 /* Bouton cliquable principal - Pièce */
+/* 3 couches indépendantes pour composer les échelles sans conflit :
+   .medal (conteneur) : survol / clic → scale du conteneur
+   .medal-anim (wrapper) : taille de base de la pièce + squash & stretch du clic
+   .medal-img (image) : rotation d'inertie du clic */
 .medal {
     position: absolute;
     right: 10%;
@@ -1746,29 +1751,50 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 100;
     transform: translateY(-50%);
 }
-@keyframes medal-bounce {
-    0%   { transform: translateY(-50%) scale(1); }
-    15%  { transform: translateY(-50%) scale(0.92); }
-    40%  { transform: translateY(-50%) scale(1.06); }
-    65%  { transform: translateY(-50%) scale(0.99); }
-    85%  { transform: translateY(-50%) scale(1.01); }
-    100% { transform: translateY(-50%) scale(1); }
-}
 .medal:hover {
-    transform: translateY(-50%) scale(1.12);
+    transform: translateY(-50%) scale(1.08);
 }
 .medal:hover .medal-img {
-    filter: drop-shadow(0 0 14px rgba(120, 180, 255, 0.8));
+    filter: drop-shadow(0 0 18px rgba(120, 180, 255, 0.85));
 }
 .medal:active {
-    transform: translateY(-50%) scale(0.98);
+    transform: translateY(-50%) scale(0.96);
 }
-.medal.bounce {
-    animation: medal-bounce 0.6s ease-out;
+/* Wrapper : agrandissement de la pièce + squash & stretch au clic.
+   Le scale de base (1.9) compense les marges transparentes de l'image. */
+.medal-anim {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transform: scale(1.9);
+}
+.medal.bounce .medal-anim {
+    animation: coin-pop 0.45s cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+.medal.bounce .medal-img {
+    animation: coin-spin 0.55s cubic-bezier(0.3, 0.8, 0.4, 1);
+}
+/* Squash & stretch : compression rapide puis rebond élastique */
+@keyframes coin-pop {
+    0%   { transform: scale(1.9) scaleX(1); }
+    30%  { transform: scale(1.9) scale(0.88, 1.1); }
+    55%  { transform: scale(1.9) scale(1.1, 0.93); }
+    75%  { transform: scale(1.9) scale(0.97, 1.02); }
+    100% { transform: scale(1.9) scale(1); }
+}
+/* Petite rotation d'inertie, retour naturel */
+@keyframes coin-spin {
+    0%   { transform: rotate(0deg); }
+    35%  { transform: rotate(-9deg); }
+    70%  { transform: rotate(4deg); }
+    100% { transform: rotate(0deg); }
 }
 .medal-img {
     width: 100%;
@@ -1778,8 +1804,25 @@ body {
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
-    transform: scale(1.75);
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35));
+}
+/* Flash de lumière au clic */
+.medal::after {
+    content: '';
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(160, 210, 255, 0.5) 45%, transparent 70%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+}
+.medal.bounce::after {
+    animation: coin-flash 0.4s ease-out;
+}
+@keyframes coin-flash {
+    0%   { opacity: 0.9; transform: scale(0.85); }
+    100% { opacity: 0; transform: scale(1.45); }
 }
 /* Bouton de lancement */
 .launch-button {
@@ -2630,14 +2673,6 @@ body {
     }
     .medal:hover { transform: translate(-50%, -50%) scale(1.05); }
     .medal:active { transform: translate(-50%, -50%) scale(0.95); }
-    @keyframes medal-bounce {
-        0%   { transform: translate(-50%, -50%) scale(1); }
-        15%  { transform: translate(-50%, -50%) scale(0.92); }
-        40%  { transform: translate(-50%, -50%) scale(1.06); }
-        65%  { transform: translate(-50%, -50%) scale(0.99); }
-        85%  { transform: translate(-50%, -50%) scale(1.01); }
-        100% { transform: translate(-50%, -50%) scale(1); }
-    }
 
     /* --- Bouton lancement : pastille flottante en bas à droite --- */
     .launch-button {
