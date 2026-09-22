@@ -2044,6 +2044,20 @@ function addScore(points, event) {
     showClickEffect(Math.round(totalPoints), event);
 
     const medal = document.getElementById('medal');
+    // Direction du clic par rapport au centre de la piece (normalisee), pour
+    // tordre l'animation vers l'endroit clique. Fallback: centre.
+    if (medal && event && event.clientX !== undefined) {
+        const rect = medal.getBoundingClientRect();
+        const halfW = rect.width / 2;
+        const halfH = rect.height / 2;
+        const dx = event.clientX - (rect.left + halfW);
+        const dy = event.clientY - (rect.top + halfH);
+        const dist = Math.min(1, Math.hypot(dx, dy) / halfW);
+        const nx = (dx / halfW) * dist;
+        const ny = (dy / halfH) * dist;
+        medal.style.setProperty('--click-nx', nx.toFixed(3));
+        medal.style.setProperty('--click-ny', ny.toFixed(3));
+    }
     medal.classList.remove('bounce');
     void medal.offsetWidth;
     medal.classList.add('bounce');

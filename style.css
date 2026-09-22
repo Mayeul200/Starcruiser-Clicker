@@ -1775,26 +1775,31 @@ body {
     pointer-events: none;
     transform: scale(1.9);
 }
+.medal {
+    --click-nx: 0;
+    --click-ny: 0;
+}
 .medal.bounce .medal-anim {
     animation: coin-pop 0.45s cubic-bezier(0.22, 1.2, 0.36, 1);
 }
 .medal.bounce .medal-img {
     animation: coin-spin 0.55s cubic-bezier(0.3, 0.8, 0.4, 1);
 }
-/* Squash & stretch : compression rapide puis rebond élastique */
+/* Squash & stretch directionnel : la piece se tord vers le point clique.
+   --click-nx/--click-ny : direction normalisee du clic (definie en JS). */
 @keyframes coin-pop {
-    0%   { transform: scale(1.9) scaleX(1); }
-    30%  { transform: scale(1.9) scale(0.88, 1.1); }
-    55%  { transform: scale(1.9) scale(1.1, 0.93); }
-    75%  { transform: scale(1.9) scale(0.97, 1.02); }
-    100% { transform: scale(1.9) scale(1); }
+    0%   { transform: translate(0px, 0px) scale(1.9) scale(1); }
+    25%  { transform: translate(calc(var(--click-nx) * -9px), calc(var(--click-ny) * -9px)) scale(1.9) scale(0.9, 1.08); }
+    55%  { transform: translate(calc(var(--click-nx) * 14px), calc(var(--click-ny) * 14px)) scale(1.9) scale(1.08, 0.95); }
+    75%  { transform: translate(calc(var(--click-nx) * -5px), calc(var(--click-ny) * -5px)) scale(1.9) scale(0.98, 1.01); }
+    100% { transform: translate(0px, 0px) scale(1.9) scale(1); }
 }
-/* Petite rotation d'inertie, retour naturel */
+/* Rotation d'inertie directionnelle : tord la piece vers l'angle du clic */
 @keyframes coin-spin {
-    0%   { transform: rotate(0deg); }
-    35%  { transform: rotate(-9deg); }
-    70%  { transform: rotate(4deg); }
-    100% { transform: rotate(0deg); }
+    0%   { transform: rotate(0deg) skewX(calc(var(--click-nx) * -5deg)) skewY(calc(var(--click-ny) * -4deg)); }
+    35%  { transform: rotate(calc(var(--click-nx) * -7deg)) skewX(calc(var(--click-nx) * -7deg)) skewY(calc(var(--click-ny) * -5deg)); }
+    70%  { transform: rotate(calc(var(--click-nx) * 3deg)) skewX(calc(var(--click-nx) * 3deg)) skewY(calc(var(--click-ny) * 2deg)); }
+    100% { transform: rotate(0deg) skewX(0deg) skewY(0deg); }
 }
 .medal-img {
     width: 100%;
