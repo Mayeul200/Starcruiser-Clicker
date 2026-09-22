@@ -12,15 +12,23 @@ document.body.appendChild(tooltip);
 
 function showTooltip(text, x, y) {
     tooltip.textContent = text;
-    tooltip.style.top = y + 'px';
-    tooltip.style.left = x + 'px';
     tooltip.style.transform = 'translate(-50%, -120%)';
     tooltip.classList.add('visible');
+    const rect = tooltip.getBoundingClientRect();
+    const margin = 8;
+    const clampedX = Math.max(rect.width / 2 + margin, Math.min(x, window.innerWidth - rect.width / 2 - margin));
+    tooltip.style.top = y + 'px';
+    tooltip.style.left = clampedX + 'px';
 }
 
 function hideTooltip() {
     tooltip.classList.remove('visible');
 }
+
+// Détection d'un écran tactile (mobile / tablette)
+const IS_TOUCH = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    || 'ontouchstart' in window
+    || navigator.maxTouchPoints > 0;
 
 // ============================================
 // GLOBAL CONSTANTS
@@ -51,26 +59,20 @@ const SPACE_UPDATE_INTERVAL_MS = 500;
 // Achetables en masse, génèrent des Parts/s. Boucle clicker.
 // ============================================
 const PRODUCTION_BUILDINGS = [
-    { id: "workshop",      name: "Atelier",                  description: "Fabrique des pièces: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 15,            gain: 0.1,      count: 0, image: "🛠️", imgPath: "images/rocket/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
-    { id: "factory",       name: "Usine",                    description: "Production de masse: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 100,           gain: 1,         count: 0, image: "🏭",       unlockCondition: () => score >= 50,       totalGenerated: 0 },
-    { id: "mine",          name: "Mine stellaire",           description: "Extraction de minerai: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1100,          gain: 8,        count: 0, image: "⛏️",       unlockCondition: () => score >= 500,      totalGenerated: 0 },
-    { id: "solar",         name: "Centrale solaire",         description: "Énergie: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 12000,         gain: 47,       count: 0, image: "☀️",       unlockCondition: () => score >= 6000,     totalGenerated: 0 },
-    { id: "lab",           name: "Laboratoire",              description: "Recherche: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 130000,        gain: 260,      count: 0, image: "🧪",       unlockCondition: () => score >= 65000,    totalGenerated: 0 },
-    { id: "foundry",       name: "Fonderie orbitale",        description: "Raffinage: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1400000,       gain: 1400,     count: 0, image: "🔥",       unlockCondition: () => score >= 700000,   totalGenerated: 0 },
-    { id: "station",       name: "Station spatiale",         description: "Logistique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 20000000,      gain: 7800,    count: 0, image: "🚀",       unlockCondition: () => score >= 10000000, totalGenerated: 0 },
-    { id: "nanoforge",     name: "Nanoforge",                description: "Fabrication avancée: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 330000000,     gain: 44000,   count: 0, image: "⚙️",       unlockCondition: () => score >= 150000000, totalGenerated: 0 },
-    { id: "synth",         name: "Synthétiseur de matière",  description: "Matière exotique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 5100000000,    gain: 260000,  count: 0, image: "✨",       unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
+    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 15,            gain: 0.1,      count: 0, image: "🛠️", imgPath: "images/buildings/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
+    { id: "factory",       name: "Usine",                    description: "Construit les ateliers: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 100,           gain: 1,         count: 0, image: "🏭",       imgPath: "images/buildings/factory.png",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
+    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1100,          gain: 8,        count: 0, image: "⛏️",       imgPath: "images/buildings/stellar-mine.png", unlockCondition: () => score >= 500,      totalGenerated: 0 },
+    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 12000,         gain: 47,       count: 0, image: "☀️",       unlockCondition: () => score >= 6000,     totalGenerated: 0 },
+    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1400000,       gain: 1400,     count: 0, image: "🛰️",       unlockCondition: () => score >= 700000,   totalGenerated: 0 },
+    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 20000000,      gain: 7800,    count: 0, image: "📡",       unlockCondition: () => score >= 10000000, totalGenerated: 0 },
+    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 330000000,     gain: 44000,   count: 0, image: "⚙️",       unlockCondition: () => score >= 150000000, totalGenerated: 0 },
+    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 5100000000,    gain: 260000,  count: 0, image: "🧬",       unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
     { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 75000000000,   gain: 1600000, count: 0, image: "🌀",       unlockCondition: () => score >= 35000000000, totalGenerated: 0 },
-    { id: "voidrig",       name: "Foreuse du vide",           description: "Forage du vide: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1e12,          gain: 10000000.0,      count: 0, image: "⛏️",       unlockCondition: () => score >= 5e11,       totalGenerated: 0 },
+    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1e12,          gain: 10000000.0,      count: 0, image: "⚫",       unlockCondition: () => score >= 5e11,       totalGenerated: 0 },
     { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.4e13,        gain: 65000000.0,    count: 0, image: "💫",       unlockCondition: () => score >= 7.5e12,    totalGenerated: 0 },
-    { id: "nebula",        name: "Raffinerie de nébuleuse",   description: "Raffinage de nébuleuse: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.7e14,          gain: 430000000.0,      count: 0, image: "🌌",       unlockCondition: () => score >= 1e14,      totalGenerated: 0 },
-    { id: "pulsar",        name: "Moulure à pulsar",          description: "Moulure à pulsar: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 2.1e15,          gain: 2900000000.0,      count: 0, image: "⭐",       unlockCondition: () => score >= 1.5e15,    totalGenerated: 0 },
-    { id: "blackhole",     name: "Trous noir industriel",     description: "Trous noir industriel: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 2.6e16,          gain: 21000000000.0,      count: 0, image: "🕳️",       unlockCondition: () => score >= 2.5e16,    totalGenerated: 0 },
-    { id: "darkmatter",    name: "Extracteur de matière sombre", description: "Matière sombre: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 3.1e17,          gain: 150000000000.0,      count: 0, image: "🌑",       unlockCondition: () => score >= 4e17,      totalGenerated: 0 },
-    { id: "wormhole",      name: "Usine à trou de ver",       description: "Trou de ver: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 7.1e18,        gain: 1.1e12,    count: 0, image: "🌀",       unlockCondition: () => score >= 6e18,      totalGenerated: 0 },
-    { id: "supernova",     name: "Réacteur à supernova",      description: "Supernova: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.2e20,          gain: 8.3e12,      count: 0, image: "🌟",       unlockCondition: () => score >= 1e20,      totalGenerated: 0 },
-    { id: "bigbang",       name: "Forge cosmique",           description: "Forge cosmique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.9e21,          gain: 6.4e13,      count: 0, image: "💥",       unlockCondition: () => score >= 1.5e21,    totalGenerated: 0 },
-    { id: "singularity",   name: "Singularité productive",    description: "Singularité: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 5.4e23,          gain: 5.1e14,      count: 0, image: "🔮",       unlockCondition: () => score >= 2.5e22,    totalGenerated: 0 }
+    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.7e14,          gain: 430000000.0,      count: 0, image: "🌟",       unlockCondition: () => score >= 1e14,      totalGenerated: 0 },
+    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 2.1e15,          gain: 2900000000.0,      count: 0, image: "⭐",       unlockCondition: () => score >= 1.5e15,    totalGenerated: 0 },
+    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 2.6e16,          gain: 21000000000.0,      count: 0, image: "🕳️",       unlockCondition: () => score >= 2.5e16,    totalGenerated: 0 },
 ];
 
 // Bâtiments de production = liste utilisée par la boucle clicker (achat en masse, gain Parts/s)
@@ -194,6 +196,7 @@ let lastBuildingsUpdate = 0;
 let lastRocketPartsUpdate = 0;
 let lastSpaceProgressUpdate = 0;
 let gameStartTime = 0;
+let startupBonusApplied = false;
 let buyMultiplier = 1;
 let clickedBonusesCount = 0;
 let unlockedTrophies = new Set();
@@ -438,6 +441,7 @@ function saveGame() {
             id: part.id,
             purchased: part.purchased
         })),
+        startupBonusApplied: startupBonusApplied,
         lastSave: Date.now(),
         gameStartTime: gameStartTime,
         version: SAVE_VERSION
@@ -498,6 +502,7 @@ function loadGame() {
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
         gameStartTime = parsed.gameStartTime || 0;
+        startupBonusApplied = !!parsed.startupBonusApplied;
 
         if (parsed.cardCollection) {
             cardCollection = {...parsed.cardCollection};
@@ -614,6 +619,7 @@ function loadGame() {
         if (clickMultipliers.length === 1) clickMultiplier = 1;
 
         initGlobals();
+        applyOfflineEarnings(parsed.lastSave);
 
     } catch (e) {
         console.error("Erreur de chargement :", e);
@@ -900,6 +906,12 @@ function renderBuilding(building) {
     buildingElement.addEventListener('mouseenter', () => {
         buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
     });
+    if (IS_TOUCH) {
+        buildingElement.addEventListener('click', (e) => {
+            if (e.target.closest('button')) return;
+            showTouchTooltip(buildingElement, getBuildingTooltip(building));
+        });
+    }
 
     container.appendChild(buildingElement);
 }
@@ -1100,13 +1112,18 @@ function checkNewPlanetsUnlocked(distance) {
     PLANETS.forEach(planet => {
         if (planet.id === 'earth') return;
         if (distance >= planet.distanceRequired && !unlockedPlanets.has(planet.id)) {
-            unlockedPlanets.add(planet.id);
-            planetBonuses[planet.id] = planet.bonusPercent / 100;
             newlyUnlocked.push(planet);
         }
     });
     
     return newlyUnlocked;
+}
+
+function applyNewPlanets(newlyUnlocked) {
+    newlyUnlocked.forEach(planet => {
+        unlockedPlanets.add(planet.id);
+        planetBonuses[planet.id] = planet.bonusPercent / 100;
+    });
 }
 
 function getTotalPlanetBonus() {
@@ -1129,12 +1146,12 @@ function showSpaceMap(distance) {
     // Mettre à jour le texte de progression
     if (progress.currentPlanet) {
         if (progress.nextPlanet) {
-            progressText.innerHTML = `Tu as atteint <strong>${progress.currentPlanet.emoji} ${progress.currentPlanet.name}</strong> ! En route vers ${progress.nextPlanet.emoji} ${progress.nextPlanet.name} (${progress.progressPercent}%)`;
+            progressText.innerHTML = `Tu as atteint <strong>${progress.currentPlanet.name}</strong> ! En route vers ${progress.nextPlanet.name} (${progress.progressPercent}%)`;
         } else {
-            progressText.innerHTML = `F\u00e9licitations ! Tu as atteint <strong>${progress.currentPlanet.emoji} ${progress.currentPlanet.name}</strong>, la dernière planète !`;
+            progressText.innerHTML = `F\u00e9licitations ! Tu as atteint <strong>${progress.currentPlanet.name}</strong>, la dernière planète !`;
         }
     } else {
-        progressText.innerHTML = `En route vers <strong>${progress.nextPlanet.emoji} ${progress.nextPlanet.name}</strong> (${progress.progressPercent}%)`;
+        progressText.innerHTML = `En route vers <strong>${progress.nextPlanet.name}</strong> (${progress.progressPercent}%)`;
     }
     
     // Vérifier les nouvelles planètes débloquées
@@ -1147,7 +1164,6 @@ function showSpaceMap(distance) {
             const planetElement = document.createElement('div');
             planetElement.className = 'new-planet-item';
             planetElement.innerHTML = `
-                <span class="planet-emoji">${planet.emoji}</span>
                 <span class="planet-name">${planet.name}</span>
                 <span class="planet-bonus">+${planet.bonusPercent}% Parts/s</span>
             `;
@@ -1296,7 +1312,10 @@ function confirmSpaceMapAndReset() {
     if (dustGained > 0) {
         starDust += dustGained;
     }
-    
+
+    // Debloquer les planetes atteintes uniquement a la confirmation du reset
+    applyNewPlanets(checkNewPlanetsUnlocked(lastLaunchDistance));
+
     // Reset du score, des bâtiments et des pièces de fusée (garde les bonus/prestige)
     score = 0;
     BUILDINGS.forEach(b => b.count = 0);
@@ -1305,6 +1324,7 @@ function confirmSpaceMapAndReset() {
     const scene = document.getElementById('rocket-parts-container');
     if (scene) scene.innerHTML = '';
     unlockedBuildings = new Set();
+    startupBonusApplied = false;
     applyStartupBonus();
     totalPartsFromClicks = 0;
     activatedClickUpgrades = [];
@@ -1376,6 +1396,7 @@ function buyGalacticUpgrade(upgradeId) {
             if (atelier) {
                 atelier.count += extra;
                 unlockedBuildings.add(atelier.id);
+                startupBonusApplied = true;
                 renderBuildings();
                 updateDisplay();
             }
@@ -1387,6 +1408,47 @@ function buyGalacticUpgrade(upgradeId) {
 }
 
 // Getters d'effets (utilisés par la boucle de jeu)
+// ============================================
+// PRODUCTION HORS-LIGNE (atelier galactique, branche Hors-ligne)
+// Credit la production accumulée pendant l'absence, plafonnée au palier débloqué.
+// ============================================
+
+function getOfflineCapHours() {
+    let hours = 0;
+    for (const up of GALACTIC_UPGRADES) {
+        if (up.branch === 'offline' && getGalacticUpgradeLevel(up.id) > 0) {
+            hours = Math.max(hours, up.effectPerLevel);
+        }
+    }
+    return hours;
+}
+
+function applyOfflineEarnings(lastSave) {
+    if (!lastSave) return;
+    const capHours = getOfflineCapHours();
+    if (capHours <= 0) return;
+    const elapsedSec = (Date.now() - lastSave) / 1000;
+    if (elapsedSec < 60) return;
+    const cappedSec = Math.min(elapsedSec, capHours * 3600);
+    let totalGain = 0;
+    BUILDINGS.forEach(building => {
+        if (building.count > 0) {
+            const g = calculateBuildingGain(building) * cappedSec;
+            totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + g;
+            totalGain += g;
+        }
+    });
+    if (totalGain <= 0) return;
+    score += totalGain;
+    partsSinceLaunch += totalGain;
+    const capped = cappedSec < elapsedSec;
+    const hours = Math.floor(cappedSec / 3600);
+    const minutes = Math.floor((cappedSec % 3600) / 60);
+    const timeStr = hours > 0 ? hours + 'h' + String(minutes).padStart(2, '0') : minutes + ' min';
+    showToast('\ud83c\udf19 Production hors-ligne (' + timeStr + (capped ? ', plafonn\u00e9e) : +' : ') : +') + formatNumber(totalGain) + ' Parts');
+    updateDisplay();
+}
+
 function getUpgradeEffect(upgradeId) {
     const u = GALACTIC_UPGRADES.find(x => x.id === upgradeId);
     return u ? getGalacticUpgradeLevel(upgradeId) * u.effectPerLevel : 0;
@@ -1407,7 +1469,7 @@ function getBuildingCostReduction() {
     return 0;
 }
 function getRocketPartDiscount() {
-    return Math.min(0.50, getUpgradeEffect('rock2') + getUpgradeEffect('rock3'));
+    return 0;
 }
 function getStartupAteliers() {
     return getUpgradeEffect('rock1');
@@ -1427,23 +1489,30 @@ function calculateStardustGain(distanceKm) {
     return Math.floor(base * getStardustGainBonus());
 }
 function getDistanceBonus() {
-    return 1 + getUpgradeEffect('rock4') + getUpgradeEffect('rock5');
+    let mult = 1;
+    if (getGalacticUpgradeLevel('rock2') > 0) mult *= 1.20;
+    if (getGalacticUpgradeLevel('rock4') > 0) mult *= 1.30;
+    return mult;
 }
 function getClickPowerBonus() {
-    return 1
-        + getUpgradeEffect('click1')
-        + getUpgradeEffect('click2')
-        + getUpgradeEffect('click4')
-        + getUpgradeEffect('click5');
+    let mult = 1;
+    if (getGalacticUpgradeLevel('click1') > 0) mult *= 2;
+    if (getGalacticUpgradeLevel('click3') > 0) mult *= 2.5;
+    if (getGalacticUpgradeLevel('click5') > 0) mult *= 3;
+    return mult;
 }
 function getCritChance() {
-    return Math.min(0.50, getUpgradeEffect('click3'));
+    return Math.min(0.50, getUpgradeEffect('click2') + getUpgradeEffect('click4'));
 }
 function getBoosterDiscount() {
-    return Math.min(0.50, getUpgradeEffect('coll4'));
+    let discount = 1;
+    if (getGalacticUpgradeLevel('coll1') > 0) discount *= 0.90;
+    if (getGalacticUpgradeLevel('coll3') > 0) discount *= 0.90;
+    if (getGalacticUpgradeLevel('coll5') > 0) discount *= 0.85;
+    return 1 - discount;
 }
 function getCollectionUpgradeBonus() {
-    return getUpgradeEffect('coll3') + getUpgradeEffect('coll5');
+    return getUpgradeEffect('coll4');
 }
 function getRarityBoost() {
     return Math.min(0.50, getUpgradeEffect('coll2'));
@@ -1451,11 +1520,19 @@ function getRarityBoost() {
 
 function applyStartupBonus() {
     const freeAteliers = getStartupAteliers();
-    if (freeAteliers > 0) {
-        const atelier = BUILDINGS.find(b => b.id === 'workshop');
-        if (atelier) {
-            atelier.count += freeAteliers;
-            unlockedBuildings.add(atelier.id);
+    if (startupBonusApplied || freeAteliers <= 0) return;
+    const atelier = BUILDINGS.find(b => b.id === 'workshop');
+    if (atelier) {
+        atelier.count += freeAteliers;
+        unlockedBuildings.add(atelier.id);
+        startupBonusApplied = true;
+    }
+    const freeUsines = getGalacticUpgradeLevel('rock3');
+    if (freeUsines > 0) {
+        const usine = BUILDINGS.find(b => b.id === 'factory');
+        if (usine) {
+            usine.count += freeUsines;
+            unlockedBuildings.add(usine.id);
         }
     }
 }
@@ -1544,9 +1621,9 @@ function updateSpaceProgress() {
     if (planetDisplay) {
         const traveledProgress = calculatePlanetProgress(traveledDistance);
         if (traveledProgress.nextPlanet) {
-            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.emoji} ${traveledProgress.nextPlanet.name}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
+            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.name}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
         } else {
-            planetDisplay.innerHTML = `${traveledProgress.currentPlanet.emoji} ${traveledProgress.currentPlanet.name}: 100%`;
+            planetDisplay.innerHTML = `${traveledProgress.currentPlanet.name}: 100%`;
         }
     }
 
@@ -1787,12 +1864,41 @@ function createUpgradeElement(color, imgSrc, altText, levelBadgeText) {
 }
 
 function attachTooltip(element, text) {
-    element.addEventListener('mouseenter', (e) => {
-        const rect = e.target.getBoundingClientRect();
-        showTooltip(text, rect.left + rect.width / 2, rect.top);
-    });
-    element.addEventListener('mouseleave', hideTooltip);
+    if (!IS_TOUCH) {
+        element.addEventListener('mouseenter', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            showTooltip(text, rect.left + rect.width / 2, rect.top);
+        });
+        element.addEventListener('mouseleave', hideTooltip);
+    }
+    if (IS_TOUCH) {
+        element.addEventListener('click', (e) => {
+            if (touchTooltipElement !== element) {
+                // 1er tap : afficher l'info, bloquer l'achat
+                showTouchTooltip(element, text);
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            } else {
+                // 2e tap : acheter (laisser passer le onclick)
+                touchTooltipElement = null;
+            }
+        });
+    }
 }
+
+// Tooltip tactile : sur mobile, le 1er tap affiche l'info, le 2e achète.
+let touchTooltipElement = null;
+function showTouchTooltip(element, text) {
+    const rect = element.getBoundingClientRect();
+    showTooltip(text, rect.left + rect.width / 2, rect.top);
+    touchTooltipElement = element;
+}
+document.addEventListener('touchstart', (e) => {
+    if (!e.target.closest('.upgrade-icon') && !e.target.closest('.building-item')) {
+        hideTooltip();
+        touchTooltipElement = null;
+    }
+}, { passive: true });
 
 // ============================================
 // BONUSES MANAGEMENT
@@ -1869,6 +1975,8 @@ function spawnRandomBonus() {
     }, duration);
 
     bonusElement.onclick = () => {
+        if (bonusElement.dataset.collected === '1') return;
+        bonusElement.dataset.collected = '1';
         clearTimeout(timeout);
         clearInterval(trailInterval);
         bonusElement.classList.add('clicked');
@@ -1925,6 +2033,9 @@ function addScore(points, event) {
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const critMult = (Math.random() < getCritChance()) ? 3 : 1;
     const totalPoints = basePoints * getClickPowerBonus() * critMult;
+    if (getGalacticUpgradeLevel('click6') > 0 && Math.random() < 0.05) {
+        spawnRandomBonus();
+    }
 
     score += totalPoints;
     partsSinceLaunch += totalPoints;
@@ -2674,28 +2785,7 @@ const CARD_RARITIES = {
     alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
 };
 
-const COLLECTIBLE_CARDS = [
-    { id: 'earth-card',     name: 'Terre',            rarity: 'common',      icon: '🌍', imgPath: 'images/cards/collection/earth-card.png' },
-    { id: 'moon-card',      name: 'Lune',             rarity: 'common',      icon: '🌙', imgPath: 'images/cards/collection/moon-card.png' },
-    { id: 'meteor-card',    name: 'Pluie de météores', rarity: 'common',      icon: '💫', imgPath: 'images/cards/collection/meteor-card.png' },
-    { id: 'wrench-card',    name: 'Atelier',          rarity: 'common',      icon: '🔧', imgPath: 'images/cards/collection/wrench-card.png' },
-    { id: 'factory-card',   name: 'Usine',            rarity: 'common',      icon: '🏭', imgPath: 'images/cards/collection/factory-card.png' },
-    { id: 'hq-card',        name: 'QG Spatial',       rarity: 'common',      icon: '🏛️', imgPath: 'images/cards/collection/hq-card.png' },
-    { id: 'nova-card',      name: 'Nova',             rarity: 'common',      icon: '🌟', imgPath: 'images/cards/collection/nova-card.png' },
-    { id: 'mining-card',    name: 'Mine stellaire',   rarity: 'common',      icon: '⛏️', imgPath: 'images/cards/collection/mining-card.png' },
-    { id: 'mars-card',      name: 'Mars',             rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/mars-card.png' },
-    { id: 'neptune-card',   name: 'Neptune',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/neptune-card.png' },
-    { id: 'lab-card',       name: 'Laboratoire',      rarity: 'rare',        icon: '🧪', imgPath: 'images/cards/collection/lab-card.png' },
-    { id: 'launchpad-card', name: 'Pas de tir',       rarity: 'rare',        icon: '🚀', imgPath: 'images/cards/collection/launchpad-card.png' },
-    { id: 'flare-card',     name: 'Éruption solaire', rarity: 'rare',   icon: '☀️', imgPath: 'images/cards/collection/flare-card.png' },
-    { id: 'comet-card',     name: 'Comète',          rarity: 'rare',        icon: '💫', imgPath: 'images/cards/collection/comet-card.png' },
-    { id: 'pluto-card',     name: 'Pluton',           rarity: 'epic',        icon: '💫', imgPath: 'images/cards/collection/pluto-card.png' },
-    { id: 'oort-card',      name: 'Nuage d\'Oort',     rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/oort-card.png' },
-    { id: 'blackhole-card', name: 'Trou noir',        rarity: 'epic',        icon: '🌀', imgPath: 'images/cards/collection/blackhole-card.png' },
-    { id: 'proxima-card',   name: 'Proxima Centauri', rarity: 'legendary',   icon: '☀️', imgPath: 'images/cards/collection/proxima-card.png' },
-    { id: 'supernova-card', name: 'Supernova',        rarity: 'legendary',   icon: '🌟', imgPath: 'images/cards/collection/supernova-card.png' },
-    { id: 'sirius-card',    name: 'Sirius',           rarity: 'alternative', icon: '⭐', imgPath: 'images/cards/collection/sirius-card.png' }
-];
+const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '🌍', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '🌙', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '🐀', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '🔧', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '🏭', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '⛏️', imgPath: 'images/cards/collection/mining-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '☀️', imgPath: 'images/cards/collection/solar-card.png' },    { id: 'lab-card',       name: 'Laboratoire',           rarity: 'common',     icon: '🧪', imgPath: 'images/cards/collection/lab-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '🌊', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '❄️', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '☉', imgPath: 'images/cards/collection/proxima-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '🛰️', imgPath: 'images/cards/collection/foundry-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '📡', imgPath: 'images/cards/collection/station-card.png' },    { id: 'nanoforge-card', name: 'Nanoforge',             rarity: 'rare',       icon: '⚙️', imgPath: 'images/cards/collection/nanoforge-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '⭐', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '🌀', imgPath: 'images/cards/collection/oort-card.png' },    { id: 'synth-card',     name: 'Imprimeur quantique',   rarity: 'epic',       icon: '🧬', imgPath: 'images/cards/collection/synth-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '🌌', imgPath: 'images/cards/collection/milkyway-card.png' },    { id: 'blackhole-card', name: 'Trou noir industriel',   rarity: 'legendary',  icon: '🕳️', imgPath: 'images/cards/collection/blackhole-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '🔭', imgPath: 'images/cards/collection/andromeda-card.png' }];
 
 const BOOSTERS = {
     standard:  { name: 'Standard',   cardCount: 1, cost: () => Math.max(100, Math.floor(partsPerSecond * 30)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
@@ -2711,7 +2801,8 @@ const GALACTIC_BRANCHES = [
     { id: 'production',   name: 'Production',    icon: '\u2699',  color: '#3b82f6' },
     { id: 'rocket',       name: 'Fus\u00e9e',          icon: '\ud83d\ude80', color: '#f59e0b' },
     { id: 'collection',   name: 'Collection',     icon: '\ud83c\udccf', color: '#ec4899' },
-    { id: 'click',        name: 'Clic',            icon: '\ud83d\udc46', color: '#10b981' }
+    { id: 'click',        name: 'Clic',            icon: '\ud83d\udc46', color: '#10b981' },
+    { id: 'offline',      name: 'Hors-ligne',      icon: '\ud83c\udf19', color: '#64748b' }
 ];
 
 const GALACTIC_UPGRADES = [
@@ -2727,24 +2818,31 @@ const GALACTIC_UPGRADES = [
 
     // === BRANCHE FUS\u00c9E (5) - upgrades uniques ===
     { id: 'rock1',  branch: 'rocket', tier: 1, name: 'D\u00e9marrage assist\u00e9',        desc: '+5 Ateliers gratuits au d\u00e9but de chaque run.', baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5 },
-    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Ing\u00e9nierie optimis\u00e9e',      desc: '-30% co\u00fbt des pi\u00e8ces de fus\u00e9e.',      baseCost: 2,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['rock1'] },
-    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Mat\u00e9riaux composites',      desc: '-20% co\u00fbt des pi\u00e8ces de fus\u00e9e.',      baseCost: 8,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['rock2'] },
-    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',      desc: '+100% distance de lancement.',       baseCost: 220,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['rock3'] },
-    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'T\u00e9l\u00e9portation spatiale',     desc: '+200% distance de lancement.',       baseCost: 1000, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['rock4'] },
+    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Propulsion am\u00e9lior\u00e9e',      desc: '+20% distance de lancement.',       baseCost: 3,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['rock1'] },
+    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Cha\u00eene de production',     desc: '+1 Usine gratuite au d\u00e9but de chaque run.',  baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['rock2'] },
+    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',      desc: '+30% distance de lancement.',       baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['rock3'] },
 
     // === BRANCHE COLLECTION (5) - upgrades uniques ===
-    { id: 'coll1',  branch: 'collection', tier: 1, name: 'March\u00e9 noir',           desc: '+2 cartes par booster Premium/L\u00e9gendaire.', baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
-    { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+25% chance de raret\u00e9 sup\u00e9rieure.',  baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['coll1'] },
-    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Boosters renforc\u00e9s',      desc: '+50% au bonus des cartes possédées.',              baseCost: 50,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50, requires: ['coll1'] },
-    { id: 'coll4',  branch: 'collection', tier: 4, name: 'Carte de commer\u00e7ant',     desc: '-40% co\u00fbt des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.40, requires: ['coll2', 'coll3'] },
-    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Album cosmique',          desc: 'Double le bonus des cartes possédées.',        baseCost: 400,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['coll4'] },
+    { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% coût des boosters.',          baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
+    { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+15% chance de rareté supérieure dans le booster Standard.',  baseCost: 8,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll1'] },
+    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Marché noir',           desc: '-10% coût des boosters.',          baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['coll2'] },
+    { id: 'coll4',  branch: 'collection', tier: 4, name: 'Boosters renforcés',      desc: '+20% au bonus des cartes possédées.',              baseCost: 80,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['coll3'] },
+    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Réseau de contrebande',  desc: '-15% coût des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll4'] },
+    { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '+1 carte dans tous les boosters.',     baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll5'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
-    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: '+50% puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.50 },
-    { id: 'click2', branch: 'click', tier: 2, name: 'Main cybern\u00e9tique',     desc: '+100% puissance de clic.',              baseCost: 20,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['click1'] },
-    { id: 'click3', branch: 'click', tier: 3, name: 'Frappe critique',       desc: '+25% chance de coup critique (x3).',    baseCost: 45,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['click1'] },
-    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+200% puissance de clic.',              baseCost: 350, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.0, requires: ['click2', 'click3'] },
-    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',    desc: 'x5 puissance de clic.',                 baseCost: 200, costMult: 1.0, maxLevel: 1, effectPerLevel: 4.0, requires: ['click4'] }
+    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x2 puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
+    { id: 'click2', branch: 'click', tier: 2, name: 'Frappe critique',       desc: '+5% chance de coup critique (x3).',     baseCost: 5,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click1'] },
+    { id: 'click3', branch: 'click', tier: 3, name: 'Main cybern\u00e9tique',     desc: 'x2.5 puissance de clic.',               baseCost: 25,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.5, requires: ['click2'] },
+    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+20% chance de coup critique (x3).',    baseCost: 60,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['click3'] },
+    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x3 puissance de clic.',                 baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 3, requires: ['click4'] },
+    { id: 'click6', branch: 'click', tier: 6, name: 'Appel cosmique',         desc: '5% de chance de d\u00e9clencher une com\u00e8te \u00e0 chaque clic.', baseCost: 400, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click5'] },
+    // === BRANCHE HORS-LIGNE (5) - production pendant l'absence ===
+    { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 1h apr\u00e8s fermeture du jeu.',  baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1 },
+    { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',         desc: 'Production continue jusqu\u0027\u00e0 2h apr\u00e8s fermeture du jeu.',  baseCost: 3,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['off1'] },
+    { id: 'off3', branch: 'offline', tier: 3, name: 'IA de bord',                  desc: 'Production continue jusqu\u0027\u00e0 4h apr\u00e8s fermeture du jeu.',  baseCost: 8,  costMult: 1.0, maxLevel: 1, effectPerLevel: 4, requires: ['off2'] },
+    { id: 'off4', branch: 'offline', tier: 4, name: 'Colonie autonome',            desc: 'Production continue jusqu\u0027\u00e0 8h apr\u00e8s fermeture du jeu.',  baseCost: 20,  costMult: 1.0, maxLevel: 1, effectPerLevel: 8, requires: ['off3'] },
+    { id: 'off5', branch: 'offline', tier: 5, name: 'Civilisation robotis\u00e9e', desc: 'Production continue jusqu\u0027\u00e0 16h apr\u00e8s fermeture du jeu.', baseCost: 50, costMult: 1.0, maxLevel: 1, effectPerLevel: 16, requires: ['off4'] }
 ];
 
 let galacticUpgrades = {};
@@ -2832,9 +2930,7 @@ function buyBooster(type) {
 
     const drawn = [];
     let cardCount = booster.cardCount;
-    if (type === 'premium' || type === 'legendary') {
-        cardCount += getGalacticUpgradeLevel('coll1');
-    }
+    cardCount += getGalacticUpgradeLevel('coll6');
     for (let i = 0; i < cardCount; i++) {
         drawn.push(drawCard(booster.rarities));
     }
@@ -2940,7 +3036,109 @@ function renderCardAlbum() {
             (owned
                 ? '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '"><div class="cc-card-count">\u00d7' + cardCollection[card.id] + '</div>'
                 : '<div class="cc-card-icon">?</div>');
+        if (owned) {
+            el.addEventListener('click', function () { openCardLightbox(card); });
+        }
         grid.appendChild(el);
+    });
+}
+
+function openCardLightbox(card) {
+    const lightbox = document.getElementById('cc-lightbox');
+    const img = document.getElementById('cc-lightbox-img');
+    img.src = card.imgPath;
+    img.alt = card.name;
+    document.getElementById('cc-lightbox-name').textContent = card.icon + ' ' + card.name;
+    const rarity = CARD_RARITIES[card.rarity];
+    const bonus = Math.round(CARD_RARITIES[card.rarity].bonusMult * 100);
+    const count = cardCollection[card.id] || 0;
+    document.getElementById('cc-lightbox-sub').textContent = rarity.name + ' \u00b7 +' + bonus + '% production \u00b7 \u00d7' + count;
+    document.getElementById('cc-lightbox-name').style.color = rarity.color;
+    lightbox.classList.add('open');
+    lightbox.dataset.cardId = card.id;
+}
+
+function closeCardLightbox() {
+    const lightbox = document.getElementById('cc-lightbox');
+    lightbox.classList.remove('open');
+    lightbox.dataset.cardId = '';
+}
+
+// ============================================
+// MOBILE / RESPONSIVE
+// ============================================
+// Vue active sur mobile : 'center' (fusée), 'right' (bâtiments), 'left' (espace)
+let mobileActiveView = 'center';
+
+function isMobileLayout() {
+    return window.matchMedia('(max-width: 1024px)').matches;
+}
+
+function setMobileView(view) {
+    mobileActiveView = view;
+    const grid = document.querySelector('.main-grid');
+    const nav = document.getElementById('mobile-nav');
+    if (!grid) return;
+    grid.classList.remove('mobile-view-left', 'mobile-view-center', 'mobile-view-right');
+    grid.classList.add('mobile-view-' + view);
+    if (nav) {
+        nav.querySelectorAll('button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === view);
+        });
+    }
+    if (view === 'center') applySceneScale();
+}
+
+// Mise à l'échelle de la scène de construction : la fusée fait ~700px
+// de haut en taille réelle (pièces positionnées en pixels fixes). On applique
+// un transform: scale() pour qu'elle tienne toujours dans l'écran.
+function applySceneScale() {
+    const container = document.getElementById('rocket-parts-container');
+    if (!container) return;
+    const scene = container.parentElement;
+    if (!scene) return;
+    const sceneHeight = scene.clientHeight;
+    const sceneWidth = scene.clientWidth;
+    if (!sceneHeight || !sceneWidth) return;
+    // Repère de la fusée dans la scène (positions px fixes des pièces)
+    const ROCKET_TOP = 205;
+    const ROCKET_BASE = 686;
+    const PAD = 12;
+    // Scène assez grande : layout d'origine inchangé (desktop)
+    if (sceneHeight >= ROCKET_BASE + PAD && sceneWidth >= 420) {
+        container.style.transform = '';
+        return;
+    }
+    const rocketHeight = ROCKET_BASE - ROCKET_TOP;
+    const fitY = (sceneHeight - PAD * 2) / rocketHeight;
+    const fitX = (sceneWidth - PAD * 2) / 420;
+    const scale = Math.min(1, fitY, fitX);
+    // Origine en haut au centre ; on place la base de la fusée
+    // juste au-dessus du bas de la scène.
+    const ty = sceneHeight - PAD - scale * ROCKET_BASE;
+    container.style.transformOrigin = '50% 0';
+    container.style.transform = 'translateY(' + ty + 'px) scale(' + scale + ')';
+}
+
+function initMobileNav() {
+    const nav = document.getElementById('mobile-nav');
+    if (!nav) return;
+    nav.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => setMobileView(btn.dataset.view));
+    });
+    if (isMobileLayout()) setMobileView(mobileActiveView);
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (isMobileLayout()) {
+                setMobileView(mobileActiveView);
+                applySceneScale();
+            }
+        }, 150);
+    });
+    window.addEventListener('orientationchange', () => {
+        setTimeout(applySceneScale, 250);
     });
 }
 
@@ -2960,6 +3158,16 @@ function init() {
     updateConstructionScene();
     checkBuildingUnlocks();
     checkTrophies();
+    initMobileNav();
+    const ccLightbox = document.getElementById('cc-lightbox');
+    if (ccLightbox) {
+        ccLightbox.addEventListener('click', function (e) { if (e.target !== document.getElementById('cc-lightbox-img')) closeCardLightbox(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCardLightbox(); });
+    }
+    if (isMobileLayout()) {
+        setMobileView(mobileActiveView);
+        applySceneScale();
+    }
 }
 
 // ============================================
@@ -3407,6 +3615,7 @@ function updateConstructionScene() {
             piece.style.width = width + 'px';
             piece.style.height = height + 'px';
             piece.style.zIndex = '3';
+            applySceneScale();
             
             // Use image if available, fallback to emoji
             if (part.imgPath) {

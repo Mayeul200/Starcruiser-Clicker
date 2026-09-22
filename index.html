@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Starship Clicker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Starship Clicker</title>
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
     <!-- TOP BAR (10% height max) -->
     <div class="top-bar">
         <div class="top-bar-logo">
-            <img src="images/logo.png" class="top-logo-img" alt="Starship Clicker logo">
             <img src="images/logo2.png" class="top-logo-text-img" alt="Starship Clicker">
         </div>
         <div class="top-bar-controls">
@@ -267,7 +266,7 @@
             <div class="rocket-parts-shop" id="rocket-parts-shop"></div>
             <div class="center-content" style="position: relative; width: 100%; height: calc(100% - 56px);">
                 <!-- CONSTRUCTION SCENE 100x100 -->
-                <div class="construction-scene-100x100" id="construction-scene" style="position: relative; width: 100%; height: 100%;">
+                <div class="construction-scene-100x100" id="construction-scene">
                     <!-- Fond de paysage -->
                     <div class="scene-background"></div>
                     
@@ -297,7 +296,7 @@
                 
                 <!-- Médaille cliquable -->
                 <div class="medal" id="medal" onclick="addScore(1, event)" style="position: absolute; right: 5%; top: 25%;">
-                    <div class="medal-emoji">⭐</div>
+                    <img class="medal-img" src="images/parts.png" alt="Pièce à cliquer" draggable="false">
                 </div>
 
                 <button class="launch-button" id="launch-button" onclick="launchRocket()" title="Lancer la fusée">
@@ -347,6 +346,24 @@
     <div class="bonuses-container" id="random-bonuses"></div>
     <div class="click-effects" id="click-effects"></div>
     <div class="toast" id="toast"></div>
+    <!-- CARD LIGHTBOX -->
+    <div class="cc-lightbox" id="cc-lightbox">
+        <div class="cc-lightbox-backdrop"></div>
+        <div class="cc-lightbox-body">
+            <img class="cc-lightbox-img" id="cc-lightbox-img" alt="">
+            <div class="cc-lightbox-info">
+                <div class="cc-lightbox-name" id="cc-lightbox-name"></div>
+                <div class="cc-lightbox-sub" id="cc-lightbox-sub"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE BOTTOM NAV -->
+    <nav class="mobile-nav" id="mobile-nav">
+        <button data-view="center"><span class="nav-icon">🚀</span>Fusée</button>
+        <button data-view="right"><span class="nav-icon">🏭</span>Bâtiments</button>
+        <button data-view="left"><span class="nav-icon">🌌</span>Espace</button>
+    </nav>
 
     <script src="script.js"></script>
 </body>
