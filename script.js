@@ -2042,6 +2042,7 @@ function addScore(points, event) {
     totalPartsFromClicks += 1;
 
     showClickEffect(Math.round(totalPoints), event);
+    spawnFallingCoin(event);
 
     const medal = document.getElementById('medal');
     // Direction du clic par rapport au centre de la piece (normalisee), pour
@@ -2092,6 +2093,52 @@ function showClickEffect(value, event) {
 
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 1200);
+}
+
+// Piece qui tombe depuis le point clique : apparait sur place, tombe a
+// vitesse constante en tournoyant, disparait hors ecran en bas.
+function spawnFallingCoin(event) {
+    const container = document.getElementById('falling-coins');
+    if (!container) return;
+
+    let x, y;
+    if (event && event.clientX !== undefined) {
+        x = event.clientX;
+        y = event.clientY;
+    } else {
+        const medal = document.getElementById('medal');
+        const medalRect = medal.getBoundingClientRect();
+        x = medalRect.left + medalRect.width / 2;
+        y = medalRect.top + medalRect.height / 2;
+    }
+
+    const coin = document.createElement('img');
+    coin.src = 'images/parts.png';
+    coin.className = 'falling-coin';
+    coin.alt = '';
+    coin.draggable = false;
+
+    const size = 38 + Math.random() * 20;
+    const drift = (Math.random() - 0.5) * 90;
+    const spinDir = Math.random() < 0.5 ? 1 : -1;
+    const rotations = 2 + Math.floor(Math.random() * 3);
+    const distance = window.innerHeight - y + size + 20;
+    const speed = 420;
+    const duration = Math.max(0.5, distance / speed);
+
+    coin.style.width = size + 'px';
+    coin.style.height = size + 'px';
+    coin.style.left = x + 'px';
+    coin.style.top = y + 'px';
+    const spinDeg = spinDir * rotations * 360;
+    coin.style.setProperty('--fall-drift', drift + 'px');
+    coin.style.setProperty('--fall-dist', distance + 'px');
+    coin.style.setProperty('--fall-spin', spinDeg + 'deg');
+    coin.style.setProperty('--fall-spin-start', (spinDeg * 0.08) + 'deg');
+    coin.style.setProperty('--fall-duration', duration + 's');
+
+    container.appendChild(coin);
+    coin.addEventListener('animationend', () => coin.remove());
 }
 
 // ============================================
