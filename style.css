@@ -626,11 +626,11 @@ body {
     pointer-events: none;
     animation:
         coin-pop-in 0.22s ease-out both,
-        coin-spin var(--fall-duration) var(--fall-delay, 0s) linear both;
+        coin-tumble var(--fall-duration) var(--fall-delay, 0s) linear both;
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
 }
-/* Tournoiement tres lent et regulier */
-@keyframes coin-spin {
+/* Tournoiement regulier : 1 tour / 12 s (vitesse definie en JS) */
+@keyframes coin-tumble {
     from { rotate: 0deg; }
     to   { rotate: var(--fall-spin); }
 }
