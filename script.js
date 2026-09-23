@@ -2469,7 +2469,7 @@ function renderTrophies() {
         }
         
         trophyElement.style.overflow = 'hidden';
-        const imgSize = trophy.icon === 'images/parts.png' ? '105%' : '100%';
+        const imgSize = trophy.icon === 'images/parts.png' ? '120%' : '100%';
         trophyElement.innerHTML = trophy.icon.startsWith('images/')
             ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: ${imgSize}; height: ${imgSize}; object-fit: cover; object-position: center;">`
             : trophy.icon;
