@@ -160,42 +160,67 @@ const SAVE_VERSION = "2.2.0";
 // TROPH\u0009ES
 // ============================================
 const TROPHIES = [
-    // Parts per second milestones
-    { id: "pps-1", name: "First Parts", description: "Reach 1 Parts per second", icon: "🚀", threshold: 1, type: "pps", unlocked: false },
-    { id: "pps-10", name: "Liftoff", description: "Reach 10 Parts per second", icon: "🚀", threshold: 10, type: "pps", unlocked: false },
-    { id: "pps-100", name: "Orbit Achieved", description: "Reach 100 Parts per second", icon: "🛰️", threshold: 100, type: "pps", unlocked: false },
-    { id: "pps-1000", name: "Space Speed", description: "Reach 1,000 Parts per second", icon: "💨", threshold: 1000, type: "pps", unlocked: false },
-    { id: "pps-10000", name: "Galactic Speed", description: "Reach 10,000 Parts per second", icon: "🌌", threshold: 10000, type: "pps", unlocked: false },
-    { id: "pps-100000", name: "Warp Speed", description: "Reach 100,000 Parts per second", icon: "⚡", threshold: 100000, type: "pps", unlocked: false },
-    { id: "pps-1000000", name: "Light Speed", description: "Reach 1,000,000 Parts per second", icon: "💫", threshold: 1000000, type: "pps", unlocked: false },
-    
-    // Building upgrades
-    { id: "first-upgrade", name: "First Upgrade", description: "Buy your first building upgrade", icon: "🪚", threshold: 1, type: "building-upgrade", unlocked: false },
-    { id: "five-upgrades", name: "Upgrade Master", description: "Have 5 building upgrades", icon: "👷‍♂️", threshold: 5, type: "building-upgrade", unlocked: false },
-    { id: "ten-upgrades", name: "Engineering Genius", description: "Have 10 building upgrades", icon: "👨‍🔬", threshold: 10, type: "building-upgrade", unlocked: false },
-    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Have 20 building upgrades", icon: "🏆", threshold: 20, type: "building-upgrade", unlocked: false },
-    
-    // Click upgrades
-    { id: "first-click-upgrade", name: "First Launch", description: "Buy your first click upgrade", icon: "🚀", threshold: 1, type: "click-upgrade", unlocked: false },
-    { id: "all-click-upgrades", name: "Launch Master", description: "Unlock all click upgrades", icon: "👨‍🚀", threshold: CLICK_UPGRADES.length, type: "click-upgrade", unlocked: false },
-    
-    // Buildings
-    { id: "first-building", name: "First Component", description: "Buy your first building", icon: "⚙️", threshold: 1, type: "building", unlocked: false },
-    { id: "ten-buildings", name: "Space Builder", description: "Own 10 buildings in total", icon: "🏗️", threshold: 10, type: "building", unlocked: false },
-    { id: "hundred-buildings", name: "Space Architect", description: "Own 100 buildings in total", icon: "🏭", threshold: 100, type: "building", unlocked: false },
-    { id: "thousand-buildings", name: "Galactic Builder", description: "Own 1,000 buildings in total", icon: "🌌", threshold: 1000, type: "building", unlocked: false },
-    
-    // Total score
-    { id: "score-1000", name: "Small Start", description: "Reach 1,000 Parts", icon: "🪐", threshold: 1000, type: "score", unlocked: false },
-    { id: "score-1000000", name: "Millionaire", description: "Reach 1,000,000 Parts", icon: "💰", threshold: 1000000, type: "score", unlocked: false },
-    { id: "score-1000000000", name: "Billionaire", description: "Reach 1,000,000,000 Parts", icon: "💎", threshold: 1000000000, type: "score", unlocked: false },
-    
-    // Bonus
-    { id: "first-bonus", name: "First Bonus", description: "Click your first random bonus", icon: "🌠", threshold: 1, type: "bonus", unlocked: false },
-    { id: "ten-bonuses", name: "Bonus Hunter", description: "Click 10 random bonuses", icon: "🎯", threshold: 10, type: "bonus", unlocked: false },
-    
-    // Special
-    { id: "all-buildings", name: "Space Collector", description: "Unlock all building types", icon: "🌌", threshold: BUILDINGS.length, type: "building-types", unlocked: false }
+    // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
+    { id: "pps-1", name: "First Parts", description: "Reach 1 Parts per second", icon: "images/buildings/workshop.png", threshold: 1, type: "pps" },
+    { id: "pps-10", name: "Liftoff", description: "Reach 10 Parts per second", icon: "images/buildings/factory.png", threshold: 10, type: "pps" },
+    { id: "pps-100", name: "Orbit Achieved", description: "Reach 100 Parts per second", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "pps" },
+    { id: "pps-1000", name: "Space Speed", description: "Reach 1,000 Parts per second", icon: "images/buildings/solar-central.png", threshold: 1000, type: "pps" },
+    { id: "pps-10000", name: "Galactic Speed", description: "Reach 10,000 Parts per second", icon: "images/buildings/orbital_autofab.png", threshold: 10000, type: "pps" },
+    { id: "pps-100000", name: "Warp Speed", description: "Reach 100,000 Parts per second", icon: "images/buildings/nanoforge.png", threshold: 100000, type: "pps" },
+    { id: "pps-1000000", name: "Light Speed", description: "Reach 1,000,000 Parts per second", icon: "images/buildings/quantic_printer.png", threshold: 1000000, type: "pps" },
+
+    // Progression spatiale (icônes: images des planètes)
+    { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
+    { id: "planet-mars", name: "Explorateur Martien", description: "Atteindre Mars", icon: "images/planets/mars.png", threshold: 2, type: "planets" },
+    { id: "planet-neptune", name: "Lointaine Neptune", description: "Atteindre Neptune", icon: "images/planets/neptune.png", threshold: 3, type: "planets" },
+    { id: "planet-pluto", name: "Aux Confins du Système", description: "Atteindre Pluton", icon: "images/planets/pluto.png", threshold: 4, type: "planets" },
+    { id: "planet-proxima", name: "Voyageur Interstellaire", description: "Atteindre Proxima Centauri", icon: "images/planets/proxima-centauri.png", threshold: 5, type: "planets" },
+    { id: "planet-sirius", name: "Éclat de Sirius", description: "Atteindre Sirius", icon: "images/planets/sirius.png", threshold: 6, type: "planets" },
+    { id: "planet-oort", name: "Le Grand Nuage", description: "Atteindre le Nuage d'Oort", icon: "images/planets/oort-cloud.png", threshold: 7, type: "planets" },
+    { id: "planet-milky", name: "Cœur de la Galaxie", description: "Atteindre le Centre de la Voie lactée", icon: "images/planets/milky-way-center.png", threshold: 8, type: "planets" },
+    { id: "planet-andromeda", name: "Galaxie Voisine", description: "Atteindre Andromède", icon: "images/planets/andromeda.png", threshold: 9, type: "planets" },
+    { id: "planet-virgo", name: "Conquérant de l'Univers", description: "Atteindre l'Amas de Virgo", icon: "images/planets/virgo-cluster.png", threshold: 10, type: "planets" },
+
+    // Lancements de fusée (icônes: pièces de fusée)
+    { id: "launch-1", name: "Décollage !", description: "Réaliser votre premier lancement", icon: "images/rocket/engines.png", threshold: 1, type: "launches" },
+    { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 5 lancements", icon: "images/rocket/cockpit.png", threshold: 5, type: "launches" },
+    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 15 lancements", icon: "images/rocket/boosters-left.png", threshold: 15, type: "launches" },
+    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.png", threshold: 30, type: "launches" },
+
+    // Poussière d'étoiles (icônes: cartes du jeu)
+    { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.png", threshold: 1, type: "stardust" },
+    { id: "dust-100", name: "Collectionneur Cosmique", description: "Gagner 100 Poussière d'Étoiles au total", icon: "images/cards/collection/nova-card.png", threshold: 100, type: "stardust" },
+    { id: "dust-1000", name: "Maître de la Poussière", description: "Gagner 1 000 Poussière d'Étoiles au total", icon: "images/cards/collection/supernova-card.png", threshold: 1000, type: "stardust" },
+
+    // Améliorations de bâtiments (icônes: bâtiments)
+    { id: "first-upgrade", name: "First Upgrade", description: "Buy your first building upgrade", icon: "images/buildings/workshop.png", threshold: 1, type: "building-upgrade" },
+    { id: "five-upgrades", name: "Upgrade Master", description: "Have 5 building upgrades", icon: "images/buildings/factory.png", threshold: 5, type: "building-upgrade" },
+    { id: "ten-upgrades", name: "Engineering Genius", description: "Have 10 building upgrades", icon: "images/buildings/essaim-sonde.png", threshold: 10, type: "building-upgrade" },
+    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Have 20 building upgrades", icon: "images/buildings/antimatter_collector.png", threshold: 20, type: "building-upgrade" },
+
+    // Améliorations de clic (icônes: pièce fusée + astronaute)
+    { id: "first-click-upgrade", name: "First Launch", description: "Buy your first click upgrade", icon: "images/rocket/nozzles.PNG", threshold: 1, type: "click-upgrade" },
+    { id: "all-click-upgrades", name: "Launch Master", description: "Unlock all click upgrades", icon: "images/rocket/astronaut.png", threshold: CLICK_UPGRADES.length, type: "click-upgrade" },
+
+    // Bâtiments possédés (icônes: bâtiments)
+    { id: "first-building", name: "First Component", description: "Buy your first building", icon: "images/buildings/workshop.png", threshold: 1, type: "building" },
+    { id: "ten-buildings", name: "Space Builder", description: "Own 10 buildings in total", icon: "images/buildings/factory.png", threshold: 10, type: "building" },
+    { id: "hundred-buildings", name: "Space Architect", description: "Own 100 buildings in total", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "building" },
+    { id: "thousand-buildings", name: "Galactic Builder", description: "Own 1,000 buildings in total", icon: "images/buildings/nanoforge.png", threshold: 1000, type: "building" },
+
+    // Score total (icônes: parts et cartes)
+    { id: "score-1000", name: "Small Start", description: "Reach 1,000 Parts", icon: "images/parts.png", threshold: 1000, type: "score" },
+    { id: "score-1000000", name: "Millionaire", description: "Reach 1,000,000 Parts", icon: "images/cards/collection/earth-card.png", threshold: 1000000, type: "score" },
+    { id: "score-1000000000", name: "Billionaire", description: "Reach 1,000,000,000 Parts", icon: "images/cards/collection/sirius-card.png", threshold: 1000000000, type: "score" },
+
+    // Bonus cliqués (icônes: comète)
+    { id: "first-bonus", name: "First Bonus", description: "Click your first random bonus", icon: "images/effects/comète.png", threshold: 1, type: "bonus" },
+    { id: "ten-bonuses", name: "Bonus Hunter", description: "Click 10 random bonuses", icon: "images/cards/collection/meteor-card.png", threshold: 10, type: "bonus" },
+
+    // Collection (icône: carte trou noir)
+    { id: "all-buildings", name: "Space Collector", description: "Unlock all building types", icon: "images/cards/collection/blackhole-card.png", threshold: BUILDINGS.length, type: "building-types" },
+    { id: "cards-10", name: "Cartothécaire", description: "Posséder 10 cartes de collection", icon: "images/cards/collection/moon-card.png", threshold: 10, type: "cards" },
+    { id: "cards-20", name: "Collection Complète", description: "Posséder toutes les cartes de collection", icon: "images/cards/collection/oort-card.png", threshold: 20, type: "cards" },
 ];
 
 // ============================================
@@ -233,6 +258,7 @@ let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
 let lastLaunchDistance = 0;
 let starDust = 0; // Poussière d'Étoiles : monnaie de prestige persistante
+let totalStardustEarned = 0; // Cumul de toutes les Poussière d'Étoiles gagnées (trophées)
 
 
 // ============================================
@@ -446,6 +472,7 @@ function saveGame() {
         maxDistance: maxDistance,
         prestigeMultiplier: prestigeMultiplier,
         starDust: starDust,
+        totalStardustEarned: totalStardustEarned,
         galacticUpgrades: {...galacticUpgrades},
         rocketsLaunched: rocketsLaunched,
         unlockedPlanets: Array.from(unlockedPlanets),
@@ -510,6 +537,7 @@ function loadGame() {
         maxDistance = parsed.maxDistance || 0;
         prestigeMultiplier = parsed.prestigeMultiplier || 1;
         starDust = parsed.starDust || 0;
+        totalStardustEarned = parsed.totalStardustEarned || 0;
         galacticUpgrades = parsed.galacticUpgrades || {};
         // V2.2: les upgrades galactiques sont uniques (maxLevel=1).
         // Cap les niveaux anciens pour eviter des bonus excesifs.
@@ -1356,6 +1384,7 @@ function confirmSpaceMapAndReset() {
     const dustGained = calculateStardustGain(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance);
     if (dustGained > 0) {
         starDust += dustGained;
+        totalStardustEarned += dustGained;
     }
 
     // Debloquer les planetes atteintes uniquement a la confirmation du reset
@@ -2316,6 +2345,9 @@ function getGameDuration() {
 // GESTION DES TROPH\u001aES
 // ============================================
 
+function getTotalStardustEarned() {
+    return totalStardustEarned;
+}
 function getTotalBuildingUpgrades() {
     let count = 0;
     for (const buildingId in buildingUpgrades) {
@@ -2356,6 +2388,18 @@ function checkTrophies() {
                     break;
                 case 'building-types':
                     unlocked = getUnlockedBuildingTypes() >= trophy.threshold;
+                    break;
+                case 'planets':
+                    unlocked = unlockedPlanets.size - (unlockedPlanets.has('earth') ? 1 : 0) >= trophy.threshold;
+                    break;
+                case 'launches':
+                    unlocked = rocketsLaunched >= trophy.threshold;
+                    break;
+                case 'stardust':
+                    unlocked = getTotalStardustEarned() >= trophy.threshold;
+                    break;
+                case 'cards':
+                    unlocked = Object.keys(cardCollection).filter(id => cardCollection[id] > 0).length >= trophy.threshold;
                     break;
             }
             
@@ -2405,7 +2449,9 @@ function renderTrophies() {
             trophyElement.style.filter = 'grayscale(100%)';
         }
         
-        trophyElement.innerHTML = trophy.icon;
+        trophyElement.innerHTML = trophy.icon.startsWith('images/')
+            ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: 100%; height: 100%; object-fit: contain;">`
+            : trophy.icon;
         
         trophyElement.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
@@ -3548,6 +3594,7 @@ const Debug = {
     },
     addStardust(n) {
         starDust += n;
+        totalStardustEarned += n;
         updateStardustDisplay();
         renderGalacticShop();
     },
@@ -3607,7 +3654,7 @@ const Debug = {
         const p = PLANETS[index];
         if (!p) { console.warn('Index invalide. 0=Terre ... ' + (PLANETS.length - 1) + '=' + PLANETS[PLANETS.length - 1].name); return; }
         const dust = calculateStardustGain(p.distanceRequired);
-        if (dust > 0) starDust += dust;
+        if (dust > 0) { starDust += dust; totalStardustEarned += dust; }
         maxDistance = Math.max(maxDistance, p.distanceRequired);
         prestigeMultiplier = 1 + Math.log(1 + maxDistance / MOON_DISTANCE) / 2;
         unlockedPlanets = new Set(PLANETS.slice(0, index + 1).map(x => x.id));
