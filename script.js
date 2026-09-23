@@ -34,6 +34,16 @@ function showTooltip(text, x, y, options) {
 
 function hideTooltip() {
     tooltip.classList.remove('visible');
+    tooltipLiveRefresh = null;
+}
+
+// Rafraichissement en continu du tooltip affiche (production qui evolue).
+// Fontion qui regenere le texte; appelee periodiquement par la boucle de jeu.
+let tooltipLiveRefresh = null;
+function refreshLiveTooltip() {
+    if (tooltipLiveRefresh && tooltip.classList.contains('visible')) {
+        tooltip.textContent = tooltipLiveRefresh();
+    }
 }
 
 // Détection d'un écran tactile (mobile / tablette)
@@ -921,6 +931,7 @@ function renderBuilding(building) {
                 align: 'left',
                 width: Math.round(rect.width * 0.75)
             });
+            tooltipLiveRefresh = () => getBuildingTooltip(building);
         });
         buildingElement.addEventListener('mouseleave', hideTooltip);
     }
@@ -928,6 +939,7 @@ function renderBuilding(building) {
         buildingElement.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
             showTouchTooltip(buildingElement, getBuildingTooltip(building));
+            tooltipLiveRefresh = () => getBuildingTooltip(building);
         });
     }
 
@@ -2236,6 +2248,7 @@ function gameLoop() {
     if (Date.now() - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastBuildingsUpdate = Date.now();
         updateAllBuildingButtons();
+        refreshLiveTooltip();
     }
     if (Date.now() - lastRocketPartsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastRocketPartsUpdate = Date.now();
