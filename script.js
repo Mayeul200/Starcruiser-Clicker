@@ -1498,13 +1498,17 @@ function getCometFrequencyBonus() {
 function getStardustGainBonus() {
     return 1;
 }
-function calculateStardustGain(distanceKm) {
+function calculateStardustGainExact(distanceKm) {
     const safeDistance = (isNaN(distanceKm) || distanceKm < 0) ? 0 : distanceKm;
     const anchor = Math.pow(STARDUST_TAIL_START_KM / MOON_DISTANCE, STARDUST_DISTANCE_EXP);
     const base = safeDistance <= STARDUST_TAIL_START_KM
         ? Math.pow(safeDistance / MOON_DISTANCE, STARDUST_DISTANCE_EXP)
         : anchor * Math.pow(safeDistance / STARDUST_TAIL_START_KM, STARDUST_TAIL_EXP);
-    return Math.floor(base * getStardustGainBonus());
+    return base * getStardustGainBonus();
+}
+
+function calculateStardustGain(distanceKm) {
+    return Math.floor(calculateStardustGainExact(distanceKm));
 }
 function getDistanceBonus() {
     let mult = 1;
@@ -2510,7 +2514,7 @@ function updateStardustPreview() {
 
     const reachableDistance = calculateDistance();
     const safeDistance = (isNaN(reachableDistance) || reachableDistance < 0) ? 0 : reachableDistance;
-    const potentialDust = calculateStardustGain(safeDistance);
+    const potentialDust = calculateStardustGainExact(safeDistance);
     const intPart = Math.floor(potentialDust);
     const fracPart = potentialDust - intPart;
 
