@@ -903,9 +903,13 @@ function renderBuilding(building) {
         </div>
     `;
 
-    buildingElement.addEventListener('mouseenter', () => {
-        buildingElement.setAttribute('data-tooltip', getBuildingTooltip(building));
-    });
+    if (!IS_TOUCH) {
+        buildingElement.addEventListener('mouseenter', (e) => {
+            const rect = buildingElement.getBoundingClientRect();
+            showTooltip(getBuildingTooltip(building), rect.left + rect.width / 2, rect.top);
+        });
+        buildingElement.addEventListener('mouseleave', hideTooltip);
+    }
     if (IS_TOUCH) {
         buildingElement.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
