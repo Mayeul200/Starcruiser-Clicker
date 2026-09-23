@@ -289,7 +289,7 @@ function findBuildingById(buildingId) {
 
 function getPrestigeProductionBoost() {
     const p = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
-    return p;
+    return 1 + (p - 1) / 2;
 }
 function getPlanetProductionBonus() {
     return 1 + getTotalPlanetBonus();
