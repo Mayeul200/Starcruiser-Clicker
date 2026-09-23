@@ -2965,13 +2965,13 @@ const GALACTIC_BRANCHES = [
 const GALACTIC_UPGRADES = [
     // === BRANCHE PRODUCTION (8) - un upgrade par planete ===
     { id: 'prod1',  branch: 'production', tier: 1, name: 'R\u00e9acteur \u00e0 fusion',        desc: '+25% production globale.',        baseCost: 2,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25 },
-    { id: 'prod2',  branch: 'production', tier: 2, name: 'Optimisation \u00e9nerg\u00e9tique',  desc: '+40% production globale.',        baseCost: 5,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.40, requires: ['prod1'] },
-    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',   desc: '+60% production globale.',        baseCost: 15,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.60, requires: ['prod2'] },
-    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avanc\u00e9e',    desc: '+80% production globale.',       baseCost: 45,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.8, requires: ['prod3'] },
-    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',          desc: '+120% production globale.',       baseCost: 130,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.2, requires: ['prod4'] },
-    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synth\u00e8se de mati\u00e8re noire', desc: '+160% production globale.',      baseCost: 380,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.6, requires: ['prod5'] },
-    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularit\u00e9 technologique', desc: '+240% production globale.',      baseCost: 800, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.4, requires: ['prod6'] },
-    { id: 'prod8',  branch: 'production', tier: 8, name: 'Forge stellaire',          desc: '+320% production globale.',       baseCost: 2200, costMult: 1.0, maxLevel: 1, effectPerLevel: 3.2, requires: ['prod7'] },
+    { id: 'prod2',  branch: 'production', tier: 2, name: 'Optimisation \u00e9nerg\u00e9tique',  desc: '+35% production globale.',        baseCost: 5,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.35, requires: ['prod1'] },
+    { id: 'prod3',  branch: 'production', tier: 3, name: 'Surcharge industrielle',   desc: '+45% production globale.',        baseCost: 15,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.45, requires: ['prod2'] },
+    { id: 'prod4',  branch: 'production', tier: 4, name: 'Automatisation avanc\u00e9e',    desc: '+55% production globale.',       baseCost: 45,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.55, requires: ['prod3'] },
+    { id: 'prod5',  branch: 'production', tier: 5, name: 'Nanotechnologie',          desc: '+65% production globale.',       baseCost: 130,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.65, requires: ['prod4'] },
+    { id: 'prod6',  branch: 'production', tier: 6, name: 'Synth\u00e8se de mati\u00e8re noire', desc: '+75% production globale.',      baseCost: 380,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.75, requires: ['prod5'] },
+    { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularit\u00e9 technologique', desc: '+85% production globale.',      baseCost: 800, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.85, requires: ['prod6'] },
+    { id: 'prod8',  branch: 'production', tier: 8, name: 'Forge stellaire',          desc: '+100% production globale.',       baseCost: 2200, costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['prod7'] },
 
     // === BRANCHE FUS\u00c9E (5) - upgrades uniques ===
     { id: 'rock1',  branch: 'rocket', tier: 1, name: 'D\u00e9marrage assist\u00e9',        desc: '+5 Ateliers gratuits au d\u00e9but de chaque run.', baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5 },
