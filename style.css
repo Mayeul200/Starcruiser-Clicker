@@ -54,6 +54,8 @@ body {
     color: var(--text);
     min-height: 100vh;
     line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
 }
 /* TOP BAR */
 .top-bar {
@@ -2066,15 +2068,11 @@ body {
     text-align: center;
     white-space: nowrap;
     padding: 0 8px;
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
 }
 .counter span {
     color: #ffd700;
     display: inline-block;
     min-width: 1ch;
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
 }
 /* Barre des upgrades */
 .upgrades-bar {
