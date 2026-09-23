@@ -929,7 +929,9 @@ const PIECE_DISTANCE_MULT = 1.0;
 const MOON_DISTANCE = 384400;
 // Parts cumulees produites lors du premier lancement d'une nouvelle partie.
 // Ce point d'ancrage calibre le debut de la courbe de distance.
-const DISTANCE_MOON_PARTS = 2.1e7;
+// 10.5M parts pour la Lune: debut de partie rapide meme en jeu casual
+// (la moitie du cumul d'un premier lancement, soit ~20-30 min de jeu).
+const DISTANCE_MOON_PARTS = 1.05e7;
 // Distance en deux segments:
 // - jusqu'a DISTANCE_MOON_PARTS parts : croissance lineaire (Lune atteignable
 //   des le premier lancement, debut de partie rapide et gratifiant)
