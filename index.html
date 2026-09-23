@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -15,8 +15,8 @@
             <img src="images/logo2.png" class="top-logo-text-img" alt="Starship Clicker">
         </div>
         <div class="top-bar-controls">
-            <button class="control-button" onclick="toggleStats()" title="Statistics">📊</button>
-            <button class="control-button" onclick="toggleSettings()" title="Settings">⚙️</button>
+            <button class="control-button" onclick="toggleStats()" title="Statistics" data-i18n-title="Statistics">📊</button>
+            <button class="control-button" onclick="toggleSettings()" title="Settings" data-i18n-title="Settings">⚙️</button>
         </div>
     </div>
 
@@ -24,7 +24,7 @@
     <div class="modal" id="stats-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Statistics</h2>
+                <h2 data-i18n="Statistics">Statistics</h2>
                 <span class="close-button" onclick="toggleStats()">&times;</span>
             </div>
             <div class="modal-body" id="stats-body"></div>
@@ -36,28 +36,28 @@
     <div class="modal" id="launch-results-modal">
         <div class="modal-content launch-modal">
             <div class="modal-header">
-                <h2>🚀 Mission Résultats</h2>
+                <h2 data-i18n="🚀 Mission Résultats">🚀 Mission Résultats</h2>
                 <span class="close-button" onclick="closeLaunchResults()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="launch-result-item">
-                    <span class="launch-label">Distance parcourue:</span>
+                    <span class="launch-label" data-i18n="Distance parcourue:">Distance parcourue:</span>
                     <span class="launch-value" id="launch-results-distance">0 km</span>
                 </div>
                 <div class="launch-result-item">
-                    <span class="launch-label">Bonus permanent:</span>
+                    <span class="launch-label" data-i18n="Bonus permanent:">Bonus permanent:</span>
                     <span class="launch-value" id="launch-results-multiplier">x1</span>
                 </div>
                 <div class="launch-result-item">
-                    <span class="launch-label">✨ Poussière d'Étoiles gagnée:</span>
+                    <span class="launch-label">✨ <span data-i18n="Poussière d'Étoiles gagnée:">Poussière d'Étoiles gagnée:</span></span>
                     <span class="launch-value" id="launch-results-stardust">0</span>
                 </div>
                 <div class="launch-result-item">
-                    <span class="launch-label">Fusées lancées:</span>
+                    <span class="launch-label" data-i18n="Fusées lancées:">Fusées lancées:</span>
                     <span class="launch-value" id="launch-results-rockets">0</span>
                 </div>
                 <div class="launch-info">
-                    <p>Plus tu vas loin, plus ton bonus permanent augmente !</p>
+                    <p data-i18n="Plus tu vas loin, plus ton bonus permanent augmente !">Plus tu vas loin, plus ton bonus permanent augmente !</p>
                 </div>
             </div>
 </div>
@@ -65,18 +65,18 @@
     <div class="modal" id="space-map-modal">
         <div class="modal-content space-map-modal">
             <div class="modal-header">
-                <h2>🌌 Carte de l'Espace</h2>
+                <h2>🌌 <span data-i18n="Carte de l'Espace">Carte de l'Espace</span></h2>
                 <span class="close-button" onclick="closeSpaceMap()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="space-progress-text" id="space-progress-text">
-                    Calcul de ta position dans l'espace...
+                    
                 </div>
                 <div class="space-map-container" id="space-map-container"></div>
                 <div class="new-planets-unlocked" id="new-planets-unlocked"></div>
                 <div class="space-modal-actions" id="space-modal-actions">
-                    <button class="space-confirm-button" id="space-confirm-button" onclick="confirmSpaceMapAndReset()">
-                        ✅ Continuer (Reset + Bonus)
+                    <button class="space-confirm-button" id="space-confirm-button" onclick="confirmSpaceMapAndReset()" data-i18n="Continuer (Reset + Bonus)">
+                        Continuer (Reset + Bonus)
                     </button>
                 </div>
             </div>
@@ -87,8 +87,8 @@
     <div class="modal" id="planetary-survey-modal">
         <div class="modal-content planetary-survey-modal">
             <div class="modal-header">
-                <h2>🎰 Casino Planétaire</h2>
-                <div class="modal-parts-counter"><span class="modal-parts-value">0</span> Parts · +<span class="modal-parts-gain">0</span>/s</div>
+                <h2 data-i18n="🎰 Casino Planétaire">🎰 Casino Planétaire</h2>
+                <div class="modal-parts-counter"><span class="modal-parts-value">0</span> <span data-i18n="Parts">Parts</span> · +<span class="modal-parts-gain">0</span>/s</div>
                 <span class="close-button" onclick="closePlanetarySurvey()">&times;</span>
             </div>
             <div class="modal-body">
@@ -98,12 +98,12 @@
                         Choisis une carte et révèle un bonus ! Mode infini : encaisse ou remise à chaque tour.
                     </div>
                     <div class="survey-bet-options" id="survey-bet-options">
-                        <button class="survey-bet-btn" data-bet-type="1s">⏱️ 1s de prod</button>
-                        <button class="survey-bet-btn" data-bet-type="30s">⏱️ 30s de prod</button>
-                        <button class="survey-bet-btn" data-bet-type="5m">⏱️ 5 min de prod</button>
+                        <button class="survey-bet-btn" data-bet-type="1s">⏱️ <span data-i18n="1s de prod">1s de prod</span></button>
+                        <button class="survey-bet-btn" data-bet-type="30s">⏱️ <span data-i18n="30s de prod">30s de prod</span></button>
+                        <button class="survey-bet-btn" data-bet-type="5m">⏱️ <span data-i18n="5 min de prod">5 min de prod</span></button>
                         <div class="survey-custom-bet">
-                            <input type="number" id="survey-custom-bet-input" placeholder="Mise libre" min="1">
-                            <button class="survey-bet-btn" id="survey-custom-bet-btn">💰 Mise libre</button>
+                            <input type="number" id="survey-custom-bet-input" placeholder="Mise libre" data-i18n-placeholder="Mise libre" min="1">
+                            <button class="survey-bet-btn" id="survey-custom-bet-btn">💰 <span data-i18n="Mise libre">Mise libre</span></button>
                         </div>
                     </div>
                 </div>
@@ -111,15 +111,15 @@
                 <!-- Écran de jeu (infini) -->
                 <div class="survey-screen" id="survey-play-screen" style="display:none;">
                     <div class="survey-status">
-                        <div class="survey-status-item">Tour: <span id="survey-round">1</span></div>
-                        <div class="survey-status-item">Pot: <span id="survey-pot">0</span></div>
+                        <div class="survey-status-item"><span data-i18n="Tour:">Tour:</span> <span id="survey-round">1</span></div>
+                        <div class="survey-status-item"><span data-i18n="Pot:">Pot:</span> <span id="survey-pot">0</span></div>
                     </div>
-                    <div class="survey-intro" id="survey-play-intro">Choisis une planète !</div>
+                    <div class="survey-intro" id="survey-play-intro" data-i18n="Choisis une planète !">Choisis une planète !</div>
                     <div class="survey-cards" id="survey-cards"></div>
                     <div class="survey-result" id="survey-result"></div>
                     <div class="survey-actions">
-                        <button class="survey-action-btn collect" id="survey-collect-btn" onclick="surveyCollectWinnings()" style="display:none;">💰 Encaisser le pot</button>
-                        <button class="survey-action-btn" id="survey-continue-btn" onclick="nextSurveyRound()" style="display:none;">🎲 Remiser (continuer)</button>
+                        <button class="survey-action-btn collect" id="survey-collect-btn" onclick="surveyCollectWinnings()" style="display:none;">💰 <span data-i18n="Encaisser le pot">Encaisser le pot</span></button>
+                        <button class="survey-action-btn" id="survey-continue-btn" onclick="nextSurveyRound()" style="display:none;">🎲 <span data-i18n="Remiser (continuer)">Remiser (continuer)</span></button>
                     </div>
                 </div>
             </div>
@@ -130,47 +130,47 @@
     <div class="modal" id="card-collection-modal">
         <div class="modal-content card-collection-modal">
             <div class="modal-header">
-                <h2>📦 Collection de Cartes</h2>
-                <div class="modal-parts-counter"><span class="modal-parts-value">0</span> Parts · +<span class="modal-parts-gain">0</span>/s</div>
-                <button class="cc-back-btn" id="cc-back-btn" onclick="showCardShop()" style="display:none;">← Retour</button>
+                <h2 data-i18n="📦 Collection de Cartes">📦 Collection de Cartes</h2>
+                <div class="modal-parts-counter"><span class="modal-parts-value">0</span> <span data-i18n="Parts">Parts</span> · +<span class="modal-parts-gain">0</span>/s</div>
+                <button class="cc-back-btn" id="cc-back-btn" onclick="showCardShop()" style="display:none;">← <span data-i18n="Retour">Retour</span></button>
                 <span class="close-button" onclick="closeCardCollection()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="card-collection-stats">
-                    <div class="card-stat">Cartes: <span id="cc-collected-count">0</span>/<span id="cc-total-count">0</span></div>
-                    <div class="card-stat">Bonus global: <span id="cc-bonus-display">×1.00</span></div>
+                    <div class="card-stat"><span data-i18n="Cartes:">Cartes:</span> <span id="cc-collected-count">0</span>/<span id="cc-total-count">0</span></div>
+                    <div class="card-stat"><span data-i18n="Bonus global:">Bonus global:</span> <span id="cc-bonus-display">×1.00</span></div>
                 </div>
                 <div class="cc-screen" id="cc-booster-screen">
-                    <div class="cc-intro" id="cc-intro">Achète des boosters pour récolter des cartes. Chaque carte possédée donne un bonus passif. Complète une série pour un bonus supplémentaire !</div>
+                    <div class="cc-intro" id="cc-intro" data-i18n="Achète des boosters pour récolter des cartes. Chaque carte possédée donne un bonus passif. Complète une série pour un bonus supplémentaire !">Achète des boosters pour récolter des cartes. Chaque carte possédée donne un bonus passif. Complète une série pour un bonus supplémentaire !</div>
                     <div class="cc-booster-options">
                         <button class="cc-booster-btn" data-booster="standard" onclick="buyBooster('standard')">
                             <img class="cc-booster-img" src="images/cards/collection/booster1.png" alt="Booster Standard">
-                            <div class="cc-booster-name">Booster Standard</div>
-                            <div class="cc-booster-info">1 carte — 80% commune / 18% rare / 2% épique</div>
+                            <div class="cc-booster-name" data-i18n="Booster Standard">Booster Standard</div>
+                            <div class="cc-booster-info" data-i18n-booster="standard">1 carte — 80% commune / 18% rare / 2% épique</div>
                             <div class="cc-booster-cost" id="cc-cost-standard">💰 —</div>
                         </button>
                         <button class="cc-booster-btn" data-booster="premium" onclick="buyBooster('premium')">
                             <img class="cc-booster-img" src="images/cards/collection/booster2.png" alt="Booster Premium">
-                            <div class="cc-booster-name">Booster Premium</div>
-                            <div class="cc-booster-info">2 cartes — 50% commune / 30% rare / 15% épique / 4% légendaire / 1% alternative</div>
+                            <div class="cc-booster-name" data-i18n="Booster Premium">Booster Premium</div>
+                            <div class="cc-booster-info" data-i18n-booster="premium">2 cartes — 50% commune / 30% rare / 15% épique / 4% légendaire / 1% alternative</div>
                             <div class="cc-booster-cost" id="cc-cost-premium">💰 —</div>
                         </button>
                         <button class="cc-booster-btn" data-booster="legendary" onclick="buyBooster('legendary')">
                             <img class="cc-booster-img" src="images/cards/collection/booster3.png" alt="Booster Légendaire">
-                            <div class="cc-booster-name">Booster Légendaire</div>
-                            <div class="cc-booster-info">3 cartes — 25% commune / 30% rare / 25% épique / 15% légendaire / 5% alternative</div>
+                            <div class="cc-booster-name" data-i18n="Booster Légendaire">Booster Légendaire</div>
+                            <div class="cc-booster-info" data-i18n-booster="legendary">3 cartes — 25% commune / 30% rare / 25% épique / 15% légendaire / 5% alternative</div>
                             <div class="cc-booster-cost" id="cc-cost-legendary">💰 —</div>
                         </button>
                     </div>
-                    <button class="cc-view-album-btn" onclick="showCardAlbum()">Voir mon album</button>
+                    <button class="cc-view-album-btn" onclick="showCardAlbum()" data-i18n="Voir mon album">Voir mon album</button>
                 </div>
                 <div class="cc-screen" id="cc-reveal-screen" style="display:none;">
-                    <div class="cc-reveal-intro">Clique sur chaque carte pour la retourner !</div>
+                    <div class="cc-reveal-intro" data-i18n="Clique sur chaque carte pour la retourner !">Clique sur chaque carte pour la retourner !</div>
                     <div class="cc-reveal-cards" id="cc-reveal-cards"></div>
                     <div class="cc-reveal-actions">
-                        <button class="cc-action-btn" onclick="revealAllCards()">👁️ Tout révéler</button>
-                        <button class="cc-action-btn" id="cc-reveal-shop-btn" onclick="showCardShop()" style="display:none;">🛒 Autre booster</button>
-                        <button class="cc-action-btn" id="cc-reveal-album-btn" onclick="showCardAlbum()" style="display:none;">📚 Voir l'album</button>
+                        <button class="cc-action-btn" onclick="revealAllCards()">👁️ <span data-i18n="Tout révéler">Tout révéler</span></button>
+                        <button class="cc-action-btn" id="cc-reveal-shop-btn" onclick="showCardShop()" style="display:none;">🛒 <span data-i18n="Autre booster">Autre booster</span></button>
+                        <button class="cc-action-btn" id="cc-reveal-album-btn" onclick="showCardAlbum()" style="display:none;">📚 <span data-i18n="Voir l'album">Voir l'album</span></button>
                     </div>
                 </div>
                 <div class="cc-screen" id="cc-album-screen" style="display:none;">
@@ -184,14 +184,19 @@
     <div class="modal" id="settings-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Settings</h2>
+                <h2 data-i18n="Settings">Settings</h2>
                 <span class="close-button" onclick="toggleSettings()">&times;</span>
             </div>
             <div class="modal-body">
-                <button class="modal-button" onclick="exportSave()">📤 Export</button>
-                <textarea id="import-textarea" placeholder="Paste your save here..."></textarea>
-                <button class="modal-button" onclick="importSave()">📥 Import</button>
-                <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ Delete</button>
+                <div class="language-selector" style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
+                    <span data-i18n="Language" style="font-size: 0.9rem; color: #64748b;">Language</span>
+                    <button class="modal-button lang-btn" id="lang-fr" onclick="setGameLanguage('fr')" style="flex: 1;">🇫🇷 FR</button>
+                    <button class="modal-button lang-btn" id="lang-en" onclick="setGameLanguage('en')" style="flex: 1;">🇬🇧 EN</button>
+                </div>
+                <button class="modal-button" onclick="exportSave()">📤 <span data-i18n="📤 Export">Export</span></button>
+                <textarea id="import-textarea" data-i18n-placeholder="Paste your save here..." placeholder="Paste your save here..."></textarea>
+                <button class="modal-button" onclick="importSave()">📥 <span data-i18n="📥 Import">Import</span></button>
+                <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ <span data-i18n="🗑️ Delete">Delete</span></button>
             </div>
         </div>
     </div>
@@ -200,16 +205,16 @@
     <div class="main-grid">
         <!-- LEFT PANEL (20%) - Space Progress -->
         <div class="left-panel">
-            <h3>🌌 Progression Spatiale</h3>
+            <h3 data-i18n="🌌 Progression Spatiale">🌌 Progression Spatiale</h3>
             <div class="space-progress-container" id="space-progress-sidebar">
                 <div class="space-progress-header">
                     <span class="current-planet-display" id="current-planet-display">
                         🌍 Terre: 0%
                     </span>
-                    <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique">
-                        <span class="galactic-shop-label">⚙ Atelier</span>
-                        <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
-                        <span class="galactic-shop-preview" id="stardust-preview" title="PE gagnées si lancement">
+                    <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique" data-i18n-title="Atelier Galactique">
+                        <span class="galactic-shop-label">⚙ <span data-i18n="Atelier">Atelier</span></span>
+                        <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
+                        <span class="galactic-shop-preview" id="stardust-preview" title="PE gagnées si lancement" data-i18n-title="PE gagnées si lancement">
                             <span class="galactic-shop-preview-bar" id="stardust-preview-bar"></span>
                             <span class="galactic-shop-preview-text">+<span id="stardust-preview-value">0</span> ✨</span>
                         </span>
@@ -218,19 +223,19 @@
                 <div class="mini-space-map" id="mini-space-map"></div>
                 <div class="space-stats" id="space-stats-sidebar">
                     <div class="stat-item">
-                        <span class="stat-label">Distance max atteinte:</span>
+                        <span class="stat-label" data-i18n="Distance max atteinte:">Distance max atteinte:</span>
                         <span class="stat-value" id="sidebar-distance-max">0 km</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Distance atteignable:</span>
+                        <span class="stat-label" data-i18n="Distance atteignable:">Distance atteignable:</span>
                         <span class="stat-value" id="sidebar-distance">0 km</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Bonus:</span>
+                        <span class="stat-label" data-i18n="Bonus:">Bonus:</span>
                         <span class="stat-value" id="sidebar-bonus">x1.00</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Objectifs:</span>
+                        <span class="stat-label" data-i18n="Objectifs:">Objectifs:</span>
                         <span class="stat-value" id="sidebar-planets">0/10</span>
                     </div>
                 </div>
@@ -238,19 +243,19 @@
             
             <!-- MINI-GAMES SECTION -->
             <div class="mini-games-section">
-                <h4>🎮 Mini-Jeux</h4>
+                <h4 data-i18n="🎮 Mini-Jeux">🎮 Mini-Jeux</h4>
                 <div class="mini-games-container" id="mini-games-container">
                     <div class="mini-game-card" onclick="openPlanetarySurvey()">
                         <div class="game-icon">🎰</div>
-                        <div class="game-name">Casino Planétaire</div>
-                        <div class="game-description">Choisis une carte et révèle un bonus !</div>
-                        <div class="game-cost">💰 Mise variable</div>
+                        <div class="game-name" data-i18n="Casino Planétaire">Casino Planétaire</div>
+                        <div class="game-description" data-i18n="Choisis une carte et révèle un bonus !">Choisis une carte et révèle un bonus !</div>
+                        <div class="game-cost">💰 <span data-i18n="Mise variable">Mise variable</span></div>
                     </div>
                     <div class="mini-game-card" onclick="openCardCollection()">
                         <div class="game-icon">📦</div>
-                        <div class="game-name">Collection de Cartes</div>
-                        <div class="game-description">Ouvre des boosters et complète ton album !</div>
-                        <div class="game-cost">💰 Boosters payants</div>
+                        <div class="game-name" data-i18n="Collection de Cartes">Collection de Cartes</div>
+                        <div class="game-description" data-i18n="Ouvre des boosters et complète ton album !">Ouvre des boosters et complète ton album !</div>
+                        <div class="game-cost">💰 <span data-i18n="Boosters payants">Boosters payants</span></div>
                     </div>
                 </div>
             </div>
@@ -259,7 +264,7 @@
         <!-- CENTER PANEL (60%) - Click Zone -->
         <div class="center-panel">
             <div class="upgrades-bar" id="upgrades-bar">
-                <span class="upgrades-title">Upgrades</span>
+                <span class="upgrades-title" data-i18n="Upgrades">Upgrades</span>
                 <div class="upgrades-container-center" id="upgrades-container"></div>
             </div>
             <!-- Liste des pièces de fusée (achats uniques) - colonne verticale à gauche -->
@@ -301,13 +306,13 @@
                     </div>
                 </div>
 
-                <button class="launch-button" id="launch-button" onclick="launchRocket()" title="Lancer la fusée">
+                <button class="launch-button" id="launch-button" onclick="launchRocket()" title="Lancer la fusée" data-i18n-title="Lancer la fusée">
                     <span class="launch-button-icon">🚀</span>
-                    <span class="launch-button-text">LANCER LA FUSÉE</span>
+                    <span class="launch-button-text" data-i18n="LANCER LA FUSÉE">LANCER LA FUSÉE</span>
                 </button>
 
                 <div class="counters">
-                    <div class="counter"><span id="score-value">0</span> Parts</div>
+                    <div class="counter"><span id="score-value">0</span> <span data-i18n="Parts">Parts</span></div>
                     <div class="counter">+<span id="gain-value">0</span>/s</div>
                 </div>
                 <div class="bonus-timer" id="bonus-timer"></div>
@@ -317,12 +322,12 @@
         <!-- RIGHT PANEL (20%) - Buildings -->
         <div class="right-panel">
             <div class="buildings-header">
-                <h3>Buildings</h3>
+                <h3 data-i18n="Buildings">Buildings</h3>
                 <div class="multiplier-buttons">
-                    <button class="multiplier-btn active" id="multiplier-x1" onclick="setBuyMultiplier(1)" title="Buy 1 at a time">x1</button>
-                    <button class="multiplier-btn" id="multiplier-x5" onclick="setBuyMultiplier(5)" title="Buy 5 at a time">x5</button>
-                    <button class="multiplier-btn" id="multiplier-x50" onclick="setBuyMultiplier(50)" title="Buy 50 at a time">x50</button>
-                    <button class="multiplier-btn" id="multiplier-max" onclick="setBuyMultiplier('max')" title="Buy maximum possible">Max</button>
+                    <button class="multiplier-btn active" id="multiplier-x1" onclick="setBuyMultiplier(1)" title="Acheter 1 à la fois" data-i18n-title="Acheter 1 à la fois">x1</button>
+                    <button class="multiplier-btn" id="multiplier-x5" onclick="setBuyMultiplier(5)" title="Acheter 5 à la fois" data-i18n-title="Acheter 5 à la fois">x5</button>
+                    <button class="multiplier-btn" id="multiplier-x50" onclick="setBuyMultiplier(50)" title="Acheter 50 à la fois" data-i18n-title="Acheter 50 à la fois">x50</button>
+                    <button class="multiplier-btn" id="multiplier-max" onclick="setBuyMultiplier('max')" title="Acheter le maximum possible" data-i18n-title="Acheter le maximum possible">Max</button>
                 </div>
             </div>
             <div class="buildings-list" id="buildings-list"></div>
@@ -333,12 +338,12 @@
     <div class="modal" id="galactic-shop-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>✨ Atelier Galactique</h2>
+                <h2>✨ <span data-i18n="Atelier Galactique">Atelier Galactique</span></h2>
                 <div class="stardust-display">✨ <span id="stardust-value-2">0</span></div>
                 <span class="close-button" onclick="toggleGalacticShop()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="galactic-intro">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.</div>
+                <div class="galactic-intro" data-i18n="Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.</div>
                 <div class="galactic-shop-list" id="galactic-shop-list"></div>
             </div>
         </div>
@@ -363,11 +368,12 @@
 
     <!-- MOBILE BOTTOM NAV -->
     <nav class="mobile-nav" id="mobile-nav">
-        <button data-view="center"><span class="nav-icon">🚀</span>Fusée</button>
-        <button data-view="right"><span class="nav-icon">🏭</span>Bâtiments</button>
-        <button data-view="left"><span class="nav-icon">🌌</span>Espace</button>
+        <button data-view="center"><span class="nav-icon">🚀</span><span data-i18n="Fusée">Fusée</span></button>
+        <button data-view="right"><span class="nav-icon">🏭</span><span data-i18n="Bâtiments">Bâtiments</span></button>
+        <button data-view="left"><span class="nav-icon">🌌</span><span data-i18n="Espace">Espace</span></button>
     </nav>
 
+    <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

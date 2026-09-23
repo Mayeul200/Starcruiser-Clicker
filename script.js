@@ -79,21 +79,22 @@ const SPACE_UPDATE_INTERVAL_MS = 500;
 // BÂTIMENTS DE PRODUCTION
 // Achetables en masse, génèrent des Parts/s. Boucle clicker.
 // ============================================
+// Les noms/descriptions sont en FR (cles i18n) : affiches via t()/tf().
 const PRODUCTION_BUILDINGS = [
-    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 15,            gain: 0.1,      count: 0, image: "🛠️", imgPath: "images/buildings/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
-    { id: "factory",       name: "Usine",                    description: "Construit les ateliers: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 100,           gain: 1,         count: 0, image: "🏭",       imgPath: "images/buildings/factory.png",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
-    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1100,          gain: 8,        count: 0, image: "⛏️",       imgPath: "images/buildings/stellar-mine.png", unlockCondition: () => score >= 500,      totalGenerated: 0 },
-    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 12000,         gain: 47,       count: 0, image: "☀️",       imgPath: "images/buildings/solar-central.png", unlockCondition: () => score >= 6000,     totalGenerated: 0 },
-    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1400000,       gain: 1400,     count: 0, image: "🛰️", imgPath: "images/buildings/orbital_autofab.png", unlockCondition: () => score >= 700000,   totalGenerated: 0 },
-    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 20000000,      gain: 7800,    count: 0, image: "📡", imgPath: "images/buildings/essaim-sonde.png", unlockCondition: () => score >= 10000000, totalGenerated: 0 },
-    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 330000000,     gain: 44000,   count: 0, image: "⚙️", imgPath: "images/buildings/nanoforge.png", unlockCondition: () => score >= 150000000, totalGenerated: 0 },
-    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 5100000000,    gain: 260000,  count: 0, image: "🧬", imgPath: "images/buildings/quantic_printer.png", unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
-    { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 75000000000,   gain: 1600000, count: 0, image: "🌀", imgPath: "images/buildings/antimatter_collector.png", unlockCondition: () => score >= 35000000000, totalGenerated: 0 },
-    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1e12,          gain: 10000000.0,      count: 0, image: "⚫",       unlockCondition: () => score >= 5e11,       totalGenerated: 0 },
-    { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.4e13,        gain: 65000000.0,    count: 0, image: "💫",       unlockCondition: () => score >= 7.5e12,    totalGenerated: 0 },
-    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 1.7e14,          gain: 430000000.0,      count: 0, image: "🌟",       unlockCondition: () => score >= 1e14,      totalGenerated: 0 },
-    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 2.1e15,          gain: 2900000000.0,      count: 0, image: "⭐",       unlockCondition: () => score >= 1.5e15,    totalGenerated: 0 },
-    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", baseCost: 2.6e16,          gain: 21000000000.0,      count: 0, image: "🕳️",       unlockCondition: () => score >= 2.5e16,    totalGenerated: 0 },
+    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici", baseCost: 15,            gain: 0.1,      count: 0, image: "🛠️", imgPath: "images/buildings/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
+    { id: "factory",       name: "Usine",                    description: "Construit les ateliers", baseCost: 100,           gain: 1,         count: 0, image: "🏭",       imgPath: "images/buildings/factory.png",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
+    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines", baseCost: 1100,          gain: 8,        count: 0, image: "⛏️",       imgPath: "images/buildings/stellar-mine.png", unlockCondition: () => score >= 500,      totalGenerated: 0 },
+    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe", baseCost: 12000,         gain: 47,       count: 0, image: "☀️",       imgPath: "images/buildings/solar-central.png", unlockCondition: () => score >= 6000,     totalGenerated: 0 },
+    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules", baseCost: 1400000,       gain: 1400,     count: 0, image: "🛰️", imgPath: "images/buildings/orbital_autofab.png", unlockCondition: () => score >= 700000,   totalGenerated: 0 },
+    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes", baseCost: 20000000,      gain: 7800,    count: 0, image: "📡", imgPath: "images/buildings/essaim-sonde.png", unlockCondition: () => score >= 10000000, totalGenerated: 0 },
+    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première", baseCost: 330000000,     gain: 44000,   count: 0, image: "⚙️", imgPath: "images/buildings/nanoforge.png", unlockCondition: () => score >= 150000000, totalGenerated: 0 },
+    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure", baseCost: 5100000000,    gain: 260000,  count: 0, image: "🧬", imgPath: "images/buildings/quantic_printer.png", unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
+    { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime", baseCost: 75000000000,   gain: 1600000, count: 0, image: "🌀", imgPath: "images/buildings/antimatter_collector.png", unlockCondition: () => score >= 35000000000, totalGenerated: 0 },
+    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique", baseCost: 1e12,          gain: 10000000.0,      count: 0, image: "⚫",       unlockCondition: () => score >= 5e11,       totalGenerated: 0 },
+    { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar", baseCost: 1.4e13,        gain: 65000000.0,    count: 0, image: "💫",       unlockCondition: () => score >= 7.5e12,    totalGenerated: 0 },
+    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières", baseCost: 1.7e14,          gain: 430000000.0,      count: 0, image: "🌟",       unlockCondition: () => score >= 1e14,      totalGenerated: 0 },
+    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers", baseCost: 2.1e15,          gain: 2900000000.0,      count: 0, image: "⭐",       unlockCondition: () => score >= 1.5e15,    totalGenerated: 0 },
+    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur", baseCost: 2.6e16,          gain: 21000000000.0,      count: 0, image: "🕳️",       unlockCondition: () => score >= 2.5e16,    totalGenerated: 0 },
 ];
 
 // Bâtiments de production = liste utilisée par la boucle clicker (achat en masse, gain Parts/s)
@@ -104,16 +105,16 @@ const BUILDINGS = PRODUCTION_BUILDINGS;
 // Achats uniques par run (payés en Parts). Compléter les 10 = lancement.
 // ============================================
 const ROCKET_PARTS = [
-    { id: "nozzles",       name: "Tuyères",        description: "Propulsion: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 50,           image: "🎯",       imgPath: "images/rocket/nozzles.PNG",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
-    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 150,          image: "🔥",       imgPath: "images/rocket/engines.png",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
-    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 450,          image: "⛽",       imgPath: "images/rocket/fuel-tank.png",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
-    { id: "rocket-body",   name: "Corps",          description: "Structure: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 1300,         image: "🏭",       imgPath: "images/rocket/body.png",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
-    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 3800,         image: "🚀",       imgPath: "images/rocket/boosters-left.png", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
-    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 11000,        image: "🚀",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
-    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 32000,        image: "👨‍🚀", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
-    { id: "shield",        name: "Bouclier",       description: "Protection: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 93000,        image: "🛡️",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
-    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 270000,       image: "🚀",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
-    { id: "astronaut",     name: "Astronaute",    description: "Pilote: +{gain} Parts/s\n% de la production: {percent}%\nTotal généré: {total} Parts", cost: 638000,       image: "👩‍🚀", imgPath: "images/rocket/astronaut.png",     x: 40,    y: 635, width: 25,  height: 60,  order: 10, purchased: false }
+    { id: "nozzles",       name: "Tuyères",        description: "Propulsion", cost: 50,           image: "🎯",       imgPath: "images/rocket/nozzles.PNG",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
+    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux", cost: 150,          image: "🔥",       imgPath: "images/rocket/engines.png",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
+    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant", cost: 450,          image: "⛽",       imgPath: "images/rocket/fuel-tank.png",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
+    { id: "rocket-body",   name: "Corps",          description: "Structure", cost: 1300,         image: "🏭",       imgPath: "images/rocket/body.png",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
+    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire", cost: 3800,         image: "🚀",       imgPath: "images/rocket/boosters-left.png", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire", cost: 11000,        image: "🚀",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "👨‍🚀", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
+    { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "🛡️",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
+    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "🚀",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
+    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "👩‍🚀", imgPath: "images/rocket/astronaut.png",     x: 40,    y: 635, width: 25,  height: 60,  order: 10, purchased: false }
 ];
 
 
@@ -150,8 +151,8 @@ const UPGRADE_COLORS = [
 ];
 
 const RANDOM_BONUSES = [
-    { id: "meteor", symbol: "🌠", name: "Meteor Shower", effect: "instant", type: "meteor", colorClass: "meteor" },
-    { id: "flare", symbol: "☀️", name: "Solar Flare", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
+    { id: "meteor", symbol: "🌠", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" },
+    { id: "flare", symbol: "☀️", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
 ];
 
 const SAVE_VERSION = "2.2.0";
@@ -174,13 +175,13 @@ const TROPHY_COLORS = {
 };
 const TROPHIES = [
     // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
-    { id: "pps-1", name: "First Parts", description: "Reach 1 Parts per second", icon: "images/parts.png", threshold: 1, type: "pps" },
-    { id: "pps-10", name: "Liftoff", description: "Reach 10 Parts per second", icon: "images/parts.png", threshold: 10, type: "pps" },
-    { id: "pps-100", name: "Orbit Achieved", description: "Reach 100 Parts per second", icon: "images/parts.png", threshold: 100, type: "pps" },
-    { id: "pps-1000", name: "Space Speed", description: "Reach 1,000 Parts per second", icon: "images/parts.png", threshold: 1000, type: "pps" },
-    { id: "pps-10000", name: "Galactic Speed", description: "Reach 10,000 Parts per second", icon: "images/parts.png", threshold: 10000, type: "pps" },
-    { id: "pps-100000", name: "Warp Speed", description: "Reach 100,000 Parts per second", icon: "images/parts.png", threshold: 100000, type: "pps" },
-    { id: "pps-1000000", name: "Light Speed", description: "Reach 1,000,000 Parts per second", icon: "images/parts.png", threshold: 1000000, type: "pps" },
+    { id: "pps-1", name: "First Parts", description: "Atteindre 1 Parts par seconde", icon: "images/parts.png", threshold: 1, type: "pps" },
+    { id: "pps-10", name: "Liftoff", description: "Atteindre 10 Parts par seconde", icon: "images/parts.png", threshold: 10, type: "pps" },
+    { id: "pps-100", name: "Orbit Achieved", description: "Atteindre 100 Parts par seconde", icon: "images/parts.png", threshold: 100, type: "pps" },
+    { id: "pps-1000", name: "Space Speed", description: "Atteindre 1 000 Parts par seconde", icon: "images/parts.png", threshold: 1000, type: "pps" },
+    { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.png", threshold: 10000, type: "pps" },
+    { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.png", threshold: 100000, type: "pps" },
+    { id: "pps-1000000", name: "Light Speed", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000, type: "pps" },
 
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
@@ -206,32 +207,32 @@ const TROPHIES = [
     { id: "dust-1000", name: "Maître de la Poussière", description: "Gagner 1 000 Poussière d'Étoiles au total", icon: "images/cards/collection/supernova-card.png", threshold: 1000, type: "stardust" },
 
     // Améliorations de bâtiments (icônes: bâtiments)
-    { id: "first-upgrade", name: "First Upgrade", description: "Buy your first building upgrade", icon: "images/buildings/workshop.png", threshold: 1, type: "building-upgrade" },
-    { id: "five-upgrades", name: "Upgrade Master", description: "Have 5 building upgrades", icon: "images/buildings/factory.png", threshold: 5, type: "building-upgrade" },
-    { id: "ten-upgrades", name: "Engineering Genius", description: "Have 10 building upgrades", icon: "images/buildings/essaim-sonde.png", threshold: 10, type: "building-upgrade" },
-    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Have 20 building upgrades", icon: "images/buildings/antimatter_collector.png", threshold: 20, type: "building-upgrade" },
+    { id: "first-upgrade", name: "First Upgrade", description: "Acheter votre première amélioration de bâtiment", icon: "images/buildings/workshop.png", threshold: 1, type: "building-upgrade" },
+    { id: "five-upgrades", name: "Upgrade Master", description: "Avoir 5 améliorations de bâtiment", icon: "images/buildings/factory.png", threshold: 5, type: "building-upgrade" },
+    { id: "ten-upgrades", name: "Engineering Genius", description: "Avoir 10 améliorations de bâtiment", icon: "images/buildings/essaim-sonde.png", threshold: 10, type: "building-upgrade" },
+    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Avoir 20 améliorations de bâtiment", icon: "images/buildings/antimatter_collector.png", threshold: 20, type: "building-upgrade" },
 
     // Améliorations de clic (icônes: pièce fusée + astronaute)
-    { id: "first-click-upgrade", name: "First Launch", description: "Buy your first click upgrade", icon: "images/rocket/nozzles.PNG", threshold: 1, type: "click-upgrade" },
-    { id: "all-click-upgrades", name: "Launch Master", description: "Unlock all click upgrades", icon: "images/rocket/astronaut.png", threshold: CLICK_UPGRADES.length, type: "click-upgrade" },
+    { id: "first-click-upgrade", name: "First Launch", description: "Acheter votre première amélioration de clic", icon: "images/rocket/nozzles.PNG", threshold: 1, type: "click-upgrade" },
+    { id: "all-click-upgrades", name: "Launch Master", description: "Débloquer toutes les améliorations de clic", icon: "images/rocket/astronaut.png", threshold: CLICK_UPGRADES.length, type: "click-upgrade" },
 
     // Bâtiments possédés (icônes: bâtiments)
-    { id: "first-building", name: "First Component", description: "Buy your first building", icon: "images/buildings/workshop.png", threshold: 1, type: "building" },
-    { id: "ten-buildings", name: "Space Builder", description: "Own 10 buildings in total", icon: "images/buildings/factory.png", threshold: 10, type: "building" },
-    { id: "hundred-buildings", name: "Space Architect", description: "Own 100 buildings in total", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "building" },
-    { id: "thousand-buildings", name: "Galactic Builder", description: "Own 1,000 buildings in total", icon: "images/buildings/nanoforge.png", threshold: 1000, type: "building" },
+    { id: "first-building", name: "First Component", description: "Acheter votre premier bâtiment", icon: "images/buildings/workshop.png", threshold: 1, type: "building" },
+    { id: "ten-buildings", name: "Space Builder", description: "Posséder 10 bâtiments au total", icon: "images/buildings/factory.png", threshold: 10, type: "building" },
+    { id: "hundred-buildings", name: "Space Architect", description: "Posséder 100 bâtiments au total", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "building" },
+    { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/nanoforge.png", threshold: 1000, type: "building" },
 
     // Score total (icônes: parts et cartes)
-    { id: "score-1000", name: "Small Start", description: "Reach 1,000 Parts", icon: "images/parts.png", threshold: 1000, type: "score" },
-    { id: "score-1000000", name: "Millionaire", description: "Reach 1,000,000 Parts", icon: "images/cards/collection/earth-card.png", threshold: 1000000, type: "score" },
-    { id: "score-1000000000", name: "Billionaire", description: "Reach 1,000,000,000 Parts", icon: "images/cards/collection/sirius-card.png", threshold: 1000000000, type: "score" },
+    { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.png", threshold: 1000, type: "score" },
+    { id: "score-1000000", name: "Millionaire", description: "Atteindre 1 000 000 Parts", icon: "images/cards/collection/earth-card.png", threshold: 1000000, type: "score" },
+    { id: "score-1000000000", name: "Billionaire", description: "Atteindre 1 000 000 000 Parts", icon: "images/cards/collection/sirius-card.png", threshold: 1000000000, type: "score" },
 
     // Bonus cliqués (icônes: comète)
-    { id: "first-bonus", name: "First Bonus", description: "Click your first random bonus", icon: "images/effects/comète.png", threshold: 1, type: "bonus" },
-    { id: "ten-bonuses", name: "Bonus Hunter", description: "Click 10 random bonuses", icon: "images/cards/collection/meteor-card.png", threshold: 10, type: "bonus" },
+    { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comète.png", threshold: 1, type: "bonus" },
+    { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/meteor-card.png", threshold: 10, type: "bonus" },
 
     // Collection (icône: carte trou noir)
-    { id: "all-buildings", name: "Space Collector", description: "Unlock all building types", icon: "images/cards/collection/blackhole-card.png", threshold: BUILDINGS.length, type: "building-types" },
+    { id: "all-buildings", name: "Space Collector", description: "Débloquer tous les types de bâtiments", icon: "images/cards/collection/blackhole-card.png", threshold: BUILDINGS.length, type: "building-types" },
     { id: "cards-10", name: "Cartothécaire", description: "Posséder 10 cartes de collection", icon: "images/cards/collection/moon-card.png", threshold: 10, type: "cards" },
     { id: "cards-20", name: "Collection Complète", description: "Posséder toutes les cartes de collection", icon: "images/cards/collection/oort-card.png", threshold: 20, type: "cards" },
 ];
@@ -295,17 +296,17 @@ let isLaunching = false;
 // SPACE MAP SYSTEM (Planets & Bonuses)
 // ============================================
 const PLANETS = [
-    { id: 'earth', name: 'Earth', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
-    { id: 'moon', name: 'Moon', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 10, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
+    { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
+    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 10, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
     { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 15, color: '#ef4444', imgPath: 'images/planets/mars.png' },
     { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 20, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluto', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 25, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
+    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 25, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
     { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 6100000000, bonusPercent: 30, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
     { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 35, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'oort-cloud', name: 'Oort Cloud', emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 40, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'milky-way-center', name: 'Milky Way Center', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 50, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromeda', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 60, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Virgo Cluster', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 75, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 40, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 50, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 60, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 75, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -315,6 +316,7 @@ let planetBonuses = {}; // {planetId: bonusMultiplier}
 // UTILITY FUNCTIONS
 // ============================================
 
+function initLanguageSafe() { if (typeof initLanguage === 'function') initLanguage(); }
 function initGlobals() {
     BUILDINGS.forEach(building => {
         totalGeneratedByBuilding[building.id] = totalGeneratedByBuilding[building.id] || 0;
@@ -375,10 +377,12 @@ function getBuildingTooltip(building) {
     const unitGain = calculateUnitBuildingGain(building);
     const totalGain = calculateBuildingGain(building);
     const percent = partsPerSecond > 0 ? ((totalGain / partsPerSecond) * 100).toFixed(2) : 0;
-    return building.description
-        .replace('{gain}', formatNumber(unitGain))
-        .replace('{percent}', percent)
-        .replace('{total}', formatNumber(totalGeneratedByBuilding[building.id] || 0));
+    return tf('{flavor}: +{gain} Parts/s\n% de la production: {percent}%\nTotal g\u00e9n\u00e9r\u00e9: {total} Parts', {
+        flavor: t(building.description),
+        gain: formatNumber(unitGain),
+        percent: percent,
+        total: formatNumber(totalGeneratedByBuilding[building.id] || 0)
+    });
 }
 
 // Coût d'un upgrade de bâtiment au palier `threshold` : baseCost × 10^(index du palier)
@@ -689,7 +693,7 @@ function loadGame() {
     } catch (e) {
         console.error("Erreur de chargement :", e);
         localStorage.removeItem('starshipClickerSave');
-        showToast("\u26a0\ufe0f Sauvegarde corrompue. Nouvelle partie.");
+        showToast("\u26a0\ufe0f " + t("Sauvegarde corrompue. Nouvelle partie."));
     }
 }
 
@@ -697,39 +701,39 @@ function exportSave() {
     const saveData = localStorage.getItem('starshipClickerSave');
     if (saveData) {
         navigator.clipboard.writeText(saveData)
-            .then(() => showToast("\u2705 Sauvegarde copiée !"))
-            .catch(() => showToast("\u274c Échec de la copie."));
+            .then(() => showToast("\u2705 " + t("Sauvegarde copiée !")))
+            .catch(() => showToast("\u274c " + t("Échec de la copie.")));
     } else {
-        showToast("\u274c Aucune sauvegarde.");
+        showToast("\u274c " + t("Aucune sauvegarde."));
     }
 }
 
 function importSave() {
     const importText = document.getElementById('import-textarea').value.trim();
-    if (!importText) { showToast("\u274c Rien à importer."); return; }
+    if (!importText) { showToast("\u274c " + t("Rien à importer.")); return; }
     try {
         const testParse = JSON.parse(importText);
         if (testParse.version && testParse.buildings && testParse.buildingUpgrades) {
             localStorage.setItem('starshipClickerSave', importText);
-            showToast("\u2705 Importé ! Redémarrage...");
+            showToast("\u2705 " + t("Importé ! Redémarrage..."));
             setTimeout(() => window.location.reload(), 1000);
         } else {
-            showToast("\u274c Format invalide.");
+            showToast("\u274c " + t("Format invalide."));
         }
     } catch (e) {
-        showToast("\u274c Format invalide.");
+        showToast("\u274c " + t("Format invalide."));
     }
 }
 
 function confirmDeleteSave() {
-    if (confirm("\u26a0\ufe0f Delete la sauvegarde ? Tous vos progrès seront PERDUS !")) {
+    if (confirm("\u26a0\ufe0f " + t("Supprimer la sauvegarde ? Tous vos progrès seront PERDUS !"))) {
         deleteSave();
     }
 }
 
 function deleteSave() {
     localStorage.removeItem('starshipClickerSave');
-    showToast("\ud83d\uddd1\ufe0f Supprimé !");
+    showToast("\ud83d\uddd1\ufe0f " + t("Supprimé !"));
     setTimeout(() => window.location.reload(), 1000);
 }
 
@@ -746,10 +750,10 @@ function setBuyMultiplier(multiplier) {
     
     if (multiplier === 'max') {
         document.getElementById('multiplier-max').classList.add('active');
-        showToast("Multiplicateur: Max");
+        showToast(t("Multiplicateur:") + " Max");
     } else {
         document.getElementById(`multiplier-x${multiplier}`).classList.add('active');
-        showToast(`Multiplicateur: x${multiplier}`);
+        showToast(t("Multiplicateur:") + ` x${multiplier}`);
     }
     
     updateAllBuildingButtons();
@@ -778,10 +782,10 @@ function buyBuilding(buildingId) {
         renderUpgrades();
         checkBuildingUnlocks();
         const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
-        showToast(`\u2705 +${buildingsToBuy} ${building.name}${maxText}`);
+        showToast(`\u2705 +${buildingsToBuy} ${t(building.name)}${maxText}`);
         checkTrophies();
     } else {
-        showToast("\u274c Pas assez de Parts");
+        showToast("\u274c " + t("Pas assez de Parts"));
     }
 }
 
@@ -808,12 +812,12 @@ function buyClickUpgrade(threshold) {
     if (!upgrade) return;
     
     if (activatedClickUpgrades.includes(threshold)) {
-        showToast("\u2705 Already activated!");
+        showToast("\u2705 " + t("Already activated!"));
         return;
     }
     
     if (score < upgrade.cost) {
-        showToast("\u274c Pas assez de Parts");
+        showToast("\u274c " + t("Pas assez de Parts"));
         return;
     }
     
@@ -824,7 +828,7 @@ function buyClickUpgrade(threshold) {
     hideTooltip();
     renderUpgrades();
     updateAllBuildingButtons();
-    showToast(`\u2705 ${upgrade.name} activated`);
+    showToast(`\u2705 ${t(upgrade.name)} ${t("activated")}`);
 }
 
 function buyBuildingUpgrade(buildingId, threshold) {
@@ -834,7 +838,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     const cost = getBuildingUpgradeFixedCost(buildingId, threshold);
     
     if (score < cost) {
-        showToast("\u274c Pas assez de Parts");
+        showToast("\u274c " + t("Pas assez de Parts"));
         return;
     }
     
@@ -851,7 +855,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     renderUpgrades();
     updateAllBuildingButtons();
     checkTrophies();
-    showToast('+ ' + building.name + ' improved x2 (-' + formatNumber(cost) + ' G)');
+    showToast('+ ' + t(building.name) + ' ' + t('am\u00e9lior\u00e9 x2') + ' (-' + formatNumber(cost) + ' Parts)');
 }
 
 function updateBuildingButton(buildingId) {
@@ -888,10 +892,10 @@ function updateBuildingButton(buildingId) {
 
     if (button) {
         button.disabled = !isAffordable || buildingsToShow === 0;
-        button.textContent = `${displayCost} Parts`;
+        button.textContent = `${displayCost} ${t("Parts")}`;
     }
     if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
-    if (ownershipDiv) ownershipDiv.textContent = `Owned: ${building.count}`;
+    if (ownershipDiv) ownershipDiv.textContent = `${t("Owned:")} ${building.count}`;
 
     element.setAttribute('data-tooltip', getBuildingTooltip(building));
 }
@@ -951,10 +955,10 @@ function renderBuilding(building) {
     buildingElement.innerHTML = `
         <div class="building-left">
             <div class="building-name-icon">
-                <span class="building-name">${building.name}</span>
+                <span class="building-name">${t(building.name)}</span>
             </div>
             <div class="building-ownership">
-                Owned: ${building.count}
+                ${t("Owned:")} ${building.count}
             </div>
         </div>
         <div class="building-center">
@@ -962,7 +966,7 @@ function renderBuilding(building) {
         </div>
         <div class="building-right">
             <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
-                ${formatNumber(currentCost)} Parts
+                ${formatNumber(currentCost)} ${t("Parts")}
             </button>
             <div class="building-production">${formatNumber(totalGain)}/s</div>
         </div>
@@ -1052,12 +1056,12 @@ function getCurrentDistance() {
 
 function launchRocket() {
     if (!checkRocketReady()) {
-        showToast("❌ Fusée pas encore prête ! Il manque des pièces.");
+        showToast("❌ " + t("Fusée pas encore prête ! Il manque des pièces."));
         return;
     }
     
     if (isLaunching) {
-        showToast("⏳ Lancement en cours...");
+        showToast("⏳ " + t("Lancement en cours..."));
         return;
     }
     
@@ -1090,7 +1094,7 @@ function launchRocket() {
         updateSpaceProgress();
         updateConstructionScene();
         isLaunching = false;
-        showToast(`🚀 Fusée lancée ! Distance atteinte: ${formatNumber(distance)} km`);
+        showToast(`🚀 ${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
     }, 2500);
 }
 
@@ -1232,12 +1236,12 @@ function showSpaceMap(distance) {
     // Mettre à jour le texte de progression
     if (progress.currentPlanet) {
         if (progress.nextPlanet) {
-            progressText.innerHTML = `Tu as atteint <strong>${progress.currentPlanet.name}</strong> ! En route vers ${progress.nextPlanet.name} (${progress.progressPercent}%)`;
+            progressText.innerHTML = `${t("Tu as atteint")} <strong>${t(progress.currentPlanet.name)}</strong> ! ${t("En route vers")} ${t(progress.nextPlanet.name)} (${progress.progressPercent}%)`;
         } else {
-            progressText.innerHTML = `F\u00e9licitations ! Tu as atteint <strong>${progress.currentPlanet.name}</strong>, la dernière planète !`;
+            progressText.innerHTML = `${t("F\u00e9licitations ! Tu as atteint")} <strong>${t(progress.currentPlanet.name)}</strong>, ${t("la dernière planète !")}`;
         }
     } else {
-        progressText.innerHTML = `En route vers <strong>${progress.nextPlanet.name}</strong> (${progress.progressPercent}%)`;
+        progressText.innerHTML = `${t("En route vers")} <strong>${t(progress.nextPlanet.name)}</strong> (${progress.progressPercent}%)`;
     }
     
     // Vérifier les nouvelles planètes débloquées
@@ -1251,14 +1255,14 @@ function showSpaceMap(distance) {
             planetElement.className = 'new-planet-item';
             planetElement.innerHTML = `
                 <span class="planet-name">${planet.name}</span>
-                <span class="planet-bonus">+${planet.bonusPercent}% Parts/s</span>
+                <span class="planet-bonus">+${planet.bonusPercent}% ${t("Parts")}/s</span>
             `;
             planetElement.style.borderColor = planet.color;
             planetElement.style.color = planet.color;
             newUnlocksContainer.appendChild(planetElement);
         });
     } else {
-        newUnlocksContainer.innerHTML = '<p class="no-new-planets">Aucune nouvelle planète débloquée</p>';
+        newUnlocksContainer.innerHTML = '<p class="no-new-planets">' + t('Aucune nouvelle planète débloquée') + '</p>';
     }
     
     // Dessiner la carte de l'espace
@@ -1322,7 +1326,7 @@ function drawSpaceMap(distance) {
             planetElement.innerHTML = `
                 ${planetHtml}
                 <span class="planet-name">${planet.name}</span>
-                <span class="planet-distance">${formatNumber(planet.distanceRequired)} km</span>
+                <span class="planet-distance">${formatNumber(planet.distanceRequired)} ${t("km")}</span>
             `;
         }
         
@@ -1462,12 +1466,12 @@ function buyGalacticUpgrade(upgradeId) {
     const level = getGalacticUpgradeLevel(upgradeId);
     if (level >= upgrade.maxLevel) return;
     if (isGalacticUpgradeLocked(upgrade)) {
-        showToast("\u274c Prérequis non rempli");
+        showToast("\u274c " + t("Prérequis non rempli"));
         return;
     }
     const cost = getGalacticUpgradeCost(upgrade);
     if (starDust < cost) {
-        showToast("\u274c Pas assez de Poussière d'Étoiles");
+        showToast("\u274c " + t("Pas assez de Poussière d'Étoiles"));
         return;
     }
     starDust -= cost;
@@ -1491,7 +1495,7 @@ function buyGalacticUpgrade(upgradeId) {
     }
 
     saveGame();
-    showToast("\u2728 " + upgrade.name + " niveau " + (level + 1));
+    showToast("\u2728 " + t(upgrade.name) + " " + t("niveau") + " " + (level + 1));
 }
 
 // Getters d'effets (utilisés par la boucle de jeu)
@@ -1532,7 +1536,7 @@ function applyOfflineEarnings(lastSave) {
     const hours = Math.floor(cappedSec / 3600);
     const minutes = Math.floor((cappedSec % 3600) / 60);
     const timeStr = hours > 0 ? hours + 'h' + String(minutes).padStart(2, '0') : minutes + ' min';
-    showToast('\ud83c\udf19 Production hors-ligne (' + timeStr + (capped ? ', plafonn\u00e9e) : +' : ') : +') + formatNumber(totalGain) + ' Parts');
+    showToast('\ud83c\udf19 ' + t('Production hors-ligne (') + timeStr + (capped ? ', ' + t('plafonn\u00e9e)') : '') + ' +' + formatNumber(totalGain) + ' ' + t('Parts'));
     updateDisplay();
 }
 
@@ -1639,7 +1643,7 @@ function renderGalacticShop() {
 
         const header = document.createElement('div');
         header.className = 'galactic-branch-header';
-        header.innerHTML = '<span class="galactic-branch-icon">' + branch.icon + '</span><span class="galactic-branch-name">' + branch.name + '</span>';
+        header.innerHTML = '<span class="galactic-branch-icon">' + branch.icon + '</span><span class="galactic-branch-name">' + t(branch.name) + '</span>';
         branchEl.appendChild(header);
 
         const treeEl = document.createElement('div');
@@ -1661,17 +1665,17 @@ function renderGalacticShop() {
                     const ru = GALACTIC_UPGRADES.find(u => u.id === r);
                     return ru ? ru.name : r;
                 });
-                reqHtml = '<span class="galactic-req">⛔ Prérequis: ' + reqNames.join(', ') + '</span>';
+                reqHtml = '<span class="galactic-req">⛔ ' + t('Prérequis:') + ' ' + reqNames.map(r => t(r)).join(', ') + '</span>';
             }
 
             el.innerHTML =
                 '<div class="galactic-node-top">' +
-                    '<span class="galactic-node-name">' + upgrade.name + '</span>' +
+                    '<span class="galactic-node-name">' + t(upgrade.name) + '</span>' +
                     (maxed ? '<span class="galactic-node-max">MAX</span>' : '') +
                 '</div>' +
-                '<span class="galactic-node-desc">' + upgrade.desc + '</span>' +
+                '<span class="galactic-node-desc">' + t(upgrade.desc) + '</span>' +
                 '<div class="galactic-node-bottom">' +
-                    '<span class="galactic-node-level">Niv. ' + level + '/' + upgrade.maxLevel + '</span>' +
+                    '<span class="galactic-node-level">' + t('Niv.') + ' ' + level + '/' + upgrade.maxLevel + '</span>' +
                     (maxed
                         ? ''
                         : locked
@@ -1712,9 +1716,9 @@ function updateSpaceProgress() {
     if (planetDisplay) {
         const traveledProgress = calculatePlanetProgress(traveledDistance);
         if (traveledProgress.nextPlanet) {
-            planetDisplay.innerHTML = `${traveledProgress.nextPlanet.name}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
+            planetDisplay.innerHTML = `${t(traveledProgress.nextPlanet.name)}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
         } else {
-            planetDisplay.innerHTML = `${traveledProgress.currentPlanet.name}: 100%`;
+            planetDisplay.innerHTML = `${t(traveledProgress.currentPlanet.name)}: 100%`;
         }
     }
 
@@ -1728,10 +1732,10 @@ function updateSpaceProgress() {
     const sidebarPlanets = document.getElementById('sidebar-planets');
 
     if (sidebarDistance) {
-        sidebarDistance.textContent = formatNumber(reachableDistance) + ' km';
+        sidebarDistance.textContent = formatNumber(reachableDistance) + ' ' + t('km');
     }
     if (sidebarDistanceMax) {
-        sidebarDistanceMax.textContent = formatNumber(traveledDistance) + ' km';
+        sidebarDistanceMax.textContent = formatNumber(traveledDistance) + ' ' + t('km');
     }
     if (sidebarBonus) {
         const totalBonus = getPlanetProductionBonus();
@@ -1796,9 +1800,9 @@ function updateMiniSpaceMap(distance) {
             } else {
                 planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
             }
-            planetHtml += `<div class="planet-name">${planet.name}</div>`;
+            planetHtml += `<div class="planet-name">${t(planet.name)}</div>`;
             const planetDist = planet.distanceRequired;
-            const distLabel = planet.id === 'earth' ? 'Départ' : `${formatNumber(planetDist)} km`;
+            const distLabel = planet.id === 'earth' ? t('Départ') : `${formatNumber(planetDist)} ${t('km')}`;
             planetHtml += `<div class="planet-distance">${distLabel}</div>`;
             
             planetElement.innerHTML = planetHtml;
@@ -1916,7 +1920,7 @@ function renderUpgrades() {
                 cost: upgrade.cost,
                 render: () => {
                     const el = createUpgradeElement(color, 'images/cursor.svg', upgrade.name, upgrade.threshold);
-                    attachTooltip(el, `${upgrade.name} — ×2 clic — ${formatNumber(upgrade.cost)} Parts`);
+                    attachTooltip(el, `${t(upgrade.name)} — ×2 ${t('clic')} — ${formatNumber(upgrade.cost)} ${t('Parts')}`);
                     el.onclick = () => buyClickUpgrade(upgrade.threshold);
                     return el;
                 }
@@ -1935,7 +1939,7 @@ function renderUpgrades() {
                     cost,
                     render: () => {
                         const el = createUpgradeElement(color, building.imgPath || '', building.name, threshold);
-                        attachTooltip(el, `${building.name} — Palier ${threshold} — ×2 production — ${formatNumber(cost)} Parts`);
+                        attachTooltip(el, `${t(building.name)} — ${t('Palier')} ${threshold} — ×2 ${t('production')} — ${formatNumber(cost)} ${t('Parts')}`);
                         el.onclick = () => buyBuildingUpgrade(building.id, threshold);
                         return el;
                     }
@@ -2092,7 +2096,7 @@ function spawnRandomBonus() {
             const instantProduction = partsPerSecond * 10;
             score += instantProduction;
             partsSinceLaunch += instantProduction;
-            showToast(`\u2705 ${bonus.name}: +${formatNumber(instantProduction)} Parts!`);
+            showToast(`\u2705 ${t(bonus.name)}: +${formatNumber(instantProduction)} ${t("Parts")}!`);
         } 
         else if (bonus.id === "flare") {
             activeRandomBonuses.push({
@@ -2102,13 +2106,13 @@ function spawnRandomBonus() {
                 endTime: Date.now() + bonus.duration
             });
             rebuildAutoMultipliers();
-            showToast(`\u2705 ${bonus.name}: ×${bonus.multiplier} Parts/s for ${bonus.duration/1000}s`);
+            showToast(`\u2705 ${t(bonus.name)}: ×${bonus.multiplier} ${t("Parts")}/s ${t("for")} ${bonus.duration/1000}s`);
 
             setTimeout(() => {
                 activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
                 rebuildAutoMultipliers();
                 updateDisplay();
-                showToast(`\u23f0 ${bonus.name} expir\u00e9`);
+                showToast(`\u23f0 ${t(bonus.name)} ${t("expir\u00e9")}`);
             }, bonus.duration);
         }
 
@@ -2351,7 +2355,7 @@ function getGameDuration() {
     if (durationMs < 60000) return Math.floor(durationMs / 1000) + "s";
     if (durationMs < 3600000) return Math.floor(durationMs / 60000) + "min";
     if (durationMs < 86400000) return Math.floor(durationMs / 3600000) + "h";
-    return Math.floor(durationMs / 86400000) + "j";
+    return Math.floor(durationMs / 86400000) + t("jours");
 }
 
 // ============================================
@@ -2419,7 +2423,7 @@ function checkTrophies() {
             if (unlocked) {
                 unlockedTrophies.add(trophy.id);
                 changed = true;
-                showToast(`Trophee debloque : ${trophy.name}!`);
+                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`);
             }
         }
     });
@@ -2477,10 +2481,10 @@ function renderTrophies() {
         
         trophyElement.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
-            const name = trophy.name;
-            const description = trophy.description;
+            const name = t(trophy.name);
+            const description = t(trophy.description);
             const isUnlocked = unlockedTrophies.has(trophy.id);
-            const status = isUnlocked ? 'Debloque' : 'Verrouille';
+            const status = isUnlocked ? t('D\u00e9bloqu\u00e9') : t('Verrouill\u00e9');
             showTooltip(`${name}\n${description}\n${status}`, rect.left + rect.width/2, rect.top);
         });
         trophyElement.addEventListener('mouseleave', hideTooltip);
@@ -2495,16 +2499,16 @@ function renderTrophies() {
 function renderStats() {
     const container = document.getElementById('stats-body');
     container.innerHTML = '';
-    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">Global Stats</h4>';
+    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Statistiques Globales') + '</h4>';
     const globalStats = [
-        { label: "Current Parts", value: formatNumber(score, true) },
-        { label: "Total Parts generated", value: formatNumber(calculateTotalGenerated()) },
-        { label: "Parts per second", value: formatNumber(partsPerSecond) },
-        { label: "Production multiplier", value: 'x' + getTotalProductionMultiplier().toFixed(2) },
-        { label: "Parts per Click", value: formatNumber(getClickPower()) },
-        { label: "Total Buildings Owned", value: formatNumber(getTotalBuildingsOwned()) },
-        { label: "Game started", value: getGameDuration() },
-        { label: "Bonuses clicked", value: clickedBonusesCount }
+        { label: t("Parts actuelles"), value: formatNumber(score, true) },
+        { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(calculateTotalGenerated()) },
+        { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
+        { label: t("Multiplicateur de production"), value: 'x' + getTotalProductionMultiplier().toFixed(2) },
+        { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
+        { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
+        { label: t("Partie commenc\u00e9e"), value: getGameDuration() },
+        { label: t("Bonus cliqu\u00e9s"), value: clickedBonusesCount }
     ];
 
     globalStats.forEach(stat => {
@@ -2520,8 +2524,8 @@ function renderStats() {
         container.appendChild(statElement);
     });
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Upgrades</h4>';
-    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">Upgrades de Clic:</h5>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Upgrades') + '</h4>';
+    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">' + t('Améliorations de Clic:') + '</h5>';
     
     if (activatedClickUpgrades.length > 0) {
         const line = document.createElement('div');
@@ -2545,7 +2549,7 @@ function renderStats() {
                 badge.style.background = 'rgba(255, 255, 255, 0.6)';
                 badge.style.color = '#64748b';
                 badge.style.fontSize = '0.8rem';
-                badge.innerHTML = `<img src="images/cursor.svg" alt="" style="width: 14px; height: 14px;"> ${upgrade.name}`;
+                badge.innerHTML = `<img src="images/cursor.svg" alt="" style="width: 14px; height: 14px;"> ${t(upgrade.name)}`;
                 line.appendChild(badge);
             }
         });
@@ -2555,11 +2559,11 @@ function renderStats() {
         statElement.style.padding = '4px 0';
         statElement.style.fontSize = '0.85rem';
         statElement.style.color = '#94a3b8';
-        statElement.textContent = 'Aucune upgrade de clic';
+        statElement.textContent = t('Aucune am\u00e9lioration de clic');
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 0.9rem;">Upgrades de Buildings:</h5>';
+    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 0.9rem;">' + t('Am\u00e9liorations de B\u00e2timents:') + '</h5>';
     
     let hasBuildingUpgrades = false;
     BUILDINGS.forEach(building => {
@@ -2572,7 +2576,7 @@ function renderStats() {
             statElement.style.padding = '4px 0';
             statElement.style.fontSize = '0.85rem';
             statElement.style.color = '#64748b';
-            statElement.innerHTML = `<span>${building.name}: ${upgrades.length} niveau(x)</span>`;
+            statElement.innerHTML = `<span>${t(building.name)}: ${upgrades.length} ${t('niveau(x)')}</span>`;
             container.appendChild(statElement);
         }
     });
@@ -2582,11 +2586,11 @@ function renderStats() {
         statElement.style.padding = '4px 0';
         statElement.style.fontSize = '0.85rem';
         statElement.style.color = '#94a3b8';
-        statElement.textContent = 'Aucune upgrade de building';
+        statElement.textContent = t('Aucune am\u00e9lioration de b\u00e2timent');
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">Trophies</h4>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Troph\u00e9es') + '</h4>';
     const trophiesSection = renderTrophies();
     container.appendChild(trophiesSection);
 }
@@ -2743,14 +2747,15 @@ function closePlanetarySurvey() {
 function resetPlanetarySurvey() {
     surveyState = { bet: 0, round: 0, pot: 0, currentReward: null, canChoose: false, doubling: false };
     showSurveyScreen('bet');
-    document.getElementById('survey-intro').textContent = 'Choisis une carte et révèle un bonus ! Mode infini : encaisse ou remise à chaque tour.';
+    document.getElementById('survey-intro').textContent = t('Choisis une carte et révèle un bonus ! Mode infini : encaisse ou remise à chaque tour.');
     updateBetButtons();
 }
 
 function updateBetButtons() {
     document.querySelectorAll('.survey-bet-btn[data-bet-type]').forEach(btn => {
         const amount = getSurveyBetAmount(btn.dataset.betType);
-        btn.textContent = `${btn.dataset.betType === '1s' ? '⏱️ 1s' : btn.dataset.betType === '30s' ? '⏱️ 30s' : '⏱️ 5 min'} (${formatNumber(amount)})`;
+        const label = btn.dataset.betType === '1s' ? t('1s de prod') : btn.dataset.betType === '30s' ? t('30s de prod') : t('5 min de prod');
+        btn.textContent = `⏱️ ${label} (${formatNumber(amount)})`;
         btn.disabled = score < amount;
     });
 }
@@ -2763,7 +2768,7 @@ function showSurveyScreen(screen) {
 function startPlanetarySurveyWithBet(bet) {
     bet = Math.max(1, Math.floor(bet));
     if (score < bet) {
-        showToast(`❌ Pas assez de pièces ! Il faut ${formatNumber(bet)} Parts.`);
+        showToast(`❌ ${t("Pas assez de pièces ! Il faut")} ${formatNumber(bet)} ${t("Parts")}.`);
         return;
     }
     score -= bet;
@@ -2786,7 +2791,7 @@ function startPlanetarySurveyCustom() {
     const input = document.getElementById('survey-custom-bet-input');
     const val = parseInt(input.value);
     if (!val || val < 1) {
-        showToast('❌ Entre une mise valide.');
+        showToast('❌ ' + t('Entre une mise valide.'));
         return;
     }
     input.value = '';
@@ -2804,8 +2809,8 @@ function nextSurveyRound() {
 
     document.getElementById('survey-round').textContent = surveyState.round;
     document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
-    const diffLabel = difficulty > 0 ? ` (Palier ${difficulty + 1})` : '';
-    document.getElementById('survey-play-intro').textContent = `Tour ${surveyState.round}${diffLabel} — Choisis une carte !`;
+    const diffLabel = difficulty > 0 ? ` (${t('Palier')} ${difficulty + 1})` : '';
+    document.getElementById('survey-play-intro').textContent = `${t('Tour')} ${surveyState.round}${diffLabel} — ${t('Choisis une carte !')}`;
     document.getElementById('survey-result').textContent = '';
     document.getElementById('survey-result').className = 'survey-result';
     document.getElementById('survey-collect-btn').style.display = 'none';
@@ -2897,29 +2902,29 @@ function revealSurveyCard(chosenCard) {
     const result = document.getElementById('survey-result');
     if (reward.type === 'bust') {
         surveyState.pot = 0;
-        result.textContent = '💀 TOUT PERDU ! Le pot est vide.';
+        result.textContent = '💀 ' + t('TOUT PERDU ! Le pot est vide.');
         result.className = 'survey-result miss';
     } else if (reward.type === 'halve') {
         surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
-        result.textContent = '⚔️ Malus ! Le pot est réduit de moitié.';
+        result.textContent = '⚔️ ' + t('Malus ! Le pot est réduit de moitié.');
         result.className = 'survey-result miss';
     } else if (reward.type === 'nothing') {
         surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
-        result.textContent = '🌑 Pot divisé par 2 !';
+        result.textContent = '🌑 ' + t('Pot divisé par 2 !');
         result.className = 'survey-result miss';
     } else if (reward.type === 'parts' || reward.type === 'bigParts') {
         const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
         const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
         const mult = Math.max(2, Math.floor(baseMult * rewardBonus));
         surveyState.pot = Math.floor(surveyState.pot * mult);
-        result.textContent = `${reward.icon} ×${mult} ! Le pot augmente !`;
+        result.textContent = `${reward.icon} ×${mult} ! ${t('Le pot augmente !')}`;
         result.className = 'survey-result win';
     } else if (reward.type === 'multiplier') {
         const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
         const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
         const mult = Math.max(2, Math.floor(baseMult * rewardBonus));
         surveyState.pot = Math.floor(surveyState.pot * mult);
-        result.textContent = `${reward.icon} ×${mult} ! Bonus de production encaissé.`;
+        result.textContent = `${reward.icon} ×${mult} ! ${t('Bonus de production encaissé.')}`;
         result.className = 'survey-result win';
         applySurveyMultiplier(mult, getSurveyMultiplierDuration(surveyState.round));
     }
@@ -2934,7 +2939,7 @@ function revealSurveyCard(chosenCard) {
             document.getElementById('survey-continue-btn').style.display = 'block';
         } else {
             // Pot vide: partie perdue, retour à la mise
-            document.getElementById('survey-result').textContent = '💔 Partie perdue... le pot est vide.';
+            document.getElementById('survey-result').textContent = '💔 ' + t('Partie perdue... le pot est vide.');
             document.getElementById('survey-result').className = 'survey-result miss';
             setTimeout(() => resetPlanetarySurvey(), 1800);
         }
@@ -2947,7 +2952,7 @@ function displayRewardOnCard(card, reward) {
     iconEl.innerHTML = reward.imgPath
         ? `<img src="${reward.imgPath}" class="survey-reward-img" alt="${reward.label}">`
         : reward.icon;
-    back.querySelector('.reward-text').textContent = reward.label;
+    back.querySelector('.reward-text').textContent = t(reward.label);
     const existing = back.querySelector('.reward-amount');
     if (existing) existing.remove();
 }
@@ -2956,7 +2961,7 @@ function surveyCollectWinnings() {
     if (surveyState.pot > 0) {
         score += surveyState.pot;
         partsSinceLaunch += surveyState.pot;
-        showToast(`💰 Tu encaisses ${formatNumber(surveyState.pot)} Parts !`);
+        showToast(`💰 ${formatNumber(surveyState.pot)} ${t('Parts')} !`);
         surveyState.pot = 0;
         updateDisplay();
     }
@@ -3158,7 +3163,7 @@ function buyBooster(type) {
     if (!booster) return;
     const cost = Math.floor(booster.cost() * (1 - getBoosterDiscount()));
     if (score < cost) {
-        showToast('❌ Pas assez de Parts pour ce booster !');
+        showToast('❌ ' + t('Pas assez de Parts pour ce booster !'));
         return;
     }
     score -= cost;
@@ -3232,7 +3237,7 @@ function renderRevealCards(cards) {
                 '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
                 '<div class="cc-reveal-back">' +
                     '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' +
-                    (isNew ? '<div class="cc-card-new">NOUVELLE !</div>' : '') +
+                    (isNew ? '<div class="cc-card-new">' + t('NOUVELLE !') + '</div>' : '') +
                 '</div>' +
             '</div>';
         el.addEventListener('click', function () {
@@ -3261,7 +3266,7 @@ function renderCardAlbum() {
     if (complete) {
         const banner = document.createElement('div');
         banner.className = 'cc-set-complete';
-        banner.textContent = '🚀 Collection complète ! +20% prod';
+        banner.textContent = '🚀 ' + t('Collection complète ! +20% prod');
         grid.appendChild(banner);
     }
     COLLECTIBLE_CARDS.forEach(card => {
@@ -3284,11 +3289,11 @@ function openCardLightbox(card) {
     const img = document.getElementById('cc-lightbox-img');
     img.src = card.imgPath;
     img.alt = card.name;
-    document.getElementById('cc-lightbox-name').textContent = card.icon + ' ' + card.name;
+    document.getElementById('cc-lightbox-name').textContent = card.icon + ' ' + t(card.name);
     const rarity = CARD_RARITIES[card.rarity];
     const bonus = Math.round(CARD_RARITIES[card.rarity].bonusMult * 100);
     const count = cardCollection[card.id] || 0;
-    document.getElementById('cc-lightbox-sub').textContent = rarity.name + ' \u00b7 +' + bonus + '% production \u00b7 \u00d7' + count;
+    document.getElementById('cc-lightbox-sub').textContent = t(rarity.name) + ' \u00b7 +' + bonus + '% ' + t('production') + ' \u00b7 \u00d7' + count;
     document.getElementById('cc-lightbox-name').style.color = rarity.color;
     lightbox.classList.add('open');
     lightbox.dataset.cardId = card.id;
@@ -3429,6 +3434,7 @@ setInterval(() => {
 }, 10000);
 
 window.onload = function() {
+    if (typeof initLanguage === 'function') initLanguage();
     init();
     if (!gameStartTime) {
         gameStartTime = Date.now();
@@ -3748,7 +3754,7 @@ function buyRocketPart(partId) {
     if (!part || part.purchased) return;
     const cost = getRocketPartCost(part);
     if (score < cost) {
-        showToast("\u274c Pas assez de Parts pour " + part.name);
+        showToast("\u274c " + t("Pas assez de Parts pour") + " " + t(part.name));
         return;
     }
     score -= cost;
@@ -3758,7 +3764,7 @@ function buyRocketPart(partId) {
     renderRocketPartsShop();
     checkBuildingUnlocks();
     saveGame();
-    showToast("\u2705 " + part.name + " construit !");
+    showToast("\u2705 " + t(part.name) + " " + t("construit !"));
     checkTrophies();
 }
 
@@ -3771,8 +3777,8 @@ function renderRocketPartsShop() {
             container.dataset.partId = '__complete__';
             container.innerHTML =
                 '<div class="rocket-part-frame complete">' +
-                    '<div class="rocket-part-frame-title">Pi\u00e8ces compl\u00e8tes</div>' +
-                    '<div class="rocket-part-frame-complete">\u2713 Fus\u00e9e pr\u00eate \u00e0 lancer</div>' +
+                    '<div class="rocket-part-frame-title">' + t('Pi\u00e8ces compl\u00e8tes') + '</div>' +
+                    '<div class="rocket-part-frame-complete">\u2713 ' + t('Fus\u00e9e pr\u00eate \u00e0 lancer') + '</div>' +
                 '</div>';
         }
         return;
@@ -3790,17 +3796,17 @@ function renderRocketPartsShop() {
         const purchasedCount = ROCKET_PARTS.filter(p => p.purchased).length;
         container.innerHTML =
             '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '">' +
-                '<div class="rocket-part-frame-title">Pi\u00e8ce ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length + '</div>' +
+                '<div class="rocket-part-frame-title">' + t('Pi\u00e8ce') + ' ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length + '</div>' +
                 '<div class="rocket-part-left">' + imageHtml + '</div>' +
                 '<div class="rocket-part-info">' +
-                    '<span class="rocket-part-name">' + nextPart.name + '</span>' +
-                    '<span class="rocket-part-cost">' + formatNumber(cost) + ' Parts</span>' +
+                    '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
+                    '<span class="rocket-part-cost">' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +
                 '</div>' +
-                '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + nextPart.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>Construire</button>' +
+                '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + nextPart.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>' + t('Construire') + '</button>' +
             '</div>';
     } else {
         const costEl = container.querySelector('.rocket-part-cost');
-        if (costEl) costEl.textContent = formatNumber(cost) + ' Parts';
+        if (costEl) costEl.textContent = formatNumber(cost) + ' ' + t('Parts');
         const btn = container.querySelector('.rocket-part-btn');
         if (btn) {
             btn.disabled = !isAffordable;
@@ -3901,7 +3907,7 @@ function checkRocketComplete() {
     const scene = document.getElementById('construction-scene');
     if (allConstructed && scene) {
         scene.classList.add('rocket-complete');
-        showToast("🚀 Fusée complète ! Prête pour le décollage !");
+        showToast("🚀 " + t("Fusée complète ! Prête pour le décollage !"));
     } else if (scene) {
         scene.classList.remove('rocket-complete');
     }
