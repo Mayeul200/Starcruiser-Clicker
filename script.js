@@ -2521,19 +2521,32 @@ function renderStats() {
     container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">Upgrades de Clic:</h5>';
     
     if (activatedClickUpgrades.length > 0) {
+        const line = document.createElement('div');
+        line.style.display = 'flex';
+        line.style.flexWrap = 'wrap';
+        line.style.gap = '6px';
+        line.style.alignItems = 'center';
+        line.style.padding = '4px 0';
         activatedClickUpgrades.forEach(threshold => {
             const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
             if (upgrade) {
-                const statElement = document.createElement('div');
-                statElement.style.display = 'flex';
-                statElement.style.justifyContent = 'space-between';
-                statElement.style.padding = '4px 0';
-                statElement.style.fontSize = '0.85rem';
-                statElement.style.color = '#64748b';
-                statElement.innerHTML = `<span>\u2713 ${upgrade.name}</span>`;
-                container.appendChild(statElement);
+                const upgradeIndex = CLICK_UPGRADES.indexOf(upgrade);
+                const color = UPGRADE_COLORS[upgradeIndex % UPGRADE_COLORS.length];
+                const badge = document.createElement('span');
+                badge.style.display = 'inline-flex';
+                badge.style.alignItems = 'center';
+                badge.style.gap = '4px';
+                badge.style.padding = '2px 8px';
+                badge.style.borderRadius = '999px';
+                badge.style.border = '1px solid ' + color;
+                badge.style.background = 'rgba(255, 255, 255, 0.6)';
+                badge.style.color = '#64748b';
+                badge.style.fontSize = '0.8rem';
+                badge.innerHTML = `<img src="images/cursor.svg" alt="" style="width: 14px; height: 14px;"> ${upgrade.name}`;
+                line.appendChild(badge);
             }
         });
+        container.appendChild(line);
     } else {
         const statElement = document.createElement('div');
         statElement.style.padding = '4px 0';
