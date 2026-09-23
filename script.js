@@ -926,8 +926,18 @@ function checkRocketReady() {
 }
 
 const PIECE_DISTANCE_MULT = 1.0;
-const DISTANCE_SCORE_EXP = 1.05;
 const MOON_DISTANCE = 384400;
+// Parts cumulees produites lors du premier lancement d'une nouvelle partie.
+// Ce point d'ancrage calibre le debut de la courbe de distance.
+const DISTANCE_MOON_PARTS = 2.1e7;
+// Distance en deux segments:
+// - jusqu'a DISTANCE_MOON_PARTS parts : croissance lineaire (Lune atteignable
+//   des le premier lancement, debut de partie rapide et gratifiant)
+// - au-dela : croissance en puissance (exposant 1.3) pour que chaque planete
+//   exige son propre lancement et un effort croissant mais regulier.
+// Calibree sur la croissance reelle de la production (bonus planetes + prestige
+// + upgrades galactiques), pour un temps par planete quasi constant.
+const DISTANCE_SCORE_EXP = 1.3;
 // Gain de Poussière d'Étoiles par lancement, en deux segments:
 // - jusqu'au Nuage d'Oort : (d / Lune)^0.44 (identique a avant)
 // - au-dela : croissance ralentie (exposant 0.35) ancree sur la valeur a Oort,
@@ -936,9 +946,7 @@ const MOON_DISTANCE = 384400;
 const STARDUST_DISTANCE_EXP = 0.44;
 const STARDUST_TAIL_EXP = 0.35;
 const STARDUST_TAIL_START_KM = 891000000000; // Nuage d'Oort
-// Facteur de calibration : les parts générées sont divisées avant l'exposant
-// pour que la distance ne décolle pas trop vite en début de partie.
-const DISTANCE_PART_DIVISOR = 10;
+
 // Croissance du coût des pièces de fusée entre les lancements.
 // Douce (×1.15) pour que la fusée se reconstruise vite après un reset,
 // comme dans Cookie Clicker où l'ascension est toujours accessible.
@@ -948,7 +956,11 @@ function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
     const totalParts = Math.max(partsSinceLaunch, 0);
     const partsMult = Math.pow(PIECE_DISTANCE_MULT, partsUnlocked);
-    const scoreFactor = totalParts > 0 ? Math.pow(totalParts / DISTANCE_PART_DIVISOR, DISTANCE_SCORE_EXP) : 0;
+    const scoreFactor = totalParts > 0
+        ? (totalParts <= DISTANCE_MOON_PARTS
+            ? MOON_DISTANCE * (totalParts / DISTANCE_MOON_PARTS)
+            : MOON_DISTANCE * Math.pow(totalParts / DISTANCE_MOON_PARTS, DISTANCE_SCORE_EXP))
+        : 0;
     const baseDistance = partsMult * scoreFactor;
 
     // Le prestige aide la distance mais de façon amortie (logarithmique) pour que
@@ -3382,9 +3394,9 @@ function debugSimulateToTarget(targetDistanceKm, clickRatePerSec = 4, maxHours =
     const next = progress.nextPlanet;
     const targetDist = targetDistanceKm || (next ? next.distanceRequired : null);
     if (!targetDist) return { error: 'Plus de planète à atteindre.' };
-    // Cumul de parts requis: dist = (cum/10)^1.05 * boostDistance
+    // Cumul de parts requis: dist = LUNE * (cum / DISTANCE_MOON_PARTS)^EXP * boostDistance
     const boost = (1 + (prestigeMultiplier - 1) / 2) * getDistanceBonus();
-    const cumRequired = 10 * Math.pow(targetDist / boost, 1 / 1.05);
+    const cumRequired = DISTANCE_MOON_PARTS * Math.pow(targetDist / (boost * MOON_DISTANCE), 1 / DISTANCE_SCORE_EXP);
     if (partsSinceLaunch >= cumRequired) return { error: 'Objectif déjà atteint.' };
 
     const dt = 1; // pas de 1 s
