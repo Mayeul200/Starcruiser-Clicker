@@ -10,13 +10,24 @@ const tooltip = document.createElement('div');
 tooltip.className = 'upgrade-tooltip';
 document.body.appendChild(tooltip);
 
-function showTooltip(text, x, y) {
+function showTooltip(text, x, y, options) {
     tooltip.textContent = text;
-    tooltip.style.transform = 'translate(-50%, -120%)';
+    tooltip.style.width = '';
+    tooltip.style.maxWidth = '';
+    if (options && options.width) {
+        tooltip.style.width = options.width + 'px';
+        tooltip.style.maxWidth = options.width + 'px';
+    }
+    if (options && options.align === 'left') {
+        tooltip.style.transform = 'translate(0, -120%)';
+    } else {
+        tooltip.style.transform = 'translate(-50%, -120%)';
+    }
     tooltip.classList.add('visible');
     const rect = tooltip.getBoundingClientRect();
     const margin = 8;
-    const clampedX = Math.max(rect.width / 2 + margin, Math.min(x, window.innerWidth - rect.width / 2 - margin));
+    const halfWidth = options && options.align === 'left' ? 0 : rect.width / 2;
+    const clampedX = Math.max(margin, Math.min(x, window.innerWidth - rect.width - margin));
     tooltip.style.top = y + 'px';
     tooltip.style.left = clampedX + 'px';
 }
@@ -906,7 +917,10 @@ function renderBuilding(building) {
     if (!IS_TOUCH) {
         buildingElement.addEventListener('mouseenter', (e) => {
             const rect = buildingElement.getBoundingClientRect();
-            showTooltip(getBuildingTooltip(building), rect.left + rect.width / 2, rect.top);
+            showTooltip(getBuildingTooltip(building), rect.left, rect.top, {
+                align: 'left',
+                width: Math.round(rect.width * 0.75)
+            });
         });
         buildingElement.addEventListener('mouseleave', hideTooltip);
     }
