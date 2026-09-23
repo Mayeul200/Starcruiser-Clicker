@@ -159,6 +159,19 @@ const SAVE_VERSION = "2.2.0";
 // ============================================
 // TROPH\u0009ES
 // ============================================
+const TROPHY_COLORS = {
+    pps: ['#88c9ee', '#4499ff', '#1177ff', '#0066ff', '#6622ff', '#aa00dd', '#ff0055'],
+    planets: ['#94a3b8', '#ef4444', '#06b6d4', '#8b5cf6', '#10b981', '#3b82f6', '#f59e0b', '#fbbf24', '#ec4899', '#a855f7'],
+    launches: ['#66b2ff', '#2288ff', '#8800ff', '#ff8800'],
+    stardust: ['#6622ff', '#cc00bb', '#ffcc00'],
+    'building-upgrade': ['#88c9ee', '#2288ff', '#aa00dd', '#ff4411'],
+    'click-upgrade': ['#1177ff', '#ffaa00'],
+    building: ['#88c9ee', '#2288ff', '#8800ff', '#ff0055'],
+    score: ['#ffcc00', '#ff8800', '#ffee00'],
+    bonus: ['#f59e0b', '#ff2233'],
+    'building-types': ['#a855f7'],
+    cards: ['#94a3b8', '#a855f7']
+};
 const TROPHIES = [
     // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
     { id: "pps-1", name: "First Parts", description: "Reach 1 Parts per second", icon: "images/buildings/workshop.png", threshold: 1, type: "pps" },
@@ -2424,6 +2437,7 @@ function renderTrophies() {
     trophiesGrid.style.gap = '8px';
     trophiesGrid.style.marginTop = '8px';
     
+    const colorCounters = {};
     TROPHIES.forEach(trophy => {
         const trophyElement = document.createElement('div');
         trophyElement.className = 'trophy-icon';
@@ -2437,12 +2451,17 @@ function renderTrophies() {
         trophyElement.style.cursor = 'pointer';
         trophyElement.style.position = 'relative';
         trophyElement.style.transition = 'all 0.2s';
-        trophyElement.style.border = '2px solid #e2e8f0';
+        const colors = TROPHY_COLORS[trophy.type] || ['#94a3b8'];
+        const idx = colorCounters[trophy.type] || 0;
+        colorCounters[trophy.type] = idx + 1;
+        const color = colors[idx % colors.length];
+        trophyElement.style.border = '2px solid ' + color;
         trophyElement.style.background = '#f8fafc';
         
         if (unlockedTrophies.has(trophy.id)) {
             trophyElement.style.background = '#dbeafe';
-            trophyElement.style.borderColor = '#2563eb';
+            trophyElement.style.borderColor = color;
+            trophyElement.style.boxShadow = 'var(--shadow), 0 0 6px ' + color;
             trophyElement.style.opacity = '1';
         } else {
             trophyElement.style.opacity = '0.4';
