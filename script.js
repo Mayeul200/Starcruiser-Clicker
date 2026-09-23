@@ -2468,7 +2468,9 @@ function renderTrophies() {
             trophyElement.style.filter = 'grayscale(100%)';
         }
         
-        const imgSize = trophy.icon === 'images/parts.png' ? '120%' : '100%';
+        const imgSize = (trophy.id === 'launch-1' || trophy.id === 'launch-5') ? '80%'
+            : trophy.icon === 'images/parts.png' ? '100%'
+            : '100%';
         trophyElement.innerHTML = trophy.icon.startsWith('images/')
             ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: ${imgSize}; height: ${imgSize}; object-fit: contain;">`
             : trophy.icon;
