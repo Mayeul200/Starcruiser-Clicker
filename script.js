@@ -174,13 +174,13 @@ const TROPHY_COLORS = {
 };
 const TROPHIES = [
     // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
-    { id: "pps-1", name: "First Parts", description: "Reach 1 Parts per second", icon: "images/buildings/workshop.png", threshold: 1, type: "pps" },
-    { id: "pps-10", name: "Liftoff", description: "Reach 10 Parts per second", icon: "images/buildings/factory.png", threshold: 10, type: "pps" },
-    { id: "pps-100", name: "Orbit Achieved", description: "Reach 100 Parts per second", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "pps" },
-    { id: "pps-1000", name: "Space Speed", description: "Reach 1,000 Parts per second", icon: "images/buildings/solar-central.png", threshold: 1000, type: "pps" },
-    { id: "pps-10000", name: "Galactic Speed", description: "Reach 10,000 Parts per second", icon: "images/buildings/orbital_autofab.png", threshold: 10000, type: "pps" },
-    { id: "pps-100000", name: "Warp Speed", description: "Reach 100,000 Parts per second", icon: "images/buildings/nanoforge.png", threshold: 100000, type: "pps" },
-    { id: "pps-1000000", name: "Light Speed", description: "Reach 1,000,000 Parts per second", icon: "images/buildings/quantic_printer.png", threshold: 1000000, type: "pps" },
+    { id: "pps-1", name: "First Parts", description: "Reach 1 Parts per second", icon: "images/parts.png", threshold: 1, type: "pps" },
+    { id: "pps-10", name: "Liftoff", description: "Reach 10 Parts per second", icon: "images/parts.png", threshold: 10, type: "pps" },
+    { id: "pps-100", name: "Orbit Achieved", description: "Reach 100 Parts per second", icon: "images/parts.png", threshold: 100, type: "pps" },
+    { id: "pps-1000", name: "Space Speed", description: "Reach 1,000 Parts per second", icon: "images/parts.png", threshold: 1000, type: "pps" },
+    { id: "pps-10000", name: "Galactic Speed", description: "Reach 10,000 Parts per second", icon: "images/parts.png", threshold: 10000, type: "pps" },
+    { id: "pps-100000", name: "Warp Speed", description: "Reach 100,000 Parts per second", icon: "images/parts.png", threshold: 100000, type: "pps" },
+    { id: "pps-1000000", name: "Light Speed", description: "Reach 1,000,000 Parts per second", icon: "images/parts.png", threshold: 1000000, type: "pps" },
 
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
