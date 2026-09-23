@@ -2468,7 +2468,7 @@ function renderTrophies() {
             trophyElement.style.filter = 'grayscale(100%)';
         }
         
-        const imgSize = (trophy.id === 'launch-1' || trophy.id === 'launch-5') ? '80%'
+        const imgSize = (trophy.id === 'launch-1' || trophy.id === 'launch-5' || trophy.id === 'first-click-upgrade') ? '80%'
             : trophy.icon === 'images/parts.png' ? '100%'
             : '100%';
         trophyElement.innerHTML = trophy.icon.startsWith('images/')
