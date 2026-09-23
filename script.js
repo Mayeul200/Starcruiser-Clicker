@@ -2572,7 +2572,7 @@ function renderStats() {
             statElement.style.padding = '4px 0';
             statElement.style.fontSize = '0.85rem';
             statElement.style.color = '#64748b';
-            statElement.innerHTML = `<span>${building.image} ${building.name}: ${upgrades.length} niveau(x)</span>`;
+            statElement.innerHTML = `<span>${building.name}: ${upgrades.length} niveau(x)</span>`;
             container.appendChild(statElement);
         }
     });
