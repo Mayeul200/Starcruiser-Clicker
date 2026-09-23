@@ -968,11 +968,9 @@ const DISTANCE_MOON_PARTS = 1.05e7;
 // Distance en deux segments:
 // - jusqu'a DISTANCE_MOON_PARTS parts : croissance lineaire (Lune atteignable
 //   des le premier lancement, debut de partie rapide et gratifiant)
-// - au-dela : croissance en puissance avec exposant < 1 : chaque km parcouru
-//   coute de plus en plus de parts, la difficulte augmente a chaque planete.
-//   L'exposant 0.95 contre la croissance de la production (prestige + planetes
-//   + atelier galactique) pour un effort croissant mais regulier.
-const DISTANCE_SCORE_EXP = 0.95;
+// - au-dela : croissance lineaire, distance proportionnelle aux parts
+//   (exposant 1 = aucun effet).
+const DISTANCE_SCORE_EXP = 1.0;
 // Gain de Poussière d'Étoiles par lancement, en deux segments:
 // - jusqu'au Nuage d'Oort : (d / Lune)^0.44 (identique a avant)
 // - au-dela : croissance ralentie (exposant 0.35) ancree sur la valeur a Oort,
