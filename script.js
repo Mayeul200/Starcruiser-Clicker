@@ -124,16 +124,19 @@ const ROCKET_PARTS = [
 // - A partir de la 2e, debloque un bonus par bâtiment possede ( Thousand Fingers).
 // - Les couts suivent l'echelle ~x10 de Cookie Clicker.
 const CLICK_UPGRADES = [
-    { threshold: 50,     name: "Doigt renforcé",        cost: 100 },
-    { threshold: 200,    name: "Précision laser",       cost: 500 },
-    { threshold: 500,    name: "Lancement puissant",   cost: 10000 },
-    { threshold: 1000,   name: "Ingénieur expert",     cost: 50000 },
-    { threshold: 2500,   name: "Scientifique spatial",  cost: 1000000 },
-    { threshold: 5000,   name: "Pionnier galactique",  cost: 5000000 },
-    { threshold: 10000,  name: "Click galactique",     cost: 100000000 },
-    { threshold: 25000, name: "Maître cosmique",      cost: 500000000 },
-    { threshold: 50000,  name: "Puissance interstellaire", cost: 10000000000 },
-    { threshold: 100000, name: "Main de l'univers",   cost: 50000000000 }
+    // Deblocage par parts produites depuis le dernier lancement (style Cookie
+    // Clicker : les upgrades apparaissent en jouant naturellement, le cout est
+    // le vrai verrou, decalant chaque achat dans le temps).
+    { threshold: 100,       name: "Doigt renforcé",        cost: 100 },
+    { threshold: 500,       name: "Précision laser",       cost: 500 },
+    { threshold: 2500,      name: "Lancement puissant",   cost: 10000 },
+    { threshold: 10000,     name: "Ingénieur expert",     cost: 50000 },
+    { threshold: 50000,     name: "Scientifique spatial",  cost: 1000000 },
+    { threshold: 250000,    name: "Pionnier galactique",  cost: 5000000 },
+    { threshold: 1000000,   name: "Click galactique",     cost: 100000000 },
+    { threshold: 5000000,   name: "Maître cosmique",      cost: 500000000 },
+    { threshold: 25000000,  name: "Puissance interstellaire", cost: 10000000000 },
+    { threshold: 100000000, name: "Main de l'univers",   cost: 50000000000 }
 ];
 
 const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
@@ -1843,6 +1846,19 @@ function updateMiniSpaceMap(distance) {
 // UPGRADES MANAGEMENT
 // ============================================
 
+// Affiche les nouveaux upgrades des qu'un seuil de production est franchi,
+// sans reconstruire la barre a chaque tick (seulement si du nouveau apparait).
+function checkNewUpgrades() {
+    const container = document.getElementById('upgrades-container');
+    if (!container) return;
+    const newClickUps = CLICK_UPGRADES.filter(u => partsSinceLaunch >= u.threshold && !activatedClickUpgrades.includes(u.threshold)).length;
+    const newBuildingUps = BUILDING_UPGRADE_THRESHOLDS.reduce((acc, threshold) =>
+        acc + BUILDINGS.filter(b => isBuildingUpgradeAvailable(b.id, threshold)).length, 0);
+    if (container.childElementCount !== newClickUps + newBuildingUps) {
+        renderUpgrades();
+    }
+}
+
 function renderUpgrades() {
     const container = document.getElementById('upgrades-container');
     container.innerHTML = '';
@@ -1850,8 +1866,10 @@ function renderUpgrades() {
     const available = [];
 
     // Upgrades de clic
+    // Style Cookie Clicker : deblocage par la production du run (partsSinceLaunch),
+    // pas par un grind de clics. Le cout reste le vrai verrou.
     CLICK_UPGRADES.forEach(upgrade => {
-        if (totalPartsFromClicks >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+        if (partsSinceLaunch >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeIndex = CLICK_UPGRADES.indexOf(upgrade);
             const color = UPGRADE_COLORS[upgradeIndex % UPGRADE_COLORS.length];
             available.push({
@@ -2249,6 +2267,7 @@ function gameLoop() {
         lastBuildingsUpdate = Date.now();
         updateAllBuildingButtons();
         refreshLiveTooltip();
+        checkNewUpgrades();
     }
     if (Date.now() - lastRocketPartsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
         lastRocketPartsUpdate = Date.now();
