@@ -153,7 +153,8 @@ body {
     transition: all 0.2s;
     z-index: 9999;
     pointer-events: none;
-    white-space: nowrap;
+    white-space: pre-line;
+    max-width: 340px;
     line-height: 1.5;
     text-align: left;
     transform: translate(-50%, -120%);
@@ -2861,7 +2862,7 @@ body {
     .comet-img { width: 130px; height: 130px; }
 
     /* Tooltip : plus lisible au doigt, reste au-dessus du clavier virtuel */
-    .upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: normal; }
+    .upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: pre-line; }
 
     /* Sur mobile, pas de tooltip CSS au survol (pas de hover) */
     .building-item:hover::after { opacity: 0; visibility: hidden; }
