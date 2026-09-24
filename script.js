@@ -182,6 +182,10 @@ const TROPHIES = [
     { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.png", threshold: 10000, type: "pps" },
     { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.png", threshold: 100000, type: "pps" },
     { id: "pps-1000000", name: "Light Speed", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000, type: "pps" },
+    { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 000 000 Parts par seconde", icon: "images/parts.png", threshold: 10000000, type: "pps" },
+    { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 000 000 Parts par seconde", icon: "images/parts.png", threshold: 100000000, type: "pps" },
+    { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000000, type: "pps" },
+    { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 10000000000, type: "pps" },
 
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
@@ -200,17 +204,23 @@ const TROPHIES = [
     { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 5 lancements", icon: "images/rocket/cockpit.png", threshold: 5, type: "launches" },
     { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 15 lancements", icon: "images/rocket/boosters-left.png", threshold: 15, type: "launches" },
     { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.png", threshold: 30, type: "launches" },
+    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 50 lancements", icon: "images/rocket/astronaut.png", threshold: 50, type: "launches" },
+    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 100 lancements", icon: "images/rocket/astronaut.png", threshold: 100, type: "launches" },
 
     // Poussière d'étoiles (icônes: cartes du jeu)
     { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.png", threshold: 1, type: "stardust" },
     { id: "dust-100", name: "Collectionneur Cosmique", description: "Gagner 100 Poussière d'Étoiles au total", icon: "images/cards/collection/nova-card.png", threshold: 100, type: "stardust" },
     { id: "dust-1000", name: "Maître de la Poussière", description: "Gagner 1 000 Poussière d'Étoiles au total", icon: "images/cards/collection/supernova-card.png", threshold: 1000, type: "stardust" },
+    { id: "dust-10000", name: "Semeur d'Étoiles", description: "Gagner 10 000 Poussière d'Étoiles au total", icon: "images/cards/collection/comet-card.png", threshold: 10000, type: "stardust" },
+    { id: "dust-100000", name: "Architecte Céleste", description: "Gagner 100 000 Poussière d'Étoiles au total", icon: "images/cards/collection/nova-card.png", threshold: 100000, type: "stardust" },
 
     // Améliorations de bâtiments (icônes: bâtiments)
     { id: "first-upgrade", name: "First Upgrade", description: "Acheter votre première amélioration de bâtiment", icon: "images/buildings/workshop.png", threshold: 1, type: "building-upgrade" },
     { id: "five-upgrades", name: "Upgrade Master", description: "Avoir 5 améliorations de bâtiment", icon: "images/buildings/factory.png", threshold: 5, type: "building-upgrade" },
     { id: "ten-upgrades", name: "Engineering Genius", description: "Avoir 10 améliorations de bâtiment", icon: "images/buildings/essaim-sonde.png", threshold: 10, type: "building-upgrade" },
     { id: "twenty-upgrades", name: "Upgrade Legend", description: "Avoir 20 améliorations de bâtiment", icon: "images/buildings/antimatter_collector.png", threshold: 20, type: "building-upgrade" },
+    { id: "fifty-upgrades", name: "Génie de l'Ingénierie", description: "Avoir 50 améliorations de bâtiment", icon: "images/buildings/nanoforge.png", threshold: 50, type: "building-upgrade" },
+    { id: "hundred-upgrades", name: "Ingénieur Cosmique", description: "Avoir 100 améliorations de bâtiment", icon: "images/buildings/quantic_printer.png", threshold: 100, type: "building-upgrade" },
 
     // Améliorations de clic (icônes: pièce fusée + astronaute)
     { id: "first-click-upgrade", name: "First Launch", description: "Acheter votre première amélioration de clic", icon: "images/rocket/nozzles.PNG", threshold: 1, type: "click-upgrade" },
@@ -221,15 +231,23 @@ const TROPHIES = [
     { id: "ten-buildings", name: "Space Builder", description: "Posséder 10 bâtiments au total", icon: "images/buildings/factory.png", threshold: 10, type: "building" },
     { id: "hundred-buildings", name: "Space Architect", description: "Posséder 100 bâtiments au total", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "building" },
     { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/nanoforge.png", threshold: 1000, type: "building" },
+    { id: "five-thousand-buildings", name: "Bâtisseur Stellaire", description: "Posséder 5 000 bâtiments au total", icon: "images/buildings/antimatter_collector.png", threshold: 5000, type: "building" },
+    { id: "ten-thousand-buildings", name: "Empereur du Vide", description: "Posséder 10 000 bâtiments au total", icon: "images/buildings/essaim-sonde.png", threshold: 10000, type: "building" },
 
     // Score total (icônes: parts et cartes)
     { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.png", threshold: 1000, type: "score" },
     { id: "score-1000000", name: "Millionaire", description: "Atteindre 1 000 000 Parts", icon: "images/cards/collection/earth-card.png", threshold: 1000000, type: "score" },
     { id: "score-1000000000", name: "Billionaire", description: "Atteindre 1 000 000 000 Parts", icon: "images/cards/collection/sirius-card.png", threshold: 1000000000, type: "score" },
+    { id: "score-1000000000000", name: "Trillionaire", description: "Atteindre 1 000 000 000 000 Parts", icon: "images/cards/collection/oort-card.png", threshold: 1000000000000, type: "score" },
+    { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 000 000 000 000 000 Parts", icon: "images/cards/collection/supernova-card.png", threshold: 1000000000000000, type: "score" },
+    { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 000 000 000 000 000 Parts", icon: "images/cards/collection/blackhole-card.png", threshold: 10000000000000000, type: "score" },
+    { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.png", threshold: 100000000000000000, type: "score" },
 
     // Bonus cliqués (icônes: comète)
     { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comète.png", threshold: 1, type: "bonus" },
     { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/meteor-card.png", threshold: 10, type: "bonus" },
+    { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comète.png", threshold: 50, type: "bonus" },
+    { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comète.png", threshold: 100, type: "bonus" },
 
     // Collection (icône: carte trou noir)
     { id: "all-buildings", name: "Space Collector", description: "Débloquer tous les types de bâtiments", icon: "images/cards/collection/blackhole-card.png", threshold: BUILDINGS.length, type: "building-types" },
