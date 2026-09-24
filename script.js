@@ -2462,12 +2462,12 @@ function renderTrophies() {
         const idx = colorCounters[trophy.type] || 0;
         colorCounters[trophy.type] = idx + 1;
         const color = colors[idx % colors.length];
-        trophyElement.style.border = '2px solid ' + color;
+        trophyElement.style.border = '2px solid #e2e8f0';
         trophyElement.style.background = '#f8fafc';
+        trophyElement.style.isolation = 'isolate';
         
         if (unlockedTrophies.has(trophy.id)) {
             trophyElement.style.background = '#dbeafe';
-            trophyElement.style.borderColor = color;
             trophyElement.style.boxShadow = 'var(--shadow), 0 0 6px ' + color;
             trophyElement.style.opacity = '1';
         } else {
@@ -2481,6 +2481,9 @@ function renderTrophies() {
         trophyElement.innerHTML = trophy.icon.startsWith('images/')
             ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: ${imgSize}; height: ${imgSize}; object-fit: contain;">`
             : trophy.icon;
+        const tint = document.createElement('span');
+        tint.style.cssText = `position: absolute; inset: 0; border-radius: 50%; pointer-events: none; mix-blend-mode: color; opacity: 0.65; background: ${color};`;
+        trophyElement.appendChild(tint);
         
         trophyElement.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
