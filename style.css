@@ -2789,8 +2789,8 @@ body {
     .upgrades-bar { height: 44px; }
     .upgrades-title { display: none; }
     .upgrades-container-center { margin-left: 0; }
-    .upgrade-icon { min-width: 34px; height: 34px; }
-    .upgrade-img { width: 22px; height: 22px; }
+    .upgrade-icon { min-width: 44px; height: 44px; }
+    .upgrade-img { width: 26px; height: 26px; }
 
     /* --- Scène de construction : zoom adaptatif --- */
     .center-content { height: calc(100% - 44px) !important; }
