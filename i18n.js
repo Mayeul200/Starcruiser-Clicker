@@ -417,10 +417,7 @@ const TRANSLATIONS = {
         '🌌 Progression Spatiale': '🌌 Space Progress',
         '🎮 Mini-Jeux': '🎮 Mini-Games',
         '🎰 Casino Planétaire': '🎰 Planetary Casino',
-        '📤 Export': '📤 Export',
-        '📥 Import': '📥 Import',
         '📦 Collection de Cartes': '📦 Card Collection',
-        '🗑️ Delete': '🗑️ Delete',
         '🚀 Mission Résultats': '🚀 Mission Results',
     }
 };
