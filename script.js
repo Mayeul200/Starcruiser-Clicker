@@ -315,16 +315,16 @@ let isLaunching = false;
 // ============================================
 const PLANETS = [
     { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
-    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 10, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 15, color: '#ef4444', imgPath: 'images/planets/mars.png' },
-    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 20, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 25, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 6100000000, bonusPercent: 30, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 35, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 40, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 50, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 60, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 75, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 20, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 25, color: '#ef4444', imgPath: 'images/planets/mars.png' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 30, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
+    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 35, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 6100000000, bonusPercent: 40, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 45, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
+    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 50, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -351,7 +351,7 @@ function getPrestigeProductionBoost() {
     return 1 + (p - 1) / 2;
 }
 function getPlanetProductionBonus() {
-    return 1 + getTotalPlanetBonus();
+    return 1 + getTotalPlanetBonus() + unlockedTrophies.size * 0.01;
 }
 function getTotalProductionMultiplier() {
     const auto = isNaN(autoMultiplier) || autoMultiplier === undefined ? 1 : autoMultiplier;
