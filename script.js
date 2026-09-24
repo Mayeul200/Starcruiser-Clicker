@@ -309,6 +309,7 @@ const ROCKET_PART_POSITIONS = {
 };
 
 let isLaunching = false;
+let launchSequenceActive = false;
 
 // ============================================
 // SPACE MAP SYSTEM (Planets & Bonuses)
@@ -1130,24 +1131,7 @@ function launchRocket() {
     // Calculer la distance
     const distance = calculateDistance();
     
-    // Animation de lancement (à améliorer plus tard)
-    const medal = document.getElementById('medal');
-    medal.classList.remove('bounce');
-    medal.style.transform = 'translateY(-50%) scale(0.8)';
-    medal.style.transition = 'transform 0.5s';
-    
-    setTimeout(() => {
-        medal.style.transform = 'translateY(-50%) translateY(-200px) scale(1.5)';
-        medal.style.opacity = '0';
-        medal.style.transition = 'all 2s';
-    }, 500);
-    
-    // Après l'animation, afficher la carte spatiale AVANT le reset
-    setTimeout(() => {
-        medal.style.transform = 'translateY(-50%)';
-        medal.style.opacity = '1';
-        medal.style.transition = 'none';
-        
+    playLaunchSequence(() => {
         // Afficher la carte spatiale avec la progression
         lastLaunchDistance = distance;
         showSpaceMap(distance);
@@ -1155,7 +1139,92 @@ function launchRocket() {
         updateConstructionScene();
         isLaunching = false;
         showToast(`🚀 ${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
-    }, 2500);
+    });
+}
+
+// Séquence cinématique de lancement : compte à rebours avec tremblement,
+// allumage des moteurs avec flammes et fumée, puis décollage accéléré
+// de la fusée complète au centre du panneau. `onDone` est appelé quand la
+// fusée a quitté l'écran.
+function playLaunchSequence(onDone) {
+    const scene = document.getElementById('construction-scene');
+    const container = document.getElementById('rocket-parts-container');
+    if (!scene || !container) { onDone(); return; }
+
+    // Bloquer le clic et le recalcul d'échelle pendant la séquence
+    const medal = document.getElementById('medal');
+    if (medal) medal.style.pointerEvents = 'none';
+    launchSequenceActive = true;
+
+    // Gel du transform d'échelle de base pour composer proprement l'animation
+    const baseTransform = container.style.transform || '';
+    const baseOrigin = container.style.transformOrigin || '';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'launch-overlay';
+    const countdown = document.createElement('div');
+    countdown.className = 'launch-countdown';
+    overlay.appendChild(countdown);
+    scene.appendChild(overlay);
+
+    // Wrapper d'animation : la fusée complète (toutes pièces) vole dedans
+    const rocketWrap = document.createElement('div');
+    rocketWrap.className = 'launch-rocket-wrap';
+    rocketWrap.style.transform = baseTransform;
+    if (baseOrigin) rocketWrap.style.transformOrigin = baseOrigin;
+    Array.from(container.children).forEach(child => rocketWrap.appendChild(child));
+    container.appendChild(rocketWrap);
+
+    const finish = () => {
+        overlay.remove();
+        Array.from(rocketWrap.children).forEach(child => container.appendChild(child));
+        rocketWrap.remove();
+        if (medal) medal.style.pointerEvents = '';
+        launchSequenceActive = false;
+        onDone();
+    };
+
+    // Étape 1 : compte à rebours 3..2..1 avec tremblement croissant
+    const steps = ['3', '2', '1'];
+    let stepIndex = 0;
+    const stepMs = 700;
+    container.classList.add('launch-shaking');
+    countdown.textContent = steps[0];
+    countdown.classList.add('pulsing');
+    const stepTimer = setInterval(() => {
+        stepIndex++;
+        if (stepIndex < steps.length) {
+            countdown.textContent = steps[stepIndex];
+        } else {
+            clearInterval(stepTimer);
+            // Étape 2 : allumage moteurs
+            countdown.textContent = t('Décollage !');
+            container.classList.remove('launch-shaking');
+            igniteLaunchFlames(rocketWrap);
+            setTimeout(() => {
+                // Étape 3 : décollage
+                countdown.classList.add('fading');
+                rocketWrap.classList.add('lift-off');
+                setTimeout(finish, 1900);
+            }, 700);
+        }
+    }, stepMs);
+}
+
+// Flammes + fumée sous la fusée pendant le décollage
+function igniteLaunchFlames(rocketWrap) {
+    const flames = document.createElement('div');
+    flames.className = 'launch-flames';
+    rocketWrap.appendChild(flames);
+    for (let i = 0; i < 3; i++) {
+        const jet = document.createElement('div');
+        jet.className = 'launch-flame-jet';
+        jet.style.animationDelay = (i * 0.12) + 's';
+        flames.appendChild(jet);
+    }
+    const smoke = document.createElement('div');
+    smoke.className = 'launch-smoke';
+    rocketWrap.appendChild(smoke);
 }
 
 function showLaunchResults(distance) {
@@ -3347,7 +3416,7 @@ function setMobileView(view) {
 // un transform: scale() pour qu'elle tienne toujours dans l'écran.
 function applySceneScale() {
     const container = document.getElementById('rocket-parts-container');
-    if (!container) return;
+    if (!container || launchSequenceActive) return;
     const scene = container.parentElement;
     if (!scene) return;
     const sceneHeight = scene.clientHeight;

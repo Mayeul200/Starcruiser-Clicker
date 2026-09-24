@@ -200,6 +200,7 @@ const TRANSLATIONS = {
         'Fusée complète ! Prête pour le décollage !': 'Rocket complete! Ready for launch!',
         'Fusée pas encore prête ! Il manque des pièces.': 'Rocket not ready yet! Parts are missing.',
         'Lancement en cours...': 'Launching...',
+        'Décollage !': 'Lift off!',
         'Fusée lancée ! Distance atteinte:': 'Rocket launched! Distance reached:',
         'Multiplicateur:': 'Multiplier:',
         'Trophée débloqué :': 'Achievement unlocked:',
