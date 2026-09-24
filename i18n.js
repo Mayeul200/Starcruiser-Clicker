@@ -23,6 +23,7 @@ const TRANSLATIONS = {
         'Distance max atteinte:': 'Max distance reached:',
         'Distance atteignable:': 'Reachable distance:',
         'Bonus:': 'Bonus:',
+        'Bonus trophées:': 'Trophy bonus:',
         'Objectifs:': 'Milestones:',
         'Atelier': 'Workshop',
         'Poussière d\'Étoiles (prestige)': 'Stardust (prestige)',

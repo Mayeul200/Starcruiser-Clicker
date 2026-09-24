@@ -1774,6 +1774,10 @@ function updateSpaceProgress() {
         const totalBonus = getPlanetProductionBonus();
         sidebarBonus.textContent = 'x' + totalBonus.toFixed(2);
     }
+    const sidebarTrophyBonus = document.getElementById('sidebar-trophy-bonus');
+    if (sidebarTrophyBonus) {
+        sidebarTrophyBonus.textContent = '+' + (unlockedTrophies.size * 1) + '%';
+    }
     if (sidebarPlanets) {
         const unlockedCount = unlockedPlanets.size - (unlockedPlanets.has('earth') ? 1 : 0);
         sidebarPlanets.textContent = unlockedCount + '/10';
