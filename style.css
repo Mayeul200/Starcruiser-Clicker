@@ -2764,7 +2764,7 @@ body {
     .building-ownership { font-size: 0.7rem; flex-shrink: 0; }
     .building-center { grid-area: icon; align-self: stretch; display: flex; align-items: center; justify-content: center; min-height: 0; }
     .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: 80px; filter: none; }
-    .building-right { grid-area: buy; display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
     .building-item button { flex: 1; padding: 9px 6px; font-size: 0.78rem; }
     .building-production { font-size: 0.72rem; white-space: nowrap; flex-shrink: 0; }
 
