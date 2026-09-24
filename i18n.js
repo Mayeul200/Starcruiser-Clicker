@@ -22,7 +22,7 @@ const TRANSLATIONS = {
         'Terre': 'Earth',
         'Distance max atteinte:': 'Max distance reached:',
         'Distance atteignable:': 'Reachable distance:',
-        'Bonus:': 'Bonus:',
+        'Bonus planètes:': 'Planet bonus:',
         'Bonus trophées:': 'Trophy bonus:',
         'Objectifs:': 'Milestones:',
         'Atelier': 'Workshop',

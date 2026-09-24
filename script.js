@@ -2647,7 +2647,7 @@ function renderStats() {
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Troph\u00e9es') + '</h4>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Troph\u00e9es') + ' <span style="color: #16a34a;">(+' + (unlockedTrophies.size * 1) + '%)</span>' + '</h4>';
     const trophiesSection = renderTrophies();
     container.appendChild(trophiesSection);
 }
