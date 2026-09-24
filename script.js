@@ -2401,6 +2401,7 @@ function gameLoop() {
         updateSpaceProgress();
     }
     checkBuildingUnlocks();
+    refreshStatsLive();
     checkTrophies();
 }
 
@@ -2588,6 +2589,20 @@ function renderTrophies() {
     
     container.appendChild(trophiesGrid);
     return container;
+}
+
+let lastStatsRender = 0;
+
+function refreshStatsLive() {
+    const modal = document.getElementById('stats-modal');
+    if (!modal || !modal.classList.contains('active')) return;
+    const now = Date.now();
+    if (now - lastStatsRender < 1000) return;
+    lastStatsRender = now;
+    const scrollEl = document.getElementById('stats-body');
+    const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
+    renderStats();
+    if (scrollEl) scrollEl.scrollTop = scrollTop;
 }
 
 function renderStats() {
