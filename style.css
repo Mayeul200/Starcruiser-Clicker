@@ -916,10 +916,26 @@ body {
     8% { transform: translate3d(0, 0, 0) scale(1); }
     100% { transform: translate3d(0, -110vh, 0) scale(1.05); opacity: 0; }
 }
-/* Flammes sous les moteurs : jets coniques orangés vacillants */
+/* Astronaute : quitte la scène en marchant vers la gauche, démarche balancée */
+.astronaut-walking {
+    animation: astronautWalkOut 1.9s ease-in forwards !important;
+}
+@keyframes astronautWalkOut {
+    0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+    15% { transform: translateX(-6%) rotate(-2deg); }
+    30% { transform: translateX(-13%) rotate(2deg); }
+    45% { transform: translateX(-20%) rotate(-2deg); }
+    60% { transform: translateX(-28%) rotate(2deg); }
+    75% { transform: translateX(-36%) rotate(-2deg); }
+    99% { transform: translateX(-45%) rotate(0deg); opacity: 1; }
+    100% { transform: translateX(-46%) rotate(0deg); opacity: 0; }
+}
+/* Flammes sous les moteurs : jets coniques orangés vacillants.
+   Positionnées dans le repère de la fusée (tuyères ~y=666) : elles suivent
+   la fusée pendant tout le vol. */
 .launch-flames {
     position: absolute;
-    bottom: 6%;
+    top: 666px;
     left: 50%;
     transform: translateX(-50%);
     width: 120px;
@@ -949,10 +965,10 @@ body {
     from { transform: scaleY(1.15) scaleX(0.92); opacity: 1; }
     to { transform: scaleY(0.8) scaleX(1.1); opacity: 0.85; }
 }
-/* Fumée qui déborde du pas de tir */
+/* Fumée au sol qui déborde du pas de tir (reste au sol pendant le vol) */
 .launch-smoke {
     position: absolute;
-    bottom: 2%;
+    bottom: 4%;
     left: 50%;
     width: 260px;
     height: 60px;
@@ -961,8 +977,8 @@ body {
     border-radius: 50%;
     filter: blur(6px);
     pointer-events: none;
-    z-index: 1;
-    animation: launchSmokeSpread 1.6s ease-out forwards;
+    z-index: 4;
+    animation: launchSmokeSpread 2.6s ease-out forwards;
 }
 @keyframes launchSmokeSpread {
     0% { transform: translateX(-50%) scale(0.4); opacity: 0; }

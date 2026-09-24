@@ -1167,18 +1167,34 @@ function playLaunchSequence(onDone) {
     overlay.appendChild(countdown);
     scene.appendChild(overlay);
 
-    // Wrapper d'animation : la fusée complète (toutes pièces) vole dedans
+    // Wrapper d'animation : la fusée vole dedans. Le pas de tir et l'astronaute
+    // restent au sol (pièces « ground ») : ils ne décollent pas.
+    const GROUND_PARTS = ['launch-pad', 'astronaut'];
     const rocketWrap = document.createElement('div');
     rocketWrap.className = 'launch-rocket-wrap';
     rocketWrap.style.transform = baseTransform;
     if (baseOrigin) rocketWrap.style.transformOrigin = baseOrigin;
-    Array.from(container.children).forEach(child => rocketWrap.appendChild(child));
+    const groundPieces = [];
+    Array.from(container.children).forEach(child => {
+        const isGround = GROUND_PARTS.some(id => child.classList && child.classList.contains(id));
+        if (isGround) groundPieces.push(child);
+        else rocketWrap.appendChild(child);
+    });
     container.appendChild(rocketWrap);
 
     const finish = () => {
         overlay.remove();
-        Array.from(rocketWrap.children).forEach(child => container.appendChild(child));
+        Array.from(rocketWrap.children).forEach(child => {
+            if (child.classList && child.classList.contains('rocket-piece')) container.appendChild(child);
+        });
         rocketWrap.remove();
+        const smoke = scene.querySelector('.launch-smoke');
+        if (smoke) smoke.remove();
+        const astronaut = container.querySelector('.rocket-piece.astronaut');
+        if (astronaut) {
+            astronaut.classList.remove('astronaut-walking');
+            astronaut.style.opacity = '';
+        }
         if (medal) medal.style.pointerEvents = '';
         launchSequenceActive = false;
         onDone();
@@ -1200,11 +1216,13 @@ function playLaunchSequence(onDone) {
             // Étape 2 : allumage moteurs
             countdown.textContent = t('Décollage !');
             container.classList.remove('launch-shaking');
-            igniteLaunchFlames(rocketWrap);
+            igniteLaunchFlames(rocketWrap, scene);
             setTimeout(() => {
-                // Étape 3 : décollage
+                // Étape 3 : décollage — la fusée s'envole, l'astronaute s'en va en marchant
                 countdown.classList.add('fading');
                 rocketWrap.classList.add('lift-off');
+                const astronaut = container.querySelector('.rocket-piece.astronaut');
+                if (astronaut) astronaut.classList.add('astronaut-walking');
                 setTimeout(finish, 1900);
             }, 700);
         }
@@ -1212,7 +1230,8 @@ function playLaunchSequence(onDone) {
 }
 
 // Flammes + fumée sous la fusée pendant le décollage
-function igniteLaunchFlames(rocketWrap) {
+function igniteLaunchFlames(rocketWrap, sceneEl) {
+    // Flammes dans le repère de la fusée : elles suivent le vol
     const flames = document.createElement('div');
     flames.className = 'launch-flames';
     rocketWrap.appendChild(flames);
@@ -1222,9 +1241,12 @@ function igniteLaunchFlames(rocketWrap) {
         jet.style.animationDelay = (i * 0.12) + 's';
         flames.appendChild(jet);
     }
-    const smoke = document.createElement('div');
-    smoke.className = 'launch-smoke';
-    rocketWrap.appendChild(smoke);
+    // Fumée au sol sur le pas de tir : elle ne décolle pas
+    if (sceneEl) {
+        const smoke = document.createElement('div');
+        smoke.className = 'launch-smoke';
+        sceneEl.appendChild(smoke);
+    }
 }
 
 function showLaunchResults(distance) {
