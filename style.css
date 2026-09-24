@@ -2720,10 +2720,10 @@ body {
 
     /* --- Panneau gauche (Espace) --- */
     .left-panel { padding: 12px; }
-    .mini-space-map { height: 90px; }
-    .mini-space-map .planet-image { width: 40px; height: 40px; }
-    .mini-space-map .planet-name { font-size: 0.6rem; margin-top: 2px; }
-    .mini-space-map .planet-distance { display: none; }
+    .mini-space-map { height: 108px; }
+    .mini-space-map .planet-image { width: 36px; height: 36px; }
+    .mini-space-map .planet-name { font-size: 0.6rem; margin-top: 1px; }
+    .mini-space-map .planet-distance { font-size: 0.55rem; margin-top: 1px; }
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     .mini-games-container { flex-direction: row; }
     .mini-game-card { flex: 1; }
@@ -2805,7 +2805,7 @@ body {
     }
     .space-map-container { height: 180px; }
     .space-planet .planet-name { display: block; font-size: 0.65rem; }
-    .space-planet .planet-distance { display: none; }
+    .space-map-container .space-planet .planet-distance { display: none; }
     .space-planet .planet-image { width: 52px; height: 52px; }
     .space-planet .planet-emoji { font-size: 1.3rem; }
 
