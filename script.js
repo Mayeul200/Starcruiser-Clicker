@@ -125,9 +125,9 @@ const ROCKET_PARTS = [
 // - A partir de la 2e, debloque un bonus par bâtiment possede ( Thousand Fingers).
 // - Les couts suivent l'echelle ~x10 de Cookie Clicker.
 const CLICK_UPGRADES = [
-    // Deblocage par parts produites depuis le dernier lancement (style Cookie
-    // Clicker : les upgrades apparaissent en jouant naturellement, le cout est
-    // le vrai verrou, decalant chaque achat dans le temps).
+    // Deblocage par Parts gagnees via les clics uniquement, cumulees depuis
+    // le debut du run (reset au lancement comme les upgrades). Le cout reste
+    // le vrai verrou, decalant chaque achat dans le temps.
     { threshold: 100,       name: "Doigt renforcé",        cost: 100 },
     { threshold: 500,       name: "Précision laser",       cost: 500 },
     { threshold: 2500,      name: "Lancement puissant",   cost: 10000 },
@@ -1895,7 +1895,7 @@ function updateMiniSpaceMap(distance) {
 function checkNewUpgrades() {
     const container = document.getElementById('upgrades-container');
     if (!container) return;
-    const newClickUps = CLICK_UPGRADES.filter(u => partsSinceLaunch >= u.threshold && !activatedClickUpgrades.includes(u.threshold)).length;
+    const newClickUps = CLICK_UPGRADES.filter(u => totalPartsFromClicks >= u.threshold && !activatedClickUpgrades.includes(u.threshold)).length;
     const newBuildingUps = BUILDING_UPGRADE_THRESHOLDS.reduce((acc, threshold) =>
         acc + BUILDINGS.filter(b => isBuildingUpgradeAvailable(b.id, threshold)).length, 0);
     if (container.childElementCount !== newClickUps + newBuildingUps) {
@@ -1910,10 +1910,10 @@ function renderUpgrades() {
     const available = [];
 
     // Upgrades de clic
-    // Style Cookie Clicker : deblocage par la production du run (partsSinceLaunch),
-    // pas par un grind de clics. Le cout reste le vrai verrou.
+    // Deblocage par les Parts gagnees uniquement en cliquant, cumulees depuis
+    // le debut du run. Le cout reste le vrai verrou.
     CLICK_UPGRADES.forEach(upgrade => {
-        if (partsSinceLaunch >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+        if (totalPartsFromClicks >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
             const upgradeIndex = CLICK_UPGRADES.indexOf(upgrade);
             const color = UPGRADE_COLORS[upgradeIndex % UPGRADE_COLORS.length];
             available.push({
@@ -2149,7 +2149,7 @@ function addScore(points, event) {
 
     score += totalPoints;
     partsSinceLaunch += totalPoints;
-    totalPartsFromClicks += 1;
+    totalPartsFromClicks += totalPoints;
 
     showClickEffect(Math.round(totalPoints), event);
     spawnFallingCoin(event);
