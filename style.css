@@ -1389,7 +1389,7 @@ body {
     min-height: 0;
 }
 .mini-game-card .game-icon {
-    font-size: 3rem;
+    font-size: 2.4rem;
     flex: 0 0 auto;
     line-height: 1;
     align-self: center;
@@ -1397,9 +1397,9 @@ body {
 }
 .mini-game-card .game-icon img {
     height: 100%;
-    max-height: 110px;
+    max-height: 80px;
     width: auto;
-    max-width: 64px;
+    max-width: 52px;
     object-fit: contain;
     filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
     display: block;
