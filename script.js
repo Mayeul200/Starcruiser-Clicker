@@ -372,6 +372,12 @@ function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
     return building.gain * autoMultiplier * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
+// Multiplicateur propre du batiment : upgrades (x2 par palier) x bonus de contrat.
+// Exclut les bonus globaux (planets, trophees, prestige, collection, boost temporaire).
+function getBuildingOwnMultiplier(building) {
+    return getBuildingUpgradeMultiplier(building.id) * getContractBuildingMultiplier(building.id);
+}
+
 // Production hors boost temporaire (autoMultiplier exclu) : base de calcul des quotas
 // de contrat, pour qu'une offre generee pendant un x5 reste atteignable ensuite.
 function calculateBuildingBaseGain(building) {
@@ -409,9 +415,10 @@ function getBuildingTooltip(building) {
     const unitGain = calculateUnitBuildingGain(building);
     const totalGain = calculateBuildingGain(building);
     const percent = partsPerSecond > 0 ? ((totalGain / partsPerSecond) * 100).toFixed(2) : 0;
-    return tf('{flavor}: +{gain} Parts/s\n% de la production: {percent}%\nTotal g\u00e9n\u00e9r\u00e9: {total} Parts', {
+    return tf('{flavor}: +{gain} Parts/s\nMultiplicateur: x{mult}\n% de la production: {percent}%\nTotal g\u00e9n\u00e9r\u00e9: {total} Parts', {
         flavor: t(building.description),
         gain: formatNumber(unitGain),
+        mult: getBuildingOwnMultiplier(building).toFixed(2),
         percent: percent,
         total: formatNumber(totalGeneratedByBuilding[building.id] || 0)
     });
