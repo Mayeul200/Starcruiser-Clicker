@@ -1114,10 +1114,10 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 4px 8px;
     font-size: 0.95rem;
     font-weight: 600;
-    padding: 6px 10px;
+    padding: 6px 8px;
     background: rgba(168, 85, 247, 0.1);
     color: #c4b5fd;
     border: 1px solid #a855f7;
@@ -1125,7 +1125,8 @@ body {
     cursor: pointer;
     text-align: center;
     transition: all 0.2s;
-    white-space: nowrap;
+    flex-wrap: wrap;
+    overflow: hidden;
 }
 .galactic-shop-btn:hover {
     background: rgba(168, 85, 247, 0.25);
@@ -1134,11 +1135,15 @@ body {
 .galactic-shop-label {
     font-size: 0.95rem;
     font-weight: 600;
+    min-width: 0;
+    white-space: nowrap;
 }
 .galactic-shop-stardust {
     font-size: 0.75rem;
     font-weight: 700;
     color: #e9d5ff;
+    min-width: 0;
+    white-space: nowrap;
 }
 .galactic-shop-stardust span {
     color: #c4b5fd;
@@ -1151,7 +1156,8 @@ body {
     padding: 1px 8px;
     border-radius: 6px;
     overflow: hidden;
-    min-width: 70px;
+    min-width: 0;
+    white-space: nowrap;
     text-align: center;
     background: rgba(34, 211, 238, 0.08);
     border: 1px solid rgba(34, 211, 238, 0.3);
