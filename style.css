@@ -726,6 +726,21 @@ body {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
+.toast-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-right: 10px;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+.toast-icon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
 /* Building blur effect for not purchased buildings */
 .building-item.not-purchased .building-left,
 .building-item.not-purchased .building-center {

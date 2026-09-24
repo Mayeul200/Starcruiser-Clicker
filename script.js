@@ -476,9 +476,25 @@ function resetMultipliers() {
     updateClickMultiplier();
 }
 
-function showToast(message) {
+function showToast(message, icon) {
     const toast = document.getElementById('toast');
-    toast.textContent = message;
+    toast.innerHTML = '';
+    if (icon) {
+        const iconEl = document.createElement('span');
+        iconEl.className = 'toast-icon';
+        if (icon.startsWith('images/')) {
+            const img = document.createElement('img');
+            img.src = icon;
+            img.alt = '';
+            iconEl.appendChild(img);
+        } else {
+            iconEl.textContent = icon;
+        }
+        toast.appendChild(iconEl);
+    }
+    const textEl = document.createElement('span');
+    textEl.textContent = message;
+    toast.appendChild(textEl);
     toast.classList.add('active');
     setTimeout(() => toast.classList.remove('active'), TOAST_DURATION_MS);
 }
@@ -2444,7 +2460,7 @@ function checkTrophies() {
             if (unlocked) {
                 unlockedTrophies.add(trophy.id);
                 changed = true;
-                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`);
+                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`, trophy.icon);
             }
         }
     });
