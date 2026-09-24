@@ -2444,8 +2444,21 @@ function renderTrophies() {
     trophiesGrid.style.gap = '8px';
     trophiesGrid.style.marginTop = '8px';
     
-    const colorCounters = {};
+    const familyOrder = ['pps', 'planets', 'launches', 'stardust', 'building-upgrade', 'click-upgrade', 'building', 'score', 'bonus', 'building-types', 'cards'];
+    const trophiesByFamily = {};
     TROPHIES.forEach(trophy => {
+        (trophiesByFamily[trophy.type] = trophiesByFamily[trophy.type] || []).push(trophy);
+    });
+    const orderedTrophies = [];
+    familyOrder.forEach(family => {
+        if (trophiesByFamily[family]) orderedTrophies.push(...trophiesByFamily[family]);
+    });
+    Object.keys(trophiesByFamily).forEach(family => {
+        if (!familyOrder.includes(family)) orderedTrophies.push(...trophiesByFamily[family]);
+    });
+
+    const colorCounters = {};
+    orderedTrophies.forEach(trophy => {
         const trophyElement = document.createElement('div');
         trophyElement.className = 'trophy-icon';
         trophyElement.style.width = '50px';
@@ -2582,7 +2595,8 @@ function renderStats() {
             statElement.style.padding = '4px 0';
             statElement.style.fontSize = '0.85rem';
             statElement.style.color = '#64748b';
-            statElement.innerHTML = `<span>${t(building.name)}: ${upgrades.length} ${t('niveau(x)')}</span>`;
+            const levelColor = UPGRADE_COLORS[(upgrades.length - 1) % UPGRADE_COLORS.length];
+            statElement.innerHTML = `<span>${t(building.name)}: <span style="color: ${levelColor}; font-weight: 700;">${upgrades.length}</span> ${t('niveau(x)')}</span>`;
             container.appendChild(statElement);
         }
     });
