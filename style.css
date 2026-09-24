@@ -2810,13 +2810,20 @@ body {
 
     /* Médaille cliquable plus grosse et plus accessible */
     .medal {
-        right: auto; left: 50%;
-        top: 52%;
-        transform: translate(-50%, -50%);
+        /* !important : la medaille porte un style inline (right/top) dans index.html */
+        left: auto !important; right: 4% !important;
+        top: 35% !important;
+        transform: translateY(-50%);
         width: 150px; height: 150px;
     }
-    .medal:hover { transform: translate(-50%, -50%) scale(1.05); }
-    .medal:active { transform: translate(-50%, -50%) scale(0.95); }
+    .medal:hover { transform: translateY(-50%) scale(1.05); }
+    .medal:active { transform: translateY(-50%) scale(0.95); }
+
+    /* Paysage : espace vertical trop serre a droite du fait du bouton
+       lancement ; la medaille se place juste a sa gauche, sous les compteurs */
+    @media (max-width: 1024px) and (orientation: landscape) {
+        .medal { top: 55% !important; right: 88px !important; width: 96px; height: 96px; }
+    }
 
     /* --- Bouton lancement : pastille flottante en bas à droite --- */
     .launch-button {
@@ -3002,7 +3009,7 @@ body {
 
 /* Petits écrans (<480px) : resserrage supplémentaire */
 @media (max-width: 480px) {
-    .medal { width: 130px; height: 130px; }
+    .medal { width: 130px; height: 130px; top: 42% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
     .building-item { grid-template-columns: 96px 1fr; }
@@ -3012,6 +3019,10 @@ body {
     .counters { width: 94vw; }
     .counter { font-size: 0.85rem; }
     .launch-button { width: 58px; height: 58px; }
+}
+/* Tres petits ecrans : la medaille se reduit pour ne pas toucher la fusee */
+@media (max-width: 350px) {
+    .medal { width: 112px; height: 112px; }
 }
 
 /* Desktop : nav mobile masquée */
