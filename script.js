@@ -811,7 +811,6 @@ function buyBuilding(buildingId) {
         updateDisplay();
         updateConstructionScene();
         saveGame();
-        hideTooltip();
         updateAllBuildingButtons();
         renderUpgrades();
         checkBuildingUnlocks();
