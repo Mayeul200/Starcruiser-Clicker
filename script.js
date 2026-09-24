@@ -2763,7 +2763,6 @@ const CONTRACT_DURATION_MS = 3 * 60 * 1000;
 const CONTRACT_QUOTA_RATIO = 1.35;
 const CONTRACT_REWARD_MULT = 0.75;
 const CONTRACT_REWARD_MAX_STACKS = 10;
-const CONTRACT_PRIME_SECONDS = 180;
 const CONTRACT_PRICE_PPS_SECONDS = 20;
 
 let contractState = {
@@ -2873,9 +2872,6 @@ function completeContract() {
     if (!maxed) {
         contractState.buildingBonuses[c.buildingId] = stacks + 1;
     }
-    const prime = Math.floor(partsPerSecond * CONTRACT_PRIME_SECONDS);
-    score += prime;
-    partsSinceLaunch += prime;
     const mult = getContractBuildingMultiplier(c.buildingId);
     showToast('\uD83E\uDDF1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
     contractState.active = null;
