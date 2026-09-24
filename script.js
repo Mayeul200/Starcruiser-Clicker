@@ -2060,6 +2060,20 @@ document.addEventListener('touchstart', (e) => {
 // BONUSES MANAGEMENT
 // ============================================
 
+function rebuildAutoMultipliers() {
+    resetMultipliers();
+    activeRandomBonuses.forEach(bonus => {
+        if ((bonus.effect === 'auto' || bonus.effect === 'both' || bonus.effect === 'multiplier') && bonus.multiplier) {
+            autoMultipliers.push(bonus.multiplier);
+        }
+        if ((bonus.effect === 'click' || bonus.effect === 'both') && bonus.multiplier) {
+            clickMultipliers.push(bonus.multiplier);
+        }
+    });
+    updateAutoMultiplier();
+    updateClickMultiplier();
+}
+
 function spawnRandomBonus() {
     let bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
     let bonus = RANDOM_BONUSES[bonusIndex];
