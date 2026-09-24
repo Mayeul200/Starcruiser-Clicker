@@ -7,6 +7,8 @@ const TRANSLATIONS = {
     en: {
         // --- Top bar / commun ---
         'Statistics': 'Statistics',
+        'Temps écoulé depuis le dernier lancement': 'Time since last launch',
+        'Jamais lancé': 'Never launched',
         'Settings': 'Settings',
         'Parts': 'Parts',
         'Buildings': 'Buildings',

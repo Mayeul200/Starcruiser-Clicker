@@ -167,9 +167,29 @@ body {
     opacity: 1;
     visibility: visible;
 }
+/* Chronometre depuis le dernier lancement (haut droit) */
+.launch-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: default;
+}
+.launch-timer.has-launch {
+    color: var(--accent-light);
+}
+
 .top-bar-controls {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 4px;
     padding: 4px 8px;
     height: 100%;
@@ -796,7 +816,6 @@ body {
 }
 @media (max-width: 480px) {
     .medal { width: 150px; height: 150px; }
-    .top-bar-controls { flex-direction: column; }
 }
 /* ============================================
    ROCKET LAUNCH SYSTEM

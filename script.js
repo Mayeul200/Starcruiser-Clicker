@@ -288,6 +288,8 @@ let unlockedTrophies = new Set();
 let maxDistance = 0;
 let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
+// Horodatage du dernier lancement confirme (0 = jamais lance)
+let lastLaunchAt = 0;
 let lastLaunchDistance = 0;
 let starDust = 0; // Poussière d'Étoiles : monnaie de prestige persistante
 let totalStardustEarned = 0; // Cumul de toutes les Poussière d'Étoiles gagnées (trophées)
@@ -547,6 +549,7 @@ function saveGame() {
         totalStardustEarned: totalStardustEarned,
         galacticUpgrades: {...galacticUpgrades},
         rocketsLaunched: rocketsLaunched,
+        lastLaunchAt: lastLaunchAt,
         unlockedPlanets: Array.from(unlockedPlanets),
         planetBonuses: {...planetBonuses},
         cardCollection: {...cardCollection},
@@ -628,6 +631,7 @@ function loadGame() {
             }
         });
         rocketsLaunched = parsed.rocketsLaunched || 0;
+        lastLaunchAt = parsed.lastLaunchAt || 0;
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
@@ -1566,6 +1570,7 @@ function confirmSpaceMapAndReset() {
         maxDistance = lastLaunchDistance;
     }
     rocketsLaunched++;
+    lastLaunchAt = Date.now();
     prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
 
     // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
@@ -2487,6 +2492,7 @@ function gameLoop() {
     const tickGain = partsPerSecond * dtSeconds;
     score += tickGain;
     partsSinceLaunch += tickGain;
+    updateLaunchTimer();
 
     if (dtSeconds > 0) {
         BUILDINGS.forEach(building => {
@@ -3504,6 +3510,30 @@ function initMobileNav() {
     window.addEventListener('orientationchange', () => {
         setTimeout(applySceneScale, 250);
     });
+}
+
+// --- Chronometre depuis le dernier lancement ---
+function formatLaunchTimer(ms) {
+    if (ms < 0) ms = 0;
+    const s = Math.floor(ms / 1000);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    if (h > 0) return h + 'h' + String(m).padStart(2, '0');
+    if (m > 0) return m + 'm' + String(sec).padStart(2, '0');
+    return sec + 's';
+}
+
+function updateLaunchTimer() {
+    const el = document.getElementById('launch-timer');
+    if (!el) return;
+    if (!lastLaunchAt) {
+        el.textContent = t("Jamais lancé");
+        el.classList.remove('has-launch');
+        return;
+    }
+    el.textContent = formatLaunchTimer(Date.now() - lastLaunchAt);
+    el.classList.add('has-launch');
 }
 
 // ============================================
