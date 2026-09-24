@@ -3527,13 +3527,11 @@ function formatLaunchTimer(ms) {
 function updateLaunchTimer() {
     const el = document.getElementById('launch-timer');
     if (!el) return;
-    if (!lastLaunchAt) {
-        el.textContent = t("Jamais lancé");
-        el.classList.remove('has-launch');
-        return;
-    }
-    el.textContent = formatLaunchTimer(Date.now() - lastLaunchAt);
-    el.classList.add('has-launch');
+    // Avant le premier lancement, le chrono court depuis le debut de la partie
+    const start = lastLaunchAt || gameStartTime || 0;
+    if (!start) return;
+    el.textContent = formatLaunchTimer(Date.now() - start);
+    el.classList.toggle('has-launch', !!lastLaunchAt);
 }
 
 // ============================================
