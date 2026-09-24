@@ -417,7 +417,7 @@ body {
     border-radius: var(--radius);
     padding: 12px;
     display: grid;
-    grid-template-columns: minmax(96px, 1.1fr) minmax(48px, 1fr) minmax(112px, 1.4fr);
+    grid-template-columns: minmax(96px, 1fr) minmax(64px, 150px) minmax(112px, 1.4fr);
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
@@ -448,7 +448,6 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0;
-    max-width: 34%;
     overflow: hidden;
     min-width: 0;
 }
@@ -3099,6 +3098,14 @@ body {
     .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
     .building-item button { flex: 1; }
     .building-image { max-height: 72px; }
+}
+
+/* Grands ecrans (>1520) : grandes images conservees ; les noms longs
+   se replient sur 2 lignes plutot que de couper ou de reduire les images */
+@media (min-width: 1521px) {
+    .building-name { white-space: normal; line-height: 1.15; }
+    .building-item { max-height: none; }
+    .building-left { overflow: visible; }
 }
 
 /* Desktop : nav mobile masquée */
