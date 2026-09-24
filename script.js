@@ -2788,7 +2788,7 @@ function pickContractTargets() {
         return { b, targetScore, share };
     });
     scored.sort((x, y) => y.targetScore - x.targetScore);
-    const n = Math.min(3, scored.length);
+    const n = Math.min(2, scored.length);
     return scored.slice(0, n).map(s => s.b);
 }
 
@@ -2879,6 +2879,8 @@ function completeContract() {
     const mult = getContractBuildingMultiplier(c.buildingId);
     showToast('\U0001F9F1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
     contractState.active = null;
+    contractState.offers = [];
+    generateContractOffers();
     checkTrophies();
     saveGame();
 }
@@ -2889,6 +2891,8 @@ function failContract() {
     const building = findBuildingById(c.buildingId);
     showToast('\u23f3 ' + tf('Contrat echoue pour {building}...', { building: t(building.name) }), building.imgPath);
     contractState.active = null;
+    contractState.offers = [];
+    generateContractOffers();
     saveGame();
 }
 
