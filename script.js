@@ -2877,7 +2877,7 @@ function completeContract() {
     score += prime;
     partsSinceLaunch += prime;
     const mult = getContractBuildingMultiplier(c.buildingId);
-    showToast('\U0001F9F1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
+    showToast('\uD83E\uDDF1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
     contractState.active = null;
     contractState.offers = [];
     generateContractOffers();
@@ -2954,7 +2954,7 @@ function renderContracts() {
                 + (stacks >= CONTRACT_REWARD_MAX_STACKS ? ' \u00b7 ' + t('palier max') : '')
                 + '</div>'
                 + '<button class="contract-buy-btn" onclick="acceptContract(\'' + offer.id + '\')" ' + (affordable ? '' : 'disabled') + '>'
-                + '\U0001F4B0 ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
+                + '\uD83D\uDCB0 ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
                 + '</div>';
         });
     }
