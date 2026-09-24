@@ -726,6 +726,14 @@ body {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
+.coin-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    vertical-align: -3px;
+    margin-right: 2px;
+}
 .toast-icon {
     display: inline-flex;
     align-items: center;

@@ -2954,7 +2954,7 @@ function renderContracts() {
                 + (stacks >= CONTRACT_REWARD_MAX_STACKS ? ' \u00b7 ' + t('palier max') : '')
                 + '</div>'
                 + '<button class="contract-buy-btn" onclick="acceptContract(\'' + offer.id + '\')" ' + (affordable ? '' : 'disabled') + '>'
-                + '\uD83D\uDCB0 ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
+                + '<img src="images/parts.png" class="coin-icon" alt=""> ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
                 + '</div>';
         });
     }
@@ -3087,7 +3087,7 @@ function showCardReveal() {
 function updateBoosterPrices() {
     for (const key in BOOSTERS) {
         const costEl = document.getElementById('cc-cost-' + key);
-        if (costEl) costEl.textContent = '💰 ' + formatNumber(Math.floor(BOOSTERS[key].cost() * (1 - getBoosterDiscount())));
+        if (costEl) { costEl.textContent = ''; const coinImg = document.createElement('img'); coinImg.src = 'images/parts.png'; coinImg.className = 'coin-icon'; coinImg.alt = ''; costEl.appendChild(coinImg); costEl.appendChild(document.createTextNode(' ' + formatNumber(Math.floor(BOOSTERS[key].cost() * (1 - getBoosterDiscount()))))); }
     }
 }
 
