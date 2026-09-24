@@ -2744,13 +2744,13 @@ function updateBonusTimer() {
 // production permanent (+75% cumulable). Rotation des contrats toutes les
 // 5 minutes. Les contrats ciblent en priorite les batiments negliges.
 // ============================================
-const CONTRACT_ROTATION_MS = 5 * 60 * 1000;
+const CONTRACT_ROTATION_MS = 2 * 60 * 1000;
 const CONTRACT_DURATION_MS = 3 * 60 * 1000;
 const CONTRACT_QUOTA_RATIO = 1.35;
 const CONTRACT_REWARD_MULT = 0.75;
 const CONTRACT_REWARD_MAX_STACKS = 10;
 const CONTRACT_PRIME_SECONDS = 180;
-const CONTRACT_PRICE_PPS_SECONDS = 60;
+const CONTRACT_PRICE_PPS_SECONDS = 20;
 
 let contractState = {
     offers: [],
