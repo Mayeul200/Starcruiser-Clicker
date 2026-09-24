@@ -2287,8 +2287,8 @@ function spawnFallingCoin(event) {
     img.draggable = false;
     coin.appendChild(img);
 
-    const size = 38 + Math.random() * 20;
-    const drift = (Math.random() - 0.5) * 90;
+    const size = 24 + Math.random() * 32;
+    const drift = (Math.random() - 0.5) * 440;
     const spinDir = Math.random() < 0.5 ? 1 : -1;
 
     // Petit saut vers le haut depuis le point clique, puis chute douce
