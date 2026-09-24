@@ -1037,6 +1037,21 @@ function renderBuilding(building) {
     }
 
     container.appendChild(buildingElement);
+    relocateBuildingProductions();
+}
+
+function relocateBuildingProductions() {
+    document.querySelectorAll('.building-item').forEach(item => {
+        const prod = item.querySelector('.building-production');
+        const left = item.querySelector('.building-left');
+        const right = item.querySelector('.building-right');
+        if (!prod || !left || !right) return;
+        if (isMobileLayout() && prod.parentElement !== left) {
+            left.appendChild(prod);
+        } else if (!isMobileLayout() && prod.parentElement !== right) {
+            right.appendChild(prod);
+        }
+    });
 }
 
 // ============================================
@@ -3354,6 +3369,7 @@ function initMobileNav() {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
+            relocateBuildingProductions();
             if (isMobileLayout()) {
                 setMobileView(mobileActiveView);
                 applySceneScale();
