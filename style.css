@@ -1386,8 +1386,14 @@ body {
     box-shadow: var(--shadow);
 }
 .mini-game-card .game-icon {
-    font-size: 1.2rem;
     text-align: center;
+    line-height: 0;
+}
+.mini-game-card .game-icon img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 .mini-game-card .game-name {
     font-size: 0.8rem;
@@ -1408,6 +1414,39 @@ body {
     font-weight: 600;
     border-top: 1px solid var(--border);
     padding-top: 4px;
+}
+.mini-game-card .game-status {
+    display: none;
+    font-size: 0.68rem;
+    text-align: center;
+    line-height: 1.3;
+    margin-top: 2px;
+}
+.mini-game-card .game-status.visible {
+    display: block;
+}
+.mini-game-card .game-status .status-bar {
+    display: block;
+    height: 4px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+.mini-game-card .game-status .status-bar > div {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+    border-radius: 2px;
+}
+.mini-game-card .game-status .status-timer {
+    color: var(--accent-light);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.mini-game-card .game-status .status-offers {
+    color: var(--primary-light);
+    font-weight: 600;
 }
 /* ============================================
    CONTRATS DE FABRICATION

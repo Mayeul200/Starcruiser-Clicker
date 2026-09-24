@@ -2915,6 +2915,31 @@ function tickContracts() {
     if (document.getElementById('contracts-modal').classList.contains('active')) {
         renderContracts();
     }
+    renderContractsCardStatus();
+}
+
+function renderContractsCardStatus() {
+    const statusEl = document.getElementById('contracts-card-status');
+    if (!statusEl) return;
+    const now = Date.now();
+    if (contractState.active) {
+        const c = contractState.active;
+        const building = findBuildingById(c.buildingId);
+        const remaining = Math.max(0, c.expiresAt - now);
+        const pct = Math.min(100, (c.progress / c.quota) * 100);
+        statusEl.className = 'game-status visible';
+        statusEl.innerHTML = t(building.name)
+            + ' <span class="status-timer">' + formatContractTime(remaining) + '</span>'
+            + '<span class="status-bar"><div style="width:' + pct + '%"></div></span>';
+    } else if (contractState.offers.length > 0) {
+        const nextIn = Math.max(0, contractState.nextRotationAt - now);
+        statusEl.className = 'game-status visible';
+        statusEl.innerHTML = '<span class="status-offers">' + contractState.offers.length + ' ' + t('contrat(s) propose(s)') + '</span>'
+            + ' \u00b7 ' + tf('nouveaux contrats dans {time}', { time: formatContractTime(nextIn) });
+    } else {
+        statusEl.className = 'game-status';
+        statusEl.textContent = '';
+    }
 }
 
 function renderContracts() {

@@ -82,6 +82,7 @@ const TRANSLATIONS = {
         'palier max': 'max tier',
         'Aucun contrat disponible': 'No contract available',
         'nouveaux contrats dans {time}': 'new contracts in {time}',
+        'contrat(s) propose(s)': 'contract(s) available',
         'Parts': 'Parts',
         'Pas assez de Parts': 'Not enough Parts',
         'jours': ' days',
