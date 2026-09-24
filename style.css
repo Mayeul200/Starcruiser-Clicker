@@ -918,7 +918,7 @@ body {
 }
 /* Astronaute : quitte la scène en marchant vers la gauche, démarche balancée */
 .astronaut-walking {
-    animation: astronautWalkOut 1.9s ease-in forwards !important;
+    animation: astronautWalkOut 1.1s ease-out forwards !important;
 }
 @keyframes astronautWalkOut {
     0% { transform: translateX(0) rotate(0deg); opacity: 1; }
