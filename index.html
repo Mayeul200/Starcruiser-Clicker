@@ -83,50 +83,21 @@
         </div>
     </div>
 
-    <!-- PLANETARY SURVEY MODAL -->
-    <div class="modal" id="planetary-survey-modal">
-        <div class="modal-content planetary-survey-modal">
+    <!-- CONTRACTS MODAL -->
+    <div class="modal" id="contracts-modal">
+        <div class="modal-content contracts-modal">
             <div class="modal-header">
-                <h2 data-i18n="🎰 Casino Planétaire">🎰 Casino Planétaire</h2>
+                <h2 data-i18n="📝 Contrats de Fabrication">📝 Contrats de Fabrication</h2>
                 <div class="modal-parts-counter"><span class="modal-parts-value">0</span> <span data-i18n="Parts">Parts</span> · +<span class="modal-parts-gain">0</span>/s</div>
-                <span class="close-button" onclick="closePlanetarySurvey()">&times;</span>
+                <span class="close-button" onclick="closeContracts()">&times;</span>
             </div>
             <div class="modal-body">
-                <!-- Écran de sélection de mise -->
-                <div class="survey-screen" id="survey-bet-screen">
-                    <div class="survey-intro" id="survey-intro">
-                        Choisis une carte et révèle un bonus ! Mode infini : encaisse ou remise à chaque tour.
-                    </div>
-                    <div class="survey-bet-options" id="survey-bet-options">
-                        <button class="survey-bet-btn" data-bet-type="1s">⏱️ <span data-i18n="1s de prod">1s de prod</span></button>
-                        <button class="survey-bet-btn" data-bet-type="30s">⏱️ <span data-i18n="30s de prod">30s de prod</span></button>
-                        <button class="survey-bet-btn" data-bet-type="5m">⏱️ <span data-i18n="5 min de prod">5 min de prod</span></button>
-                        <div class="survey-custom-bet">
-                            <input type="number" id="survey-custom-bet-input" placeholder="Mise libre" data-i18n-placeholder="Mise libre" min="1">
-                            <button class="survey-bet-btn" id="survey-custom-bet-btn">💰 <span data-i18n="Mise libre">Mise libre</span></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Écran de jeu (infini) -->
-                <div class="survey-screen" id="survey-play-screen" style="display:none;">
-                    <div class="survey-status">
-                        <div class="survey-status-item"><span data-i18n="Tour:">Tour:</span> <span id="survey-round">1</span></div>
-                        <div class="survey-status-item"><span data-i18n="Pot:">Pot:</span> <span id="survey-pot">0</span></div>
-                    </div>
-                    <div class="survey-intro" id="survey-play-intro" data-i18n="Choisis une planète !">Choisis une planète !</div>
-                    <div class="survey-cards" id="survey-cards"></div>
-                    <div class="survey-result" id="survey-result"></div>
-                    <div class="survey-actions">
-                        <button class="survey-action-btn collect" id="survey-collect-btn" onclick="surveyCollectWinnings()" style="display:none;">💰 <span data-i18n="Encaisser le pot">Encaisser le pot</span></button>
-                        <button class="survey-action-btn" id="survey-continue-btn" onclick="nextSurveyRound()" style="display:none;">🎲 <span data-i18n="Remiser (continuer)">Remiser (continuer)</span></button>
-                    </div>
-                </div>
+                <div class="contracts-intro" data-i18n="Accepte un contrat, remplis son quota avec le batiment cible dans le temps imparti, et gagne un bonus de production permanent sur ce batiment.">Accepte un contrat, remplis son quota avec le batiment cible dans le temps imparti, et gagne un bonus de production permanent sur ce batiment.</div>
+                <div id="contracts-list"></div>
             </div>
         </div>
     </div>
-
-<!-- CARD COLLECTION MODAL -->
+    <!-- CARD COLLECTION MODAL -->
     <div class="modal" id="card-collection-modal">
         <div class="modal-content card-collection-modal">
             <div class="modal-header">
@@ -249,11 +220,11 @@
             <div class="mini-games-section">
                 <h4 data-i18n="🎮 Mini-Jeux">🎮 Mini-Jeux</h4>
                 <div class="mini-games-container" id="mini-games-container">
-                    <div class="mini-game-card" onclick="openPlanetarySurvey()">
-                        <div class="game-icon">🎰</div>
-                        <div class="game-name" data-i18n="Casino Planétaire">Casino Planétaire</div>
-                        <div class="game-description" data-i18n="Choisis une carte et révèle un bonus !">Choisis une carte et révèle un bonus !</div>
-                        <div class="game-cost">💰 <span data-i18n="Mise variable">Mise variable</span></div>
+                    <div class="mini-game-card" onclick="openContracts()">
+                        <div class="game-icon">📝</div>
+                        <div class="game-name" data-i18n="Contrats de Fabrication">Contrats de Fabrication</div>
+                        <div class="game-description" data-i18n="Remplis des commandes pour booster tes batiments !">Remplis des commandes pour booster tes batiments !</div>
+                        <div class="game-cost">💰 <span data-i18n="Contrats payants">Contrats payants</span></div>
                     </div>
                     <div class="mini-game-card" onclick="openCardCollection()">
                         <div class="game-icon">📦</div>

@@ -364,12 +364,12 @@ function getTotalProductionMultiplier() {
 
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * autoMultiplier * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
 
 // Chaque upgrade de bâtiment double sa production (×2 par palier),
@@ -544,6 +544,12 @@ function saveGame() {
             purchased: part.purchased
         })),
         startupBonusApplied: startupBonusApplied,
+        contractState: {
+            offers: contractState.offers,
+            active: contractState.active,
+            buildingBonuses: contractState.buildingBonuses,
+            nextRotationAt: contractState.nextRotationAt
+        },
         lastSave: Date.now(),
         gameStartTime: gameStartTime,
         version: SAVE_VERSION
@@ -606,6 +612,12 @@ function loadGame() {
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
         gameStartTime = parsed.gameStartTime || 0;
         startupBonusApplied = !!parsed.startupBonusApplied;
+        if (parsed.contractState) {
+            contractState.offers = parsed.contractState.offers || [];
+            contractState.active = parsed.contractState.active || null;
+            contractState.buildingBonuses = parsed.contractState.buildingBonuses || {};
+            contractState.nextRotationAt = parsed.contractState.nextRotationAt || 0;
+        }
 
         if (parsed.cardCollection) {
             cardCollection = {...parsed.cardCollection};
@@ -1456,6 +1468,7 @@ function confirmSpaceMapAndReset() {
     buildingUpgradeCosts = {};
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
+    resetContractState();
     
     updateDisplay();
     saveGame();
@@ -2729,347 +2742,224 @@ function updateBonusTimer() {
 }
 
 // ============================================
-// PLANETARY SURVEY MINI-GAME
+// CONTRATS DE FABRICATION (mini-jeu)
+// On achete un contrat ciblant un batiment precise; si on produit le quota
+// de Parts avec CE batiment dans le temps imparti, il gagne un bonus de
+// production permanent (+75% cumulable). Rotation des contrats toutes les
+// 5 minutes. Les contrats ciblent en priorite les batiments negliges.
 // ============================================
+const CONTRACT_ROTATION_MS = 5 * 60 * 1000;
+const CONTRACT_DURATION_MS = 3 * 60 * 1000;
+const CONTRACT_QUOTA_RATIO = 1.35;
+const CONTRACT_REWARD_MULT = 0.75;
+const CONTRACT_REWARD_MAX_STACKS = 10;
+const CONTRACT_PRIME_SECONDS = 180;
+const CONTRACT_PRICE_PPS_SECONDS = 60;
 
-const SURVEY_BET_OPTIONS = [1, 10, 100];
-
-// Mises calquées sur la production: 1s, 30s, 5min
-function getSurveyBetAmount(type) {
-    const pps = Math.max(1, partsPerSecond);
-    switch (type) {
-        case '1s': return Math.max(1, Math.floor(pps * 1));
-        case '30s': return Math.max(1, Math.floor(pps * 30));
-        case '5m': return Math.max(1, Math.floor(pps * 300));
-        default: return Math.max(1, Math.floor(pps * 1));
-    }
-}
-
-// Récompenses possibles (poids relatif). Les multiplicateurs de Parts sont appliqués à la mise.
-const SURVEY_REWARDS = [
-    { type: 'parts', weight: 35, minMult: 1, maxMult: 3, icon: '💰', label: 'Parts gagnés', imgPath: 'images/cards/casino/parts.png' },
-    { type: 'multiplier', weight: 20, minMult: 2, maxMult: 4, duration: 30000, icon: '⭐', label: 'Multiplicateur temporaire', imgPath: 'images/cards/casino/multiplier.png' },
-    { type: 'bigParts', weight: 8, minMult: 5, maxMult: 10, icon: '💎', label: 'Gros lot de Parts', imgPath: 'images/cards/casino/bigParts.png' },
-    { type: 'nothing', weight: 37, icon: '🌑', label: 'Pot divisé par 2', imgPath: 'images/cards/casino/nothing.png' }
-];
-
-// Malus: apparaît à partir du palier 1 (tour 6+), de plus en plus avec la difficulté
-const SURVEY_MALUS = [
-    { type: 'bust', weight: 15, icon: '💀', label: 'Tout perdu !', imgPath: 'images/cards/casino/bust.png' },
-    { type: 'halve', weight: 20, icon: '⚔️', label: 'Pot réduit de moitié', imgPath: 'images/cards/casino/halve.png' }
-];
-
-// Palier de difficulté (tous les 5 tours): 0 = tour 1-5, 1 = tour 6-10, 2 = tour 11-15, etc.
-function getSurveyDifficulty(round) {
-    return Math.floor((round - 1) / 5);
-}
-// Nombre de cartes: 3 + palier (capé à 8)
-function getSurveyCardCount(round) {
-    return Math.min(8, 3 + getSurveyDifficulty(round));
-}
-// Probabilité de tirer un malus augmente avec la difficulté (0 au palier 0)
-function getSurveyMalusChance(round) {
-    const diff = getSurveyDifficulty(round);
-    return diff === 0 ? 0 : Math.min(0.55, 0.08 * diff);
-}
-// Bonus de puissance des récompenses selon le palier
-function getSurveyRewardMultiplier(round) {
-    const diff = getSurveyDifficulty(round);
-    return 1 + diff * 0.5;
-}
-// Durée du multiplicateur temporaire selon le palier
-function getSurveyMultiplierDuration(round) {
-    const diff = getSurveyDifficulty(round);
-    return 30000 + diff * 10000;
-}
-
-let surveyState = {
-    bet: 0,
-    round: 0,
-    pot: 0,
-    currentReward: null,
-    canChoose: false,
-    doubling: false
+let contractState = {
+    offers: [],
+    nextRotationAt: 0,
+    active: null,
+    buildingBonuses: {}
 };
 
-function openPlanetarySurvey() {
-    document.getElementById('planetary-survey-modal').classList.add('active');
-    resetPlanetarySurvey();
+function getContractEligibleBuildings() {
+    return BUILDINGS.filter(b => b.count > 0 && b.unlockCondition());
 }
 
-function closePlanetarySurvey() {
-    document.getElementById('planetary-survey-modal').classList.remove('active');
-}
-
-function resetPlanetarySurvey() {
-    surveyState = { bet: 0, round: 0, pot: 0, currentReward: null, canChoose: false, doubling: false };
-    showSurveyScreen('bet');
-    document.getElementById('survey-intro').textContent = t('Choisis une carte et révèle un bonus ! Mode infini : encaisse ou remise à chaque tour.');
-    updateBetButtons();
-}
-
-function updateBetButtons() {
-    document.querySelectorAll('.survey-bet-btn[data-bet-type]').forEach(btn => {
-        const amount = getSurveyBetAmount(btn.dataset.betType);
-        const label = btn.dataset.betType === '1s' ? t('1s de prod') : btn.dataset.betType === '30s' ? t('30s de prod') : t('5 min de prod');
-        btn.textContent = `⏱️ ${label} (${formatNumber(amount)})`;
-        btn.disabled = score < amount;
+function pickContractTargets() {
+    const eligible = getContractEligibleBuildings();
+    if (eligible.length === 0) return [];
+    const totalPps = Math.max(1e-9, partsPerSecond);
+    const scored = eligible.map(b => {
+        const share = calculateBuildingGain(b) / totalPps;
+        const stacks = contractState.buildingBonuses[b.id] || 0;
+        const targetScore = (1 - share) + (CONTRACT_REWARD_MAX_STACKS - stacks) * 0.02 + Math.random() * 0.3;
+        return { b, targetScore, share };
     });
+    scored.sort((x, y) => y.targetScore - x.targetScore);
+    const n = Math.min(3, scored.length);
+    return scored.slice(0, n).map(s => s.b);
 }
 
-function showSurveyScreen(screen) {
-    document.getElementById('survey-bet-screen').style.display = screen === 'bet' ? 'block' : 'none';
-    document.getElementById('survey-play-screen').style.display = screen === 'play' ? 'block' : 'none';
+function getContractPrice() {
+    return Math.max(50, Math.floor(partsPerSecond * CONTRACT_PRICE_PPS_SECONDS));
 }
 
-function startPlanetarySurveyWithBet(bet) {
-    bet = Math.max(1, Math.floor(bet));
-    if (score < bet) {
-        showToast(`❌ ${t("Pas assez de pièces ! Il faut")} ${formatNumber(bet)} ${t("Parts")}.`);
+function generateContractOffers() {
+    const targets = pickContractTargets();
+    const now = Date.now();
+    contractState.offers = targets.map(b => {
+        const ppsBuilding = calculateBuildingGain(b);
+        const quota = Math.max(10, Math.floor(ppsBuilding * (CONTRACT_DURATION_MS / 1000) * CONTRACT_QUOTA_RATIO));
+        return {
+            id: 'contract-' + b.id + '-' + now + '-' + Math.floor(Math.random() * 1e6),
+            buildingId: b.id,
+            price: getContractPrice(),
+            quota: quota,
+            expiresAt: now + CONTRACT_DURATION_MS
+        };
+    });
+    contractState.nextRotationAt = now + CONTRACT_ROTATION_MS;
+    if (typeof renderContracts === 'function' && document.getElementById('contracts-modal').classList.contains('active')) {
+        renderContracts();
+    }
+}
+
+function openContracts() {
+    document.getElementById('contracts-modal').classList.add('active');
+    renderContracts();
+}
+
+function closeContracts() {
+    document.getElementById('contracts-modal').classList.remove('active');
+}
+
+function acceptContract(offerId) {
+    const offer = contractState.offers.find(o => o.id === offerId);
+    if (!offer) return;
+    if (contractState.active) {
+        showToast('\u26a0\ufe0f ' + t('Un contrat a la fois !'));
         return;
     }
-    score -= bet;
-    updateDisplay();
-
-    surveyState.bet = bet;
-    surveyState.round = 0;
-    surveyState.pot = bet;
-    surveyState.doubling = false;
-
-    showSurveyScreen('play');
-    nextSurveyRound();
-}
-
-function startPlanetarySurveyFromType(type) {
-    startPlanetarySurveyWithBet(getSurveyBetAmount(type));
-}
-
-function startPlanetarySurveyCustom() {
-    const input = document.getElementById('survey-custom-bet-input');
-    const val = parseInt(input.value);
-    if (!val || val < 1) {
-        showToast('❌ ' + t('Entre une mise valide.'));
+    if (score < offer.price) {
+        showToast('\u274c ' + t('Pas assez de Parts'));
         return;
     }
-    input.value = '';
-    startPlanetarySurveyWithBet(val);
+    score -= offer.price;
+    partsSinceLaunch = Math.max(0, partsSinceLaunch - offer.price);
+    const building = findBuildingById(offer.buildingId);
+    contractState.active = {
+        offerId: offer.id,
+        buildingId: offer.buildingId,
+        quota: offer.quota,
+        progress: 0,
+        startTotal: totalGeneratedByBuilding[offer.buildingId] || 0,
+        acceptedAt: Date.now(),
+        expiresAt: Date.now() + CONTRACT_DURATION_MS
+    };
+    contractState.offers = contractState.offers.filter(o => o.id !== offer.id);
+    showToast('\u2705 ' + tf('Contrat accepte : {building} !', { building: t(building.name) }), building.imgPath);
+    renderContracts();
+    saveGame();
 }
 
-function nextSurveyRound() {
-    surveyState.round++;
-    surveyState.canChoose = true;
-    surveyState.currentReward = null;
-
-    const difficulty = getSurveyDifficulty(surveyState.round);
-    const cardCount = getSurveyCardCount(surveyState.round);
-    const malusChance = getSurveyMalusChance(surveyState.round);
-
-    document.getElementById('survey-round').textContent = surveyState.round;
-    document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
-    const diffLabel = difficulty > 0 ? ` (${t('Palier')} ${difficulty + 1})` : '';
-    document.getElementById('survey-play-intro').textContent = `${t('Tour')} ${surveyState.round}${diffLabel} — ${t('Choisis une carte !')}`;
-    document.getElementById('survey-result').textContent = '';
-    document.getElementById('survey-result').className = 'survey-result';
-    document.getElementById('survey-collect-btn').style.display = 'none';
-    document.getElementById('survey-continue-btn').style.display = 'none';
-
-    const container = document.getElementById('survey-cards');
-    container.innerHTML = '';
-
-    for (let i = 0; i < cardCount; i++) {
-        const card = document.createElement('div');
-        card.className = 'survey-card';
-        card.innerHTML = `
-            <div class="survey-card-inner">
-                <div class="survey-card-front"><img src="images/cards/backs/card-back.png" class="survey-card-img" alt="Carte"></div>
-                <div class="survey-card-back">
-                    <div class="reward-icon">❓</div>
-                    <div class="reward-text">?</div>
-                </div>
-            </div>
-        `;
-        // Tirer un malus selon la probabilité, sinon une récompense
-        const isMalus = Math.random() < malusChance;
-        card.dataset.reward = JSON.stringify(isMalus ? pickSurveyMalus() : pickSurveyReward());
-        card.dataset.isMalus = isMalus ? '1' : '0';
-        card.onclick = () => revealSurveyCard(card);
-        container.appendChild(card);
+function updateContractProgress() {
+    const c = contractState.active;
+    if (!c) return;
+    const totalNow = totalGeneratedByBuilding[c.buildingId] || 0;
+    c.progress = Math.max(0, totalNow - c.startTotal);
+    if (c.progress >= c.quota) {
+        completeContract();
     }
 }
 
-function pickSurveyMalus() {
-    const totalWeight = SURVEY_MALUS.reduce((sum, m) => sum + m.weight, 0);
-    let roll = Math.random() * totalWeight;
-    for (const malus of SURVEY_MALUS) {
-        roll -= malus.weight;
-        if (roll <= 0) return malus;
+function completeContract() {
+    const c = contractState.active;
+    if (!c) return;
+    const building = findBuildingById(c.buildingId);
+    const stacks = (contractState.buildingBonuses[c.buildingId] || 0);
+    const maxed = stacks >= CONTRACT_REWARD_MAX_STACKS;
+    if (!maxed) {
+        contractState.buildingBonuses[c.buildingId] = stacks + 1;
     }
-    return SURVEY_MALUS[0];
+    const prime = Math.floor(partsPerSecond * CONTRACT_PRIME_SECONDS);
+    score += prime;
+    partsSinceLaunch += prime;
+    const mult = getContractBuildingMultiplier(c.buildingId);
+    showToast('\U0001F9F1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
+    contractState.active = null;
+    checkTrophies();
+    saveGame();
 }
 
-function pickSurveyReward() {
-    const diff = getSurveyDifficulty(surveyState.round);
-    const adjusted = SURVEY_REWARDS.map(r => {
-        let w = r.weight;
-        if (r.type === 'parts') w = r.weight + (diff === 0 ? 18 : Math.max(0, 10 - diff));
-        else if (r.type === 'bigParts') w = r.weight + diff * 4;
-        else if (r.type === 'multiplier') w = r.weight + diff * 3;
-        else if (r.type === 'nothing') w = r.weight + diff * 6;
-        return { ...r, weight: Math.max(1, w) };
-    });
-    const totalWeight = adjusted.reduce((sum, r) => sum + r.weight, 0);
-    let roll = Math.random() * totalWeight;
-    for (const reward of adjusted) {
-        roll -= reward.weight;
-        if (roll <= 0) return reward;
-    }
-    return adjusted[0];
+function failContract() {
+    const c = contractState.active;
+    if (!c) return;
+    const building = findBuildingById(c.buildingId);
+    showToast('\u23f3 ' + tf('Contrat echoue pour {building}...', { building: t(building.name) }), building.imgPath);
+    contractState.active = null;
+    saveGame();
 }
 
-function revealSurveyCard(chosenCard) {
-    if (!surveyState.canChoose) return;
-    surveyState.canChoose = false;
+function getContractBuildingMultiplier(buildingId) {
+    const stacks = contractState.buildingBonuses[buildingId] || 0;
+    return Math.pow(1 + CONTRACT_REWARD_MULT, stacks);
+}
 
-    const allCards = document.querySelectorAll('.survey-card');
-    allCards.forEach(card => {
-        card.classList.add('disabled');
-        card.onclick = null;
-    });
+function tickContracts() {
+    const now = Date.now();
+    if (now >= contractState.nextRotationAt) {
+        generateContractOffers();
+    }
+    if (contractState.active) {
+        updateContractProgress();
+        if (contractState.active && now >= contractState.active.expiresAt) {
+            failContract();
+        }
+    }
+    if (document.getElementById('contracts-modal').classList.contains('active')) {
+        renderContracts();
+    }
+}
 
-    const reward = JSON.parse(chosenCard.dataset.reward);
-    surveyState.currentReward = reward;
-
-    chosenCard.classList.add('flipped');
-    if (chosenCard.dataset.isMalus === '1') chosenCard.classList.add('malus');
-    displayRewardOnCard(chosenCard, reward);
-
-    // Révéler les autres cartes
-    setTimeout(() => {
-        allCards.forEach(card => {
-            if (card !== chosenCard) {
-                const otherReward = JSON.parse(card.dataset.reward);
-                card.classList.add('flipped');
-                if (card.dataset.isMalus === '1') card.classList.add('malus');
-                displayRewardOnCard(card, otherReward);
-            }
+function renderContracts() {
+    const modal = document.getElementById('contracts-modal');
+    if (!modal.classList.contains('active')) return;
+    const listEl = document.getElementById('contracts-list');
+    if (!listEl) return;
+    const now = Date.now();
+    let html = '';
+    if (contractState.active) {
+        const c = contractState.active;
+        const building = findBuildingById(c.buildingId);
+        const remaining = Math.max(0, c.expiresAt - now);
+        const pct = Math.min(100, (c.progress / c.quota) * 100);
+        html += '<div class="contract-card active">'
+            + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div><div class="contract-title">' + t(building.name) + '</div>'
+            + '<div class="contract-sub">' + t('Contrat en cours') + '</div></div></div>'
+            + '<div class="contract-progress"><div style="width:' + pct + '%"></div></div>'
+            + '<div class="contract-meta"><span>' + formatNumber(Math.floor(c.progress)) + ' / ' + formatNumber(c.quota) + ' ' + t('Parts') + '</span>'
+            + '<span class="contract-timer">' + formatContractTime(remaining) + '</span></div>'
+            + '</div>';
+    } else if (contractState.offers.length === 0) {
+        const nextIn = Math.max(0, contractState.nextRotationAt - now);
+        html += '<div class="contract-empty">' + t('Aucun contrat disponible') + ' \u2014 ' + tf('nouveaux contrats dans {time}', { time: formatContractTime(nextIn) }) + '</div>';
+    } else {
+        contractState.offers.forEach(offer => {
+            const building = findBuildingById(offer.buildingId);
+            const stacks = contractState.buildingBonuses[offer.buildingId] || 0;
+            const rewardMult = getContractBuildingMultiplier(offer.buildingId) * (1 + CONTRACT_REWARD_MULT);
+            const affordable = score >= offer.price;
+            html += '<div class="contract-card">'
+                + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div>'
+                + '<div class="contract-title">' + t(building.name) + '</div>'
+                + '<div class="contract-sub">' + tf('Produis {quota} Parts avec ce batiment en 3 min', { quota: formatNumber(offer.quota) }) + '</div></div></div>'
+                + '<div class="contract-reward">+' + Math.round(CONTRACT_REWARD_MULT * 100) + '% ' + t('production permanente') + ' (x' + rewardMult.toFixed(2) + ')'
+                + (stacks > 0 ? ' \u00b7 ' + t('deja') + ' x' + getContractBuildingMultiplier(offer.buildingId).toFixed(2) : '')
+                + (stacks >= CONTRACT_REWARD_MAX_STACKS ? ' \u00b7 ' + t('palier max') : '')
+                + '</div>'
+                + '<button class="contract-buy-btn" onclick="acceptContract(\'' + offer.id + '\')" ' + (affordable ? '' : 'disabled') + '>'
+                + '\U0001F4B0 ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
+                + '</div>';
         });
-    }, 600);
-
-    // Calculer l'effet sur le pot
-    const result = document.getElementById('survey-result');
-    if (reward.type === 'bust') {
-        surveyState.pot = 0;
-        result.textContent = '💀 ' + t('TOUT PERDU ! Le pot est vide.');
-        result.className = 'survey-result miss';
-    } else if (reward.type === 'halve') {
-        surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
-        result.textContent = '⚔️ ' + t('Malus ! Le pot est réduit de moitié.');
-        result.className = 'survey-result miss';
-    } else if (reward.type === 'nothing') {
-        surveyState.pot = Math.max(0, Math.floor(surveyState.pot * 0.5));
-        result.textContent = '🌑 ' + t('Pot divisé par 2 !');
-        result.className = 'survey-result miss';
-    } else if (reward.type === 'parts' || reward.type === 'bigParts') {
-        const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
-        const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        const mult = Math.max(2, Math.floor(baseMult * rewardBonus));
-        surveyState.pot = Math.floor(surveyState.pot * mult);
-        result.textContent = `${reward.icon} ×${mult} ! ${t('Le pot augmente !')}`;
-        result.className = 'survey-result win';
-    } else if (reward.type === 'multiplier') {
-        const rewardBonus = getSurveyRewardMultiplier(surveyState.round);
-        const baseMult = reward.minMult + Math.floor(Math.random() * (reward.maxMult - reward.minMult + 1));
-        const mult = Math.max(2, Math.floor(baseMult * rewardBonus));
-        surveyState.pot = Math.floor(surveyState.pot * mult);
-        result.textContent = `${reward.icon} ×${mult} ! ${t('Bonus de production encaissé.')}`;
-        result.className = 'survey-result win';
-        applySurveyMultiplier(mult, getSurveyMultiplierDuration(surveyState.round));
     }
-
-    document.getElementById('survey-pot').textContent = formatNumber(surveyState.pot);
-    updateDisplay();
-
-    // Proposer encaisser ou remiser (mode infini)
-    setTimeout(() => {
-        if (surveyState.pot > 0) {
-            document.getElementById('survey-collect-btn').style.display = 'block';
-            document.getElementById('survey-continue-btn').style.display = 'block';
-        } else {
-            // Pot vide: partie perdue, retour à la mise
-            document.getElementById('survey-result').textContent = '💔 ' + t('Partie perdue... le pot est vide.');
-            document.getElementById('survey-result').className = 'survey-result miss';
-            setTimeout(() => resetPlanetarySurvey(), 1800);
-        }
-    }, 1200);
+    listEl.innerHTML = html;
 }
 
-function displayRewardOnCard(card, reward) {
-    const back = card.querySelector('.survey-card-back');
-    const iconEl = back.querySelector('.reward-icon');
-    iconEl.innerHTML = reward.imgPath
-        ? `<img src="${reward.imgPath}" class="survey-reward-img" alt="${reward.label}">`
-        : reward.icon;
-    back.querySelector('.reward-text').textContent = t(reward.label);
-    const existing = back.querySelector('.reward-amount');
-    if (existing) existing.remove();
+function formatContractTime(ms) {
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return m + ':' + (r < 10 ? '0' : '') + r;
 }
 
-function surveyCollectWinnings() {
-    if (surveyState.pot > 0) {
-        score += surveyState.pot;
-        partsSinceLaunch += surveyState.pot;
-        showToast(`💰 ${formatNumber(surveyState.pot)} ${t('Parts')} !`);
-        surveyState.pot = 0;
-        updateDisplay();
-    }
-    resetPlanetarySurvey();
+function resetContractState() {
+    contractState.offers = [];
+    contractState.active = null;
+    contractState.buildingBonuses = {};
+    contractState.nextRotationAt = 0;
 }
-
-function rebuildAutoMultipliers() {
-    resetMultipliers();
-    activeRandomBonuses.forEach(bonus => {
-        if ((bonus.effect === 'auto' || bonus.effect === 'both' || bonus.effect === 'multiplier') && bonus.multiplier) {
-            autoMultipliers.push(bonus.multiplier);
-        }
-        if ((bonus.effect === 'click' || bonus.effect === 'both') && bonus.multiplier) {
-            clickMultipliers.push(bonus.multiplier);
-        }
-    });
-    updateAutoMultiplier();
-    updateClickMultiplier();
-}
-
-function applySurveyMultiplier(mult, duration) {
-    const bonusId = 'survey-mult-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
-    activeRandomBonuses.push({
-        id: bonusId,
-        effect: 'multiplier',
-        multiplier: mult,
-        endTime: Date.now() + duration
-    });
-    rebuildAutoMultipliers();
-    updateDisplay();
-    setTimeout(() => {
-        activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonusId);
-        rebuildAutoMultipliers();
-        updateDisplay();
-    }, duration);
-}
-
-// Attacher les boutons de mise
-(function attachSurveyBetButtons() {
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.survey-bet-btn[data-bet-type]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                startPlanetarySurveyFromType(btn.dataset.betType);
-            });
-        });
-        const customBtn = document.getElementById('survey-custom-bet-btn');
-        if (customBtn) {
-            customBtn.addEventListener('click', startPlanetarySurveyCustom);
-        }
-    });
-})();
 
 // ============================================
 // CARD COLLECTION MINI-GAME
@@ -3484,6 +3374,7 @@ scheduleBonusSpawn();
 let lastGameTick = Date.now();
 
 setInterval(gameLoop, GAME_LOOP_INTERVAL_MS);
+setInterval(tickContracts, 500);
 setInterval(() => {
     if (Date.now() - lastSaveTime > SAVE_INTERVAL_MS) {
         saveGame();
