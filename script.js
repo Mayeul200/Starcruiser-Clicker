@@ -1609,9 +1609,9 @@ function getDistanceBonus() {
 }
 function getClickPowerBonus() {
     let mult = 1;
-    if (getGalacticUpgradeLevel('click1') > 0) mult *= 2;
-    if (getGalacticUpgradeLevel('click3') > 0) mult *= 2.5;
-    if (getGalacticUpgradeLevel('click5') > 0) mult *= 3;
+    if (getGalacticUpgradeLevel('click1') > 0) mult *= 1.5;
+    if (getGalacticUpgradeLevel('click3') > 0) mult *= 1.75;
+    if (getGalacticUpgradeLevel('click5') > 0) mult *= 2;
     return mult;
 }
 function getCritChance() {
@@ -3110,11 +3110,11 @@ const GALACTIC_UPGRADES = [
     { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '+1 carte dans tous les boosters.',     baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll5'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
-    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x2 puissance de clic.',                baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2 },
-    { id: 'click2', branch: 'click', tier: 2, name: 'Frappe critique',       desc: '+5% chance de coup critique (x3).',     baseCost: 5,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click1'] },
-    { id: 'click3', branch: 'click', tier: 3, name: 'Main cybern\u00e9tique',     desc: 'x2.5 puissance de clic.',               baseCost: 25,  costMult: 1.0, maxLevel: 1, effectPerLevel: 2.5, requires: ['click2'] },
-    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+20% chance de coup critique (x3).',    baseCost: 60,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['click3'] },
-    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x3 puissance de clic.',                 baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 3, requires: ['click4'] },
+    { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x1.5 puissance de clic.',              baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1.5 },
+    { id: 'click2', branch: 'click', tier: 2, name: 'Frappe critique',       desc: '+2.5% chance de coup critique (x3).',   baseCost: 5,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.025, requires: ['click1'] },
+    { id: 'click3', branch: 'click', tier: 3, name: 'Main cybern\u00e9tique',     desc: 'x1.75 puissance de clic.',             baseCost: 25,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1.75, requires: ['click2'] },
+    { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+10% chance de coup critique (x3).',    baseCost: 60,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['click3'] },
+    { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x2 puissance de clic.',                baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['click4'] },
     { id: 'click6', branch: 'click', tier: 6, name: 'Appel cosmique',         desc: '5% de chance de d\u00e9clencher une com\u00e8te \u00e0 chaque clic.', baseCost: 400, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click5'] },
     // === BRANCHE HORS-LIGNE (5) - production pendant l'absence ===
     { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 1h apr\u00e8s fermeture du jeu.',  baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1 },
