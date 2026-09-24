@@ -28,7 +28,6 @@ const TRANSLATIONS = {
         'Poussière d\'Étoiles (prestige)': 'Stardust (prestige)',
         'PE gagnées si lancement': 'Stardust gained on launch',
         'Lancer la fusée': 'Launch the rocket',
-        // --- Mini-jeux ---
         'Mini-Jeux': 'Mini-Games',
         'Choisis une carte et révèle un bonus !': 'Pick a card and reveal a bonus!',
         'Mise variable': 'Variable bet',
@@ -440,7 +439,6 @@ const TRANSLATIONS = {
         'Acheter le maximum possible': 'Buy the maximum possible',
         // --- Clés HTML avec emoji ---
         '🌌 Progression Spatiale': '🌌 Space Progress',
-        '🎮 Mini-Jeux': '🎮 Mini-Games',
         '📦 Collection de Cartes': '📦 Card Collection',
         '🚀 Mission Résultats': '🚀 Mission Results',
     }
