@@ -417,7 +417,7 @@ body {
     border-radius: var(--radius);
     padding: 12px;
     display: grid;
-    grid-template-columns: 1fr 150px 1fr;
+    grid-template-columns: minmax(96px, 1.1fr) minmax(48px, 1fr) minmax(112px, 1.4fr);
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
@@ -448,6 +448,9 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0;
+    max-width: 34%;
+    overflow: hidden;
+    min-width: 0;
 }
 .building-name-icon {
     display: flex;
@@ -459,6 +462,8 @@ body {
     font-weight: 500;
     color: var(--text);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .building-image {
@@ -472,6 +477,7 @@ body {
     pointer-events: none;
     display: block;
     filter: none;
+    flex-shrink: 1;
 }
 .building-center {
     align-self: stretch;
@@ -522,11 +528,19 @@ body {
     font-size: 0.9rem;
     color: var(--text-dark);
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 .building-production {
     font-size: 0.9rem;
     color: var(--accent-light);
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 .building-item button {
     width: 100%;
@@ -538,7 +552,10 @@ body {
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s;
-    min-width: 80px;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .building-item button:hover:not(:disabled) {
     background: var(--primary-light);
@@ -3042,6 +3059,46 @@ body {
 /* Tres petits ecrans : la medaille se reduit pour ne pas toucher la fusee */
 @media (max-width: 350px) {
     .medal { width: 112px; height: 112px; }
+}
+
+/* Ecrans desktop etroits / tablette large (1025-1280) : panneaux lateraux
+   elargis et contenus compacts pour eviter tout debordement des cadres */
+@media (min-width: 1025px) and (max-width: 1520px) {
+    .main-grid { grid-template-columns: 25.5% 49% 25.5%; }
+    .left-panel { padding: 10px; }
+    .right-panel { padding: 0 8px 12px; }
+    .buildings-header { gap: 4px; padding: 0 2px; }
+    .buildings-header h3 { font-size: 0.9rem; white-space: nowrap; }
+    .multiplier-btn { padding: 4px 7px; font-size: 0.75rem; }
+    .building-item { padding: 10px; }
+    .building-item button { padding: 8px 6px; font-size: 0.78rem; }
+    .building-name { font-size: 0.85rem; }
+    .building-ownership { font-size: 0.75rem; }
+    .building-production { font-size: 0.75rem; }
+    .building-image { max-height: 60px; }
+    .mini-game-card { padding: 8px 10px; gap: 8px; }
+    .mini-game-card .game-icon { font-size: 1.8rem; }
+    .mini-game-card .game-icon img { max-width: 40px; max-height: 60px; }
+    .mini-game-card .game-name { font-size: 0.82rem; }
+    .mini-game-card .game-description { font-size: 0.72rem; }
+    .galactic-shop-btn { font-size: 0.8rem; }
+    .galactic-shop-label { font-size: 0.8rem; }
+    .stat-label, .stat-value { font-size: 0.75rem; }
+    .left-panel h3 { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
+    .building-item {
+        grid-template-columns: 72px 1fr;
+        grid-template-areas:
+            "icon info"
+            "icon buy";
+        grid-template-rows: auto auto;
+        row-gap: 6px;
+        column-gap: 10px;
+    }
+    .building-left { grid-area: info; display: flex; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; }
+    .building-center { grid-area: icon; align-self: stretch; max-width: none; min-width: 0; }
+    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
+    .building-item button { flex: 1; }
+    .building-image { max-height: 72px; }
 }
 
 /* Desktop : nav mobile masquée */
