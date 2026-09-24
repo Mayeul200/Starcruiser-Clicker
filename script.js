@@ -372,6 +372,12 @@ function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
     return building.gain * autoMultiplier * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
+// Production hors boost temporaire (autoMultiplier exclu) : base de calcul des quotas
+// de contrat, pour qu'une offre generee pendant un x5 reste atteignable ensuite.
+function calculateBuildingBaseGain(building) {
+    const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
+    return building.gain * building.count * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+}
 
 // Chaque upgrade de bâtiment double sa production (×2 par palier),
 // comme les tiered upgrades de Cookie Clicker.
@@ -2920,7 +2926,7 @@ function generateContractOffers() {
     const targets = pickContractTargets();
     const now = Date.now();
     contractState.offers = targets.map(b => {
-        const ppsBuilding = calculateBuildingGain(b);
+        const ppsBuilding = calculateBuildingBaseGain(b);
         const quota = Math.max(10, Math.floor(ppsBuilding * (CONTRACT_DURATION_MS / 1000) * CONTRACT_QUOTA_RATIO));
         return {
             id: 'contract-' + b.id + '-' + now + '-' + Math.floor(Math.random() * 1e6),
