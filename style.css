@@ -2956,6 +2956,48 @@ body {
 
     /* Sur mobile, pas de tooltip CSS au survol (pas de hover) */
     .building-item:hover::after { opacity: 0; visibility: hidden; }
+
+    /* --- Corrections ergonomie mobile --- */
+    /* Titres de sections : jamais plus larges que l'ecran */
+    .left-panel h3, .right-panel h3, .center-panel h3 {
+        max-width: 100%;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    /* Cibles tactiles >= 44px (recommandation Apple/Google) */
+    .multiplier-btn { min-height: 40px; padding: 8px 12px; font-size: 0.85rem; }
+    .building-item button { min-height: 44px; padding: 10px 8px; font-size: 0.85rem; }
+    .rocket-part-btn { min-height: 36px; padding: 8px 6px; font-size: 0.75rem; }
+    .galactic-shop-btn { min-height: 44px; }
+    .contract-buy-btn { min-height: 44px; padding: 12px 18px; font-size: 0.95rem; align-self: stretch; }
+    .modal-button { min-height: 48px; }
+    .control-button { width: 42px; height: 42px; }
+    /* Minimap : km et noms lisibles */
+    .mini-space-map .planet-distance { font-size: 0.6rem; }
+    .mini-space-map .planet-name { font-size: 0.65rem; }
+    /* Cartes mini-jeux : texte a taille lisible */
+    .mini-game-card .game-name { font-size: 0.85rem; }
+    .mini-game-card .game-cost { font-size: 0.75rem; }
+    /* Compteurs : chiffres legèrement plus grands */
+    .counter { font-size: 1rem; }
+    .counter-label { font-size: 0.7rem; }
+    /* Boutons de fermeture de modals plus faciles a toucher */
+    .close-button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+    /* Boutons langue et params */
+    .lang-btn { min-height: 48px; }
+    /* Titres de modals : cedent la place au bouton fermer, jamais de debordement */
+    .modal-header h2 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .close-button { flex-shrink: 0; }
+    /* Cartes mini-jeux : jamais plus larges que l'ecran */
+    .mini-games-container { max-width: 100%; box-sizing: border-box; }
+    .mini-game-card { min-width: 0; }
+    .game-info { min-width: 0; overflow: hidden; }
+    /* km de la minimap legèrement plus grands (>= 10px) */
+    .mini-space-map .planet-distance { font-size: 0.625rem; }
 }
 
 /* Petits écrans (<480px) : resserrage supplémentaire */
