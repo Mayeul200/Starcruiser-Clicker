@@ -3457,21 +3457,19 @@ function applySceneScale() {
     const sceneHeight = scene.clientHeight;
     const sceneWidth = scene.clientWidth;
     if (!sceneHeight || !sceneWidth) return;
-    // Repère de la fusée dans la scène (positions px fixes des pièces)
+    // Repère de la fusée dans la scène (positions px fixes des pièces).
+    // La fusée est ancrée sur la ligne de sol : sa base est posée à PAD du bas
+    // à toutes les tailles d'écran, et son échelle s'adapte à la scène
+    // (plus de palier desktop/mobile : une seule règle continue).
     const ROCKET_TOP = 205;
     const ROCKET_BASE = 686;
+    const ROCKET_WIDTH = 420;
     const PAD = 12;
-    // Scène assez grande : layout d'origine inchangé (desktop)
-    if (sceneHeight >= ROCKET_BASE + PAD && sceneWidth >= 420) {
-        container.style.transform = '';
-        return;
-    }
     const rocketHeight = ROCKET_BASE - ROCKET_TOP;
     const fitY = (sceneHeight - PAD * 2) / rocketHeight;
-    const fitX = (sceneWidth - PAD * 2) / 420;
+    const fitX = (sceneWidth - PAD * 2) / ROCKET_WIDTH;
     const scale = Math.min(1, fitY, fitX);
-    // Origine en haut au centre ; on place la base de la fusée
-    // juste au-dessus du bas de la scène.
+    // Origine en haut au centre ; la base de la fusée reste calée sur le sol.
     const ty = sceneHeight - PAD - scale * ROCKET_BASE;
     container.style.transformOrigin = '50% 0';
     container.style.transform = 'translateY(' + ty + 'px) scale(' + scale + ')';
@@ -3491,8 +3489,9 @@ function initMobileNav() {
             relocateBuildingProductions();
             if (isMobileLayout()) {
                 setMobileView(mobileActiveView);
-                applySceneScale();
             }
+            // La scène se recale à toutes les tailles d'écran (desktop inclus)
+            applySceneScale();
         }, 150);
     });
     window.addEventListener('orientationchange', () => {
@@ -3558,6 +3557,9 @@ window.onload = function() {
         gameStartTime = Date.now();
     }
     initDebugMode();
+    // Recalage de la scene une fois les polices/images stabilisees :
+    // la hauteur de la top-bar peut encore changer au premier rendu.
+    setTimeout(applySceneScale, 100);
 };
 
 // ============================================
