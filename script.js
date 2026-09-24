@@ -2184,6 +2184,7 @@ function addScore(points, event) {
 function showClickEffect(value, event) {
     const container = document.getElementById('click-effects');
 
+    const containerRect = container.getBoundingClientRect();
     let x, y;
     if (event && event.clientX !== undefined) {
         x = event.clientX;
@@ -2194,6 +2195,8 @@ function showClickEffect(value, event) {
         x = medalRect.left + medalRect.width / 2;
         y = medalRect.top + medalRect.height / 2;
     }
+    x -= containerRect.left;
+    y = y - containerRect.top - 10;
 
     const effect = document.createElement('div');
     effect.className = 'click-effect';
