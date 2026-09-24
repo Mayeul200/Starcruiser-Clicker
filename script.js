@@ -378,6 +378,13 @@ function calculateBuildingBaseGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
     return building.gain * building.count * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
+// PPS total hors boost temporaire : base de calcul du prix des contrats, pour
+// qu'une offre generee pendant un x5 ne coute pas 5 fois trop cher.
+function getBasePartsPerSecond() {
+    let total = 0;
+    BUILDINGS.forEach(building => { total += calculateBuildingBaseGain(building); });
+    return total;
+}
 
 // Chaque upgrade de bâtiment double sa production (×2 par palier),
 // comme les tiered upgrades de Cookie Clicker.
@@ -2919,7 +2926,7 @@ function pickContractTargets() {
 }
 
 function getContractPrice() {
-    return Math.max(50, Math.floor(partsPerSecond * CONTRACT_PRICE_PPS_SECONDS));
+    return Math.max(50, Math.floor(getBasePartsPerSecond() * CONTRACT_PRICE_PPS_SECONDS));
 }
 
 function generateContractOffers() {
