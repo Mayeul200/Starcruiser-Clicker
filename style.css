@@ -1108,8 +1108,8 @@ body {
     padding-bottom: 10px;
 }
 .galactic-shop-btn {
-    flex: 1 1 0;
-    min-width: 0;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 150px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -1125,7 +1125,7 @@ body {
     cursor: pointer;
     text-align: center;
     transition: all 0.2s;
-    flex-wrap: wrap;
+    white-space: nowrap;
     overflow: hidden;
 }
 .galactic-shop-btn:hover {
@@ -1183,12 +1183,13 @@ body {
 }
 .space-progress-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: stretch;
     gap: 8px;
 }
 .current-planet-display {
-    flex: 1 1 0;
-    min-width: 0;
+    flex: 1 1 calc(50% - 4px);
+    min-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
