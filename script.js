@@ -2923,7 +2923,8 @@ function renderContracts() {
     const listEl = document.getElementById('contracts-list');
     if (!listEl) return;
     const now = Date.now();
-    let html = '';
+    const nextIn = Math.max(0, contractState.nextRotationAt - now);
+    let html = '<div class="contract-rotation">\u23f3 ' + tf('nouveaux contrats dans {time}', { time: formatContractTime(nextIn) }) + '</div>';
     if (contractState.active) {
         const c = contractState.active;
         const building = findBuildingById(c.buildingId);
@@ -2937,8 +2938,7 @@ function renderContracts() {
             + '<span class="contract-timer">' + formatContractTime(remaining) + '</span></div>'
             + '</div>';
     } else if (contractState.offers.length === 0) {
-        const nextIn = Math.max(0, contractState.nextRotationAt - now);
-        html += '<div class="contract-empty">' + t('Aucun contrat disponible') + ' \u2014 ' + tf('nouveaux contrats dans {time}', { time: formatContractTime(nextIn) }) + '</div>';
+        html += '<div class="contract-empty">' + t('Aucun contrat disponible') + '</div>';
     } else {
         contractState.offers.forEach(offer => {
             const building = findBuildingById(offer.buildingId);
