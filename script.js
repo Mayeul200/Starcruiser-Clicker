@@ -3309,30 +3309,7 @@ function setMobileView(view) {
             btn.classList.toggle('active', btn.dataset.view === view);
         });
     }
-    relocateCountersForMobile();
     if (view === 'center') applySceneScale();
-}
-
-function relocateCountersForMobile() {
-    const counters = document.querySelector('.counters');
-    const bonusTimer = document.getElementById('bonus-timer');
-    const home = document.querySelector('.center-content');
-    if (!counters || !home) return;
-    if (isMobileLayout() && counters.parentElement !== document.body) {
-        document.body.appendChild(counters);
-        counters.classList.add('counters-fixed');
-        if (bonusTimer) {
-            document.body.appendChild(bonusTimer);
-            bonusTimer.classList.add('bonus-timer-fixed');
-        }
-    } else if (!isMobileLayout() && counters.parentElement === document.body) {
-        home.appendChild(counters);
-        counters.classList.remove('counters-fixed');
-        if (bonusTimer) {
-            home.appendChild(bonusTimer);
-            bonusTimer.classList.remove('bonus-timer-fixed');
-        }
-    }
 }
 
 // Mise à l'échelle de la scène de construction : la fusée fait ~700px
@@ -3377,7 +3354,6 @@ function initMobileNav() {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            relocateCountersForMobile();
             if (isMobileLayout()) {
                 setMobileView(mobileActiveView);
                 applySceneScale();

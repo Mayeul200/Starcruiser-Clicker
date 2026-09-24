@@ -2039,18 +2039,6 @@ body {
     padding: 8px 16px;
     border-radius: 10px;
 }
-.counters-fixed {
-    position: fixed !important;
-    top: 56px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-}
-.bonus-timer-fixed {
-    position: fixed !important;
-    top: 104px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-}
 .counter {
     color: white;
     font-size: 1.1rem;
