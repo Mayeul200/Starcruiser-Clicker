@@ -449,7 +449,12 @@ const TRANSLATIONS = {
         '🚀 Mission Résultats': '🚀 Mission Results',
     }
 };
-let gameLanguage = localStorage.getItem('starship-language') || 'fr';
+if (localStorage.getItem('starcruiser-language') === null && localStorage.getItem('starship-language') !== null) {
+    localStorage.setItem('starcruiser-language', localStorage.getItem('starship-language'));
+}
+if (localStorage.getItem('starship-language') !== null) localStorage.removeItem('starship-language');
+let gameLanguage = localStorage.getItem('starcruiser-language') || 'fr';
+
 function t(key) {
     if (gameLanguage === 'fr') return key;
     return (TRANSLATIONS.en && TRANSLATIONS.en[key]) || key;
@@ -463,7 +468,7 @@ function tf(key, vars) {
 }
 function setGameLanguage(lang) {
     gameLanguage = lang;
-    localStorage.setItem('starship-language', lang);
+    localStorage.setItem('starcruiser-language', lang);
     document.documentElement.lang = lang;
     applyStaticTranslations();
     updateLanguageButtons();

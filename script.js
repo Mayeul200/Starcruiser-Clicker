@@ -1,5 +1,5 @@
 // ============================================
-// STARSHIP CLICKER - MAIN SCRIPT
+// STARCruiser CLICKER - MAIN SCRIPT
 // Version 2.1.0
 // ============================================
 
@@ -621,12 +621,18 @@ function saveGame() {
         saveData.buildingUpgradeCosts[buildingId] = {...buildingUpgradeCosts[buildingId]};
     }
 
-    localStorage.setItem('starshipClickerSave', JSON.stringify(saveData));
+    localStorage.setItem('starcruiserClickerSave', JSON.stringify(saveData));
     lastSaveTime = Date.now();
 }
 
 function loadGame() {
-    const saveData = localStorage.getItem('starshipClickerSave');
+    const legacySave = localStorage.getItem('starshipClickerSave');
+    if (legacySave !== null && localStorage.getItem('starcruiserClickerSave') === null) {
+        localStorage.setItem('starcruiserClickerSave', legacySave);
+    }
+    if (legacySave !== null) localStorage.removeItem('starshipClickerSave');
+
+    const saveData = localStorage.getItem('starcruiserClickerSave');
     if (!saveData) return;
 
     try {
@@ -801,13 +807,13 @@ function loadGame() {
 
     } catch (e) {
         console.error("Erreur de chargement :", e);
-        localStorage.removeItem('starshipClickerSave');
+        localStorage.removeItem('starcruiserClickerSave');
         showToast("\u26a0\ufe0f " + t("Sauvegarde corrompue. Nouvelle partie."));
     }
 }
 
 function exportSave() {
-    const saveData = localStorage.getItem('starshipClickerSave');
+    const saveData = localStorage.getItem('starcruiserClickerSave');
     if (saveData) {
         navigator.clipboard.writeText(saveData)
             .then(() => showToast("\u2705 " + t("Sauvegarde copiée !")))
@@ -823,7 +829,7 @@ function importSave() {
     try {
         const testParse = JSON.parse(importText);
         if (testParse.version && testParse.buildings && testParse.buildingUpgrades) {
-            localStorage.setItem('starshipClickerSave', importText);
+            localStorage.setItem('starcruiserClickerSave', importText);
             showToast("\u2705 " + t("Importé ! Redémarrage..."));
             setTimeout(() => window.location.reload(), 1000);
         } else {
@@ -841,7 +847,7 @@ function confirmDeleteSave() {
 }
 
 function deleteSave() {
-    localStorage.removeItem('starshipClickerSave');
+    localStorage.removeItem('starcruiserClickerSave');
     showToast("\ud83d\uddd1\ufe0f " + t("Supprimé !"));
     setTimeout(() => window.location.reload(), 1000);
 }
@@ -3973,7 +3979,7 @@ const Debug = {
         debugRenderAll();
     },
     reset() {
-        localStorage.removeItem('starshipClickerSave');
+        localStorage.removeItem('starcruiserClickerSave');
         location.search = '?debug=1';
     },
     estimate() {
