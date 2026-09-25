@@ -2333,10 +2333,13 @@ function spawnRandomBonus() {
         bonusElement.dataset.collected = '1';
         clearTimeout(timeout);
         clearInterval(trailInterval);
-        bonusElement.classList.add('locked');
-        bonusElement.style.transition = 'none';
+        // IMPORTANT : lire la position AVANT de couper la transition, sinon
+        // l'annulation de la transition teleporte la comete a sa position
+        // d'arrivee (hors ecran) et le missile frappe dans le vide.
         const frozenRect = bonusElement.getBoundingClientRect();
         const contRect = document.getElementById('random-bonuses').getBoundingClientRect();
+        bonusElement.classList.add('locked');
+        bonusElement.style.transition = 'none';
         bonusElement.style.left = (frozenRect.left - contRect.left) + 'px';
         bonusElement.style.top = (frozenRect.top - contRect.top) + 'px';
         interceptCometWithMissile(bonusElement, () => {
