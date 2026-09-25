@@ -1095,6 +1095,10 @@ body {
 /* Tremblement pré-lancement : SEULE la fusée vibre (pas le pas de tir
    ni l'astronaute). Le wrapper porte le transform de base du container :
    le shake en margin-left évite d'écraser ce transform. */
+.launch-rocket-wrap {
+    position: relative;
+    width: 100%;
+}
 .launch-rocket-wrap.launch-shaking {
     animation: launchShake 0.12s linear infinite;
 }
@@ -1260,15 +1264,17 @@ body {
    L'image body.png pointe vers le haut, aucune rotation necessaire. */
 .travel-rocket {
     position: absolute;
-    /* left/top/transform pilotes en JS (trajectoire radiale inclinee) */
-    width: 48px;
+    /* left/top/transform + dimensions pilotes en JS : la fusee complete
+       (tuyeres -> bouclier) est reconstruite dedans a la bonne echelle. */
     z-index: 3;
 }
+.travel-rocket > div {
+    position: absolute;
+    inset: 0;
+}
 .travel-rocket img {
-    width: 100%;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 0 12px rgba(255, 170, 60, 0.45));
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
 }
 /* Petit jet de flamme sous la fusee pendant le vol */
 .travel-rocket::after {
@@ -1276,8 +1282,8 @@ body {
     position: absolute;
     top: 100%;
     left: 50%;
-    width: 14px;
-    height: 34px;
+    width: 26px;
+    height: 44px;
     transform: translateX(-50%);
     background: linear-gradient(180deg, #fff7cc 0%, #ffd23f 35%, #ff8a00 65%, rgba(255, 61, 0, 0) 100%);
     border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
@@ -1352,7 +1358,7 @@ body {
 }
 /* Sur petits ecans : fusee et planetes un peu plus petites */
 @media (max-width: 480px) {
-    .travel-rocket { width: 40px; }
+    /* (la fusee de voyage est reconstruite en JS, pas de largeur fixe) */
     .travel-earth { width: 70vw; }
     .travel-moon { width: 38vw; }
 }

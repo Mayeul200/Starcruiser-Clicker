@@ -1358,6 +1358,54 @@ function closeLaunchResults() {
 const TRAVEL_ANIM_MS = 4200;
 let travelAnimFrame = 0;
 
+// Construit la fusee COMPLETE (tuyeres, moteurs, reservoir, corps, boosters,
+// cockpit, bouclier) dans le holder de l'animation de voyage : chaque piece
+// est positionnee exactement comme dans la scene de construction (repere
+// monde 1024x744), puis le tout est mis a l'echelle dans une boite tenant
+// dans l'ecran. On reutilise les images existantes, pas de sprite dedie.
+function buildTravelRocketInto(holder, screenH) {
+    const GROUND = ['launch-pad', 'astronaut'];
+    const parts = ROCKET_PARTS.filter(p => p.imgPath && !GROUND.includes(p.id));
+    // Boite englobante des pieces dans le repere monde
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    parts.forEach(p => {
+        const cx = (p.x / 100) * 1024;
+        minX = Math.min(minX, cx - p.width / 2);
+        maxX = Math.max(maxX, cx + p.width / 2);
+        minY = Math.min(minY, p.y);
+        maxY = Math.max(maxY, p.y + p.height);
+    });
+    const bboxW = maxX - minX;
+    const bboxH = maxY - minY;
+    // Hauteur visee : ~30% de l'ecran, borne pour eviter les extremes
+    const k = Math.max(0.25, Math.min(0.8, (screenH * 0.30) / bboxH));
+    holder.innerHTML = '';
+    holder.style.width = (bboxW * k) + 'px';
+    holder.style.height = (bboxH * k) + 'px';
+    const world = document.createElement('div');
+    world.style.position = 'absolute';
+    world.style.left = (-minX * k) + 'px';
+    world.style.top = (-minY * k) + 'px';
+    world.style.width = '1024px';
+    world.style.height = '744px';
+    world.style.transformOrigin = '0 0';
+    world.style.transform = 'scale(' + k + ')';
+    parts.forEach(p => {
+        const img = document.createElement('img');
+        img.src = p.imgPath;
+        img.alt = '';
+        img.style.position = 'absolute';
+        img.style.left = p.x + '%';
+        img.style.top = p.y + 'px';
+        img.style.width = p.width + 'px';
+        img.style.height = p.height + 'px';
+        img.style.transform = 'translate(-50%, 0)';
+        img.style.objectFit = 'contain';
+        world.appendChild(img);
+    });
+    holder.appendChild(world);
+}
+
 function playTravelAnimation(distance, onDone) {
     const overlay = document.getElementById('travel-overlay');
     if (!overlay || typeof distance !== 'number' || isNaN(distance)) {
@@ -1365,7 +1413,7 @@ function playTravelAnimation(distance, onDone) {
         return;
     }
     cancelAnimationFrame(travelAnimFrame);
-    const rocketEl = overlay.querySelector('.travel-rocket');
+    const rocketEl = document.getElementById('travel-rocket');
     const earthEl = overlay.querySelector('.travel-earth');
     const moonEl = overlay.querySelector('.travel-moon');
     const distanceEl = document.getElementById('travel-distance-value');
@@ -1378,12 +1426,14 @@ function playTravelAnimation(distance, onDone) {
     const H = window.innerHeight || 800;
     const W = window.innerWidth || 400;
 
-    // Trajectoire radiale (vue plongeante) : la fusee est INCLINEE,
-    // elle monte et derive legerement vers la droite.
-    const startX = W * 0.30;
-    const startY = H * 0.84;
-    const endX = W * 0.50;
-    const endY = H * 0.22;
+    // Fusee complete, reconstruite a la bonne echelle pour cet ecran
+    if (rocketEl) buildTravelRocketInto(rocketEl, H);
+
+    // Trajectoire verticale (mobile-first) : la fusee reste dans l'axe,
+    // sans derive laterale. Le relief 3D vient du rotateX.
+    const x = W * 0.5;
+    const startY = H * 0.70;
+    const endY = H * 0.30;
 
     const startTime = performance.now();
     let finished = false;
@@ -1409,25 +1459,24 @@ function playTravelAnimation(distance, onDone) {
     // - fusee : ease-in doux (elle accelere en quittant la Terre)
     // - Lune : tres lent au debut puis elle enflue rapidement (approche)
     // - Terre : descend hors de l'ecran au fil du depart
-    const easeInQuad = (x) => x * x;
-    const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
+    const easeInQuad = (xv) => xv * xv;
+    const easeOutCubic = (xv) => 1 - Math.pow(1 - xv, 3);
 
     const tick = (now) => {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
 
-        // ---- Fusee : monte en derivant vers la droite, inclinee ----
+        // ---- Fusee : monte verticalement, penchee vers l'avant (3D) ----
         const tRocket = easeInQuad(linear);
-        const x = startX + (endX - startX) * tRocket;
         const y = startY + (endY - startY) * tRocket;
         if (rocketEl) {
-            // Inclinaison fixe vers la trajectoire + tres leger tangage
-            // qui suit la derive horizontale, pour l'effet 3D radial.
-            const drift = (x - startX) / Math.max(1, (endX - startX));
-            const tilt = 18 + drift * 8;
+            // Inclinaison "vers l'avant" : rotateX avec perspective, le nez
+            // plonge vers le fond de l'ecran comme si la fusee s'eloignait
+            // de nous en montant. Le tangage s'accentue avec la vitesse.
+            const tilt = 22 + tRocket * 8;
             rocketEl.style.left = x + 'px';
             rocketEl.style.top = y + 'px';
-            rocketEl.style.transform = 'translate(-50%, -50%) rotate(' + tilt.toFixed(1) + 'deg)';
+            rocketEl.style.transform = 'perspective(900px) translate(-50%, -50%) rotateX(' + tilt.toFixed(1) + 'deg)';
         }
 
         // ---- Compteur de km synchronise sur la fusee ----
@@ -1459,9 +1508,9 @@ function playTravelAnimation(distance, onDone) {
 
     // Initialisation visuelle avant affichage
     if (rocketEl) {
-        rocketEl.style.left = startX + 'px';
+        rocketEl.style.left = x + 'px';
         rocketEl.style.top = startY + 'px';
-        rocketEl.style.transform = 'translate(-50%, -50%) rotate(18deg)';
+        rocketEl.style.transform = 'perspective(900px) translate(-50%, -50%) rotateX(22deg)';
     }
     if (earthEl) {
         earthEl.style.transform = 'translate(-50%, 0) scale(1)';
