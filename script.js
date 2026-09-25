@@ -9,6 +9,7 @@
 const tooltip = document.createElement('div');
 tooltip.className = 'upgrade-tooltip';
 document.body.appendChild(tooltip);
+let tooltipAnchor = null;
 
 function showTooltip(text, x, y, options) {
     tooltip.textContent = text;
@@ -24,14 +25,24 @@ function showTooltip(text, x, y, options) {
     // leftEdge : bord gauche reel du tooltip une fois le centrage (-50%) applique
     const leftEdge = options && options.align === 'left' ? x : x - rect.width / 2;
     const clampedLeft = Math.max(margin, Math.min(leftEdge, window.innerWidth - rect.width - margin));
-    tooltip.style.transform = 'translate(0, -120%)';
-    tooltip.style.top = y + 'px';
+    // Clamp vertical : si le tooltip ne tient pas au-dessus (trophees proches
+    // du haut d'ecran), il bascule sous l'element via options.anchorBottom.
+    const anchorBottom = options && options.anchorBottom ? options.anchorBottom : y;
+    if (y - rect.height - margin >= 0) {
+        tooltip.style.transform = 'translate(0, -120%)';
+        tooltip.style.top = y + 'px';
+    } else {
+        tooltip.style.transform = 'translate(0, 0)';
+        tooltip.style.top = Math.min(anchorBottom + margin, window.innerHeight - rect.height - margin) + 'px';
+    }
     tooltip.style.left = clampedLeft + 'px';
+    tooltipAnchor = { x, y, options: options || null };
 }
 
 function hideTooltip() {
     tooltip.classList.remove('visible');
     tooltipLiveRefresh = null;
+    tooltipAnchor = null;
 }
 
 // Rafraichissement en continu du tooltip affiche (production qui evolue).
@@ -40,6 +51,19 @@ let tooltipLiveRefresh = null;
 function refreshLiveTooltip() {
     if (tooltipLiveRefresh && tooltip.classList.contains('visible')) {
         tooltip.textContent = tooltipLiveRefresh();
+        if (tooltipAnchor) {
+            const rect = tooltip.getBoundingClientRect();
+            const margin = 8;
+            const leftEdge = tooltipAnchor.options && tooltipAnchor.options.align === 'left'
+                ? tooltipAnchor.x : tooltipAnchor.x - rect.width / 2;
+            const clampedLeft = Math.max(margin, Math.min(leftEdge, window.innerWidth - rect.width - margin));
+            tooltip.style.left = clampedLeft + 'px';
+            if (tooltipAnchor.y - rect.height - margin < 0) {
+                const anchorBottom = tooltipAnchor.options && tooltipAnchor.options.anchorBottom
+                    ? tooltipAnchor.options.anchorBottom : tooltipAnchor.y;
+                tooltip.style.top = Math.min(anchorBottom + margin, window.innerHeight - rect.height - margin) + 'px';
+            }
+        }
     }
 }
 
@@ -2545,10 +2569,15 @@ function getGameDuration() {
     
     const durationMs = Date.now() - gameStartTime;
     
-    if (durationMs < 60000) return Math.floor(durationMs / 1000) + "s";
-    if (durationMs < 3600000) return Math.floor(durationMs / 60000) + "min";
-    if (durationMs < 86400000) return Math.floor(durationMs / 3600000) + "h";
-    return Math.floor(durationMs / 86400000) + t("jours");
+    const totalSec = Math.floor(durationMs / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (days > 0) return days + t("jours") + ' ' + h + 'h' + String(m).padStart(2, '0') + String(s).padStart(2, '0');
+    if (h > 0) return h + 'h' + String(m).padStart(2, '0') + String(s).padStart(2, '0');
+    if (m > 0) return m + 'min' + String(s).padStart(2, '0');
+    return s + "s";
 }
 
 // ============================================
@@ -2694,7 +2723,7 @@ function renderTrophies() {
             const description = t(trophy.description);
             const isUnlocked = unlockedTrophies.has(trophy.id);
             const status = isUnlocked ? t('D\u00e9bloqu\u00e9') : t('Verrouill\u00e9');
-            showTooltip(`${name}\n${description}\n${status}`, rect.left + rect.width/2, rect.top);
+            showTooltip(`${name}\n${description}\n${status}`, rect.left + rect.width/2, rect.top, { anchorBottom: rect.bottom });
         });
         trophyElement.addEventListener('mouseleave', hideTooltip);
         
@@ -2707,16 +2736,52 @@ function renderTrophies() {
 
 let lastStatsRender = 0;
 
+function statsStructureKey() {
+    return [
+        gameLanguage,
+        activatedClickUpgrades.join(','),
+        Object.keys(buildingUpgrades).map(id => id + ':' + ((buildingUpgrades[id] || []).length)).join(','),
+        unlockedTrophies.size,
+        [...unlockedTrophies].join(',')
+    ].join('|');
+}
+
 function refreshStatsLive() {
     const modal = document.getElementById('stats-modal');
     if (!modal || !modal.classList.contains('active')) return;
     const now = Date.now();
+    const container = document.getElementById('stats-body');
+    if (!container) return;
+    const key = statsStructureKey();
+    if (container.dataset.structureKey !== key) {
+        const scrollTop = container.scrollTop;
+        renderStats();
+        container.dataset.structureKey = key;
+        container.scrollTop = scrollTop;
+        return;
+    }
     if (now - lastStatsRender < 1000) return;
     lastStatsRender = now;
-    const scrollEl = document.getElementById('stats-body');
-    const scrollTop = scrollEl ? scrollEl.scrollTop : 0;
-    renderStats();
-    if (scrollEl) scrollEl.scrollTop = scrollTop;
+    updateStatsDynamicValues(container);
+}
+
+function updateStatsDynamicValues(container) {
+    const values = [
+        formatNumber(score, true),
+        formatNumber(calculateTotalGenerated()),
+        formatNumber(partsPerSecond),
+        'x' + getTotalProductionMultiplier().toFixed(2),
+        formatNumber(getClickPower()),
+        formatNumber(getTotalBuildingsOwned()),
+        getGameDuration(),
+        String(clickedBonusesCount)
+    ];
+    container.querySelectorAll('[data-stat-value]').forEach(el => {
+        const idx = parseInt(el.dataset.statValue, 10);
+        if (!Number.isNaN(idx) && values[idx] !== undefined) el.textContent = values[idx];
+    });
+    const bonusTitle = container.querySelector('[data-trophies-bonus]');
+    if (bonusTitle) bonusTitle.textContent = '(+' + (unlockedTrophies.size * 1) + '%)';
 }
 
 function renderStats() {
@@ -2742,7 +2807,7 @@ function renderStats() {
         statElement.style.borderBottom = '1px solid #e2e8f0';
         statElement.innerHTML = `
             <span style="color: #64748b; font-size: 0.9rem;">${stat.label}</span>
-            <span style="color: #2563eb; font-weight: 600;">${stat.value}</span>
+            <span style="color: #2563eb; font-weight: 600;" data-stat-value="${globalStats.indexOf(stat)}">${stat.value}</span>
         `;
         container.appendChild(statElement);
     });
@@ -2814,9 +2879,10 @@ function renderStats() {
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Troph\u00e9es') + ' <span style="color: #16a34a;">(+' + (unlockedTrophies.size * 1) + '%)</span>' + '</h4>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Troph\u00e9es') + ' <span style="color: #16a34a;" data-trophies-bonus>(+' + (unlockedTrophies.size * 1) + '%)</span>' + '</h4>';
     const trophiesSection = renderTrophies();
     container.appendChild(trophiesSection);
+    container.dataset.structureKey = statsStructureKey();
 }
 
 // ============================================
@@ -3082,25 +3148,37 @@ function renderContractsCardStatus() {
     }
 }
 
+function contractsStructureKey() {
+    if (contractState.active) return 'active:' + contractState.active.offerId;
+    return 'offers:' + contractState.offers.map(o => o.id).join(',');
+}
 function renderContracts() {
     const modal = document.getElementById('contracts-modal');
     if (!modal.classList.contains('active')) return;
     const listEl = document.getElementById('contracts-list');
     if (!listEl) return;
     const now = Date.now();
-    const nextIn = Math.max(0, contractState.nextRotationAt - now);
-    let html = '<div class="contract-rotation">\u23f3 ' + tf('nouveaux contrats dans {time}', { time: formatContractTime(nextIn) }) + '</div>';
+    const key = contractsStructureKey();
+    // Reconstruire le DOM seulement si la structure change (nouvelles offres,
+    // contrat actif/termine). Sinon mise a jour ciblee des valeurs dynamiques :
+    // reconstruire innerHTML detruirait le bouton sous le curseur (flicker).
+    if (listEl.dataset.structureKey !== key) {
+        listEl.dataset.structureKey = key;
+        listEl.innerHTML = buildContractsHtml();
+    }
+    updateContractsDynamicValues(listEl, now);
+}
+function buildContractsHtml() {
+    let html = '<div class="contract-rotation">\u23f3 ' + tf('nouveaux contrats dans {time}', { time: '<span class="contract-rotation-timer">' + formatContractTime(Math.max(0, contractState.nextRotationAt - Date.now())) + '</span>' }) + '</div>';
     if (contractState.active) {
         const c = contractState.active;
         const building = findBuildingById(c.buildingId);
-        const remaining = Math.max(0, c.expiresAt - now);
-        const pct = Math.min(100, (c.progress / c.quota) * 100);
         html += '<div class="contract-card active">'
             + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div><div class="contract-title">' + t(building.name) + '</div>'
             + '<div class="contract-sub">' + t('Contrat en cours') + '</div></div></div>'
-            + '<div class="contract-progress"><div style="width:' + pct + '%"></div></div>'
-            + '<div class="contract-meta"><span>' + formatNumber(Math.floor(c.progress)) + ' / ' + formatNumber(c.quota) + ' ' + t('Parts') + '</span>'
-            + '<span class="contract-timer">' + formatContractTime(remaining) + '</span></div>'
+            + '<div class="contract-progress"><div class="contract-progress-fill" style="width:0%"></div></div>'
+            + '<div class="contract-meta"><span class="contract-progress-text"></span>'
+            + '<span class="contract-timer"></span></div>'
             + '</div>';
     } else if (contractState.offers.length === 0) {
         html += '<div class="contract-empty">' + t('Aucun contrat disponible') + '</div>';
@@ -3109,7 +3187,6 @@ function renderContracts() {
             const building = findBuildingById(offer.buildingId);
             const stacks = contractState.buildingBonuses[offer.buildingId] || 0;
             const rewardMult = getContractBuildingMultiplier(offer.buildingId) * (1 + CONTRACT_REWARD_MULT);
-            const affordable = score >= offer.price;
             html += '<div class="contract-card">'
                 + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div>'
                 + '<div class="contract-title">' + t(building.name) + '</div>'
@@ -3118,19 +3195,42 @@ function renderContracts() {
                 + (stacks > 0 ? ' \u00b7 ' + t('deja') + ' x' + getContractBuildingMultiplier(offer.buildingId).toFixed(2) : '')
                 + (stacks >= CONTRACT_REWARD_MAX_STACKS ? ' \u00b7 ' + t('palier max') : '')
                 + '</div>'
-                + '<button class="contract-buy-btn" onclick="acceptContract(\'' + offer.id + '\')" ' + (affordable ? '' : 'disabled') + '>'
+                + '<button class="contract-buy-btn" data-offer-id="' + offer.id + '" onclick="acceptContract(\'' + offer.id + '\')">'
                 + '<img src="images/parts.png" class="coin-icon" alt=""> ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
                 + '</div>';
         });
     }
-    listEl.innerHTML = html;
+    return html;
+}
+function updateContractsDynamicValues(listEl, now) {
+    const rotationEl = listEl.querySelector('.contract-rotation-timer');
+    if (rotationEl) rotationEl.textContent = formatContractTime(Math.max(0, contractState.nextRotationAt - now));
+    if (contractState.active) {
+        const c = contractState.active;
+        const remaining = Math.max(0, c.expiresAt - now);
+        const pct = Math.min(100, (c.progress / c.quota) * 100);
+        const fill = listEl.querySelector('.contract-progress-fill');
+        if (fill) fill.style.width = pct + '%';
+        const text = listEl.querySelector('.contract-progress-text');
+        if (text) text.textContent = formatNumber(Math.floor(c.progress)) + ' / ' + formatNumber(c.quota) + ' ' + t('Parts');
+        const timer = listEl.querySelector('.contract-timer');
+        if (timer) timer.textContent = formatContractTime(remaining);
+    } else {
+        contractState.offers.forEach(offer => {
+            const btn = listEl.querySelector('.contract-buy-btn[data-offer-id="' + offer.id + '"]');
+            if (btn) btn.disabled = score < offer.price;
+        });
+    }
 }
 
 function formatContractTime(ms) {
     const s = Math.max(0, Math.ceil(ms / 1000));
-    const m = Math.floor(s / 60);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
     const r = s % 60;
-    return m + ':' + (r < 10 ? '0' : '') + r;
+    const mm = (m < 10 ? '0' : '') + m;
+    const rr = (r < 10 ? '0' : '') + r;
+    return (h > 0 ? h + ':' : '') + mm + ':' + rr;
 }
 
 function resetContractState() {
@@ -3516,7 +3616,7 @@ function formatLaunchTimer(ms) {
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
     const sec = s % 60;
-    if (h > 0) return h + 'h' + String(m).padStart(2, '0');
+    if (h > 0) return h + 'h' + String(m).padStart(2, '0') + String(sec).padStart(2, '0');
     if (m > 0) return m + 'm' + String(sec).padStart(2, '0');
     return sec + 's';
 }

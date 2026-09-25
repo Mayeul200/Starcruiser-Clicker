@@ -2773,7 +2773,9 @@ body {
         background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
         border-top: 1px solid var(--border);
         box-shadow: 0 -4px 12px rgba(0,0,0,0.5);
-        z-index: 1100;
+        /* Au-dessus des modals (1200) : la nav reste visible et cliquable
+           meme dans Collection / Contrats / Atelier. */
+        z-index: 1350;
     }
     .mobile-nav button {
         flex: 1;
@@ -2821,14 +2823,14 @@ body {
     .bonus-timer { top: 104px; left: 50%; transform: translateX(-50%); }
 
     /* --- Barre d'upgrades (horizontale, déjà scrollable) --- */
-    .upgrades-bar { height: 40px; }
+    .upgrades-bar { height: 44px; }
     .upgrades-title { display: none; }
     .upgrades-container-center { margin-left: 0; gap: 8px; }
     .upgrade-icon { min-width: 40px; height: 40px; }
     .upgrade-img { width: 24px; height: 24px; }
 
     /* --- Scène de construction : zoom adaptatif --- */
-    .center-content { height: calc(100% - 40px) !important; }
+    .center-content { height: calc(100% - 44px) !important; }
     .construction-scene-100x100 { min-height: 0; }
     .rocket-parts-shop {
         position: fixed;
@@ -2935,6 +2937,9 @@ body {
         border-radius: 0;
         border: none;
         z-index: 1200;
+        /* La nav basse reste visible et cliquable : le modal cede la place. */
+        padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
+        box-sizing: border-box;
     }
     .modal-content {
         width: 100% !important; max-width: 100% !important;
