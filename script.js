@@ -3624,6 +3624,7 @@ function drawCard(rarities) {
 function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
+    container.style.setProperty('--card-count', cards.length);
     document.getElementById('cc-reveal-shop-btn').style.display = 'none';
     document.getElementById('cc-reveal-album-btn').style.display = 'none';
     const total = cards.length;
