@@ -1429,6 +1429,7 @@ function playTravelAnimation(distance, onDone) {
     const rocketEl = document.getElementById('travel-rocket');
     const earthEl = overlay.querySelector('.travel-earth');
     const moonEl = overlay.querySelector('.travel-moon');
+    const marsEl = overlay.querySelector('.travel-mars');
     const distanceEl = document.getElementById('travel-distance-value');
     const skipBtn = document.getElementById('travel-skip');
     const safeDistance = Math.max(0, distance);
@@ -1442,11 +1443,19 @@ function playTravelAnimation(distance, onDone) {
     // Fusee complete, reconstruite a la bonne echelle pour cet ecran
     if (rocketEl) buildTravelRocketInto(rocketEl, H);
 
-    // Trajectoire verticale (mobile-first) : la fusee reste dans l'axe,
-    // sans derive laterale. Le relief 3D vient du rotateX.
-    const x = W * 0.5;
-    const startY = H * 0.70;
-    const endY = H * 0.30;
+    // AXE INCLINE Terre -> Lune (~15 deg) : les deux planetes sont quasi
+    // alignees sur cet axe, la Lune etant decalee vers le haut-droite.
+    const AXIS_DEG = 15;
+    const axisRad = AXIS_DEG * Math.PI / 180;
+    const sinA = Math.sin(axisRad);
+    const cosA = Math.cos(axisRad);
+
+    // Trajectoire de la fusee le long de l'axe incline (vers le haut-droite)
+    const startX = W * 0.42;
+    const startY = H * 0.88;
+    const travel = H * 0.62;                 // distance parcourue sur l'axe
+    const endX = startX + travel * sinA;
+    const endY = startY - travel * cosA;
 
     const startTime = performance.now();
     let finished = false;
@@ -1468,10 +1477,6 @@ function playTravelAnimation(distance, onDone) {
         setTimeout(cleanup, 240);
     }
 
-    // Easing distincts pour choregraphier les phases du voyage :
-    // - fusee : ease-in doux (elle accelere en quittant la Terre)
-    // - Lune : tres lent au debut puis elle enflue rapidement (approche)
-    // - Terre : descend hors de l'ecran au fil du depart
     const easeInQuad = (xv) => xv * xv;
     const easeOutCubic = (xv) => 1 - Math.pow(1 - xv, 3);
 
@@ -1479,37 +1484,63 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
 
-        // ---- Fusee : monte verticalement, penchee vers l'avant (3D) ----
+        // ---- Fusee : avance le long de l'axe incline, alignee dessus ----
         const tRocket = easeInQuad(linear);
-        const y = startY + (endY - startY) * tRocket;
+        const along = travel * tRocket;
+        const x = startX + along * sinA;
+        const y = startY - along * cosA;
         if (rocketEl) {
-            // Inclinaison "vers l'avant" : rotateX avec perspective, le nez
-            // plonge vers le fond de l'ecran comme si la fusee s'eloignait
-            // de nous en montant. Le tangage s'accentue avec la vitesse.
-            const tilt = 22 + tRocket * 8;
+            // Inclinee de 15 deg vers la droite (provisoire en attendant
+            // l'image dediee) : alignee sur l'axe Terre -> Lune.
             rocketEl.style.left = x + 'px';
             rocketEl.style.top = y + 'px';
-            rocketEl.style.transform = 'perspective(900px) translate(-50%, -50%) rotateX(' + tilt.toFixed(1) + 'deg)';
+            rocketEl.style.transform = 'translate(-50%, -50%) rotate(' + AXIS_DEG + 'deg)';
         }
 
         // ---- Compteur de km synchronise sur la fusee ----
         if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * tRocket));
 
-        // ---- Terre : descend et sort de l'ecran par le bas ----
+        // ---- Terre : GROSSIT d'abord (la camera la survole) puis
+        //      descend hors de l'ecran par le bas, tard dans le voyage ----
         if (earthEl) {
-            const tEarth = Math.min(1, linear * 1.15);
-            const earthY = tEarth * tEarth * (H * 0.95);
-            const earthScale = 1 - tEarth * 0.25;
-            earthEl.style.transform = 'translate(-50%, ' + earthY.toFixed(0) + 'px) scale(' + earthScale.toFixed(3) + ')';
+            // Phase 1 (0 -> 0.45) : grossit en restant quasi place
+            // Phase 2 (0.45 -> 1) : glisse vers le bas et s'efface
+            let eScale, eY;
+            if (linear < 0.45) {
+                const t1 = linear / 0.45;
+                eScale = 1 + t1 * 0.45;
+                eY = t1 * t1 * (H * 0.06);
+            } else {
+                const t2 = (linear - 0.45) / 0.55;
+                eScale = 1.45 - t2 * 0.35;
+                eY = (H * 0.06) + t2 * t2 * (H * 0.92);
+            }
+            const eOpacity = linear < 0.75 ? 1 : Math.max(0, 1 - (linear - 0.75) / 0.2);
+            earthEl.style.transform = 'translate(-50%, ' + eY.toFixed(0) + 'px) scale(' + eScale.toFixed(3) + ')';
+            earthEl.style.opacity = eOpacity.toFixed(2);
         }
 
-        // ---- Lune : point minuscule au depart, enflue a l'approche ----
+        // ---- Lune : point minuscule, enfle, et descend vers ~80% du
+        //      chemin du centre le long de l'axe incline ----
         if (moonEl) {
             const tMoon = easeOutCubic(linear);
             const scale = 0.06 + Math.pow(tMoon, 3.2) * 1.35;
-            const opacity = Math.min(1, linear * 2.5);
+            const moonStartTop = 0.09;   // depart : 9% du haut (CSS)
+            const moonEndTop = 0.80 * 0.5; // ~80% du chemin vers le centre
+            const topPct = moonStartTop + (moonEndTop - moonStartTop) * tMoon;
+            const leftPct = 50 + Math.sin(axisRad) * (tMoon * 18); // derive vers la droite le long de l'axe
+            moonEl.style.top = (topPct * 100).toFixed(1) + '%';
+            moonEl.style.left = leftPct.toFixed(1) + '%';
             moonEl.style.transform = 'translate(-50%, 0) scale(' + scale.toFixed(3) + ')';
-            moonEl.style.opacity = opacity.toFixed(2);
+            moonEl.style.opacity = Math.min(1, linear * 2.5).toFixed(2);
+        }
+
+        // ---- Mars : point minuscule au loin, apparait en fin de voyage ----
+        if (marsEl) {
+            const tMars = Math.max(0, (linear - 0.62) / 0.38);
+            const mScale = 0.3 + tMars * 0.5;
+            marsEl.style.transform = 'translate(-50%, 0) scale(' + mScale.toFixed(3) + ')';
+            marsEl.style.opacity = tMars.toFixed(2);
         }
 
         if (linear >= 1) {
@@ -1521,17 +1552,23 @@ function playTravelAnimation(distance, onDone) {
 
     // Initialisation visuelle avant affichage
     if (rocketEl) {
-        rocketEl.style.left = x + 'px';
+        rocketEl.style.left = startX + 'px';
         rocketEl.style.top = startY + 'px';
-        rocketEl.style.transform = 'perspective(900px) translate(-50%, -50%) rotateX(22deg)';
+        rocketEl.style.transform = 'translate(-50%, -50%) rotate(' + AXIS_DEG + 'deg)';
     }
     if (earthEl) {
         earthEl.style.transform = 'translate(-50%, 0) scale(1)';
         earthEl.style.opacity = '1';
     }
     if (moonEl) {
+        moonEl.style.top = '9%';
+        moonEl.style.left = '50%';
         moonEl.style.transform = 'translate(-50%, 0) scale(0.06)';
         moonEl.style.opacity = '0';
+    }
+    if (marsEl) {
+        marsEl.style.transform = 'translate(-50%, 0) scale(0.3)';
+        marsEl.style.opacity = '0';
     }
     if (distanceEl) distanceEl.textContent = '0';
     fillTravelStars(overlay);

@@ -1330,6 +1330,16 @@ body {
     opacity: 0;
     /* scale pilote en JS : minuscule au depart, enorme a l'arrivee */
 }
+/* Planete d'apres (Mars) : point minuscule dans le lointain, visible
+   seulement en toute fin de voyage, en haut le long de l'axe incline. */
+.travel-mars {
+    top: 14vh;
+    left: 50%;
+    width: 12vw;
+    max-width: 60px;
+    z-index: 1;
+    opacity: 0;
+}
 /* HUD : compteur de km en haut, bouton Passer en dessous */
 .travel-hud {
     position: absolute;
