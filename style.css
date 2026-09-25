@@ -720,6 +720,80 @@ body {
 .random-bonus:hover {
     transform: none !important;
 }
+/* Comète verrouillée : en attente du missile, elle stoppe net */
+.random-bonus.locked .comet-img {
+    animation: cometLockedPulse 0.18s ease-in-out infinite alternate;
+}
+@keyframes cometLockedPulse {
+    from { filter: brightness(1); }
+    to   { filter: brightness(1.6) drop-shadow(0 0 14px rgba(255, 200, 80, 0.9)); }
+}
+/* Missile d'interception : fusée rapide avec flamme, orientation pilotée en JS */
+.comet-missile {
+    position: fixed;
+    width: 46px;
+    height: 14px;
+    background: linear-gradient(180deg, #e8ecf4 0%, #b8c2d4 55%, #8a94a8 100%);
+    border-radius: 7px;
+    box-shadow: 0 0 10px rgba(255, 180, 60, 0.4);
+    z-index: 65;
+    pointer-events: none;
+}
+.comet-missile::before {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    transform: translateY(-50%);
+    background: radial-gradient(circle, rgba(255, 240, 180, 0.95) 0%, rgba(255, 160, 40, 0.75) 35%, rgba(255, 90, 20, 0) 70%);
+    border-radius: 50%;
+    animation: missileFlame 0.09s linear infinite alternate;
+}
+.comet-missile::after {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 14px solid #e8ecf4;
+    rotate: 90deg;
+}
+@keyframes missileFlame {
+    from { transform: translateY(-50%) scaleX(0.8); opacity: 0.8; }
+    to   { transform: translateY(-50%) scaleX(1.25); opacity: 1; }
+}
+/* Explosion à l'impact : flash + onde de choc + éclats */
+.comet-explosion {
+    position: fixed;
+    width: 0;
+    height: 0;
+    z-index: 66;
+    pointer-events: none;
+    animation: cometExplosionFlash 0.45s ease-out forwards;
+}
+@keyframes cometExplosionFlash {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 240, 190, 0.95), 0 0 40px 30px rgba(255, 170, 50, 0.9); }
+    100% { box-shadow: 0 0 0 90px rgba(255, 200, 90, 0), 0 0 90px 60px rgba(255, 140, 40, 0); }
+}
+.comet-shard {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #fff2c0 0%, #ffb347 60%, rgba(255, 120, 30, 0) 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: cometShardFly 0.55s cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+}
+@keyframes cometShardFly {
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) scale(0.2); opacity: 0; }
+}
 .random-bonus.clicked {
     opacity: 0;
     transform: scale(0.5);

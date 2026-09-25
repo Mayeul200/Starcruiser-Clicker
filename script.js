@@ -2333,6 +2333,13 @@ function spawnRandomBonus() {
         bonusElement.dataset.collected = '1';
         clearTimeout(timeout);
         clearInterval(trailInterval);
+        bonusElement.classList.add('locked');
+        bonusElement.style.transition = 'none';
+        const frozenRect = bonusElement.getBoundingClientRect();
+        const contRect = document.getElementById('random-bonuses').getBoundingClientRect();
+        bonusElement.style.left = (frozenRect.left - contRect.left) + 'px';
+        bonusElement.style.top = (frozenRect.top - contRect.top) + 'px';
+        interceptCometWithMissile(bonusElement, () => {
         bonusElement.classList.add('clicked');
         clickedBonusesCount++;
 
@@ -2362,7 +2369,71 @@ function spawnRandomBonus() {
 
         setTimeout(() => bonusElement.remove(), 500);
         checkTrophies();
+        });
     };
+}
+// Missile d'interception : quand le joueur clique sur une comète, un missile
+// part du bord de l'écran et la percute en trajectoire perpendiculaire à la
+// sienne. Vol très rapide (180-320 ms), puis explosion et destruction.
+function interceptCometWithMissile(cometEl, onDestroy) {
+    const cometRect = cometEl.getBoundingClientRect();
+    const cx = cometRect.left + cometRect.width / 2;
+    const cy = cometRect.top + cometRect.height / 2;
+    // La comète descend en diagonale à 45° : le missile arrive sur l'autre
+    // diagonale (montante), côté opposé à son sens de vol, exactement à 90°.
+    const goRight = !cometEl.classList.contains('reverse');
+    const fromLeft = goRight;
+    const OFF = 60;
+    const launchX = fromLeft ? -OFF : window.innerWidth + OFF;
+    // Point de départ sur la diagonale perpendiculaire passant par la comète,
+    // tiré au hasard sous elle : |dx| = |dy| garantit l'angle droit.
+    const reach = 120 + Math.random() * 260;
+    const launchY = Math.min(window.innerHeight + OFF, cy + reach);
+    const launchXadj = cx + (fromLeft ? -(launchY - cy) : (launchY - cy));
+    let vx = cx - launchXadj;
+    let vy = cy - launchY;
+    const dist = Math.hypot(vx, vy);
+    const angle = Math.atan2(vy, vx);
+    const missile = document.createElement('div');
+    missile.className = 'comet-missile';
+    document.body.appendChild(missile);
+    const mRect = missile.getBoundingClientRect();
+    const mW = mRect.width || 46;
+    const mH = mRect.height || 14;
+    missile.style.left = (launchXadj - mW / 2) + 'px';
+    missile.style.top = (launchY - mH / 2) + 'px';
+    missile.style.transform = `rotate(${angle}rad)`;
+    // Vol rapide : borné entre 180 et 320 ms, peu importe la distance.
+    const duration = Math.max(180, Math.min(320, dist / 4));
+    requestAnimationFrame(() => {
+        missile.style.transition = `left ${duration}ms linear, top ${duration}ms linear`;
+        missile.style.left = (cx - mW / 2) + 'px';
+        missile.style.top = (cy - mH / 2) + 'px';
+    });
+    setTimeout(() => {
+        if (!missile.isConnected) return;
+        missile.remove();
+        spawnCometExplosion(cx, cy);
+        onDestroy();
+    }, duration + 20);
+}
+// Explosion de la comète à l'impact : flash + onde de choc + éclats.
+function spawnCometExplosion(cx, cy) {
+    const explosion = document.createElement('div');
+    explosion.className = 'comet-explosion';
+    explosion.style.left = cx + 'px';
+    explosion.style.top = cy + 'px';
+    document.body.appendChild(explosion);
+    for (let i = 0; i < 10; i++) {
+        const shard = document.createElement('div');
+        shard.className = 'comet-shard';
+        const theta = Math.random() * Math.PI * 2;
+        const r = 40 + Math.random() * 70;
+        shard.style.setProperty('--sx', Math.cos(theta) * r + 'px');
+        shard.style.setProperty('--sy', Math.sin(theta) * r + 'px');
+        explosion.appendChild(shard);
+    }
+    setTimeout(() => explosion.remove(), 700);
 }
 
 // ============================================
