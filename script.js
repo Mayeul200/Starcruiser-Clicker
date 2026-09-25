@@ -1371,16 +1371,14 @@ function closeLaunchResults() {
 const TRAVEL_ANIM_MS = 5200;
 let travelAnimFrame = 0;
 
-// Fusee COMPLETE reconstruite pour l'animation de voyage (comme
-// buildTravelRocketInto ci-dessous, reutilisee telle quelle).
-
 // ============================================
 // MOTEUR DE PROJECTION PERSPECTIVE (voyage spatial pseudo-3D)
-// Repere : la fusEE vise vers le HAUT de l'ecran. La "profondeur" z
-// croit vers le haut de l'axe de voyage. La camera (chase cam) est
-// légèrement AU-DESSUS et DERRIERE la fusee, regarde vers l'avant et
-// legerement vers le bas : la fusee apparait dans le tiers inferieur,
-// les planetes lointaines remontent vers le haut de l'ecran.
+// Axe de voyage : vertical, la fusee vise le HAUT de l'ecran. La
+// profondeur z croit vers le haut. La camera (chase cam) est legerement
+// AU-DESSUS et DERRIERE la fusee : la fusee est rendue au tiers inferieur,
+// les astres proches apparaissent bas et gros, les astres lointains
+// remontent vers l'horizon en rapetissant (parallaxe reelle).
+// Unite de profondeur : 1 = distance camera->fusee (REL_ROCKET).
 // ============================================
 
 // Construit la fusee COMPLETE dans le holder, a l'echelle cible.
@@ -1425,24 +1423,20 @@ function buildTravelRocketInto(holder, targetH) {
     holder.appendChild(world);
 }
 
-// Projection d'un point (x lateral, z profondeur sur l'axe de voyage)
-// vers l'ecran. cameraZ = profondeur de la camera sur l'axe.
-// focal = distance focale (px ecran par unite de z relatif).
-// Retourne { x, y, scale, visible } :
-// - x : position horizontale ecran
-// - y : position verticale ecran (croissant vers le bas)
-// - scale : facteur d'echelle perspective
-// - visible : true si devant la camera (z > cameraZ)
-function travelProject(lat, z, cameraZ, focal, horizonY) {
-    const rel = z - cameraZ;
-    if (rel <= 0.05) return { visible: false };
-    const scale = focal / rel;
-    // lat : decalage lateral en unites monde ; l'axe reste centre
-    const x = (window.innerWidth || 400) / 2 + lat * scale;
-    // Plus c'est LOIN, plus c'est HAUT (proche de l'horizon) ;
-    // l'horizon (z infini) est a horizonY.
-    const y = horizonY + (focal * 1.9) / rel;
-    return { x, y, scale, visible: true };
+// Projection d'un astre (decalage lateral lat, profondeur z) sur
+// l'ecran pour une camera a la profondeur cameraZ. Tous les astres
+// restent proches de l'axe central (composition mobile).
+function travelProject(lat, z, cameraZ, W, horizonY, pitchK, baseSize) {
+    const rel = z - cameraZ;                 // profondeur relative
+    if (rel <= 0.08) return { visible: false };
+    const inv = 1 / rel;                     // 1 = profondeur de la fusee
+    return {
+        x: W / 2 + lat * 0.5 * W * inv,      // parallaxe laterale
+        y: horizonY + pitchK * inv,          // proche = bas, loin = horizon
+        size: baseSize * inv,                 // echelle perspective
+        inv: inv,
+        visible: true
+    };
 }
 
 function playTravelAnimation(distance, onDone) {
@@ -1461,29 +1455,36 @@ function playTravelAnimation(distance, onDone) {
     const H = window.innerHeight || 800;
     const W = window.innerWidth || 400;
 
-    // --- Fusee : point focal, inclinee dans son axe de voyage ---
-    if (rocketEl) buildTravelRocketInto(rocketEl, H * 0.24);
-    // La fusEE est legereement INCLINEE (nez vers la destination) :
-    // vue de la chase cam legerement surelevee, son arriere decroche
-    // un peu vers la gauche, son axe global reste vertical.
-    const ROCKET_TILT = -8; // degres (negatif = nez vers la droite)
+    // --- Chase cam legerement au-dessus et derriere la fusee ---
+    // La fusee est le point focal : fixe au tiers inferieur, inclinee
+    // dans son axe de voyage (nez vers la destination), avec un leger
+    // abaissement d'arriere (vue surelevee, pas un sprite 2D plat).
     const rocketX = W * 0.5;
-    const rocketY = H * 0.66;
+    const rocketY = H * 0.62;
+    const horizonY = H * 0.14;
+    // pitchK : ecart vertical fusee->horizon pour un astre a la profondeur
+    // de la fusee (rel=1) -> l'astre affleure la fusee.
+    const pitchK = (rocketY - horizonY);
+    const baseSize = W * 0.52;
+    const ROCKET_TILT = -7;                  // degres, nez vers la Lune
 
-    // --- Planetes sur l'axe de voyage, a des profondeurs reelles ---
-    // On prend les planetes de PLANETS (ordre croissant de distance).
-    // La camera part "sur" la Terre et arrive a la planete atteinte.
+    if (rocketEl) buildTravelRocketInto(rocketEl, H * 0.24);
+
+    // --- Itineraire : planetes de PLANETS jusqu'a la destination atteinte
+    // (structure du jeu inchangee : Terre -> Lune -> Mars -> ...).
     const reached = PLANETS.filter(p => safeDistance >= p.distanceRequired);
     const target = reached[reached.length - 1] || PLANETS[0];
     const itinerary = PLANETS.slice(0, PLANETS.indexOf(target) + 1);
-    // Unites de profondeur : la Terre est a z=0, chaque planete a z
-    // proportionnel a son rang dans le trajet (voyage lisible).
-    // zMax = profondeur de la destination finale.
     const zMax = itinerary.length - 1;
-    const CAM_START = -0.42;          // camera demarre derriere la Terre
-    const CAM_END = zMax - 0.18;      // s'arrete juste avant la cible
 
-    // Corps celestes generes dynamiquement dans le calque deep
+    // Trajet de la camera : demarre PRES de la Terre (gros bout de
+    // planet en bas d'ecran, comme juste apres le decollage), croisiere,
+    // puis ralentit et s'arrete a distance de la cible (elle apparait
+    // grande, juste sous la fusee, dans l'axe).
+    const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
+    const CAM_END = zMax - 0.85;             // cible a rel ~0.85 a l'arrivee
+
+    // Corps celestes generes dynamiquement (calque de profondeur)
     deepEl.innerHTML = '';
     const bodies = itinerary.map((p, i) => {
         const el = document.createElement('div');
@@ -1493,14 +1494,11 @@ function playTravelAnimation(distance, onDone) {
         img.alt = '';
         el.appendChild(img);
         deepEl.appendChild(el);
-        // Legere derive laterale pour la composition (planetes proches
-        // de l'axe, jamais hors ecran) : Terre a gauche, cible centree.
-        const lat = (i === 0) ? -0.55 : (i === itinerary.length - 1 ? 0 : 0.35);
-        return { el, z: i, lat, radius: 1.0, isTarget: i === itinerary.length - 1 };
+        // Composition : tous sur l'axe ; la Terre legerement a gauche
+        // (point de depart depasse sur le cote au depassement).
+        const lat = (i === 0) ? -0.28 : 0;
+        return { el, z: i, lat };
     });
-
-    const focal = Math.min(W, H) * 0.62;
-    const horizonY = H * 0.16;
 
     const startTime = performance.now();
     let finished = false;
@@ -1523,47 +1521,44 @@ function playTravelAnimation(distance, onDone) {
     }
 
     const lerp = (a, b, t) => a + (b - a) * t;
-
-    // Profil de vitesse : depart accelere, croisiere, ralentissement a
-    // l'approche de la destination (cinematique).
-    const camAt = (t) => {
-        // ease-in-out custom : accélère, tient, ralentit
-        const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-        return lerp(CAM_START, CAM_END, easeInOut(t));
-    };
+    // Profil cinematique : acceleration au depart, croisiere,
+    // ralentissement a l'approche de la destination.
+    const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
+    const camAt = (t) => lerp(CAM_START, CAM_END, easeInOut(t));
 
     const tick = (now) => {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
         const cameraZ = camAt(linear);
 
-        // ---- Fusee : point focal, inclinee dans son axe ----
+        // ---- Fusee : point focal, inclinee dans son axe de voyage ----
         if (rocketEl) {
             rocketEl.style.left = rocketX + 'px';
             rocketEl.style.top = rocketY + 'px';
-            rocketEl.style.transform = 'translate(-50%, -50%) rotate(' + ROCKET_TILT + 'deg) perspective(700px) rotateX(8deg)';
+            // perspective d'abord, puis leger basculement arriere (vue
+            // surelevee de la chase cam) et inclinaison vers la cible.
+            rocketEl.style.transform = 'perspective(700px) translate(-50%, -50%) rotateX(7deg) rotate(' + ROCKET_TILT + 'deg)';
         }
 
-        // ---- Compteur de km : synchronise sur la camera ----
-        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * linear));
+        // ---- Compteur de km : synchronise sur l'avancee camera ----
+        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * easeInOut(linear)));
 
-        // ---- Planetes : projection perspective ----
+        // ---- Astres : projection perspective + fondu de depassement ----
         bodies.forEach(b => {
-            const pr = travelProject(b.lat, b.z, cameraZ, focal, horizonY);
+            const pr = travelProject(b.lat, b.z, cameraZ, W, horizonY, pitchK, baseSize);
             if (!pr.visible) {
                 b.el.style.opacity = '0';
                 return;
             }
-            const size = pr.scale * (W * 0.5);
-            b.el.style.left = pr.x + 'px';
-            b.el.style.top = pr.y + 'px';
-            b.el.style.width = Math.max(8, size) + 'px';
+            b.el.style.left = pr.x.toFixed(1) + 'px';
+            b.el.style.top = pr.y.toFixed(1) + 'px';
+            b.el.style.width = Math.max(6, pr.size).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
-            // Opacite : les astres tres lointains se revelent ; ceux
-            // qui passent derriere la camera s'effacent.
+            // Depassement : l'astre passe SOUS la camera -> il grossit
+            // en sortant par le bas et s'efface (vraie sensation de
+            // voyage devant les planetes intermediaires).
             let opacity = 1;
-            if (b.z - cameraZ < 0.6) opacity = Math.max(0, (b.z - cameraZ) / 0.6);
-            if (b.z - cameraZ > 3.2) opacity = Math.max(0, Math.min(1, (zMax + 1.5 - (b.z - cameraZ)) / 1.2));
+            if (pr.inv > 1.55) opacity = Math.max(0, (1.75 - pr.inv) / 0.2);
             b.el.style.opacity = opacity.toFixed(2);
         });
 
@@ -1578,7 +1573,7 @@ function playTravelAnimation(distance, onDone) {
     if (rocketEl) {
         rocketEl.style.left = rocketX + 'px';
         rocketEl.style.top = rocketY + 'px';
-        rocketEl.style.transform = 'translate(-50%, -50%) rotate(' + ROCKET_TILT + 'deg) perspective(700px) rotateX(8deg)';
+        rocketEl.style.transform = 'perspective(700px) translate(-50%, -50%) rotateX(7deg) rotate(' + ROCKET_TILT + 'deg)';
     }
     if (distanceEl) distanceEl.textContent = '0';
     fillTravelStars(overlay);
