@@ -18,18 +18,15 @@ function showTooltip(text, x, y, options) {
         tooltip.style.width = options.width + 'px';
         tooltip.style.maxWidth = options.width + 'px';
     }
-    if (options && options.align === 'left') {
-        tooltip.style.transform = 'translate(0, -120%)';
-    } else {
-        tooltip.style.transform = 'translate(-50%, -120%)';
-    }
     tooltip.classList.add('visible');
     const rect = tooltip.getBoundingClientRect();
     const margin = 8;
-    const halfWidth = options && options.align === 'left' ? 0 : rect.width / 2;
-    const clampedX = Math.max(margin, Math.min(x, window.innerWidth - rect.width - margin));
+    // leftEdge : bord gauche reel du tooltip une fois le centrage (-50%) applique
+    const leftEdge = options && options.align === 'left' ? x : x - rect.width / 2;
+    const clampedLeft = Math.max(margin, Math.min(leftEdge, window.innerWidth - rect.width - margin));
+    tooltip.style.transform = 'translate(0, -120%)';
     tooltip.style.top = y + 'px';
-    tooltip.style.left = clampedX + 'px';
+    tooltip.style.left = clampedLeft + 'px';
 }
 
 function hideTooltip() {

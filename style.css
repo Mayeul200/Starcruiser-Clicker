@@ -2821,14 +2821,14 @@ body {
     .bonus-timer { top: 104px; left: 50%; transform: translateX(-50%); }
 
     /* --- Barre d'upgrades (horizontale, déjà scrollable) --- */
-    .upgrades-bar { height: 44px; }
+    .upgrades-bar { height: 40px; }
     .upgrades-title { display: none; }
-    .upgrades-container-center { margin-left: 0; }
-    .upgrade-icon { min-width: 44px; height: 44px; }
-    .upgrade-img { width: 26px; height: 26px; }
+    .upgrades-container-center { margin-left: 0; gap: 8px; }
+    .upgrade-icon { min-width: 40px; height: 40px; }
+    .upgrade-img { width: 24px; height: 24px; }
 
     /* --- Scène de construction : zoom adaptatif --- */
-    .center-content { height: calc(100% - 44px) !important; }
+    .center-content { height: calc(100% - 40px) !important; }
     .construction-scene-100x100 { min-height: 0; }
     .rocket-parts-shop {
         position: fixed;
@@ -2876,7 +2876,9 @@ body {
 
     /* --- Panneau gauche (Espace) --- */
     .left-panel { padding: 12px; }
-    .mini-space-map { height: 108px; }
+    /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
+    .left-panel h3 { flex-shrink: 0; }
+    .mini-space-map { height: 148px; }
     .mini-space-map .planet-image { width: 36px; height: 36px; }
     .mini-space-map .planet-name { font-size: 0.6rem; margin-top: 1px; }
     .mini-space-map .planet-distance { font-size: 0.55rem; margin-top: 1px; }
