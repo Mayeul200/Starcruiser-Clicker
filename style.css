@@ -1008,7 +1008,9 @@ body {
 /* Fumée au sol qui déborde du pas de tir (reste au sol pendant le vol) */
 .launch-smoke {
     position: absolute;
-    bottom: 4%;
+    /* Repere monde (1024x744) : la base de la fusée est à y=686,
+       on pose la fumée juste dessous, sur la ligne de sol */
+    bottom: 46px;
     left: 50%;
     width: 260px;
     height: 60px;
@@ -1798,8 +1800,35 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 400px;
-    background-color: #0a0a1a;
+    overflow: hidden;
+    /* Ciel de remplissage : meme couleur que le haut du fond, la jonction
+       est invisible quand le monde 1024x744 ne remplit pas tout l'ecran */
+    background: linear-gradient(180deg, #2e5f96 0%, #3b81c7 100%);
+}
+/* Monde a taille fixe : repere unique pour le fond ET la fusée.
+   Dimensions natives de l'image (1024x744). Le JS applique un
+   transform scale() uniforme : jamais de recadrage ni de decalage. */
+.scene-world {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 1024px;
+    height: 744px;
+    transform-origin: 50% 100%;
+    z-index: 0;
+}
+/* Prolongation du sol : remplissage aux couleurs du terrain du decor,
+   ancre en bas de scene. Visible uniquement quand le monde 1024x744
+   ne couvre pas toute la largeur (ecrans larges et bas). La hauteur
+   est pilotee par JS (applySceneScale) pour suivre la ligne de sol. */
+.scene-ground-fill {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0;
+    background: linear-gradient(180deg, #4c542f 0%, #3c3e26 100%);
+    pointer-events: none;
 }
 .scene-background {
     position: absolute;
@@ -1808,8 +1837,7 @@ body {
     width: 100%;
     height: 100%;
     background-image: url('images/backgrounds/valley-day.png');
-    background-size: cover;
-    background-position: center bottom;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     z-index: 0;
 }

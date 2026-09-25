@@ -1309,11 +1309,13 @@ function igniteLaunchFlames(rocketWrap, sceneEl) {
         jet.style.animationDelay = (i * 0.12) + 's';
         flames.appendChild(jet);
     }
-    // Fumée au sol sur le pas de tir : elle ne décolle pas
-    if (sceneEl) {
+    // Fumée au sol sur le pas de tir : elle ne décolle pas.
+    // Ajoutée dans le monde scene-world pour suivre la meme echelle que la fusée.
+    const world = document.getElementById('scene-world');
+    if (world) {
         const smoke = document.createElement('div');
         smoke.className = 'launch-smoke';
-        sceneEl.appendChild(smoke);
+        world.appendChild(smoke);
     }
 }
 
@@ -3622,29 +3624,35 @@ function setMobileView(view) {
 // de haut en taille réelle (pièces positionnées en pixels fixes). On applique
 // un transform: scale() pour qu'elle tienne toujours dans l'écran.
 function applySceneScale() {
-    const container = document.getElementById('rocket-parts-container');
-    if (!container || launchSequenceActive) return;
-    const scene = container.parentElement;
+    // Le monde scene-world (1024x744, dimensions natives du fond) contient le
+    // decor ET la fusée dans le meme repere : une seule echelle uniforme,
+    // jamais de desynchronisation au redimensionnement.
+    const world = document.getElementById('scene-world');
+    if (!world || launchSequenceActive) return;
+    const scene = world.parentElement;
     if (!scene) return;
     const sceneHeight = scene.clientHeight;
     const sceneWidth = scene.clientWidth;
     if (!sceneHeight || !sceneWidth) return;
-    // Repère de la fusée dans la scène (positions px fixes des pièces).
-    // La fusée est ancrée sur la ligne de sol : sa base est posée à PAD du bas
-    // à toutes les tailles d'écran, et son échelle s'adapte à la scène
-    // (plus de palier desktop/mobile : une seule règle continue).
-    const ROCKET_TOP = 205;
-    const ROCKET_BASE = 686;
-    const ROCKET_WIDTH = 420;
-    const PAD = 12;
-    const rocketHeight = ROCKET_BASE - ROCKET_TOP;
-    const fitY = (sceneHeight - PAD * 2) / rocketHeight;
-    const fitX = (sceneWidth - PAD * 2) / ROCKET_WIDTH;
-    const scale = Math.min(1, fitY, fitX);
-    // Origine en haut au centre ; la base de la fusée reste calée sur le sol.
-    const ty = sceneHeight - PAD - scale * ROCKET_BASE;
-    container.style.transformOrigin = '50% 0';
-    container.style.transform = 'translateY(' + ty + 'px) scale(' + scale + ')';
+    const WORLD_WIDTH = 1024;
+    const WORLD_HEIGHT = 744;
+    // Sommet de la fusée dans le repere monde (piece la plus haute : pas de tir).
+    const ROCKET_TOP_Y = 205;
+    const rocketAboveGround = WORLD_HEIGHT - ROCKET_TOP_Y;
+    const MARGIN = 24;
+    // 1) Echelle "cover" : le decor remplit toujours la scene (ancré bas-centre,
+    //    le debordement part vers le ciel).
+    let scale = Math.max(sceneWidth / WORLD_WIDTH, sceneHeight / WORLD_HEIGHT);
+    // 2) Garde-fou : le sommet de la fusée reste toujours visible avec une
+    //    marge, même sur des ecrans tres larges et bas.
+    scale = Math.min(scale, (sceneHeight - MARGIN) / rocketAboveGround);
+    world.style.transformOrigin = '50% 100%';
+    world.style.transform = 'translateX(-50%) scale(' + scale + ')';
+    // Prolongation du sol : le decor a sa ligne de sol vers y=480 (sur 744).
+    // On aligne le remplissage sur cette ligne pour une jonction invisible.
+    const GROUND_LINE_Y = 480;
+    const groundFill = document.getElementById('scene-ground-fill');
+    if (groundFill) groundFill.style.height = (scale * (WORLD_HEIGHT - GROUND_LINE_Y)) + 'px';
 }
 
 function initMobileNav() {
