@@ -1312,16 +1312,20 @@ function igniteLaunchFlames(rocketWrap, sceneEl) {
     const nozzles = ROCKET_PARTS.filter(p => p.id === 'nozzles');
     const boosters = ROCKET_PARTS.filter(p => p.id.startsWith('boosters-'));
     const centerX = 50; // axe central de la fusee en %
+    // Decalage du centre VISUEL des tuyeres dans chaque image de booster :
+    // le contenu PNG n'est pas centre dans le canevas (boosters-left a du
+    // remplissage transparent a droite, boosters-right a gauche).
+    const BOOSTER_JET_OFFSET_PX = { 'boosters-left': -5, 'boosters-right': 4 };
     const jets = [];
-    nozzles.forEach(n => jets.push({ cx: n.x }));
-    boosters.forEach(b => jets.push({ cx: b.x }));
+    nozzles.forEach(n => jets.push({ cx: n.x, off: 0 }));
+    boosters.forEach(b => jets.push({ cx: b.x, off: BOOSTER_JET_OFFSET_PX[b.id] || 0 }));
     if (jets.length === 0) {
-        jets.push({ cx: centerX }, { cx: centerX }, { cx: centerX });
+        jets.push({ cx: centerX, off: 0 }, { cx: centerX, off: 0 }, { cx: centerX, off: 0 });
     }
     jets.forEach((j, i) => {
         const jet = document.createElement('div');
         jet.className = 'launch-flame-jet';
-        jet.style.left = 'calc(' + j.cx + '% - 13px)'; // 13px = demi-largeur du jet
+        jet.style.left = 'calc(' + j.cx + '% + ' + (j.off || 0) + 'px - 13px)'; // 13px = demi-largeur du jet
         jet.style.animationDelay = (i * 0.12) + 's';
         flames.appendChild(jet);
     });
