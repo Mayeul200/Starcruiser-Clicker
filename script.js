@@ -1372,8 +1372,8 @@ function closeLaunchResults() {
 // (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
 // jusqu'a la distance reellement atteinte par le lancer.
 // ============================================
-const TRAVEL_ANIM_BASE_MS = 5200;   // voyage court (Terre -> Lune)
-const TRAVEL_ANIM_STEP_MS = 1600;   // par planete intermediaire supplementaire
+const TRAVEL_ANIM_BASE_MS = 9500;   // voyage court (Terre -> Lune)
+const TRAVEL_ANIM_STEP_MS = 2600;   // par planete intermediaire supplementaire
 let travelAnimFrame = 0;
 
 // ============================================
@@ -1473,7 +1473,10 @@ function playTravelAnimation(distance, onDone) {
     // pitchK : ecart vertical fusee->horizon pour un astre a la profondeur
     // de la fusee (rel=1) -> l'astre affleure la fusee.
     const pitchK = (rocketY - horizonY);
-    const baseSize = W * 0.52;
+    // Facteur global d'echelle des planetes : -20% (vue un peu plus
+    // reculee, comme si la camera etait plus loin de l'axe).
+    const PLANET_SCALE = 0.8;
+    const baseSize = W * 0.52 * PLANET_SCALE;
     const ROCKET_TILT = -7;                  // degres, nez vers la Lune
 
     if (rocketEl) buildTravelRocketInto(rocketEl, H * 0.24);
@@ -1483,10 +1486,11 @@ function playTravelAnimation(distance, onDone) {
     const reached = PLANETS.filter(p => safeDistance >= p.distanceRequired);
     const target = reached[reached.length - 1] || PLANETS[0];
     const itinerary = PLANETS.slice(0, PLANETS.indexOf(target) + 1);
-    // Etapes espacees : 2 unites de profondeur par planete -> la
-    // destination demarre tres loin (petit point), les intermediaires
-    // demandent un vrai trajet. zMax = profondeur de la cible.
-    const zMax = (itinerary.length - 1) * 3;
+    // Etapes espacees : 5 unites de profondeur par planete -> la
+    // destination demarre tres loin (point minuscule a l'horizon), les
+    // intermediaires demandent un vrai trajet. zMax = profondeur de la cible.
+    const DEPTH_STEP = 5;
+    const zMax = (itinerary.length - 1) * DEPTH_STEP;
 
     // Trajet de la camera : demarre PRES de la Terre (gros bout de
     // planet en bas d'ecran, comme juste apres le decollage), croisiere,
@@ -1510,7 +1514,7 @@ function playTravelAnimation(distance, onDone) {
         // Composition : tous sur l'axe ; la Terre legerement a gauche
         // (point de depart depasse sur le cote au depassement).
         const lat = (i === 0) ? -0.28 : 0;
-        return { el, z: i * 3, lat };
+        return { el, z: i * DEPTH_STEP, lat };
     });
 
     const startTime = performance.now();
