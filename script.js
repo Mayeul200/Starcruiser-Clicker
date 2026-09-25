@@ -1910,13 +1910,7 @@ function renderGalacticShop() {
 }
 
 function toggleGalacticShop() {
-    const modal = document.getElementById('galactic-shop-modal');
-    if (modal.classList.contains('active')) {
-        modal.classList.remove('active');
-    } else {
-        renderGalacticShop();
-        modal.classList.add('active');
-    }
+    showExclusiveModal('galactic-shop-modal', renderGalacticShop);
 }
 
 // ============================================
@@ -2920,16 +2914,26 @@ function renderStats() {
 // MODALS
 // ============================================
 
+const EXCLUSIVE_MODALS = ['stats-modal', 'settings-modal', 'contracts-modal', 'card-collection-modal', 'galactic-shop-modal'];
+function showExclusiveModal(modalId, onOpen) {
+    const target = document.getElementById(modalId);
+    const wasActive = target.classList.contains('active');
+    EXCLUSIVE_MODALS.forEach(id => {
+        if (id !== modalId) document.getElementById(id).classList.remove('active');
+    });
+    if (wasActive) {
+        target.classList.remove('active');
+    } else {
+        if (onOpen) onOpen();
+        target.classList.add('active');
+    }
+}
 function toggleSettings() {
-    document.getElementById('settings-modal').classList.toggle('active');
+    showExclusiveModal('settings-modal');
 }
 
 function toggleStats() {
-    const modal = document.getElementById('stats-modal');
-    modal.classList.toggle('active');
-    if (modal.classList.contains('active')) {
-        renderStats();
-    }
+    showExclusiveModal('stats-modal', renderStats);
 }
 
 // ============================================
@@ -3065,8 +3069,7 @@ function openContracts() {
         showToast('\uD83D\uDD12 ' + tf('Debloque {count} types de batiments pour les contrats', { count: CONTRACT_UNLOCK_BUILDING_TYPES }));
         return;
     }
-    document.getElementById('contracts-modal').classList.add('active');
-    renderContracts();
+    showExclusiveModal('contracts-modal', renderContracts);
 }
 
 function closeContracts() {
@@ -3375,9 +3378,10 @@ let galacticUpgrades = {};
 let cardCollection = {};
 
 function openCardCollection() {
-    document.getElementById('card-collection-modal').classList.add('active');
-    updateCardCollectionDisplay();
-    showCardShop();
+    showExclusiveModal('card-collection-modal', () => {
+        updateCardCollectionDisplay();
+        showCardShop();
+    });
 }
 
 function closeCardCollection() {
