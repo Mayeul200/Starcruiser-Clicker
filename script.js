@@ -520,7 +520,8 @@ function resetMultipliers() {
     updateClickMultiplier();
 }
 
-function showToast(message, icon) {
+let toastHideTimer = null;
+function showToast(message, icon, durationMs) {
     const toast = document.getElementById('toast');
     toast.innerHTML = '';
     if (icon) {
@@ -540,8 +541,17 @@ function showToast(message, icon) {
     textEl.textContent = message;
     toast.appendChild(textEl);
     toast.classList.add('active');
-    setTimeout(() => toast.classList.remove('active'), TOAST_DURATION_MS);
+    if (toastHideTimer) clearTimeout(toastHideTimer);
+    toastHideTimer = setTimeout(() => toast.classList.remove('active'), durationMs || TOAST_DURATION_MS);
 }
+// Un clic sur la notification la fait disparaitre immediatement.
+document.addEventListener('click', (e) => {
+    const toast = e.target.closest('#toast');
+    if (toast && toast.classList.contains('active')) {
+        if (toastHideTimer) clearTimeout(toastHideTimer);
+        toast.classList.remove('active');
+    }
+});
 
 // ============================================
 // SAVE / LOAD
@@ -593,7 +603,8 @@ function saveGame() {
             offers: contractState.offers,
             active: contractState.active,
             buildingBonuses: contractState.buildingBonuses,
-            nextRotationAt: contractState.nextRotationAt
+            nextRotationAt: contractState.nextRotationAt,
+            unlockedSeen: contractState.unlockedSeen
         },
         lastSave: Date.now(),
         gameStartTime: gameStartTime,
@@ -663,6 +674,7 @@ function loadGame() {
             contractState.active = parsed.contractState.active || null;
             contractState.buildingBonuses = parsed.contractState.buildingBonuses || {};
             contractState.nextRotationAt = parsed.contractState.nextRotationAt || 0;
+            contractState.unlockedSeen = !!parsed.contractState.unlockedSeen;
         }
 
         if (parsed.cardCollection) {
@@ -2277,19 +2289,34 @@ function spawnRandomBonus() {
         bonusElement.style.top = `${endY}px`;
     });
 
+    // Trainee fluide : petites particules frequentes a vie courte, aux
+    // positions interpolees entre deux ticks d'animation pour eviter
+    // l'effet "chapelet de cercles" de l'ancienne version.
+    const TRAIL_INTERVAL_MS = 24;
+    const TRAIL_LIFE_MS = 420;
+    let lastTrailPos = null;
     const trailInterval = setInterval(() => {
         const rect = bonusElement.getBoundingClientRect();
-        const trail = document.createElement('div');
-        trail.className = 'comet-trail';
-        trail.style.left = `${rect.left + rect.width / 2}px`;
-        trail.style.top = `${rect.top + rect.height / 2}px`;
-        document.body.appendChild(trail);
-        requestAnimationFrame(() => {
-            trail.style.opacity = '0';
-            trail.style.transform = 'translate(-50%, -50%) scale(2.5)';
-        });
-        setTimeout(() => trail.remove(), 1000);
-    }, 80);
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const prev = lastTrailPos || { x: cx, y: cy };
+        // 2 particules par tick, interpolees entre la position precedente
+        // et l'actuelle pour une trainee continue.
+        for (let i = 1; i <= 2; i++) {
+            const f = i / 2;
+            const trail = document.createElement('div');
+            trail.className = 'comet-trail';
+            trail.style.left = `${prev.x + (cx - prev.x) * f}px`;
+            trail.style.top = `${prev.y + (cy - prev.y) * f}px`;
+            document.body.appendChild(trail);
+            requestAnimationFrame(() => {
+                trail.style.opacity = '0';
+                trail.style.transform = `translate(-50%, -50%) scale(0.35)`;
+            });
+            setTimeout(() => trail.remove(), TRAIL_LIFE_MS);
+        }
+        lastTrailPos = { x: cx, y: cy };
+    }, TRAIL_INTERVAL_MS);
 
     const timeout = setTimeout(() => {
         clearInterval(trailInterval);
@@ -2645,7 +2672,7 @@ function checkTrophies() {
             if (unlocked) {
                 unlockedTrophies.add(trophy.id);
                 changed = true;
-                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`, trophy.icon);
+                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`, trophy.icon, 5000);
             }
         }
     });
@@ -2979,10 +3006,16 @@ let contractState = {
     offers: [],
     nextRotationAt: 0,
     active: null,
-    buildingBonuses: {}
+    buildingBonuses: {},
+    unlockedSeen: false
 };
 
+const CONTRACT_UNLOCK_BUILDING_TYPES = 3;
+function areContractsUnlocked() {
+    return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES;
+}
 function getContractEligibleBuildings() {
+    if (!areContractsUnlocked()) return [];
     return BUILDINGS.filter(b => b.count > 0 && b.unlockCondition());
 }
 
@@ -3024,8 +3057,11 @@ function generateContractOffers() {
         renderContracts();
     }
 }
-
 function openContracts() {
+    if (!areContractsUnlocked()) {
+        showToast('\uD83D\uDD12 ' + tf('Debloque {count} types de batiments pour les contrats', { count: CONTRACT_UNLOCK_BUILDING_TYPES }));
+        return;
+    }
     document.getElementById('contracts-modal').classList.add('active');
     renderContracts();
 }
@@ -3037,6 +3073,7 @@ function closeContracts() {
 function acceptContract(offerId) {
     const offer = contractState.offers.find(o => o.id === offerId);
     if (!offer) return;
+    // Contrat accepte : rotation en pause tant qu'il n'est pas termine.
     if (contractState.active) {
         showToast('\u26a0\ufe0f ' + t('Un contrat a la fois !'));
         return;
@@ -3086,7 +3123,8 @@ function completeContract() {
     showToast('\uD83E\uDDF1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
     contractState.active = null;
     contractState.offers = [];
-    generateContractOffers();
+    // Contrat termine : le timer repart de zero, prochaine offre dans 2 min.
+    contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
     checkTrophies();
     saveGame();
 }
@@ -3098,7 +3136,8 @@ function failContract() {
     showToast('\u23f3 ' + tf('Contrat echoue pour {building}...', { building: t(building.name) }), building.imgPath);
     contractState.active = null;
     contractState.offers = [];
-    generateContractOffers();
+    // Contrat echoue : le timer repart de zero, prochaine offre dans 2 min.
+    contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
     saveGame();
 }
 
@@ -3109,7 +3148,17 @@ function getContractBuildingMultiplier(buildingId) {
 
 function tickContracts() {
     const now = Date.now();
-    if (now >= contractState.nextRotationAt) {
+    // Deblocage au 3e batiment : la premiere offre arrive immediatement,
+    // puis le timer de rotation (2 min) cadence les suivantes.
+    if (areContractsUnlocked() && !contractState.unlockedSeen) {
+        contractState.unlockedSeen = true;
+        if (contractState.offers.length === 0 && !contractState.active) {
+            generateContractOffers();
+        }
+    }
+    // Le timer de rotation se met en pause tant qu'un contrat est en cours.
+    const rotationPaused = !!contractState.active;
+    if (!rotationPaused && contractState.nextRotationAt > 0 && now >= contractState.nextRotationAt) {
         generateContractOffers();
     }
     if (contractState.active) {
@@ -3128,6 +3177,11 @@ function renderContractsCardStatus() {
     const statusEl = document.getElementById('contracts-card-status');
     if (!statusEl) return;
     const now = Date.now();
+    if (!areContractsUnlocked()) {
+        statusEl.className = 'game-status visible';
+        statusEl.textContent = '\uD83D\uDD12 ' + t('3 batiments requis');
+        return;
+    }
     if (contractState.active) {
         const c = contractState.active;
         const building = findBuildingById(c.buildingId);
@@ -3238,6 +3292,7 @@ function resetContractState() {
     contractState.active = null;
     contractState.buildingBonuses = {};
     contractState.nextRotationAt = 0;
+    // unlockedSeen reste true : les contrats restent debloques d'un run a l'autre.
 }
 
 // ============================================

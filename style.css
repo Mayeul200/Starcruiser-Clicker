@@ -704,14 +704,14 @@ body {
 }
 .comet-trail {
     position: fixed;
-    width: 30px;
-    height: 30px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 60%, transparent 100%);
+    background: radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.25) 55%, transparent 100%);
     pointer-events: none;
     z-index: 55;
     transform: translate(-50%, -50%);
-    transition: opacity 1s ease-out, transform 1s ease-out;
+    transition: opacity 420ms linear, transform 420ms ease-out;
 }
 .random-bonus:hover {
     transform: none !important;
@@ -761,6 +761,7 @@ body {
 .toast.active {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+    cursor: pointer;
 }
 .coin-icon {
     display: inline-block;
@@ -2885,9 +2886,10 @@ body {
     .mini-space-map .planet-name { font-size: 0.6rem; margin-top: 1px; }
     .mini-space-map .planet-distance { font-size: 0.55rem; margin-top: 1px; }
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
-    .mini-games-container { flex-direction: row; }
-    .mini-game-card { flex: 1; }
-    .mini-game-card .game-description { display: none; }
+    /* Cartes mini-jeux empilees verticalement : plus propre a lire,
+       l'utilisateur scrolle si necessaire. */
+    .mini-games-container { flex-direction: column; }
+    .mini-game-card { flex: 0 0 auto; }
     .mini-game-card .game-cost { font-size: 0.65rem; }
     .mini-games-section { display: flex !important; flex: 0 0 auto; }
 
@@ -2907,11 +2909,10 @@ body {
     .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
     .buildings-list { gap: 6px; margin-top: 2px; }
     .building-item {
-        grid-template-columns: 108px 1fr;
+        grid-template-columns: 64px 1fr 74px;
         grid-template-areas:
-            "icon info"
-            "icon buy";
-        grid-template-rows: auto auto;
+            "icon info buy";
+        grid-template-rows: auto;
         min-height: 0;
         max-height: 100px;
         overflow: hidden;
@@ -2919,14 +2920,26 @@ body {
         gap: 4px 10px;
         align-items: center;
     }
-    .building-left { grid-area: info; display: flex; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; }
-    .building-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .building-left { grid-area: info; display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 2px; min-width: 0; }
+    .building-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .building-ownership { font-size: 0.7rem; flex-shrink: 0; }
     .building-center { grid-area: icon; align-self: stretch; display: flex; align-items: center; justify-content: center; min-height: 0; }
     .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: 80px; filter: none; }
-    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
-    .building-item button { flex: 1; padding: 9px 6px; font-size: 0.78rem; }
-    .building-left .building-production { font-size: 0.72rem; white-space: nowrap; flex-shrink: 0; margin-left: auto; color: var(--accent-light); }
+    .building-right { grid-area: buy; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; min-width: 0; }
+    .building-item button {
+        flex: 0 0 auto;
+        width: 74px; height: 74px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 6px 4px;
+        font-size: 0.72rem;
+        line-height: 1.2;
+        border-radius: var(--radius);
+        box-sizing: border-box;
+        text-align: center;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+    .building-left .building-production { font-size: 0.72rem; white-space: nowrap; flex-shrink: 0; margin-left: 0; color: var(--accent-light); }
 
     /* --- Modales : plein écran --- */
     .modal {
@@ -3054,7 +3067,8 @@ body {
     .medal { width: 130px; height: 130px; top: 42% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: 96px 1fr; }
+    .building-item { grid-template-columns: 56px 1fr 68px; }
+    .building-item button { width: 68px; height: 68px; font-size: 0.68rem; }
     .building-image { max-height: 76px; min-width: 48px; }
     .building-name { font-size: 0.78rem; }
     .multiplier-btn { padding: 5px 10px; }

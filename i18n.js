@@ -84,6 +84,8 @@ const TRANSLATIONS = {
         'palier max': 'max tier',
         'Aucun contrat disponible': 'No contract available',
         'nouveaux contrats dans {time}': 'new contracts in {time}',
+        '3 batiments requis': '3 buildings required',
+        'Debloque {count} types de batiments pour les contrats': 'Unlock {count} building types to access contracts',
         'contrat(s) propose(s)': 'contract(s) available',
         'Parts': 'Parts',
         'Pas assez de Parts': 'Not enough Parts',
