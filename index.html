@@ -347,6 +347,18 @@
     </div>
 
     <!-- MOBILE BOTTOM NAV -->
+    <!-- ANIMATION DE VOYAGE (plein ecran, verticale, mobile-first) -->
+    <div class="travel-overlay" id="travel-overlay">
+        <div class="travel-stars" id="travel-stars"></div>
+        <div class="travel-planet travel-earth"><img src="images/planets/earth.png" alt=""></div>
+        <div class="travel-planet travel-moon"><img src="images/planets/moon.png" alt=""></div>
+        <div class="travel-rocket" id="travel-rocket"><img src="images/rocket/body.png" alt=""></div>
+        <div class="travel-hud">
+            <div class="travel-distance"><span id="travel-distance-value">0</span> <span data-i18n="km">km</span></div>
+            <button class="travel-skip" id="travel-skip" data-i18n="Passer">Passer</button>
+        </div>
+    </div>
+
     <nav class="mobile-nav" id="mobile-nav">
         <button data-view="center"><span class="nav-icon">🚀</span><span data-i18n="Fusée">Fusée</span></button>
         <button data-view="right"><span class="nav-icon">🏭</span><span data-i18n="Bâtiments">Bâtiments</span></button>

@@ -1212,6 +1212,138 @@ body {
     }
 }
 /* ============================================
+   ANIMATION DE VOYAGE (plein ecran, verticale, mobile-first)
+   ============================================ */
+.travel-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: linear-gradient(180deg, #02030f 0%, #0b1030 55%, #1a2a5e 100%);
+    display: none;
+    overflow: hidden;
+    pointer-events: none;
+}
+.travel-overlay.active {
+    display: block;
+    pointer-events: auto;
+}
+/* Champ d'etoiles fixe (deroul JS aleatoire) */
+.travel-stars {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+.travel-star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0.8;
+}
+.travel-star.twinkle {
+    animation: travelStarTwinkle 1.6s ease-in-out infinite alternate;
+}
+@keyframes travelStarTwinkle {
+    from { opacity: 0.25; }
+    to { opacity: 0.9; }
+}
+/* Fusee : vole vers le HAUT, meme image que la scene de construction.
+   L'image body.png pointe vers le haut, aucune rotation necessaire. */
+.travel-rocket {
+    position: absolute;
+    left: 50%;
+    width: 48px;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+.travel-rocket img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(255, 170, 60, 0.45));
+}
+/* Petit jet de flamme sous la fusee pendant le vol */
+.travel-rocket::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 14px;
+    height: 34px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #fff7cc 0%, #ffd23f 35%, #ff8a00 65%, rgba(255, 61, 0, 0) 100%);
+    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+    filter: blur(1.5px);
+    transform-origin: 50% 0;
+    animation: travelFlame 0.14s ease-in-out infinite alternate;
+}
+@keyframes travelFlame {
+    from { transform: translateX(-50%) scaleY(0.75); opacity: 0.8; }
+    to { transform: translateX(-50%) scaleY(1.15); opacity: 1; }
+}
+/* Planetes d'arrivee : Terre en bas, Lune en haut (visible une fois proche) */
+.travel-planet {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+.travel-planet img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.travel-earth {
+    bottom: -8vh;
+    width: 58vw;
+    max-width: 340px;
+    z-index: 1;
+    opacity: 0.9;
+}
+.travel-moon {
+    top: 8vh;
+    width: 30vw;
+    max-width: 170px;
+    z-index: 2;
+}
+/* HUD : compteur de km en haut, bouton Passer en dessous */
+.travel-hud {
+    position: absolute;
+    top: 4vh;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    text-align: center;
+}
+.travel-distance {
+    font-size: clamp(2rem, 9vw, 3.4rem);
+    font-weight: 800;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 24px rgba(59, 130, 246, 0.9), 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+.travel-distance span {
+    color: var(--accent-light, #93c5fd);
+}
+.travel-skip {
+    margin-top: 10px;
+    padding: 8px 22px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+.travel-skip:active {
+    transform: scale(0.96);
+}
+/* Sur petits ecans : fusee et planetes un peu plus petites */
+@media (max-width: 480px) {
+    .travel-rocket { width: 40px; }
+    .travel-earth { width: 70vw; }
+    .travel-moon { width: 38vw; }
+}
+/* ============================================
    SPACE MAP STYLES
    ============================================ */
 /* Space Map Modal */

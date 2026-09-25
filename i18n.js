@@ -67,6 +67,7 @@ const TRANSLATIONS = {
         'la dernière planète !': 'the last planet!',
         'Départ': 'Start',
         'Aucune nouvelle planète débloquée': 'No new planet unlocked',
+        'Passer': 'Skip',
         // --- Contrats ---
         'Contrats de Fabrication': 'Fabrication Contracts',
         'Accepte un contrat, remplis son quota avec le batiment cible dans le temps imparti, et gagne un bonus de production permanent sur ce batiment.': 'Accept a contract, fill its quota with the target building within the time limit, and earn a permanent production bonus on that building.',

@@ -1200,13 +1200,15 @@ function launchRocket() {
     const distance = calculateDistance();
     
     playLaunchSequence(() => {
-        // Afficher la carte spatiale avec la progression
         lastLaunchDistance = distance;
-        showSpaceMap(distance);
-        updateSpaceProgress();
-        updateConstructionScene();
-        isLaunching = false;
-        showToast(`🚀 ${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
+        // Animation de voyage Terre -> Lune, puis carte de l'espace
+        playTravelAnimation(distance, () => {
+            showSpaceMap(distance);
+            updateSpaceProgress();
+            updateConstructionScene();
+            isLaunching = false;
+            showToast(`🚀 ${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
+        });
     });
 }
 
@@ -1345,6 +1347,107 @@ function showLaunchResults(distance) {
 
 function closeLaunchResults() {
     document.getElementById('launch-results-modal').classList.remove('active');
+}
+
+// ============================================
+// ANIMATION DE VOYAGE (apres decollage, avant la carte de l'espace)
+// Plein ecran, verticale, pensee mobile : la fusee monte de la Terre
+// (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
+// jusqu'a la distance reellement atteinte par le lancer.
+// ============================================
+const TRAVEL_ANIM_MS = 3400;
+let travelAnimFrame = 0;
+
+function playTravelAnimation(distance, onDone) {
+    const overlay = document.getElementById('travel-overlay');
+    if (!overlay || typeof distance !== 'number' || isNaN(distance)) {
+        if (onDone) onDone();
+        return;
+    }
+    cancelAnimationFrame(travelAnimFrame);
+    const rocketEl = overlay.querySelector('.travel-rocket');
+    const distanceEl = document.getElementById('travel-distance-value');
+    const moonEl = overlay.querySelector('.travel-moon');
+    const skipBtn = document.getElementById('travel-skip');
+    const safeDistance = Math.max(0, distance);
+
+    // Fusee de depart : vers le bas de l'ecran, au-dessus de la Terre
+    const startY = overlay.clientHeight * 0.78;
+    const endY = overlay.clientHeight * 0.20;
+
+    const startTime = performance.now();
+    let finished = false;
+
+    const cleanup = () => {
+        cancelAnimationFrame(travelAnimFrame);
+        overlay.classList.remove('active');
+        if (skipBtn) skipBtn.removeEventListener('click', skipHandler);
+        if (finished) {
+            if (onDone) onDone();
+        }
+    };
+    const skipHandler = () => finish();
+
+    function finish() {
+        if (finished) return;
+        finished = true;
+        if (distanceEl) distanceEl.textContent = formatNumber(safeDistance);
+        if (rocketEl) rocketEl.style.top = endY + 'px';
+        setTimeout(cleanup, 260);
+    }
+
+    const tick = (now) => {
+        if (finished) return;
+        const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
+        // Courbe ease-out : rapide au debut, ralentit en arrivant sur la Lune
+        const eased = 1 - Math.pow(1 - linear, 2.6);
+        // La fusee monte ; sa position figure la hauteur atteinte
+        const y = startY + (endY - startY) * eased;
+        if (rocketEl) rocketEl.style.top = y + 'px';
+        // Compteur de km synchronise sur la fusee
+        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * eased));
+        // La Lune grossit a mesure qu'on s'approche
+        if (moonEl) {
+            const scale = 0.7 + 0.3 * eased;
+            moonEl.style.transform = 'translateX(-50%) scale(' + scale + ')';
+        }
+        if (linear >= 1) {
+            finish();
+            return;
+        }
+        travelAnimFrame = requestAnimationFrame(tick);
+    };
+
+    // Initialisation visuelle avant l'affichage
+    if (rocketEl) {
+        rocketEl.style.top = startY + 'px';
+        rocketEl.style.transition = 'none';
+    }
+    if (distanceEl) distanceEl.textContent = '0';
+    if (moonEl) moonEl.style.transform = 'translateX(-50%) scale(0.7)';
+    fillTravelStars(overlay);
+    overlay.classList.add('active');
+    if (skipBtn) skipBtn.addEventListener('click', skipHandler);
+    travelAnimFrame = requestAnimationFrame(tick);
+}
+
+// Champ d'etoiles aleatoire : petites tailles et scintillement varies
+function fillTravelStars(overlay) {
+    const starsEl = overlay.querySelector('.travel-stars');
+    if (!starsEl || starsEl.childElementCount > 0) return;
+    const count = 70;
+    for (let i = 0; i < count; i++) {
+        const star = document.createElement('div');
+        star.className = 'travel-star';
+        if (Math.random() < 0.5) star.classList.add('twinkle');
+        const size = Math.random() * 2.2 + 1;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = (Math.random() * 100) + '%';
+        star.style.top = (Math.random() * 100) + '%';
+        star.style.animationDelay = (Math.random() * 1.6) + 's';
+        starsEl.appendChild(star);
+    }
 }
 
 // ============================================
