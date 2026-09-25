@@ -3282,8 +3282,12 @@ function tickContracts() {
         }
     }
     // Le timer de rotation se met en pause tant qu'un contrat est en cours.
+    // nextRotationAt a 0 (apres un lancement/reset ou une sauvegarde ancienne) :
+    // on genere des offres immediatement des que les contrats sont debloques,
+    // sinon le timer resterait bloque a 00:00 sans jamais rien proposer.
     const rotationPaused = !!contractState.active;
-    if (!rotationPaused && contractState.nextRotationAt > 0 && now >= contractState.nextRotationAt) {
+    if (!rotationPaused && areContractsUnlocked()
+        && (contractState.nextRotationAt === 0 || now >= contractState.nextRotationAt)) {
         generateContractOffers();
     }
     if (contractState.active) {
