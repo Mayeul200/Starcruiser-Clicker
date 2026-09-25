@@ -215,6 +215,7 @@ const TRANSLATIONS = {
         'Pas assez de Parts pour': 'Not enough Parts for',
         // --- Bonus aléatoires ---
         'Pluie de météores': 'Meteor Shower',
+        'Pluie de comètes ! Attrapez-les !': 'Comet shower! Catch them!',
         'Éruption solaire': 'Solar Flare',
         'expiré': 'expired',
         'for': 'for',

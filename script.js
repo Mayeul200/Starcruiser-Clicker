@@ -2243,14 +2243,17 @@ function rebuildAutoMultipliers() {
     updateClickMultiplier();
 }
 
-function spawnRandomBonus() {
-    let bonusIndex = Math.floor(Math.random() * RANDOM_BONUSES.length);
-    let bonus = RANDOM_BONUSES[bonusIndex];
+function spawnRandomBonus(shower) {
+    // Pluie de comètes : bonus instantané uniquement (pas de flare, pas de
+    // cumul de multiplicateurs), look distinct, récompense généreuse.
+    let bonus = shower
+        ? { id: "meteor", symbol: "\ud83c\udf20", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" }
+        : RANDOM_BONUSES[Math.floor(Math.random() * RANDOM_BONUSES.length)];
     // Si ce bonus est déjà actif, prendre l'autre pour ne pas bloquer le spawn
-    if (activeRandomBonuses.some(b => b.id === bonus.id)) {
-        bonusIndex = (bonusIndex + 1) % RANDOM_BONUSES.length;
-        bonus = RANDOM_BONUSES[bonusIndex];
-        if (activeRandomBonuses.some(b => b.id === bonus.id)) return;
+    if (!shower && activeRandomBonuses.some(b => b.id === bonus.id)) {
+        const other = RANDOM_BONUSES.find(b => b.id !== bonus.id);
+        if (activeRandomBonuses.some(b => b.id === other.id)) return;
+        bonus = other;
     }
 
     // La comète traverse l'écran en diagonale de haut en bas
@@ -2279,7 +2282,7 @@ function spawnRandomBonus() {
     const duration = 6000;
 
     const bonusElement = document.createElement('div');
-    bonusElement.className = `random-bonus comet ${bonus.colorClass}`;
+    bonusElement.className = `random-bonus comet ${bonus.colorClass}` + (shower ? ' shower' : '');
     if (!goRight) bonusElement.classList.add('reverse');
     bonusElement.innerHTML = '<img src="images/effects/com\u00e8te.png" class="comet-img" alt="Comete">';
     bonusElement.style.left = `${startX}px`;
@@ -2347,7 +2350,7 @@ function spawnRandomBonus() {
         clickedBonusesCount++;
 
         if (bonus.id === "meteor") {
-            const instantProduction = partsPerSecond * 10;
+            const instantProduction = partsPerSecond * (shower ? 5 : 10);
             score += instantProduction;
             partsSinceLaunch += instantProduction;
             showToast(`\u2705 ${t(bonus.name)}: +${formatNumber(instantProduction)} ${t("Parts")}!`);
@@ -3857,11 +3860,38 @@ function scheduleBonusSpawn() {
     const bonus = getCometFrequencyBonus();
     const delay = Math.max(800, BONUS_SPAWN_INTERVAL_MS / (1 + bonus));
     setTimeout(() => {
-        spawnRandomBonus();
+        if (!cometShowerActive) spawnRandomBonus();
         scheduleBonusSpawn();
     }, delay);
 }
 scheduleBonusSpawn();
+
+// ============================================
+// PLUIE DE COMÈTES (événement régulier)
+// ============================================
+// Toutes les 4 à 6 minutes, une cascade de comètes dorées traverse
+// l'écran : chacune ne donne que du bonus instantané (jamais de flare),
+// pour éviter tout cumul de multiplicateurs.
+let cometShowerActive = false;
+function scheduleCometShower() {
+    const delay = 240000 + Math.random() * 120000;
+    setTimeout(() => {
+        startCometShower();
+        scheduleCometShower();
+    }, delay);
+}
+function startCometShower() {
+    if (cometShowerActive) return;
+    cometShowerActive = true;
+    showToast('\ud83c\udf20 ' + t('Pluie de com\u00e8tes ! Attrapez-les !'));
+    const COUNT = 12;
+    const SPREAD_MS = 8000;
+    for (let i = 0; i < COUNT; i++) {
+        setTimeout(() => spawnRandomBonus(true), (i / COUNT) * SPREAD_MS + Math.random() * 400);
+    }
+    setTimeout(() => { cometShowerActive = false; }, SPREAD_MS + 8000);
+}
+scheduleCometShower();
 let lastGameTick = Date.now();
 
 setInterval(gameLoop, GAME_LOOP_INTERVAL_MS);
