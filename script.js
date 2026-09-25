@@ -266,7 +266,7 @@ const TROPHIES = [
 
     // Bonus cliqués (icônes: comète)
     { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comète.png", threshold: 1, type: "bonus" },
-    { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/meteor-card.png", threshold: 10, type: "bonus" },
+    { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/comet-card.png", threshold: 10, type: "bonus" },
     { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comète.png", threshold: 50, type: "bonus" },
     { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comète.png", threshold: 100, type: "bonus" },
 
