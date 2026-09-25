@@ -1116,22 +1116,30 @@ body {
 }
 /* Astronaute : court hors du pas de tir dès le clic sur Lancer.
    Course rapide (foulées courtes) vers la gauche, sans retour. */
+/* Astronaute : court hors du pas de tir des le clic sur Lancer.
+   Il traverse le fond jusqu'au bord GAUCHE de l'image du panneau central :
+   deplacement en px (le % serait relatif a sa propre largeur de 25px,
+   soit seulement quelques pixels). Il part de x=40% du monde (410px)
+   et doit sortir du cadre gauche (monde 1024px). */
 .astronaut-running {
-    animation: astronautRunOut 1.15s linear forwards !important;
+    animation: astronautRunOut 1.5s linear forwards !important;
 }
 @keyframes astronautRunOut {
-    0% { transform: translateX(0) rotate(0deg); opacity: 1; }
-    10% { transform: translateX(-5%) rotate(3deg); }
-    20% { transform: translateX(-10%) rotate(-3deg); }
-    30% { transform: translateX(-15%) rotate(3deg); }
-    40% { transform: translateX(-20%) rotate(-3deg); }
-    50% { transform: translateX(-25%) rotate(3deg); }
-    60% { transform: translateX(-30%) rotate(-3deg); }
-    70% { transform: translateX(-36%) rotate(3deg); }
-    80% { transform: translateX(-42%) rotate(-3deg); }
-    90% { transform: translateX(-48%) rotate(2deg); }
-    99% { transform: translateX(-55%) rotate(0deg); opacity: 1; }
-    100% { transform: translateX(-56%) rotate(0deg); opacity: 0; }
+    0% { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
+    8% { transform: translate(calc(-50% - 36px), 0) rotate(3deg); }
+    16% { transform: translate(calc(-50% - 72px), 0) rotate(-3deg); }
+    24% { transform: translate(calc(-50% - 108px), 0) rotate(3deg); }
+    32% { transform: translate(calc(-50% - 144px), 0) rotate(-3deg); }
+    40% { transform: translate(calc(-50% - 180px), 0) rotate(3deg); }
+    48% { transform: translate(calc(-50% - 216px), 0) rotate(-3deg); }
+    56% { transform: translate(calc(-50% - 252px), 0) rotate(3deg); }
+    64% { transform: translate(calc(-50% - 288px), 0) rotate(-3deg); }
+    72% { transform: translate(calc(-50% - 324px), 0) rotate(3deg); }
+    80% { transform: translate(calc(-50% - 360px), 0) rotate(-3deg); }
+    88% { transform: translate(calc(-50% - 396px), 0) rotate(3deg); }
+    96% { transform: translate(calc(-50% - 420px), 0) rotate(-2deg); }
+    99% { transform: translate(calc(-50% - 425px), 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(calc(-50% - 430px), 0) rotate(0deg); opacity: 0; }
 }
 /* Flammes sous les moteurs : jets coniques orangés vacillants.
    Ancrées au bas des tuyères (y=666) : le HAUT des jets affleure les
@@ -1158,9 +1166,11 @@ body {
     transform-origin: 50% 0;
     animation: launchFlameJet 0.16s ease-in-out infinite alternate;
 }
-.launch-flame-jet:nth-child(1) { left: 14px; }
+/* Jets alignes sur les tuyeres : le central sous les moteurs (x=512),
+   les lateraux sous les boosters gauche/droit (x=469 / x=555). */
+.launch-flame-jet:nth-child(1) { left: 5px; }
 .launch-flame-jet:nth-child(2) { left: 47px; animation-name: launchFlameJet2; }
-.launch-flame-jet:nth-child(3) { left: 80px; }
+.launch-flame-jet:nth-child(3) { left: 90px; }
 @keyframes launchFlameJet {
     from { transform: scaleY(0.85) scaleX(1.05); opacity: 0.85; }
     to { transform: scaleY(1.2) scaleX(0.9); opacity: 1; }
