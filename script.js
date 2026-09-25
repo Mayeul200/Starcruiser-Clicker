@@ -2386,13 +2386,15 @@ function interceptCometWithMissile(cometEl, onDestroy) {
     // diagonale (montante), côté opposé à son sens de vol, exactement à 90°.
     const goRight = !cometEl.classList.contains('reverse');
     const fromLeft = goRight;
-    const OFF = 60;
-    const launchX = fromLeft ? -OFF : window.innerWidth + OFF;
-    // Point de départ sur la diagonale perpendiculaire passant par la comète,
-    // tiré au hasard sous elle : |dx| = |dy| garantit l'angle droit.
-    const reach = 120 + Math.random() * 260;
-    const launchY = Math.min(window.innerHeight + OFF, cy + reach);
-    const launchXadj = cx + (fromLeft ? -(launchY - cy) : (launchY - cy));
+    // Départ au bord de l'écran : on descend la diagonale perpendiculaire
+    // passant par la comète jusqu'à la frontière de l'écran (bas ou côté
+    // opposé à son sens de vol). |dx| = |dy| garantit l'angle droit, et la
+    // distance maximale laisse le temps de voir le missile arriver.
+    const sBottom = window.innerHeight - cy;
+    const sSide = fromLeft ? cx : (window.innerWidth - cx);
+    const reach = Math.max(60, Math.min(sBottom, sSide)) + 40;
+    const launchY = cy + reach;
+    const launchXadj = cx + (fromLeft ? -reach : reach);
     let vx = cx - launchXadj;
     let vy = cy - launchY;
     const dist = Math.hypot(vx, vy);
@@ -2406,8 +2408,8 @@ function interceptCometWithMissile(cometEl, onDestroy) {
     missile.style.left = (launchXadj - mW / 2) + 'px';
     missile.style.top = (launchY - mH / 2) + 'px';
     missile.style.transform = `rotate(${angle}rad)`;
-    // Vol rapide : borné entre 180 et 320 ms, peu importe la distance.
-    const duration = Math.max(180, Math.min(320, dist / 4));
+    // Vol rapide mais lisible : borné entre 240 et 600 ms selon la distance.
+    const duration = Math.max(240, Math.min(600, dist / 2.2));
     requestAnimationFrame(() => {
         missile.style.transition = `left ${duration}ms linear, top ${duration}ms linear`;
         missile.style.left = (cx - mW / 2) + 'px';
