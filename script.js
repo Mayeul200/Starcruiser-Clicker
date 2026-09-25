@@ -1514,7 +1514,9 @@ function playTravelAnimation(distance, onDone) {
         // Composition : tous sur l'axe ; la Terre legerement a gauche
         // (point de depart depasse sur le cote au depassement).
         const lat = (i === 0) ? -0.28 : 0;
-        return { el, z: i * DEPTH_STEP, lat };
+        // La Terre un peu plus petite que l'echelle globale des planetes.
+        const scale = (i === 0) ? 0.75 : 1;
+        return { el, z: i * DEPTH_STEP, lat, scale };
     });
 
     const startTime = performance.now();
@@ -1569,18 +1571,14 @@ function playTravelAnimation(distance, onDone) {
             }
             b.el.style.left = pr.x.toFixed(1) + 'px';
             b.el.style.top = pr.y.toFixed(1) + 'px';
-            b.el.style.width = Math.max(6, pr.size).toFixed(1) + 'px';
+            b.el.style.width = Math.max(6, pr.size * (b.scale || 1)).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
             // derriere la camera gardent leur ordre naturel.
             b.el.style.zIndex = String(Math.max(1, Math.round(pr.inv * 10) + 1));
-            // Depassement : l'astre passe SOUS la camera -> il grossit
-            // en sortant par le bas et s'efface (vraie sensation de
-            // voyage devant les planetes intermediaires).
-            let opacity = 1;
-            if (pr.inv > 1.55) opacity = Math.max(0, (1.75 - pr.inv) / 0.2);
-            b.el.style.opacity = opacity.toFixed(2);
+            // Pas de fondu : l'astre depasse la camera en grossissant et
+            // sort naturellement de l'ecran par le bas, plein echelle.
         });
 
         if (linear >= 1) {
