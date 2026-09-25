@@ -1322,6 +1322,7 @@ body {
 #travel-deep {
     position: absolute;
     inset: 0;
+    z-index: 1;            /* calque derriere la fusee (z-index 3) */
     pointer-events: none;
 }
 .travel-body {

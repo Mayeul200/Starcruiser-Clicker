@@ -1368,7 +1368,8 @@ function closeLaunchResults() {
 // (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
 // jusqu'a la distance reellement atteinte par le lancer.
 // ============================================
-const TRAVEL_ANIM_MS = 5200;
+const TRAVEL_ANIM_BASE_MS = 5200;   // voyage court (Terre -> Lune)
+const TRAVEL_ANIM_STEP_MS = 1600;   // par planete intermediaire supplementaire
 let travelAnimFrame = 0;
 
 // ============================================
@@ -1460,8 +1461,11 @@ function playTravelAnimation(distance, onDone) {
     // dans son axe de voyage (nez vers la destination), avec un leger
     // abaissement d'arriere (vue surelevee, pas un sprite 2D plat).
     const rocketX = W * 0.5;
-    const rocketY = H * 0.62;
-    const horizonY = H * 0.14;
+    // Cam plus HAUTE au-dessus de l'axe : la fusee est rendue plus bas,
+    // l'horizon descend, la pente fusee->horizon s'accentue (vue plongeante
+    // plus marquee sur la ligne de planetes).
+    const rocketY = H * 0.70;
+    const horizonY = H * 0.20;
     // pitchK : ecart vertical fusee->horizon pour un astre a la profondeur
     // de la fusee (rel=1) -> l'astre affleure la fusee.
     const pitchK = (rocketY - horizonY);
@@ -1475,14 +1479,19 @@ function playTravelAnimation(distance, onDone) {
     const reached = PLANETS.filter(p => safeDistance >= p.distanceRequired);
     const target = reached[reached.length - 1] || PLANETS[0];
     const itinerary = PLANETS.slice(0, PLANETS.indexOf(target) + 1);
-    const zMax = itinerary.length - 1;
+    // Etapes espacees : 2 unites de profondeur par planete -> la
+    // destination demarre tres loin (petit point), les intermediaires
+    // demandent un vrai trajet. zMax = profondeur de la cible.
+    const zMax = (itinerary.length - 1) * 3;
 
     // Trajet de la camera : demarre PRES de la Terre (gros bout de
     // planet en bas d'ecran, comme juste apres le decollage), croisiere,
     // puis ralentit et s'arrete a distance de la cible (elle apparait
     // grande, juste sous la fusee, dans l'axe).
     const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
-    const CAM_END = zMax - 0.85;             // cible a rel ~0.85 a l'arrivee
+    const CAM_END = zMax - 1.15;             // cible a rel ~1.15 a l'arrivee
+    // Duree adaptee : le voyage s'etire avec le nombre d'etapes.
+    const animMs = TRAVEL_ANIM_BASE_MS + Math.max(0, itinerary.length - 2) * TRAVEL_ANIM_STEP_MS;
 
     // Corps celestes generes dynamiquement (calque de profondeur)
     deepEl.innerHTML = '';
@@ -1497,7 +1506,7 @@ function playTravelAnimation(distance, onDone) {
         // Composition : tous sur l'axe ; la Terre legerement a gauche
         // (point de depart depasse sur le cote au depassement).
         const lat = (i === 0) ? -0.28 : 0;
-        return { el, z: i, lat };
+        return { el, z: i * 3, lat };
     });
 
     const startTime = performance.now();
@@ -1528,7 +1537,7 @@ function playTravelAnimation(distance, onDone) {
 
     const tick = (now) => {
         if (finished) return;
-        const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
+        const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
@@ -1554,6 +1563,10 @@ function playTravelAnimation(distance, onDone) {
             b.el.style.top = pr.y.toFixed(1) + 'px';
             b.el.style.width = Math.max(6, pr.size).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
+            // Ordre de peinture par profondeur : plus un astre est proche,
+            // plus il est peint au-dessus (z eleve). Les astres passes
+            // derriere la camera gardent leur ordre naturel.
+            b.el.style.zIndex = String(Math.max(1, Math.round(pr.inv * 10) + 1));
             // Depassement : l'astre passe SOUS la camera -> il grossit
             // en sortant par le bas et s'efface (vraie sensation de
             // voyage devant les planetes intermediaires).
