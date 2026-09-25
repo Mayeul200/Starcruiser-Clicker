@@ -1012,8 +1012,7 @@ body {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
     box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
-    max-width: 500px;
-    width: 90%;
+    width: 100%;
 }
 .launch-modal .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
