@@ -3696,7 +3696,7 @@ function openCardLightbox(card) {
     const img = document.getElementById('cc-lightbox-img');
     img.src = card.imgPath;
     img.alt = card.name;
-    document.getElementById('cc-lightbox-name').textContent = card.icon + ' ' + t(card.name);
+    document.getElementById('cc-lightbox-name').textContent = t(card.name);
     const rarity = CARD_RARITIES[card.rarity];
     const bonus = Math.round(CARD_RARITIES[card.rarity].bonusMult * 100);
     const count = cardCollection[card.id] || 0;

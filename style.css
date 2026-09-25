@@ -625,7 +625,7 @@ body {
     z-index: 1000;
     pointer-events: none;
     white-space: pre-line;
-    width: 90%;
+    width: 85%;
     line-height: 1.5;
 }
 .building-item:hover::after {
