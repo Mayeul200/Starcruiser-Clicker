@@ -1748,9 +1748,7 @@ function applyOfflineEarnings(lastSave) {
     score += totalGain;
     partsSinceLaunch += totalGain;
     const capped = cappedSec < elapsedSec;
-    const hours = Math.floor(cappedSec / 3600);
-    const minutes = Math.floor((cappedSec % 3600) / 60);
-    const timeStr = hours > 0 ? hours + 'h' + String(minutes).padStart(2, '0') : minutes + ' min';
+    const timeStr = formatDurationHMS(cappedSec * 1000);
     showToast('\ud83c\udf19 ' + t('Production hors-ligne (') + timeStr + (capped ? ', ' + t('plafonn\u00e9e)') : '') + ' +' + formatNumber(totalGain) + ' ' + t('Parts'));
     updateDisplay();
 }
@@ -2603,13 +2601,8 @@ function getGameDuration() {
     
     const totalSec = Math.floor(durationMs / 1000);
     const days = Math.floor(totalSec / 86400);
-    const h = Math.floor((totalSec % 86400) / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
-    if (days > 0) return days + t("jours") + ' ' + h + 'h' + String(m).padStart(2, '0') + String(s).padStart(2, '0');
-    if (h > 0) return h + 'h' + String(m).padStart(2, '0') + String(s).padStart(2, '0');
-    if (m > 0) return m + 'min' + String(s).padStart(2, '0');
-    return s + "s";
+    if (days > 0) return days + t("jours") + ' ' + formatDurationHMS((totalSec % 86400) * 1000);
+    return formatDurationHMS(durationMs);
 }
 
 // ============================================
@@ -2986,8 +2979,7 @@ function updateBonusTimer() {
 
     const labels = activeBonuses.map(bonus => {
         const remainingTime = Math.max(0, bonus.endTime - Date.now());
-        const seconds = Math.ceil(remainingTime / 1000);
-        return `\u23f3 \u00d7${bonus.multiplier} (${seconds}s)`;
+        return `\u23f3 \u00d7${bonus.multiplier} (${formatDurationHMS(remainingTime)})`;
     });
     timerElement.innerHTML = labels.join('<br>');
     timerElement.style.display = 'block';
@@ -3670,15 +3662,21 @@ function initMobileNav() {
 }
 
 // --- Chronometre depuis le dernier lancement ---
-function formatLaunchTimer(ms) {
+// Format de duree complet : toutes les unites non nulles sont affichees,
+// avec zero non significatif quand une unite superieure est presente.
+// 3h45m50s / 45m50s / 50s / jamais une seule unite tronquee.
+function formatDurationHMS(ms) {
     if (ms < 0) ms = 0;
-    const s = Math.floor(ms / 1000);
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    if (h > 0) return h + 'h' + String(m).padStart(2, '0') + String(sec).padStart(2, '0');
-    if (m > 0) return m + 'm' + String(sec).padStart(2, '0');
-    return sec + 's';
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (h > 0) return h + 'h' + String(m).padStart(2, '0') + 'm' + String(s).padStart(2, '0') + 's';
+    if (m > 0) return m + 'm' + String(s).padStart(2, '0') + 's';
+    return s + 's';
+}
+function formatLaunchTimer(ms) {
+    return formatDurationHMS(ms);
 }
 
 function updateLaunchTimer() {
@@ -3934,9 +3932,7 @@ function debugEstimateTime() {
         debugRenderAll();
     }
     if (result.error) return result;
-    const h = Math.floor(result.seconds / 3600);
-    const m = Math.round((result.seconds % 3600) / 60);
-    return { ...result, formatted: h > 0 ? (h + 'h' + String(m).padStart(2, '0')) : (m + ' min') };
+    return { ...result, formatted: formatDurationHMS(result.seconds * 1000) };
 }
 
 const Debug = {
