@@ -1355,7 +1355,7 @@ function closeLaunchResults() {
 // (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
 // jusqu'a la distance reellement atteinte par le lancer.
 // ============================================
-const TRAVEL_ANIM_MS = 3400;
+const TRAVEL_ANIM_MS = 4200;
 let travelAnimFrame = 0;
 
 function playTravelAnimation(distance, onDone) {
@@ -1366,14 +1366,24 @@ function playTravelAnimation(distance, onDone) {
     }
     cancelAnimationFrame(travelAnimFrame);
     const rocketEl = overlay.querySelector('.travel-rocket');
-    const distanceEl = document.getElementById('travel-distance-value');
+    const earthEl = overlay.querySelector('.travel-earth');
     const moonEl = overlay.querySelector('.travel-moon');
+    const distanceEl = document.getElementById('travel-distance-value');
     const skipBtn = document.getElementById('travel-skip');
     const safeDistance = Math.max(0, distance);
 
-    // Fusee de depart : vers le bas de l'ecran, au-dessus de la Terre
-    const startY = overlay.clientHeight * 0.78;
-    const endY = overlay.clientHeight * 0.20;
+    // NB: l'overlay est en display:none avant l'activation, clientHeight
+    // vaut 0. On mesure la fenetre, ce qui est equivalent car l'overlay
+    // couvre tout l'ecran (inset: 0).
+    const H = window.innerHeight || 800;
+    const W = window.innerWidth || 400;
+
+    // Trajectoire radiale (vue plongeante) : la fusee est INCLINEE,
+    // elle monte et derive legerement vers la droite.
+    const startX = W * 0.30;
+    const startY = H * 0.84;
+    const endX = W * 0.50;
+    const endY = H * 0.22;
 
     const startTime = performance.now();
     let finished = false;
@@ -1392,25 +1402,54 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         finished = true;
         if (distanceEl) distanceEl.textContent = formatNumber(safeDistance);
-        if (rocketEl) rocketEl.style.top = endY + 'px';
-        setTimeout(cleanup, 260);
+        setTimeout(cleanup, 240);
     }
+
+    // Easing distincts pour choregraphier les phases du voyage :
+    // - fusee : ease-in doux (elle accelere en quittant la Terre)
+    // - Lune : tres lent au debut puis elle enflue rapidement (approche)
+    // - Terre : descend hors de l'ecran au fil du depart
+    const easeInQuad = (x) => x * x;
+    const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
 
     const tick = (now) => {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
-        // Courbe ease-out : rapide au debut, ralentit en arrivant sur la Lune
-        const eased = 1 - Math.pow(1 - linear, 2.6);
-        // La fusee monte ; sa position figure la hauteur atteinte
-        const y = startY + (endY - startY) * eased;
-        if (rocketEl) rocketEl.style.top = y + 'px';
-        // Compteur de km synchronise sur la fusee
-        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * eased));
-        // La Lune grossit a mesure qu'on s'approche
-        if (moonEl) {
-            const scale = 0.7 + 0.3 * eased;
-            moonEl.style.transform = 'translateX(-50%) scale(' + scale + ')';
+
+        // ---- Fusee : monte en derivant vers la droite, inclinee ----
+        const tRocket = easeInQuad(linear);
+        const x = startX + (endX - startX) * tRocket;
+        const y = startY + (endY - startY) * tRocket;
+        if (rocketEl) {
+            // Inclinaison fixe vers la trajectoire + tres leger tangage
+            // qui suit la derive horizontale, pour l'effet 3D radial.
+            const drift = (x - startX) / Math.max(1, (endX - startX));
+            const tilt = 18 + drift * 8;
+            rocketEl.style.left = x + 'px';
+            rocketEl.style.top = y + 'px';
+            rocketEl.style.transform = 'translate(-50%, -50%) rotate(' + tilt.toFixed(1) + 'deg)';
         }
+
+        // ---- Compteur de km synchronise sur la fusee ----
+        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * tRocket));
+
+        // ---- Terre : descend et sort de l'ecran par le bas ----
+        if (earthEl) {
+            const tEarth = Math.min(1, linear * 1.15);
+            const earthY = tEarth * tEarth * (H * 0.95);
+            const earthScale = 1 - tEarth * 0.25;
+            earthEl.style.transform = 'translate(-50%, ' + earthY.toFixed(0) + 'px) scale(' + earthScale.toFixed(3) + ')';
+        }
+
+        // ---- Lune : point minuscule au depart, enflue a l'approche ----
+        if (moonEl) {
+            const tMoon = easeOutCubic(linear);
+            const scale = 0.06 + Math.pow(tMoon, 3.2) * 1.35;
+            const opacity = Math.min(1, linear * 2.5);
+            moonEl.style.transform = 'translate(-50%, 0) scale(' + scale.toFixed(3) + ')';
+            moonEl.style.opacity = opacity.toFixed(2);
+        }
+
         if (linear >= 1) {
             finish();
             return;
@@ -1418,20 +1457,27 @@ function playTravelAnimation(distance, onDone) {
         travelAnimFrame = requestAnimationFrame(tick);
     };
 
-    // Initialisation visuelle avant l'affichage
+    // Initialisation visuelle avant affichage
     if (rocketEl) {
+        rocketEl.style.left = startX + 'px';
         rocketEl.style.top = startY + 'px';
-        rocketEl.style.transition = 'none';
+        rocketEl.style.transform = 'translate(-50%, -50%) rotate(18deg)';
+    }
+    if (earthEl) {
+        earthEl.style.transform = 'translate(-50%, 0) scale(1)';
+        earthEl.style.opacity = '1';
+    }
+    if (moonEl) {
+        moonEl.style.transform = 'translate(-50%, 0) scale(0.06)';
+        moonEl.style.opacity = '0';
     }
     if (distanceEl) distanceEl.textContent = '0';
-    if (moonEl) moonEl.style.transform = 'translateX(-50%) scale(0.7)';
     fillTravelStars(overlay);
     overlay.classList.add('active');
     if (skipBtn) skipBtn.addEventListener('click', skipHandler);
     travelAnimFrame = requestAnimationFrame(tick);
 }
 
-// Champ d'etoiles aleatoire : petites tailles et scintillement varies
 function fillTravelStars(overlay) {
     const starsEl = overlay.querySelector('.travel-stars');
     if (!starsEl || starsEl.childElementCount > 0) return;
