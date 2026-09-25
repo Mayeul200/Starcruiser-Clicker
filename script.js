@@ -1302,16 +1302,29 @@ function playLaunchSequence(onDone) {
 
 // Flammes + fumée sous la fusée pendant le décollage
 function igniteLaunchFlames(rocketWrap, sceneEl) {
-    // Flammes dans le repère de la fusée : elles suivent le vol
+    // Flammes dans le repere de la fusee : elles suivent le vol.
+    // Positionnement calcule depuis ROCKET_PARTS (plus de valeurs CSS en
+    // dur) : un jet sous chaque tuyere de booster + le jet central sous
+    // les moteurs. Tolerie de proximite pour relier tuyere et jet.
     const flames = document.createElement('div');
     flames.className = 'launch-flames';
     rocketWrap.appendChild(flames);
-    for (let i = 0; i < 3; i++) {
+    const nozzles = ROCKET_PARTS.filter(p => p.id === 'nozzles');
+    const boosters = ROCKET_PARTS.filter(p => p.id.startsWith('boosters-'));
+    const centerX = 50; // axe central de la fusee en %
+    const jets = [];
+    nozzles.forEach(n => jets.push({ cx: n.x }));
+    boosters.forEach(b => jets.push({ cx: b.x }));
+    if (jets.length === 0) {
+        jets.push({ cx: centerX }, { cx: centerX }, { cx: centerX });
+    }
+    jets.forEach((j, i) => {
         const jet = document.createElement('div');
         jet.className = 'launch-flame-jet';
+        jet.style.left = 'calc(' + j.cx + '% - 13px)'; // 13px = demi-largeur du jet
         jet.style.animationDelay = (i * 0.12) + 's';
         flames.appendChild(jet);
-    }
+    });
     // Fumée au sol sur le pas de tir : elle ne décolle pas.
     // Ajoutée dans le monde scene-world pour suivre la meme echelle que la fusée.
     const world = document.getElementById('scene-world');

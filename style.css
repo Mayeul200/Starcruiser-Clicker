@@ -1099,15 +1099,18 @@ body {
     position: relative;
     width: 100%;
 }
+/* Tremblement d'ENSEMBLE : la propriete translate est composited, le
+   calque du wrapper bouge d'un bloc (moteurs, reservoir, boosters et
+   tuyeres restent soudes, aucun interstice ne s'ouvre entre eux). */
 .launch-rocket-wrap.launch-shaking {
     animation: launchShake 0.12s linear infinite;
 }
 @keyframes launchShake {
-    0% { margin-left: 0; }
-    25% { margin-left: -1.5px; }
-    50% { margin-left: 1.5px; }
-    75% { margin-left: -1px; }
-    100% { margin-left: 0; }
+    0% { translate: 0 0; }
+    25% { translate: -1.5px 0.4px; }
+    50% { translate: 1.5px -0.4px; }
+    75% { translate: -1px 0.3px; }
+    100% { translate: 0 0; }
 }
 /* Décollage : accélération réaliste (lente au départ, rapide ensuite) */
 .launch-rocket-wrap.lift-off {
@@ -1170,11 +1173,10 @@ body {
     transform-origin: 50% 0;
     animation: launchFlameJet 0.16s ease-in-out infinite alternate;
 }
-/* Jets alignes sur les tuyeres : le central sous les moteurs (x=512),
-   les lateraux sous les boosters gauche/droit (x=469 / x=555). */
-.launch-flame-jet:nth-child(1) { left: 5px; }
-.launch-flame-jet:nth-child(2) { left: 47px; animation-name: launchFlameJet2; }
-.launch-flame-jet:nth-child(3) { left: 90px; }
+/* Positions des jets calculees en JS depuis ROCKET_PARTS (left en %).
+   Le 2e jet vacille a contre-temps pour l'effet moteur. */
+.launch-flame-jet:nth-child(2) { animation-name: launchFlameJet2; }
+.launch-flame-jet:nth-child(3) { animation-name: launchFlameJet3; }
 @keyframes launchFlameJet {
     from { transform: scaleY(0.85) scaleX(1.05); opacity: 0.85; }
     to { transform: scaleY(1.2) scaleX(0.9); opacity: 1; }
@@ -1182,6 +1184,10 @@ body {
 @keyframes launchFlameJet2 {
     from { transform: scaleY(1.15) scaleX(0.92); opacity: 1; }
     to { transform: scaleY(0.8) scaleX(1.1); opacity: 0.85; }
+}
+@keyframes launchFlameJet3 {
+    from { transform: scaleY(0.95) scaleX(1); opacity: 0.9; }
+    to { transform: scaleY(1.1) scaleX(0.95); opacity: 1; }
 }
 /* Fumée au sol qui déborde du pas de tir (reste au sol pendant le vol) */
 .launch-smoke {
