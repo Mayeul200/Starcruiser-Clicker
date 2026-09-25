@@ -1315,31 +1315,27 @@ body {
     height: auto;
     display: block;
 }
-.travel-earth {
+/* Calque des astres en profondeur : chaque planete est un div genere en
+   JS (id travel-deep), place par la projection perspective. La largeur
+   de reference est fixee en JS selon l'ecran ; ici on ne gere que le
+   positionnement: left/top calcules + transform scale. */
+#travel-deep {
     position: absolute;
-    /* left/top/scale pilotes en JS (scene horizontale a planetes) */
-    width: 58vw;
-    max-width: 340px;
-    z-index: 1;
-    opacity: 1;
+    inset: 0;
+    pointer-events: none;
 }
-.travel-moon {
+.travel-body {
     position: absolute;
-    /* left/top/scale pilotes en JS : vient de l'horizon vers la fusee */
-    width: 30vw;
-    max-width: 170px;
-    z-index: 2;
-    opacity: 0;
+    width: 300px;
+    max-width: none;
+    will-change: transform, opacity;
 }
-/* Planete d'apres (Mars) : point minuscule dans le lointain, visible
-   seulement en toute fin de voyage, en haut le long de l'axe incline. */
-.travel-mars {
-    position: absolute;
-    /* left/top pilotes en JS : point fixe au loin sur l'horizon */
-    width: 12vw;
-    max-width: 60px;
-    z-index: 1;
-    opacity: 0;
+.travel-body img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 18px rgba(120, 160, 255, 0.25));
 }
 /* HUD : compteur de km en haut, bouton Passer en dessous */
 .travel-hud {
@@ -1374,11 +1370,7 @@ body {
     transform: scale(0.96);
 }
 /* Sur petits ecans : fusee et planetes un peu plus petites */
-@media (max-width: 480px) {
-    /* (la fusee de voyage est reconstruite en JS, pas de largeur fixe) */
-    .travel-earth { width: 70vw; }
-    .travel-moon { width: 38vw; }
-}
+/* (planetes et fusee de voyage dimensionnees en JS selon l'ecran) */
 /* ============================================
    SPACE MAP STYLES
    ============================================ */
