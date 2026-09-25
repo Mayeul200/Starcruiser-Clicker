@@ -1260,7 +1260,7 @@ function playLaunchSequence(onDone) {
         if (smoke) smoke.remove();
         const astronaut = container.querySelector('.rocket-piece.astronaut');
         if (astronaut) {
-            astronaut.classList.remove('astronaut-walking');
+            astronaut.classList.remove('astronaut-running');
             astronaut.style.opacity = '';
         }
         if (medal) medal.style.pointerEvents = '';
@@ -1268,11 +1268,14 @@ function playLaunchSequence(onDone) {
         onDone();
     };
 
-    // Étape 1 : compte à rebours 3..2..1 avec tremblement croissant
+    // Étape 1 : compte à rebours 3..2..1. Seule la fusée tremble ;
+    // l'astronaute, lui, court hors du pas de tir dès le clic.
     const steps = ['3', '2', '1'];
     let stepIndex = 0;
     const stepMs = 700;
-    container.classList.add('launch-shaking');
+    rocketWrap.classList.add('launch-shaking');
+    const astronaut = container.querySelector('.rocket-piece.astronaut');
+    if (astronaut) astronaut.classList.add('astronaut-running');
     countdown.textContent = steps[0];
     countdown.classList.add('pulsing');
     const stepTimer = setInterval(() => {
@@ -1283,14 +1286,12 @@ function playLaunchSequence(onDone) {
             clearInterval(stepTimer);
             // Étape 2 : allumage moteurs
             countdown.textContent = t('Décollage !');
-            container.classList.remove('launch-shaking');
+            rocketWrap.classList.remove('launch-shaking');
             igniteLaunchFlames(rocketWrap, scene);
             setTimeout(() => {
-                // Étape 3 : décollage — la fusée s'envole, l'astronaute s'en va en marchant
+                // Étape 3 : décollage — la fusée s'envole (l'astronaute court déjà)
                 countdown.classList.add('fading');
                 rocketWrap.classList.add('lift-off');
-                const astronaut = container.querySelector('.rocket-piece.astronaut');
-                if (astronaut) astronaut.classList.add('astronaut-walking');
                 setTimeout(finish, 1900);
             }, 700);
         }
