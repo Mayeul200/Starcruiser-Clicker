@@ -1440,21 +1440,34 @@ function playTravelAnimation(distance, onDone) {
 
     if (rocketEl) buildTravelRocketInto(rocketEl, H);
 
-    // SCENE LINEAIRE : tous les astres (Terre, Lune, Mars, ...) sont
-    // alignes sur l'axe vertical central (x = 50%). La fusee reste
-    // VERTICALE, sans aucune inclinaison, et se stabilise au milieu de
-    // l'ecran. Ce sont les planetes qui defilent vers le bas, comme une
-    // camera qui glisse le long d'une ligne de planetes. Mouvement
-    // uniforme (lineaire), sans easing, realiste.
-    const axisX = W * 0.5;
-    const rocketStartY = H * 0.74;
-    const rocketEndY = H * 0.46;
+    // SCENE : ligne de planetes sur l'AXE HORIZONTAL (comme la carte de
+    // l'espace). La camera est en hauteur (decalee en Y au-dessus de la
+    // ligne) et suit la fusee le long de l'axe : les astres proches
+    // apparaissent BAS et GROS, les astres lointains remontent vers
+    // l'horizon et rapetissent -> effet 3D de vue plongeante.
+    // La fusee reste pres du centre (camera verrouillee dessus).
+    const rocketX = W * 0.46;
+    const rocketY = H * 0.47;
 
-    // Terre : deja a sa taille max, elle sort par le bas sur la 1re moitie
-    const earthExitY = H * 1.15;
-    // Lune : part du haut (point minuscule) et descend jusqu'a la fusee
-    const moonBaseTop = H * 0.09;
-    const moonFinalCenterY = H * 0.62;
+    // Terre : au depart la camera est PRES de la Terre (gros bout visible,
+    // zoom), puis la fusee s'eloigne et la Terre recule vers la gauche
+    // en rapetissant et remontant vers l'horizon.
+    const EARTH = {
+        x0: W * 0.30, x1: -W * 0.38,          // recule vers la gauche
+        y0: H * 0.62, y1: H * 0.40,           // remonte vers l'horizon
+        s0: 1.15, s1: 0.18,                   // grossit encore un peu puis rapetisse
+        growUntil: 0.16,                        // phase de zoom initial
+        goneBy: 0.85                           // sortie d'ecran gauche
+    };
+    // Lune : point minuscule sur l'horizon a droite, elle VIENT a la
+    // fusee : descend de l'horizon et grossit.
+    const MOON = {
+        x0: W * 0.82, x1: W * 0.63,
+        y0: H * 0.33, y1: H * 0.56,
+        s0: 0.06, s1: 0.85
+    };
+    // Mars : destination suivante, point fixe au loin sur l'horizon.
+    const MARS = { x: W * 0.90, y: H * 0.34, s: 0.32, from: 0.62 };
 
     const startTime = performance.now();
     let finished = false;
@@ -1476,46 +1489,60 @@ function playTravelAnimation(distance, onDone) {
         setTimeout(cleanup, 240);
     }
 
+    const lerp = (a, b, t) => a + (b - a) * t;
+
     const tick = (now) => {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / TRAVEL_ANIM_MS);
 
-        // ---- Fusee : verticale, glisse lentement vers le milieu ----
+        // ---- Fusee : horizontale, camera verrouillee, pointe vers la Lune ----
         if (rocketEl) {
-            const y = rocketStartY + (rocketEndY - rocketStartY) * linear;
-            rocketEl.style.left = axisX + 'px';
-            rocketEl.style.top = y + 'px';
-            rocketEl.style.transform = 'translate(-50%, -50%)';
+            rocketEl.style.left = rocketX + 'px';
+            rocketEl.style.top = rocketY + 'px';
+            rocketEl.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         }
 
         // ---- Compteur de km : lineaire ----
         if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * linear));
 
-        // ---- Terre : taille constante, sort de l'ecran par le bas ----
+        // ---- Terre : zoom initial puis recule et sort a gauche ----
         if (earthEl) {
-            const tEarth = Math.min(1, linear / 0.55);
-            const eY = tEarth * earthExitY;
-            earthEl.style.transform = 'translate(-50%, ' + eY.toFixed(0) + 'px) scale(1)';
-            earthEl.style.opacity = '1';
+            let t, eScale;
+            if (linear < EARTH.growUntil) {
+                // La camera decolle : la Terre GROSSIT encore (gros bout)
+                t = linear / EARTH.growUntil;
+                eScale = lerp(EARTH.s0, EARTH.s0 * 1.18, t);
+                earthEl.style.left = EARTH.x0 + 'px';
+                earthEl.style.top = EARTH.y0 + 'px';
+            } else {
+                t = (linear - EARTH.growUntil) / (1 - EARTH.growUntil);
+                const tc = Math.min(1, t / (EARTH.goneBy - EARTH.growUntil) * (EARTH.goneBy - EARTH.growUntil));
+                earthEl.style.left = lerp(EARTH.x0, EARTH.x1, t) + 'px';
+                earthEl.style.top = lerp(EARTH.y0, EARTH.y1, t) + 'px';
+                eScale = lerp(EARTH.s0 * 1.18, EARTH.s1, t);
+            }
+            const eOpacity = linear < 0.8 ? 1 : Math.max(0, 1 - (linear - 0.8) / 0.18);
+            earthEl.style.transform = 'translate(-50%, -50%) scale(' + eScale.toFixed(3) + ')';
+            earthEl.style.opacity = eOpacity.toFixed(2);
         }
 
-        // ---- Lune : descend vers la fusee en grossissant lineairement ----
+        // ---- Lune : descend de l'horizon et grossit en venant a la fusee ----
         if (moonEl) {
-            const moonH = moonEl.offsetHeight || (H * 0.30);
-            const finalY = moonFinalCenterY - (moonBaseTop + moonH / 2);
-            const mY = finalY * linear;
-            const scale = 0.06 + 0.94 * linear;
-            moonEl.style.top = '';
-            moonEl.style.left = '';
-            moonEl.style.transform = 'translate(-50%, ' + mY.toFixed(0) + 'px) scale(' + scale.toFixed(3) + ')';
+            const t = linear;
+            moonEl.style.left = lerp(MOON.x0, MOON.x1, t) + 'px';
+            moonEl.style.top = lerp(MOON.y0, MOON.y1, t) + 'px';
+            const mScale = lerp(MOON.s0, MOON.s1, t);
+            moonEl.style.transform = 'translate(-50%, -50%) scale(' + mScale.toFixed(3) + ')';
             moonEl.style.opacity = Math.min(1, linear * 3).toFixed(2);
         }
 
-        // ---- Mars : point suivant sur l'axe, au loin, en fin de voyage ----
+        // ---- Mars : point au loin sur l'horizon, se revele en fin ----
         if (marsEl) {
-            const tMars = Math.max(0, (linear - 0.7) / 0.3);
-            marsEl.style.transform = 'translate(-50%, 0) scale(0.4)';
-            marsEl.style.opacity = tMars.toFixed(2);
+            const t = Math.max(0, (linear - MARS.from) / (1 - MARS.from));
+            marsEl.style.left = MARS.x + 'px';
+            marsEl.style.top = MARS.y + 'px';
+            marsEl.style.transform = 'translate(-50%, -50%) scale(' + MARS.s.toFixed(3) + ')';
+            marsEl.style.opacity = t.toFixed(2);
         }
 
         if (linear >= 1) {
@@ -1527,22 +1554,26 @@ function playTravelAnimation(distance, onDone) {
 
     // Initialisation visuelle avant affichage
     if (rocketEl) {
-        rocketEl.style.left = axisX + 'px';
-        rocketEl.style.top = rocketStartY + 'px';
-        rocketEl.style.transform = 'translate(-50%, -50%)';
+        rocketEl.style.left = rocketX + 'px';
+        rocketEl.style.top = rocketY + 'px';
+        rocketEl.style.transform = 'translate(-50%, -50%) rotate(90deg)';
     }
     if (earthEl) {
-        earthEl.style.transform = 'translate(-50%, 0) scale(1)';
+        earthEl.style.left = EARTH.x0 + 'px';
+        earthEl.style.top = EARTH.y0 + 'px';
+        earthEl.style.transform = 'translate(-50%, -50%) scale(' + EARTH.s0 + ')';
         earthEl.style.opacity = '1';
     }
     if (moonEl) {
-        moonEl.style.top = '';
-        moonEl.style.left = '';
-        moonEl.style.transform = 'translate(-50%, 0) scale(0.06)';
+        moonEl.style.left = MOON.x0 + 'px';
+        moonEl.style.top = MOON.y0 + 'px';
+        moonEl.style.transform = 'translate(-50%, -50%) scale(' + MOON.s0 + ')';
         moonEl.style.opacity = '0';
     }
     if (marsEl) {
-        marsEl.style.transform = 'translate(-50%, 0) scale(0.4)';
+        marsEl.style.left = MARS.x + 'px';
+        marsEl.style.top = MARS.y + 'px';
+        marsEl.style.transform = 'translate(-50%, -50%) scale(' + MARS.s + ')';
         marsEl.style.opacity = '0';
     }
     if (distanceEl) distanceEl.textContent = '0';
