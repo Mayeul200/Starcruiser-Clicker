@@ -1152,12 +1152,14 @@ body {
    Ancrées au bas des tuyères (y=666) : le HAUT des jets affleure les
    tuyères (top:0 dans le conteneur posé à top:666px), elles suivent
    la fusée pendant tout le vol. */
+/* Conteneur PLEINE LARGEUR (repere monde) : les jets sont places en %
+   depuis ROCKET_PARTS (x=50% moteurs, x=45.8%/54.2% boosters), le % doit
+   s'appliquer sur toute la largeur de la fusee, pas sur une boite de 120px. */
 .launch-flames {
     position: absolute;
     top: 666px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
+    left: 0;
+    width: 100%;
     height: 90px;
     pointer-events: none;
     z-index: 2;
