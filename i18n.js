@@ -232,7 +232,7 @@ const TRANSLATIONS = {
         'Légendaire': 'Legendary',
         'Alternative': 'Alternative',
         // --- Cartes collection ---
-        'Laboratoire': 'Laboratory',
+        'Comète': 'Comet',
         // --- Boosters ---
         'Standard': 'Standard',
         'Premium': 'Premium',
