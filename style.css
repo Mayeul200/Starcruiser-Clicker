@@ -728,71 +728,133 @@ body {
     from { filter: brightness(1); }
     to   { filter: brightness(1.6) drop-shadow(0 0 14px rgba(255, 200, 80, 0.9)); }
 }
-/* Missile d'interception : fusée rapide avec flamme, orientation pilotée en JS */
+/* Missile d'interception : sprite PNG du joueur, bande centrale horizontale
+   (nez a gauche, flamme a droite). Le conteneur est oriente par le JS selon
+   l'angle de vol ; l'image est retournee de 180° pour aligner le nez sur
+   l'axe +x du conteneur, donc sur la direction du vol. */
 .comet-missile {
     position: fixed;
-    width: 46px;
-    height: 14px;
-    background: linear-gradient(180deg, #e8ecf4 0%, #b8c2d4 55%, #8a94a8 100%);
-    border-radius: 7px;
-    box-shadow: 0 0 10px rgba(255, 180, 60, 0.4);
+    width: 150px;
+    height: 112px; /* conserve le ratio 4:3 du canevas du sprite */
     z-index: 65;
     pointer-events: none;
+    will-change: left, top, transform;
 }
-.comet-missile::before {
-    content: '';
-    position: absolute;
-    right: -8px;
-    top: 50%;
-    width: 22px;
-    height: 22px;
-    transform: translateY(-50%);
-    background: radial-gradient(circle, rgba(255, 240, 180, 0.95) 0%, rgba(255, 160, 40, 0.75) 35%, rgba(255, 90, 20, 0) 70%);
-    border-radius: 50%;
-    animation: missileFlame 0.09s linear infinite alternate;
+.comet-missile img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: rotate(180deg);
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
+    user-select: none;
+    -webkit-user-drag: none;
 }
-.comet-missile::after {
-    content: '';
-    position: absolute;
-    left: -7px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-left: 9px solid transparent;
-    border-right: 9px solid transparent;
-    border-bottom: 14px solid #e8ecf4;
-    rotate: 90deg;
-}
-@keyframes missileFlame {
-    from { transform: translateY(-50%) scaleX(0.8); opacity: 0.8; }
-    to   { transform: translateY(-50%) scaleX(1.25); opacity: 1; }
-}
-/* Explosion à l'impact : flash + onde de choc + éclats */
+/* ===== Explosion de la comète : flash, boule de feu, ondes, étincelles, fumée ===== */
 .comet-explosion {
     position: fixed;
     width: 0;
     height: 0;
     z-index: 66;
     pointer-events: none;
-    animation: cometExplosionFlash 0.45s ease-out forwards;
 }
-@keyframes cometExplosionFlash {
-    0%   { box-shadow: 0 0 0 0 rgba(255, 240, 190, 0.95), 0 0 40px 30px rgba(255, 170, 50, 0.9); }
-    100% { box-shadow: 0 0 0 90px rgba(255, 200, 90, 0), 0 0 90px 60px rgba(255, 140, 40, 0); }
+/* Lueur globale : éclat doux qui éclaire la zone puis retombe */
+.exp-light {
+    position: absolute;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 244, 214, 0.95) 0%, rgba(255, 190, 90, 0.55) 30%, rgba(255, 150, 50, 0) 68%);
+    animation: expLight 0.55s ease-out forwards;
 }
-.comet-shard {
+@keyframes expLight {
+    0%   { transform: translate(-50%, -50%) scale(0.25); opacity: 1; }
+    55%  { opacity: 0.85; }
+    100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0; }
+}
+/* Coeur blanc : flash suraigu au point d'impact */
+.exp-core {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, #ffffff 0%, #fff4c8 55%, rgba(255, 235, 160, 0) 75%);
+    animation: expCore 0.4s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+}
+@keyframes expCore {
+    0%   { transform: translate(-50%, -50%) scale(0.15); opacity: 1; }
+    70%  { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+/* Boule de feu : orange vif, grossit en s'éteignant */
+.exp-fireball {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, #fff7d6 0%, #ffd23f 28%, #ff8a00 58%, rgba(255, 61, 0, 0.85) 82%, rgba(255, 61, 0, 0) 100%);
+    filter: blur(2px);
+    animation: expFireball 0.6s cubic-bezier(0.2, 0.75, 0.35, 1) forwards;
+}
+@keyframes expFireball {
+    0%   { transform: translate(-50%, -50%) scale(0.2) rotate(0deg); opacity: 1; }
+    45%  { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.1) rotate(18deg); opacity: 0; }
+}
+/* Ondes de choc : deux anneaux qui se propagent, le second en retard */
+.exp-ring {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 236, 180, 0.95);
+    box-shadow: 0 0 14px rgba(255, 200, 100, 0.55), inset 0 0 10px rgba(255, 220, 140, 0.4);
+    transform: translate(-50%, -50%);
+    animation: expRing 0.62s cubic-bezier(0.15, 0.8, 0.3, 1) forwards;
+}
+@keyframes expRing {
+    0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.95; border-width: 4px; }
+    100% { transform: translate(-50%, -50%) scale(11); opacity: 0; border-width: 1px; }
+}
+/* Étincelles : traits incandescents projetés dans toutes les directions */
+.exp-spark {
     position: absolute;
     left: 0;
     top: 0;
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, #fff2c0 0%, #ffb347 60%, rgba(255, 120, 30, 0) 100%);
+    width: var(--ssize, 4px);
+    height: var(--ssize, 4px);
     border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, #ffe38a 45%, #ff9b2f 100%);
+    box-shadow: 0 0 6px 1px rgba(255, 170, 60, 0.85);
     transform: translate(-50%, -50%);
-    animation: cometShardFly 0.55s cubic-bezier(0.2, 0.7, 0.4, 1) forwards;
+    animation: expSpark var(--sd, 0.6s) cubic-bezier(0.15, 0.85, 0.45, 1) forwards;
 }
-@keyframes cometShardFly {
-    0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    100% { transform: translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) scale(0.2); opacity: 0; }
+@keyframes expSpark {
+    0%   { transform: translate(-50%, -50%) rotate(0deg) scale(1.1); opacity: 1; }
+    60%  { opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) rotate(var(--sr, 0deg)) scale(0.25); opacity: 0; }
+}
+/* Fumée : bouffées gris-bleu qui s'étendent en s'élevant doucement */
+.exp-smoke {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(186, 192, 204, 0.5) 0%, rgba(140, 146, 160, 0.32) 45%, rgba(120, 126, 140, 0) 72%);
+    filter: blur(5px);
+    transform: translate(-50%, -50%);
+    animation: expSmoke 0.95s ease-out forwards;
+    animation-delay: var(--sdelay, 0s);
+    opacity: 0;
+}
+@keyframes expSmoke {
+    0%   { transform: translate(-50%, -50%) scale(calc(0.35 * var(--sscale, 1))); opacity: 0; }
+    18%  { opacity: 0.85; }
+    100% { transform: translate(calc(-50% + var(--sx)), calc(-50% + var(--sy))) scale(calc(1.5 * var(--sscale, 1))); opacity: 0; }
 }
 .random-bonus.clicked {
     opacity: 0;

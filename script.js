@@ -2401,6 +2401,7 @@ function interceptCometWithMissile(cometEl, onDestroy) {
     const angle = Math.atan2(vy, vx);
     const missile = document.createElement('div');
     missile.className = 'comet-missile';
+    missile.innerHTML = '<img src="images/effects/missile.png" alt="">';
     document.body.appendChild(missile);
     const mRect = missile.getBoundingClientRect();
     const mW = mRect.width || 46;
@@ -2422,23 +2423,60 @@ function interceptCometWithMissile(cometEl, onDestroy) {
         onDestroy();
     }, duration + 20);
 }
-// Explosion de la comète à l'impact : flash + onde de choc + éclats.
+// Explosion de la comète à l'impact : lueur, flash blanc, boule de feu,
+// ondes de choc, gerbe d'étincelles et fumée. Chaque couche est un div
+// positionné au point d'impact, animée en CSS puis nettoyée.
 function spawnCometExplosion(cx, cy) {
     const explosion = document.createElement('div');
     explosion.className = 'comet-explosion';
     explosion.style.left = cx + 'px';
     explosion.style.top = cy + 'px';
     document.body.appendChild(explosion);
-    for (let i = 0; i < 10; i++) {
-        const shard = document.createElement('div');
-        shard.className = 'comet-shard';
-        const theta = Math.random() * Math.PI * 2;
-        const r = 40 + Math.random() * 70;
-        shard.style.setProperty('--sx', Math.cos(theta) * r + 'px');
-        shard.style.setProperty('--sy', Math.sin(theta) * r + 'px');
-        explosion.appendChild(shard);
+
+    const layer = (cls) => {
+        const el = document.createElement('div');
+        el.className = cls;
+        explosion.appendChild(el);
+        return el;
+    };
+
+    layer('exp-light');
+    layer('exp-core');
+    layer('exp-fireball');
+
+    // Deux ondes de choc, la seconde légèrement en retard
+    layer('exp-ring');
+    const ring2 = layer('exp-ring');
+    ring2.style.animationDelay = '0.12s';
+    ring2.style.animationDuration = '0.7s';
+
+    // Gerbe d'étincelles : directions et portées variées
+    const SPARKS = 16;
+    for (let i = 0; i < SPARKS; i++) {
+        const spark = layer('exp-spark');
+        const theta = (i / SPARKS) * Math.PI * 2 + Math.random() * 0.35;
+        const dist = 50 + Math.random() * 110;
+        const sx = Math.cos(theta) * dist;
+        const sy = Math.sin(theta) * dist;
+        spark.style.setProperty('--sx', sx.toFixed(1) + 'px');
+        spark.style.setProperty('--sy', sy.toFixed(1) + 'px');
+        spark.style.setProperty('--sr', (Math.random() * 220 - 110).toFixed(0) + 'deg');
+        spark.style.setProperty('--ssize', (3 + Math.random() * 3.5).toFixed(1) + 'px');
+        spark.style.setProperty('--sd', (0.5 + Math.random() * 0.35).toFixed(2) + 's');
     }
-    setTimeout(() => explosion.remove(), 700);
+
+    // Fumée : bouffées décalées, majoritairement vers le haut
+    for (let i = 0; i < 6; i++) {
+        const smoke = layer('exp-smoke');
+        const theta = -Math.PI / 2 + (Math.random() - 0.5) * 1.9;
+        const dist = 26 + Math.random() * 60;
+        smoke.style.setProperty('--sx', (Math.cos(theta) * dist).toFixed(1) + 'px');
+        smoke.style.setProperty('--sy', (Math.sin(theta) * dist).toFixed(1) + 'px');
+        smoke.style.setProperty('--sscale', (0.7 + Math.random() * 0.9).toFixed(2));
+        smoke.style.setProperty('--sdelay', (0.05 + Math.random() * 0.2).toFixed(2) + 's');
+    }
+
+    setTimeout(() => explosion.remove(), 1400);
 }
 
 // ============================================
