@@ -2153,6 +2153,22 @@ function showPostTravelShop(distance) {
     if (!modal) return;
     postTravelLock = true;
     modal.classList.add('post-travel');
+    // Recompenses creditees DES L'OUVERTURE de l'atelier (pas au reset) :
+    // le joueur voit deja sa Poussiere d'Etoiles et peut la depenser avant
+    // de cliquer sur Continuer. Sauvegarde immediate : un rafraichissement
+    // pendant l'atelier ne fait pas perdre le gain du vol.
+    if (lastLaunchDistance > maxDistance) {
+        maxDistance = lastLaunchDistance;
+    }
+    rocketsLaunched++;
+    lastLaunchAt = Date.now();
+    prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
+    const dustGained = calculateStardustGain(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance);
+    if (dustGained > 0) {
+        starDust += dustGained;
+        totalStardustEarned += dustGained;
+    }
+    saveGame();
     const summaryEl = document.getElementById('post-travel-summary');
     if (summaryEl) {
         const newlyUnlocked = checkNewPlanetsUnlocked(distance);
@@ -2162,7 +2178,6 @@ function showPostTravelShop(distance) {
                 '<span class="pts-planet" style="border-color:' + planet.color + ';color:' + planet.color + ';">' +
                 t(planet.name) + ' +' + planet.bonusPercent + '%</span>').join('') + '</div>';
         }
-        const dustGained = calculateStardustGain(isNaN(distance) ? 0 : distance);
         summaryEl.innerHTML =
             '<div class="pts-line">' + t('Distance parcourue') + ' <strong>' + formatNumber(isNaN(distance) ? 0 : distance) + ' km</strong></div>' +
             '<div class="pts-line">' + t('Poussière d\'Étoiles gagnée') + ' <strong>+' + formatNumber(dustGained) + ' \u2728</strong></div>' +
@@ -2207,19 +2222,8 @@ function confirmPostTravelReset() {
     if (summaryEl) summaryEl.style.display = 'none';
     const actionsEl = document.getElementById('post-travel-actions');
     if (actionsEl) actionsEl.style.display = 'none';
-    // Appliquer le reset avec les bonus
-    if (lastLaunchDistance > maxDistance) {
-        maxDistance = lastLaunchDistance;
-    }
-    rocketsLaunched++;
-    lastLaunchAt = Date.now();
-    prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
-    // Gain de Poussiere d'Etoiles (monnaie de prestige persistante)
-    const dustGained = calculateStardustGain(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance);
-    if (dustGained > 0) {
-        starDust += dustGained;
-        totalStardustEarned += dustGained;
-    }
+    // Les recompenses (record, prestige, Poussiere d'Etoiles) ont deja ete
+    // creditees a l'ouverture de l'atelier : ici, seul le reset reste a faire.
     // Debloquer les planetes atteintes uniquement a la confirmation du reset
     applyNewPlanets(checkNewPlanetsUnlocked(lastLaunchDistance));
     // Reset du score, des batiments et des pieces de fusee (garde les bonus/prestige)
