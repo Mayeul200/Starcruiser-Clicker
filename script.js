@@ -1657,7 +1657,7 @@ function playTravelAnimation(distance, onDone) {
     for (let i = 0; i < oldStreaks.length; i++) oldStreaks[i].remove();
     overlay.appendChild(streaksEl);
     const streaks = [];
-    const streakCount = 26;
+    const streakCount = 39;
     for (let i = 0; i < streakCount; i++) {
         const s = document.createElement('div');
         s.className = 'travel-streak';
@@ -1866,7 +1866,7 @@ function playTravelAnimation(distance, onDone) {
             // PLUS PETITE (fenetre resserree) : elle ne se reveille qu'une
             // fois la traversee bien avancee, puis grossit uniquement par
             // la perspective -- croissance continue, jamais de va-et-vient.
-            const lookahead = b.distant ? 7 : TRAVEL_LOOKAHEAD;
+            const lookahead = b.distant ? 9 : TRAVEL_LOOKAHEAD;
             if (b.z - cameraZ > lookahead) {
                 b.el.style.display = 'none';
                 return;
@@ -1879,7 +1879,18 @@ function playTravelAnimation(distance, onDone) {
             }
             b.el.style.left = pr.x.toFixed(1) + 'px';
             b.el.style.top = pr.y.toFixed(1) + 'px';
-            b.el.style.width = Math.max(6, pr.size * (b.scale || 1)).toFixed(1) + 'px';
+            // Planete apres le Nuage d'Oort : entree en douceur (fondu
+            // d'opacite sur les premieres unites de profondeur, taille
+            // de depart reduite) puis croissance perspective purement
+            // monotone -- jamais de pop ni de va-et-vient.
+            if (b.distant) {
+                const rel = b.z - cameraZ;
+                const fadeIn = Math.max(0, Math.min(1, (lookahead - rel) / 2.5));
+                b.el.style.opacity = (fadeIn * fadeIn * (3 - 2 * fadeIn)).toFixed(2);
+            } else {
+                b.el.style.opacity = '';
+            }
+            b.el.style.width = Math.max(6, pr.size * (b.scale || 1) * (b.distant ? 0.85 : 1)).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
@@ -1966,7 +1977,7 @@ function fillTravelStars(overlay) {
     if (!starsEl) return;
     starsEl.innerHTML = '';
     travelStarsData = [];
-    const count = 70;
+    const count = 105;
     for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
         star.className = 'travel-star';
