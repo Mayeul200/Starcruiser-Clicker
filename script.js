@@ -881,6 +881,31 @@ function setBuyMultiplier(multiplier) {
     updateAllBuildingButtons();
 }
 
+// Reveal "Nouveau batiment" : popup plein ecran avec l'image en grand,
+// la description et les caracteristiques. Se declenche uniquement au
+// premier achat d'un type de batiment (count 0 -> 1).
+function showNewBuildingModal(building) {
+    const modal = document.getElementById('new-building-modal');
+    if (!modal) return;
+    const img = document.getElementById('nb-image');
+    img.src = building.imgPath || '';
+    img.alt = building.name;
+    // relance l'animation de pop a chaque ouverture
+    img.style.animation = 'none';
+    void img.offsetWidth;
+    img.style.animation = '';
+    document.getElementById('nb-name').textContent = t(building.name);
+    document.getElementById('nb-description').textContent = t(building.description);
+    document.getElementById('nb-gain').textContent = '+' + formatNumber(building.gain) + ' ' + t('Parts') + '/s';
+    document.getElementById('nb-cost').textContent = formatNumber(building.baseCost) + ' ' + t('Parts');
+    modal.classList.add('active');
+}
+
+function closeNewBuildingModal() {
+    const modal = document.getElementById('new-building-modal');
+    if (modal) modal.classList.remove('active');
+}
+
 function buyBuilding(buildingId) {
     const building = findBuildingById(buildingId);
     if (!building) return;
@@ -893,9 +918,11 @@ function buyBuilding(buildingId) {
     }
 
     if (buildingsToBuy > 0) {
+        const isNewType = building.count === 0;
         score -= totalCost;
         building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
+        if (isNewType) showNewBuildingModal(building);
         updateDisplay();
         updateConstructionScene();
         saveGame();

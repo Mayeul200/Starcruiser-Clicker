@@ -22,6 +22,33 @@
     </div>
 
     <!-- STATISTICS MODAL -->
+    <!-- NOUVEAU BATIMENT MODAL -->
+    <div class="modal new-building-modal" id="new-building-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="Nouveau bâtiment !">Nouveau bâtiment !</h2>
+                <span class="close-button" onclick="closeNewBuildingModal()">&times;</span>
+            </div>
+            <div class="modal-body new-building-body">
+                <div class="nb-reveal">
+                    <img id="nb-image" src="" alt="">
+                </div>
+                <h3 id="nb-name"></h3>
+                <p id="nb-description"></p>
+                <div class="nb-stats">
+                    <div class="nb-stat">
+                        <span class="nb-stat-label" data-i18n="Production">Production</span>
+                        <span class="nb-stat-value" id="nb-gain"></span>
+                    </div>
+                    <div class="nb-stat">
+                        <span class="nb-stat-label" data-i18n="Prix de base">Prix de base</span>
+                        <span class="nb-stat-value" id="nb-cost"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="stats-modal">
         <div class="modal-content">
             <div class="modal-header">

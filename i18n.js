@@ -118,6 +118,8 @@ const TRANSLATIONS = {
         'Atelier Galactique': 'Galactic Workshop',
         'Dépense ta Poussière d\'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.': 'Spend your Stardust on permanent upgrades. They never reset on launch.',
         'Production': 'Production',
+        'Nouveau bâtiment !': 'New Building!',
+        'Prix de base': 'Base price',
         'Fusée': 'Rocket',
         'Collection': 'Collection',
         'Clic': 'Click',
