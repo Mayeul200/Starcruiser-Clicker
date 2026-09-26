@@ -1388,44 +1388,24 @@ let travelStarsData = [];
 
 // Construit la fusee COMPLETE dans le holder, a l'echelle cible.
 function buildTravelRocketInto(holder, targetH) {
-    const GROUND = ['launch-pad', 'astronaut'];
-    const parts = ROCKET_PARTS.filter(p => p.imgPath && !GROUND.includes(p.id));
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    parts.forEach(p => {
-        const cx = (p.x / 100) * 1024;
-        minX = Math.min(minX, cx - p.width / 2);
-        maxX = Math.max(maxX, cx + p.width / 2);
-        minY = Math.min(minY, p.y);
-        maxY = Math.max(maxY, p.y + p.height);
-    });
-    const bboxW = maxX - minX;
-    const bboxH = maxY - minY;
-    const k = Math.max(0.22, Math.min(0.85, targetH / bboxH));
+    // Fusee du voyage : image dediee (Fusee-travel.png, 768x1376),
+    // verticale et droite. Largeur deduite du ratio de l'image.
+    const ROCKET_TRAVEL_IMG = 'images/rocket/Fusee-travel.png';
+    const ROCKET_TRAVEL_RATIO = 768 / 1376;
     holder.innerHTML = '';
-    holder.style.width = (bboxW * k) + 'px';
-    holder.style.height = (bboxH * k) + 'px';
-    const world = document.createElement('div');
-    world.style.position = 'absolute';
-    world.style.left = (-minX * k) + 'px';
-    world.style.top = (-minY * k) + 'px';
-    world.style.width = '1024px';
-    world.style.height = '744px';
-    world.style.transformOrigin = '0 0';
-    world.style.transform = 'scale(' + k + ')';
-    parts.forEach(p => {
-        const img = document.createElement('img');
-        img.src = p.imgPath;
-        img.alt = '';
-        img.style.position = 'absolute';
-        img.style.left = p.x + '%';
-        img.style.top = p.y + 'px';
-        img.style.width = p.width + 'px';
-        img.style.height = p.height + 'px';
-        img.style.transform = 'translate(-50%, 0)';
-        img.style.objectFit = 'contain';
-        world.appendChild(img);
-    });
-    holder.appendChild(world);
+    const h = Math.max(1, targetH);
+    const w = h * ROCKET_TRAVEL_RATIO;
+    holder.style.width = w + 'px';
+    holder.style.height = h + 'px';
+    const img = document.createElement('img');
+    img.src = ROCKET_TRAVEL_IMG;
+    img.alt = '';
+    img.style.position = 'absolute';
+    img.style.inset = '0';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'contain';
+    holder.appendChild(img);
 }
 
 // Projection d'un astre (decalage lateral lat, profondeur z) sur
@@ -1477,7 +1457,7 @@ function playTravelAnimation(distance, onDone) {
     // reculee, comme si la camera etait plus loin de l'axe).
     const PLANET_SCALE = 0.8;
     const baseSize = W * 0.52 * PLANET_SCALE;
-    const ROCKET_TILT = -7;                  // degres, nez vers la Lune
+    // Fusee VERTICALE et DROITE (image dediee, aucune inclinaison).
 
     if (rocketEl) buildTravelRocketInto(rocketEl, H * 0.24);
 
@@ -1654,7 +1634,7 @@ function playTravelAnimation(distance, onDone) {
             rocketEl.style.top = rocketY + 'px';
             // perspective d'abord, puis leger basculement arriere (vue
             // surelevee de la chase cam) et inclinaison vers la cible.
-            rocketEl.style.transform = 'perspective(700px) translate(-50%, -50%) rotateX(7deg) rotate(' + ROCKET_TILT + 'deg)';
+            rocketEl.style.transform = 'translate(-50%, -50%)';
         }
 
         // ---- Compteur de km : distances reelles, synchronisees au
@@ -1718,7 +1698,7 @@ function playTravelAnimation(distance, onDone) {
     if (rocketEl) {
         rocketEl.style.left = rocketX + 'px';
         rocketEl.style.top = rocketY + 'px';
-        rocketEl.style.transform = 'perspective(700px) translate(-50%, -50%) rotateX(7deg) rotate(' + ROCKET_TILT + 'deg)';
+        rocketEl.style.transform = 'translate(-50%, -50%)';
     }
     if (distanceEl) distanceEl.textContent = '0';
     fillTravelStars(overlay);
