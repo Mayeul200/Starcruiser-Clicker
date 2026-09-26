@@ -1576,16 +1576,21 @@ function playTravelAnimation(distance, onDone) {
 
     const lerp = (a, b, t) => a + (b - a) * t;
     const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-    // Profil de vitesse : AUCUNE deceleration. La camera accelere au
-    // depart du voyage puis tient sa vitesse de croisiere jusqu'a la
-    // cible ; les planetes defilent de plus en plus vite puis a rythme
-    // constant (vraie sensation d'acceleration).
-    const ACCEL_SPAN = 0.22;
-    const profileTotal = ACCEL_SPAN / 2 + (1 - ACCEL_SPAN);
+    // Profil de vitesse : ACCELERATION CONSTANTE du depart a la cible.
+    // Mouvement uniformement accelere : vitesse initiale non nulle (la
+    // camera bouge des le premier ecran), acceleration calculee pour
+    // atteindre exactement la cible, vitesse MAX atteinte au point
+    // d'arrivee -- la fusee n'arrete jamais d'accelerer jusqu'a son record.
+    const V0_N = 0.35;                     // vitesse initiale (x vitesse moyenne)
+    const ACCEL_N = 2 * (1 - V0_N);        // v0*T + a*T^2/2 = D -> a normalisee
+    const VMAX_N = V0_N + ACCEL_N;         // vitesse max, atteinte a la cible
     const profile = (x) => {
         x = Math.min(Math.max(x, 0), 1);
-        const raw = (x < ACCEL_SPAN) ? (x * x) / (2 * ACCEL_SPAN) : ACCEL_SPAN / 2 + (x - ACCEL_SPAN);
-        return raw / profileTotal;
+        return (V0_N + (ACCEL_N / 2) * x) * x;
+    };
+    const speedAt = (x) => {
+        x = Math.min(Math.max(x, 0), 1);
+        return (V0_N + ACCEL_N * x) / VMAX_N;
     };
     const camAt = (t) => lerp(CAM_START, CAM_END, profile(t));
     // Compteur km : interpolation REELLE entre planetes. Quand la camera
@@ -1615,12 +1620,12 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
-        // Vitesse normalisee de la camera (0 a l'arret, ~1 en croisiere)
-        // et avancee du fond INTEGREE sur le temps : plus on va vite,
-        // plus le defilement est rapide (vraie coherence physique).
+        // Vitesse normalisee de la camera (0.21 au depart -> 1.0 a la
+        // cible) et avancee du fond INTEGREE sur le temps : plus on va
+        // vite, plus le defilement est rapide (vraie coherence physique).
         const dt = Math.min(0.05, (now - lastNow) / 1000);
         lastNow = now;
-        const speed = Math.min(1, Math.max(0, (profile(linear + 0.012) - profile(linear)) * 84));
+        const speed = speedAt(linear);
         bgTravel += speed * dt * 2.6;
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
