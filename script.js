@@ -3774,12 +3774,14 @@ function updateBonusTimer() {
 // CONTRATS DE FABRICATION (mini-jeu)
 // On achete un contrat ciblant un batiment precise; si on produit le quota
 // de Parts avec CE batiment dans le temps imparti, il gagne un bonus de
-// production permanent (+75% cumulable). Rotation des contrats toutes les
-// 5 minutes. Les contrats ciblent en priorite les batiments negliges.
+// production permanent (+50% cumulable). Rotation des contrats toutes les
+// 2 minutes. Les contrats ciblent en priorite les batiments negliges.
+// Quota volontaire Faisable : production normale du batiment sur la duree
+// +5% seulement -- pas besoin de boost ni d'achat pour reussir.
 // ============================================
 const CONTRACT_ROTATION_MS = 2 * 60 * 1000;
 const CONTRACT_DURATION_MS = 3 * 60 * 1000;
-const CONTRACT_QUOTA_RATIO = 1.35;
+const CONTRACT_QUOTA_RATIO = 1.05;
 const CONTRACT_REWARD_MULT = 0.50;
 const CONTRACT_REWARD_MAX_STACKS = 10;
 const CONTRACT_PRICE_PPS_SECONDS = 20;
