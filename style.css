@@ -1382,26 +1382,55 @@ body {
 }
 /* Jet de flamme sous la fusee pendant le vol : meme style jeu video que
    le decollage (coeur incandescent + halo orange + pointe vive). */
+/* Flamme du voyage : systeme a deux couches pour un rendu riche.
+   ::before = panache externe large et diffus (lueur du reactor),
+   ::after = flamme principale (base bleue, coeur blanc, colonne
+   orange, pointe fumeuse). Animations desynchronisees. */
+.travel-rocket::before {
+    content: '';
+    position: absolute;
+    top: 96%;
+    left: 50%;
+    width: 46px;
+    height: 84px;
+    transform: translateX(-50%);
+    background:
+        radial-gradient(ellipse 55% 60% at 50% 16%, rgba(255, 190, 90, 0.4) 0%, rgba(255, 130, 40, 0.22) 45%, rgba(255, 90, 20, 0) 75%);
+    border-radius: 50% 50% 45% 55% / 55% 60% 45% 40%;
+    filter: blur(6px);
+    transform-origin: 50% 0;
+    animation: travelFlameGlow 0.3s ease-in-out infinite alternate;
+    pointer-events: none;
+}
 .travel-rocket::after {
     content: '';
     position: absolute;
     top: 100%;
     left: 50%;
-    width: 30px;
-    height: 58px;
+    width: 28px;
+    height: 62px;
     transform: translateX(-50%);
     background:
-        linear-gradient(180deg, rgba(255, 110, 20, 0) 58%, rgba(255, 80, 0, 0.35) 76%, rgba(200, 40, 0, 0.12) 90%, rgba(160, 30, 0, 0) 100%),
-        linear-gradient(180deg, rgba(255, 200, 80, 0.95) 15%, rgba(255, 160, 40, 0.75) 42%, rgba(255, 110, 20, 0.4) 62%, rgba(255, 90, 10, 0) 86%),
-        radial-gradient(ellipse 55% 26% at 50% 9%, rgba(255, 255, 255, 0.98) 0%, rgba(255, 245, 190, 0.9) 45%, rgba(255, 230, 120, 0) 80%);
+        /* pointe fumeuse rouge */
+        linear-gradient(180deg, rgba(255, 110, 20, 0) 60%, rgba(255, 80, 0, 0.32) 78%, rgba(200, 40, 0, 0.1) 92%, rgba(160, 30, 0, 0) 100%),
+        /* colonne orange translucide */
+        linear-gradient(180deg, rgba(255, 200, 80, 0.95) 16%, rgba(255, 160, 40, 0.72) 44%, rgba(255, 110, 20, 0.38) 64%, rgba(255, 90, 10, 0) 86%),
+        /* coeur blanc-jaune compact */
+        radial-gradient(ellipse 55% 26% at 50% 9%, rgba(255, 255, 255, 0.98) 0%, rgba(255, 245, 190, 0.9) 45%, rgba(255, 230, 120, 0) 80%),
+        /* base bleue de combustion incomplete */
+        radial-gradient(ellipse 62% 30% at 50% 6%, rgba(130, 185, 255, 0.7) 0%, rgba(85, 145, 250, 0.4) 50%, rgba(60, 110, 240, 0) 82%);
     border-radius: 46% 54% 50% 50% / 58% 62% 42% 38%;
-    filter: blur(1.4px) drop-shadow(0 0 10px rgba(255, 170, 60, 0.55));
+    filter: blur(1.2px) drop-shadow(0 0 9px rgba(255, 170, 60, 0.6));
     transform-origin: 50% 0;
-    animation: travelFlame 0.2s ease-in-out infinite alternate;
+    animation: travelFlame 0.21s ease-in-out infinite alternate;
+}
+@keyframes travelFlameGlow {
+    from { transform: translateX(-50%) scaleY(0.88) scaleX(0.95); opacity: 0.75; }
+    to { transform: translateX(-50%) scaleY(1.14) scaleX(1.05); opacity: 1; }
 }
 @keyframes travelFlame {
-    from { transform: translateX(-50%) scaleX(0.94); opacity: 0.92; }
-    to { transform: translateX(-50%) scaleX(1.06); opacity: 1; }
+    from { transform: translateX(-50%) scaleY(0.93) scaleX(0.94); opacity: 0.93; }
+    to { transform: translateX(-50%) scaleY(1.07) scaleX(1.05); opacity: 1; }
 }
 /* Planetes d'arrivee : Terre en bas, Lune en haut (visible une fois proche) */
 .travel-planet {
