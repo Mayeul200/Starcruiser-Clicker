@@ -161,8 +161,15 @@ const CLICK_UPGRADES = [
     { threshold: 100000000, name: "Main de l'univers",   cost: 50000000000 }
 ];
 
-const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
+// Paliers de 1 a 200 batiments : personne ne depassera 200 exemplaires
+const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200];
 
+function getUpgradeTierColor(tierIndex) {
+    const n = BUILDING_UPGRADE_THRESHOLDS.length;
+    if (n <= 1) return UPGRADE_COLORS[0];
+    const pos = Math.round(tierIndex * (UPGRADE_COLORS.length - 1) / (n - 1));
+    return UPGRADE_COLORS[Math.min(Math.max(pos, 0), UPGRADE_COLORS.length - 1)];
+}
 const UPGRADE_COLORS = [
     '#88c9ee', '#66b2ff', '#4499ff', '#2288ff', '#1177ff',
     '#0066ff', '#4444ff', '#6622ff', '#8800ff', '#aa00dd',
@@ -251,9 +258,9 @@ const TROPHIES = [
     { id: "first-building", name: "First Component", description: "Acheter votre premier bâtiment", icon: "images/buildings/workshop.png", threshold: 1, type: "building" },
     { id: "ten-buildings", name: "Space Builder", description: "Posséder 10 bâtiments au total", icon: "images/buildings/factory.png", threshold: 10, type: "building" },
     { id: "hundred-buildings", name: "Space Architect", description: "Posséder 100 bâtiments au total", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "building" },
-    { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/nanoforge.png", threshold: 1000, type: "building" },
-    { id: "five-thousand-buildings", name: "Bâtisseur Stellaire", description: "Posséder 5 000 bâtiments au total", icon: "images/buildings/antimatter_collector.png", threshold: 5000, type: "building" },
-    { id: "ten-thousand-buildings", name: "Empereur du Vide", description: "Posséder 10 000 bâtiments au total", icon: "images/buildings/essaim-sonde.png", threshold: 10000, type: "building" },
+    { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 250 bâtiments au total", icon: "images/buildings/nanoforge.png", threshold: 250, type: "building" },
+    { id: "five-thousand-buildings", name: "Bâtisseur Stellaire", description: "Posséder 500 bâtiments au total", icon: "images/buildings/antimatter_collector.png", threshold: 500, type: "building" },
+    { id: "ten-thousand-buildings", name: "Empereur du Vide", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/essaim-sonde.png", threshold: 1000, type: "building" },
 
     // Score total (icônes: parts et cartes)
     { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.png", threshold: 1000, type: "score" },
@@ -2805,7 +2812,7 @@ function renderUpgrades() {
         BUILDINGS.forEach(building => {
             if (isBuildingUpgradeAvailable(building.id, threshold)) {
                 const thresholdIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
-                const color = UPGRADE_COLORS[thresholdIndex];
+                const color = getUpgradeTierColor(thresholdIndex);
                 const cost = getBuildingUpgradeFixedCost(building.id, threshold);
                 available.push({
                     cost,
@@ -3689,7 +3696,7 @@ function renderStats() {
             statElement.style.padding = '4px 0';
             statElement.style.fontSize = '0.85rem';
             statElement.style.color = '#64748b';
-            const levelColor = UPGRADE_COLORS[(upgrades.length - 1) % UPGRADE_COLORS.length];
+            const levelColor = getUpgradeTierColor(upgrades.length - 1);
             statElement.innerHTML = `<span>${t(building.name)}: <span style="color: ${levelColor}; font-weight: 700;">${upgrades.length}</span> ${t('niveau(x)')}</span>`;
             container.appendChild(statElement);
         }
