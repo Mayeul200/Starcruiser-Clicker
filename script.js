@@ -1237,7 +1237,10 @@ function launchRocket() {
         lastLaunchDistance = distance;
         // Animation de voyage Terre -> Lune, puis carte de l'espace
         playTravelAnimation(distance, () => {
-            showSpaceMap(distance);
+            // Fin du voyage : l'atelier galactique s'ouvre en plein ecran,
+            // non fermable -- on en sort uniquement par le bouton Continuer
+            // (qui applique le reset). Plus d'ecran de space map intermediaire.
+            showPostTravelShop(distance);
             updateSpaceProgress();
             updateConstructionScene();
             isLaunching = false;
@@ -2139,172 +2142,71 @@ function getTotalPlanetBonus() {
     return total;
 }
 
-function showSpaceMap(distance) {
-    const modal = document.getElementById('space-map-modal');
-    const mapContainer = document.getElementById('space-map-container');
-    const progressText = document.getElementById('space-progress-text');
-    const newUnlocksContainer = document.getElementById('new-planets-unlocked');
-    
-    // Calculer la progression
-    const progress = calculatePlanetProgress(distance);
-    
-    // Mettre à jour le texte de progression
-    if (progress.currentPlanet) {
-        if (progress.nextPlanet) {
-            progressText.innerHTML = `${t("Tu as atteint")} <strong>${t(progress.currentPlanet.name)}</strong> ! ${t("En route vers")} ${t(progress.nextPlanet.name)} (${progress.progressPercent}%)`;
-        } else {
-            progressText.innerHTML = `${t("F\u00e9licitations ! Tu as atteint")} <strong>${t(progress.currentPlanet.name)}</strong>, ${t("la dernière planète !")}`;
+// Fin de voyage : ouvre l'atelier galactique en PLEIN ECRAN, non fermable.
+// Le joueur y depense sa Poussiere d'Etoiles, puis clique sur Continuer
+// pour appliquer le reset et reprendre la partie. Le bouton de la sidebar
+// ouvre la meme modal en consultation (fermable librement).
+let postTravelLock = false;
+
+function showPostTravelShop(distance) {
+    const modal = document.getElementById('galactic-shop-modal');
+    if (!modal) return;
+    postTravelLock = true;
+    modal.classList.add('post-travel');
+    const summaryEl = document.getElementById('post-travel-summary');
+    if (summaryEl) {
+        const newlyUnlocked = checkNewPlanetsUnlocked(distance);
+        let unlocksHtml = '';
+        if (newlyUnlocked.length > 0) {
+            unlocksHtml = '<div class="pts-unlocks">' + newlyUnlocked.map(planet =>
+                '<span class="pts-planet" style="border-color:' + planet.color + ';color:' + planet.color + ';">' +
+                t(planet.name) + ' +' + planet.bonusPercent + '%</span>').join('') + '</div>';
         }
-    } else {
-        progressText.innerHTML = `${t("En route vers")} <strong>${t(progress.nextPlanet.name)}</strong> (${progress.progressPercent}%)`;
+        const dustGained = calculateStardustGain(isNaN(distance) ? 0 : distance);
+        summaryEl.innerHTML =
+            '<div class="pts-line">' + t('Distance parcourue') + ' <strong>' + formatNumber(isNaN(distance) ? 0 : distance) + ' km</strong></div>' +
+            '<div class="pts-line">' + t('Poussière d\'Étoiles gagnée') + ' <strong>+' + formatNumber(dustGained) + ' \u2728</strong></div>' +
+            unlocksHtml;
+        summaryEl.style.display = '';
     }
-    
-    // Vérifier les nouvelles planètes débloquées
-    const newlyUnlocked = checkNewPlanetsUnlocked(distance);
-    
-    // Afficher les nouvelles planètes débloquées
-    newUnlocksContainer.innerHTML = '';
-    if (newlyUnlocked.length > 0) {
-        newlyUnlocked.forEach(planet => {
-            const planetElement = document.createElement('div');
-            planetElement.className = 'new-planet-item';
-            planetElement.innerHTML = `
-                <span class="planet-name">${planet.name}</span>
-                <span class="planet-bonus">+${planet.bonusPercent}% ${t("Parts")}/s</span>
-            `;
-            planetElement.style.borderColor = planet.color;
-            planetElement.style.color = planet.color;
-            newUnlocksContainer.appendChild(planetElement);
-        });
-    } else {
-        newUnlocksContainer.innerHTML = '<p class="no-new-planets">' + t('Aucune nouvelle planète débloquée') + '</p>';
-    }
-    
-    // Dessiner la carte de l'espace
-    drawSpaceMap(distance);
-    
-    // Afficher le modal
+    const actionsEl = document.getElementById('post-travel-actions');
+    if (actionsEl) actionsEl.style.display = '';
+    renderGalacticShop();
+    updateStardustDisplay();
     modal.classList.add('active');
 }
 
-function drawSpaceMap(distance) {
-    const container = document.getElementById('space-map-container');
-    const progress = calculatePlanetProgress(distance);
-    
-    container.innerHTML = '';
-    
-    // Espacement fixe entre planètes (px) pour éviter le chevauchement
-    const planetSpacing = 140;
-    const planetSize = 80;
-    const labelSpace = 50;
-    const totalWidth = PLANETS.length * planetSpacing;
-    container.style.width = `${totalWidth}px`;
-    
-    // Index de la planète actuelle (base pour le flou des planètes lointaines)
-    const currentPlanetIndex = progress.currentPlanet
-        ? PLANETS.findIndex(p => p.id === progress.currentPlanet.id)
-        : 0;
-    
-    PLANETS.forEach((planet, index) => {
-        const planetElement = document.createElement('div');
-        planetElement.className = 'space-planet';
-        
-        const isUnlocked = unlockedPlanets.has(planet.id) || distance >= planet.distanceRequired;
-        const isCurrent = progress.currentPlanet && progress.currentPlanet.id === planet.id;
-        const isNext = progress.nextPlanet && progress.nextPlanet.id === planet.id;
-        const isHidden = index > currentPlanetIndex + 2;
-        
-        let className = 'space-planet';
-        if (isUnlocked) className += ' unlocked';
-        if (isCurrent) className += ' current';
-        if (isNext) className += ' next';
-        if (isHidden) className += ' hidden';
-        
-        planetElement.className = className;
-        
-        // Planètes cachées: cercle noir avec point d'interrogation
-        if (isHidden) {
-            planetElement.innerHTML = `
-                <div class="planet-unknown" style="width: ${planetSize}px; height: ${planetSize}px;">?</div>
-                <span class="planet-name">???</span>
-                <span class="planet-distance">???</span>
-            `;
-        } else {
-            // Utiliser l'image si disponible, sinon l'emoji
-            let planetHtml = '';
-            if (planet.imgPath) {
-                planetHtml = `<img src="${planet.imgPath}" class="planet-image" alt="${planet.name}" style="width: ${planetSize}px; height: ${planetSize}px;">`;
-            } else {
-                planetHtml = `<span class="planet-emoji">${planet.emoji}</span>`;
-            }
-            
-            planetElement.innerHTML = `
-                ${planetHtml}
-                <span class="planet-name">${planet.name}</span>
-                <span class="planet-distance">${formatNumber(planet.distanceRequired)} ${t("km")}</span>
-            `;
-        }
-        
-        planetElement.style.setProperty('--planet-color', planet.color);
-        
-        // Positionner les planètes (layout horizontal en px)
-        const position = index * planetSpacing + planetSpacing / 2;
-        planetElement.style.left = `${position}px`;
-        
-        // Ajouter la ligne de connexion (sauf pour la dernière)
-        if (index < PLANETS.length - 1) {
-            const nextPlanet = PLANETS[index + 1];
-            const isNextUnlocked = unlockedPlanets.has(nextPlanet.id) || distance >= nextPlanet.distanceRequired;
-            
-            const line = document.createElement('div');
-            line.className = 'space-connection';
-            if (isUnlocked && isNextUnlocked) {
-                line.classList.add('active');
-            }
-            line.style.left = `${position}px`;
-            line.style.width = `${planetSpacing}px`;
-            container.appendChild(line);
-        }
-        
-        container.appendChild(planetElement);
-    });
-    
-    // Ajouter le vaisseau spatial
-    if (progress.currentPlanet || progress.progressPercent > 0) {
-        const spaceship = document.createElement('div');
-        spaceship.className = 'spaceship';
-        spaceship.innerHTML = '\u{1F680}';
-        
-        // Calculer la position du vaisseau
-        let shipPosition = planetSpacing / 2;
-        if (progress.currentPlanet) {
-            const currentIndex = PLANETS.findIndex(p => p.id === progress.currentPlanet.id);
-            const nextIndex = currentIndex + 1;
-            
-            if (nextIndex < PLANETS.length && progress.nextPlanet) {
-                // Entre deux planètes
-                const startPos = currentIndex * planetSpacing + planetSpacing / 2;
-                const endPos = nextIndex * planetSpacing + planetSpacing / 2;
-                shipPosition = startPos + (endPos - startPos) * (progress.progressPercent / 100);
-            } else {
-                // Sur la dernière planète
-                shipPosition = (PLANETS.length - 1) * planetSpacing + planetSpacing / 2;
-            }
-        } else {
-            // Avant la première planète
-            const firstPlanetPos = planetSpacing / 2;
-            const secondPlanetPos = planetSpacing + planetSpacing / 2;
-            shipPosition = firstPlanetPos + (secondPlanetPos - firstPlanetPos) * (progress.progressPercent / 100);
-        }
-        
-        spaceship.style.left = `${shipPosition}px`;
-        container.appendChild(spaceship);
-    }
+// Consultation libre depuis la sidebar : pas de blocage, pas de resume.
+function openGalacticShopBrowse() {
+    const modal = document.getElementById('galactic-shop-modal');
+    if (!modal) return;
+    postTravelLock = false;
+    modal.classList.remove('post-travel');
+    const summaryEl = document.getElementById('post-travel-summary');
+    if (summaryEl) summaryEl.style.display = 'none';
+    const actionsEl = document.getElementById('post-travel-actions');
+    if (actionsEl) actionsEl.style.display = 'none';
+    renderGalacticShop();
+    updateStardustDisplay();
+    modal.classList.add('active');
 }
 
-function confirmSpaceMapAndReset() {
-    closeSpaceMap();
-    
+// Sortie de la modal atelier : bloquee si on vient de finir un voyage
+// (seul le bouton Continuer -> confirmPostTravelReset peut la fermer).
+function tryCloseGalacticShop() {
+    if (postTravelLock) return;
+    document.getElementById('galactic-shop-modal').classList.remove('active');
+}
+
+// Bouton Continuer : ferme la modal, applique le reset avec les bonus,
+// puis affiche les resultats de la mission.
+function confirmPostTravelReset() {
+    document.getElementById('galactic-shop-modal').classList.remove('active');
+    postTravelLock = false;
+    const summaryEl = document.getElementById('post-travel-summary');
+    if (summaryEl) summaryEl.style.display = 'none';
+    const actionsEl = document.getElementById('post-travel-actions');
+    if (actionsEl) actionsEl.style.display = 'none';
     // Appliquer le reset avec les bonus
     if (lastLaunchDistance > maxDistance) {
         maxDistance = lastLaunchDistance;
@@ -2312,18 +2214,15 @@ function confirmSpaceMapAndReset() {
     rocketsLaunched++;
     lastLaunchAt = Date.now();
     prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
-
-    // Gain de Poussière d'Étoiles (monnaie de prestige persistante)
+    // Gain de Poussiere d'Etoiles (monnaie de prestige persistante)
     const dustGained = calculateStardustGain(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance);
     if (dustGained > 0) {
         starDust += dustGained;
         totalStardustEarned += dustGained;
     }
-
     // Debloquer les planetes atteintes uniquement a la confirmation du reset
     applyNewPlanets(checkNewPlanetsUnlocked(lastLaunchDistance));
-
-    // Reset du score, des bâtiments et des pièces de fusée (garde les bonus/prestige)
+    // Reset du score, des batiments et des pieces de fusee (garde les bonus/prestige)
     score = 0;
     BUILDINGS.forEach(b => b.count = 0);
     ROCKET_PARTS.forEach(p => p.purchased = false);
@@ -2340,24 +2239,18 @@ function confirmSpaceMapAndReset() {
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
     resetContractState();
-    
     updateDisplay();
     saveGame();
     checkBuildingUnlocks();
     renderBuildings();
     renderUpgrades();
     renderRocketPartsShop();
-    
-    // Afficher le modal de résultats
     showLaunchResults(lastLaunchDistance);
     isLaunching = false;
-        updateSpaceProgress();
-        updateConstructionScene();
+    updateSpaceProgress();
+    updateConstructionScene();
 }
 
-function closeSpaceMap() {
-    document.getElementById('space-map-modal').classList.remove('active');
-}
 
 // ============================================
 // ATELIER GALACTIQUE (upgrades permanents)
@@ -2606,7 +2499,12 @@ function renderGalacticShop() {
 }
 
 function toggleGalacticShop() {
-    showExclusiveModal('galactic-shop-modal', renderGalacticShop);
+    const modal = document.getElementById('galactic-shop-modal');
+    if (modal && modal.classList.contains('active') && !postTravelLock) {
+        modal.classList.remove('active');
+        return;
+    }
+    openGalacticShopBrowse();
 }
 
 // ============================================
@@ -3756,7 +3654,12 @@ function showExclusiveModal(modalId, onOpen) {
     const target = document.getElementById(modalId);
     const wasActive = target.classList.contains('active');
     EXCLUSIVE_MODALS.forEach(id => {
-        if (id !== modalId) document.getElementById(id).classList.remove('active');
+        if (id !== modalId) {
+            const el = document.getElementById(id);
+            // Ne jamais masquer l'atelier galactique pendant le blocage post-voyage
+            if (id === 'galactic-shop-modal' && postTravelLock) return;
+            el.classList.remove('active');
+        }
     });
     if (wasActive) {
         target.classList.remove('active');

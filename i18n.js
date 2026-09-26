@@ -54,6 +54,8 @@ const TRANSLATIONS = {
         // --- Launch results ---
         'Mission Résultats': 'Mission Results',
         'Distance parcourue:': 'Distance traveled:',
+        'Distance parcourue': 'Distance traveled',
+        'Poussière d\'Étoiles gagnée': 'Stardust earned',
         'Bonus permanent:': 'Permanent bonus:',
         'Poussière d\'Étoiles gagnée:': 'Stardust earned:',
         'Fusées lancées:': 'Rockets launched:',

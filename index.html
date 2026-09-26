@@ -89,29 +89,7 @@
                 </div>
             </div>
 </div>
-    </div>    <!-- SPACE MAP MODAL -->
-    <div class="modal" id="space-map-modal">
-        <div class="modal-content space-map-modal">
-            <div class="modal-header">
-                <h2>🌌 <span data-i18n="Carte de l'Espace">Carte de l'Espace</span></h2>
-                <span class="close-button" onclick="closeSpaceMap()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="space-progress-text" id="space-progress-text">
-                    
-                </div>
-                <div class="space-map-container" id="space-map-container"></div>
-                <div class="new-planets-unlocked" id="new-planets-unlocked"></div>
-                <div class="space-modal-actions" id="space-modal-actions">
-                    <button class="space-confirm-button" id="space-confirm-button" onclick="confirmSpaceMapAndReset()" data-i18n="Continuer (Reset + Bonus)">
-                        Continuer (Reset + Bonus)
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- CONTRACTS MODAL -->
+    </div>    <!-- CONTRACTS MODAL -->
     <div class="modal" id="contracts-modal">
         <div class="modal-content contracts-modal">
             <div class="modal-header">
@@ -347,11 +325,15 @@
             <div class="modal-header">
                 <h2>✨ <span data-i18n="Atelier Galactique">Atelier Galactique</span></h2>
                 <div class="stardust-display">✨ <span id="stardust-value-2">0</span></div>
-                <span class="close-button" onclick="toggleGalacticShop()">&times;</span>
+                <span class="close-button" onclick="tryCloseGalacticShop()">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="galactic-intro" data-i18n="Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.</div>
+                <div class="post-travel-summary" id="post-travel-summary" style="display: none;"></div>
                 <div class="galactic-shop-list" id="galactic-shop-list"></div>
+                <div class="post-travel-actions" id="post-travel-actions" style="display: none;">
+                    <button class="post-travel-continue" onclick="confirmPostTravelReset()" data-i18n="Continuer (Reset + Bonus)">Continuer (Reset + Bonus)</button>
+                </div>
             </div>
         </div>
     </div>
