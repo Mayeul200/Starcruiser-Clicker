@@ -2018,8 +2018,8 @@ body {
     position: absolute;
     top: 50%;
     transform: translateY(-50%) translateX(-50%) rotate(90deg);
-    width: 16px;
-    height: 30px;
+    width: 19.2px;
+    height: 36px;
     z-index: 3;
 }
 .mini-space-map .spaceship .spaceship-img {
