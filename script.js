@@ -343,9 +343,9 @@ const PLANETS = [
     { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 35, color: '#ef4444', imgPath: 'images/planets/mars.png' },
     { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 40, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
     { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 45, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 6100000000, bonusPercent: 50, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 55, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 891000000000, bonusPercent: 60, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 50, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 55, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 60, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
     { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 65, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
     { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 75, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
     { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 90, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
