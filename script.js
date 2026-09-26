@@ -1412,7 +1412,7 @@ function closeLaunchResults() {
 // (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
 // jusqu'a la distance reellement atteinte par le lancer.
 // ============================================
-const TRAVEL_ANIM_LEG_MS = 6000;    // duree par troncon (Terre -> Lune = 1 troncon)
+const TRAVEL_ANIM_LEG_MS = 5000;    // duree par troncon (Terre -> Lune = 1 troncon)
 let travelAnimFrame = 0;
 let travelStarsData = [];
 
@@ -1752,9 +1752,9 @@ function playTravelAnimation(distance, onDone) {
     // a la position absolue : Terre = 1, Virgo = 8.
     const VIRGO_SPEED_MAX = 8;
     // Vitesse camera CONSTANTE PAR TRONCON : chaque troncon dure
-    // exactement TRAVEL_ANIM_LEG_MS (6s), de l'echapement de la planete
+    // exactement TRAVEL_ANIM_LEG_MS (5s), de l'echapement de la planete
     // au passage de la suivante. La fusee croise chaque planete pile a
-    // la frontiere 6s/6s -- la sensation d'acceleration vient du fond,
+    // la frontiere 5s/5s -- la sensation d'acceleration vient du fond,
     // du compteur km (distances reelles croissantes) et des trainees.
     const camAt = (t) => {
         if (legs <= 0) return CAM_START;
