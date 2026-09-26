@@ -1821,8 +1821,8 @@ function playTravelAnimation(distance, onDone) {
         // que la scene ne soit pas statique.
         if (rocketEl) {
             const ph = (now - startTime) / 1000;
-            const swayX = Math.sin(ph * 0.9 + 0.4) * 14 + Math.sin(ph * 1.7) * 6;
-            const swayY = Math.sin(ph * 0.6) * 10;
+            const swayX = Math.sin(ph * 0.9 + 0.4) * 28 + Math.sin(ph * 1.7) * 12;
+            const swayY = Math.sin(ph * 0.6) * 20;
             const breathe = 1 + Math.sin(ph * 0.6 + 1.2) * 0.024;
             rocketEl.style.left = (rocketX + swayX) + 'px';
             rocketEl.style.top = (rocketY + swayY) + 'px';
