@@ -1545,13 +1545,11 @@ function playTravelAnimation(distance, onDone) {
     });
 
     // --- Nuage d'Oort : champ volumetrique de debris glaces ---
-    // La camera traverse un VOLUME 3D d'objets proceduraux (quelques
-    // modeles reutilises : particules, fragments glaces, asteroides
-    // sombres, noyaux de comete, gros blocs rares). Trois couches de
-    // profondeur, densite progressive (aucune apparition brutale),
-    // projection et z-index identiques aux planetes : la fusee entre
-    // reellement dans un environnement immense. Aucune logique de
-    // voyage modifiee -- uniquement la representation visuelle.
+    // La camera traverse un VOLUME 3D d'objets : les 5 images dediees
+    // de l'utilisateur (images/effects/) remplacee les modeles proceduraux.
+    // Trois couches de profondeur, densite progressive (aucune apparition
+    // brutale), projection et z-index identiques aux planetes. Aucune
+    // logique de voyage modifiee -- uniquement la representation visuelle.
     let oortDensity = () => 0;
     const oortField = [];
     const smooth01 = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
@@ -1570,39 +1568,55 @@ function playTravelAnimation(distance, onDone) {
         };
         const rand = (a, b) => a + Math.random() * (b - a);
         const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-        const addObj = (layer, cls, size, op, ox, oy, z) => {
+        // Les 5 modeles d'objets du nuage (images dediees, tailles
+        // natives heterogenes -- les tailles ecran sont fixees par couche).
+        const OORT_MODELS = [
+            { cls: 'oort-ice', img: 'images/effects/Small irregular icy nucleus.png', ar: 197 / 184 },
+            { cls: 'oort-comet', img: 'images/effects/Small comet nucleus.png', ar: 182 / 165 },
+            { cls: 'oort-fragment', img: 'images/effects/Ice-rock fragment.png', ar: 218 / 244 },
+            { cls: 'oort-asteroid', img: 'images/effects/Dark rocky asteroid.png', ar: 159 / 156 },
+            { cls: 'oort-large', img: 'images/effects/Large rare Oort Cloud body.png', ar: 289 / 281 }
+        ];
+        const addObj = (layer, model, size, op, ox, oy, z) => {
             const el = document.createElement('div');
-            el.className = 'travel-oort ' + cls;
+            el.className = 'travel-oort ' + model.cls;
+            const img = document.createElement('img');
+            img.src = model.img;
+            img.alt = '';
+            img.draggable = false;
+            el.appendChild(img);
             el.style.display = 'none';
             deepEl.appendChild(el);
             oortField.push({
-                el, layer, z, ox, oy, size, op, on: false,
+                el, layer, z, ox, oy, size, op, on: false, ar: model.ar,
                 gate: layer === 0 ? 0.02 : (layer === 1 ? 0.14 : 0.30),
                 stag: Math.random(),
                 rot: rand(0, 360),
                 spin: rand(-40, 40)
             });
         };
+        // Petits modeles (4) pour les couches lointaine et moyenne.
+        const SMALLS = OORT_MODELS.slice(0, 4);
         // Couche 1 -- tres loin : minuscules points glaces (immensite,
         // quasi immobiles, ils habillent la profondeur).
-        for (let i = 0; i < 46; i++) {
-            addObj(0, (i % 5 === 0) ? 'oort-chip' : 'oort-particle',
+        for (let i = 0; i < 70; i++) {
+            addObj(0, pick(SMALLS),
                 rand(5, 11), rand(0.25, 0.55),
                 rand(-0.62, 0.62) * W, rand(-0.42, 0.42) * H,
                 rand(FIELD_Z0, FIELD_Z1));
         }
         // Couche 2 -- distance moyenne : fragments et asteroides
         // visibles, tailles variees, parallaxe marquee.
-        for (let i = 0; i < 34; i++) {
-            addObj(1, pick(['oort-chip', 'oort-asteroid', 'oort-chip', 'oort-comet']),
+        for (let i = 0; i < 55; i++) {
+            addObj(1, pick(SMALLS),
                 rand(16, 44), rand(0.5, 0.85),
                 rand(-0.55, 0.55) * W, rand(-0.34, 0.34) * H,
                 rand(FIELD_Z0 + 0.5, FIELD_Z1 - 0.5));
         }
         // Couche 3 -- fly-by proches : gros blocs rares qui traversent
         // vite le champ de vision, avec streak radial (motion blur).
-        for (let i = 0; i < 12; i++) {
-            addObj(2, pick(['oort-asteroid', 'oort-chip', 'oort-asteroid']),
+        for (let i = 0; i < 18; i++) {
+            addObj(2, pick(OORT_MODELS),
                 rand(45, 110), rand(0.75, 0.95),
                 (Math.random() < 0.5 ? -1 : 1) * rand(0.16, 0.46) * W,
                 rand(-0.26, 0.26) * H,
@@ -1832,7 +1846,7 @@ function playTravelAnimation(distance, onDone) {
                 o.el.style.left = sx.toFixed(1) + 'px';
                 o.el.style.top = sy.toFixed(1) + 'px';
                 o.el.style.width = size.toFixed(1) + 'px';
-                o.el.style.height = size.toFixed(1) + 'px';
+                o.el.style.height = (size / o.ar).toFixed(1) + 'px';
                 o.el.style.opacity = op.toFixed(2);
                 o.el.style.transform = 'translate(-50%, -50%) rotate(' + (o.rot + o.spin * (o.layer === 2 ? 2.2 : 0.5)) + 'deg)';
                 // Ordre de peinture identique aux planetes : plus c'est
