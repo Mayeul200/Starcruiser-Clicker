@@ -1577,7 +1577,11 @@ function playTravelAnimation(distance, onDone) {
         if (legs <= 0) return CAM_START;
         const scaled = Math.min(t, 1) * legs;
         const k = Math.min(legs - 1, Math.floor(scaled));
-        return lerp(k * DEPTH_STEP, (k === legs - 1) ? CAM_END : (k + 1) * DEPTH_STEP, scaled - k);
+        // Le premier troncon part de CAM_START (derriere la Terre, bien
+        // visible au depart) ; les suivants de la planete k a la k+1.
+        const from = (k === 0) ? CAM_START : k * DEPTH_STEP;
+        const to = (k === legs - 1) ? CAM_END : (k + 1) * DEPTH_STEP;
+        return lerp(from, to, scaled - k);
     };
     // Position absolue normalisee sur la route COMPLETE (0 Terre, 1 Virgo) :
     // troncons deja franchis + avancement dans le troncon courant.
