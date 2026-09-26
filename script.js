@@ -1374,6 +1374,7 @@ function closeLaunchResults() {
 // ============================================
 const TRAVEL_ANIM_LEG_MS = 9500;    // duree par troncon (Terre -> Lune = 1 troncon)
 let travelAnimFrame = 0;
+let travelStarsData = [];
 
 // ============================================
 // MOTEUR DE PROJECTION PERSPECTIVE (voyage spatial pseudo-3D)
@@ -1495,9 +1496,9 @@ function playTravelAnimation(distance, onDone) {
     const zMax = (itinerary.length - 1) * DEPTH_STEP;
 
     // Trajet de la camera : demarre PRES de la Terre (gros bout de
-    // planet en bas d'ecran, comme juste apres le decollage), croisiere,
-    // puis ralentit et s'arrete a distance de la cible (elle apparait
-    // grande, juste sous la fusee, dans l'axe).
+    // planet en bas d'ecran, comme juste apres le decollage), accelere
+    // puis maintient sa vitesse de croisiere jusqu'a la cible (aucune
+    // deceleration, meme a l'arrivee).
     const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
     const CAM_END = zMax - 1.15;             // cible a rel ~1.15 a l'arrivee
     // Temps EQUIVALENT par troncon : Terre -> Lune garde sa duree, chaque
@@ -1505,11 +1506,6 @@ function playTravelAnimation(distance, onDone) {
     // fois Terre -> Lune).
     const legs = itinerary.length - 1;
     const animMs = Math.max(1, legs) * TRAVEL_ANIM_LEG_MS;
-    // Bornes camera de chaque troncon : la camera croise chaque planete
-    // intermediaire exactement a la frontiere entre deux troncons.
-    const camPoints = [CAM_START];
-    for (let i = 1; i <= itinerary.length - 2; i++) camPoints.push(i * DEPTH_STEP);
-    camPoints.push(CAM_END);
 
     // Corps celestes generes dynamiquement (calque de profondeur)
     deepEl.innerHTML = '';
@@ -1528,6 +1524,30 @@ function playTravelAnimation(distance, onDone) {
         const scale = (i === 0) ? 0.75 : 1;
         return { el, z: i * DEPTH_STEP, lat, scale };
     });
+
+    // --- Couche vitesse : etoiles en parallaxe + trainees de vitesse ---
+    // La profondeur d'avancee (0 -> 1) fait defiler les etoiles vers le
+    // bas a des vitesses differentes selon leur profondeur (vraie
+    // sensation de mouvement, pas un fond fixe).
+    // Trainees verticales : opacite croissante avec la vitesse camera,
+    // longueur de trainee selon la profondeur (proche = rapide/longue).
+    const streaksEl = document.createElement('div');
+    streaksEl.className = 'travel-streaks';
+    const oldStreaks = overlay.querySelectorAll('.travel-streaks');
+    for (let i = 0; i < oldStreaks.length; i++) oldStreaks[i].remove();
+    overlay.appendChild(streaksEl);
+    const streaks = [];
+    const streakCount = 26;
+    for (let i = 0; i < streakCount; i++) {
+        const s = document.createElement('div');
+        s.className = 'travel-streak';
+        const depth = 0.25 + Math.random() * 0.75;
+        s.style.left = (Math.random() * 100) + '%';
+        s.style.height = (18 + depth * 60) + 'px';
+        s.style.opacity = '0';
+        streaksEl.appendChild(s);
+        streaks.push({ el: s, x: Math.random(), depth, phase: Math.random() });
+    }
 
     const startTime = performance.now();
     let finished = false;
@@ -1550,16 +1570,19 @@ function playTravelAnimation(distance, onDone) {
     }
 
     const lerp = (a, b, t) => a + (b - a) * t;
-    // Profil cinematique PAR TRONCON : acceleration au depart de chaque
-    // planete, deceleration a l'approche de la suivante (rythme constant
-    // sur tout le voyage).
     const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-    const camAt = (t) => {
-        if (legs <= 0) return CAM_START;
-        const scaled = Math.min(t, 1) * legs;
-        const k = Math.min(legs - 1, Math.floor(scaled));
-        return lerp(camPoints[k], camPoints[k + 1], easeInOut(scaled - k));
+    // Profil de vitesse : AUCUNE deceleration. La camera accelere au
+    // depart du voyage puis tient sa vitesse de croisiere jusqu'a la
+    // cible ; les planetes defilent de plus en plus vite puis a rythme
+    // constant (vraie sensation d'acceleration).
+    const ACCEL_SPAN = 0.22;
+    const profileTotal = ACCEL_SPAN / 2 + (1 - ACCEL_SPAN);
+    const profile = (x) => {
+        x = Math.min(Math.max(x, 0), 1);
+        const raw = (x < ACCEL_SPAN) ? (x * x) / (2 * ACCEL_SPAN) : ACCEL_SPAN / 2 + (x - ACCEL_SPAN);
+        return raw / profileTotal;
     };
+    const camAt = (t) => lerp(CAM_START, CAM_END, profile(t));
     // Compteur km : interpolation REELLE entre planetes. Quand la camera
     // croise la Lune, le compteur lit exactement 384 400 km, quel que soit
     // le voyage ; la vitesse en km/s s'adapte donc a chaque troncon. Le
@@ -1587,6 +1610,8 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
+        // Avancee normalisee du fond (0 -> 1) pour la parallaxe d'etoiles.
+        const depthTravel = linear;
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
         if (rocketEl) {
@@ -1600,6 +1625,23 @@ function playTravelAnimation(distance, onDone) {
         // ---- Compteur de km : distances reelles, synchronisees au
         // passage effectif de chaque planete ----
         if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(legs > 0 ? kmAt(cameraZ) : safeDistance * easeInOut(linear)));
+
+        // ---- Fond en parallaxe : les etoiles defilent vers le bas a
+        // des vitesses lieées a leur profondeur ; vitesse = derivee du
+        // profil camera (acceleration visible au depart).
+        const speed = Math.min(1, Math.max(0, (profile(linear + 0.012) - profile(linear)) * 84));
+        travelStarsData.forEach(st => {
+            const y = (st.y + depthTravel * st.depth) % 1;
+            st.el.style.left = (st.x * W) + 'px';
+            st.el.style.top = (y * H) + 'px';
+        });
+        // ---- Trainees de vitesse : opacite et vitesse selon l'avancee ----
+        streaks.forEach(s => {
+            const v = (0.06 + s.depth * 0.22) * speed;
+            const y = (s.phase + depthTravel * s.depth * 2.2) % 1;
+            s.el.style.top = (y * H) + 'px';
+            s.el.style.opacity = (speed > 0.25 ? (0.16 + s.depth * 0.3) * speed : 0).toFixed(2);
+        });
 
         // ---- Astres : projection perspective + fondu de depassement ----
         bodies.forEach(b => {
@@ -1648,8 +1690,12 @@ function playTravelAnimation(distance, onDone) {
 }
 
 function fillTravelStars(overlay) {
+    // Etoiles reconstruites a chaque voyage : positions pilotees en JS
+    // (parallaxe selon la profondeur propre a chaque etoile).
     const starsEl = overlay.querySelector('.travel-stars');
-    if (!starsEl || starsEl.childElementCount > 0) return;
+    if (!starsEl) return;
+    starsEl.innerHTML = '';
+    travelStarsData = [];
     const count = 70;
     for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
@@ -1658,10 +1704,14 @@ function fillTravelStars(overlay) {
         const size = Math.random() * 2.2 + 1;
         star.style.width = size + 'px';
         star.style.height = size + 'px';
-        star.style.left = (Math.random() * 100) + '%';
-        star.style.top = (Math.random() * 100) + '%';
         star.style.animationDelay = (Math.random() * 1.6) + 's';
         starsEl.appendChild(star);
+        travelStarsData.push({
+            el: star,
+            x: Math.random(),
+            y: Math.random(),
+            depth: 0.2 + Math.random() * 0.8
+        });
     }
 }
 

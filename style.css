@@ -1249,7 +1249,8 @@ body {
     display: block;
     pointer-events: auto;
 }
-/* Champ d'etoiles fixe (deroul JS aleatoire) */
+/* Champ d'etoiles en parallaxe : positions pilotees en JS selon la
+   profondeur propre a chaque etoile (le fond defile avec le voyage). */
 .travel-stars {
     position: absolute;
     inset: 0;
@@ -1267,6 +1268,23 @@ body {
 @keyframes travelStarTwinkle {
     from { opacity: 0.25; }
     to { opacity: 0.9; }
+}
+/* Trainees de vitesse : traits verticaux semi-transparents qui
+   apparaissent avec la vitesse camera (sensation d'acceleration). */
+.travel-streaks {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+.travel-streak {
+    position: absolute;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.75), transparent);
+    pointer-events: none;
+    will-change: transform, opacity;
 }
 /* Fusee : vole vers le HAUT, meme image que la scene de construction.
    L'image body.png pointe vers le haut, aucune rotation necessaire. */
