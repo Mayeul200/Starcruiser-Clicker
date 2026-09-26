@@ -195,7 +195,7 @@ const TROPHY_COLORS = {
     stardust: ['#6622ff', '#cc00bb', '#ffcc00'],
     'building-upgrade': ['#88c9ee', '#2288ff', '#aa00dd', '#ff4411'],
     'click-upgrade': ['#1177ff', '#ffaa00'],
-    building: ['#88c9ee', '#2288ff', '#8800ff', '#ff0055'],
+    building: ['#88c9ee', '#0066ff', '#ff6600', '#ffcc00', '#ffee00', '#ffff00'],
     score: ['#ffcc00', '#ff8800', '#ffee00'],
     bonus: ['#f59e0b', '#ff2233'],
     'building-types': ['#a855f7'],
