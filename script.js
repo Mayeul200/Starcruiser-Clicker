@@ -1525,6 +1525,9 @@ function playTravelAnimation(distance, onDone) {
     // volumetrique procedural (oortField) -- troncon, timing et km
     // inchanges, uniquement la representation visuelle.
     deepEl.innerHTML = '';
+    // Index du Nuage d'Oort dans l'itineraire (calcule AVANT bodies :
+    // sert a rendre la planete suivante plus discrete en sortie de nuage).
+    const oortIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
     const bodies = itinerary.map((p, i) => {
         if (p.id === 'oort-cloud') {
             return { el: null, z: i * DEPTH_STEP, lat: 0, scale: 1, hidden: true };
@@ -1541,7 +1544,11 @@ function playTravelAnimation(distance, onDone) {
         const lat = 0;
         // La Terre un peu plus petite que l'echelle globale des planetes.
         const scale = (i === 0) ? 0.75 : 1;
-        return { el, z: i * DEPTH_STEP, lat, scale };
+        // La planete qui suit le Nuage d'Oort est plus discrete : elle
+        // se reveille en tout petit seulement apres la traversee, pour
+        // ne pas gacher l'immersion dans le nuage.
+        const afterOort = i === oortIdx + 1;
+        return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort };
     });
 
     // --- Nuage d'Oort : champ volumetrique de debris glaces ---
@@ -1553,18 +1560,21 @@ function playTravelAnimation(distance, onDone) {
     let oortDensity = () => 0;
     const oortField = [];
     const smooth01 = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
-    const oortIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
     if (oortIdx >= 0) {
         const oortZ = oortIdx * DEPTH_STEP;
         // Champ elargi et montee plus douce : les premiers cailloux
         // apparaissent PLUS TOT (des le passage de Pluton), la densite
         // monte progressivement vers le plein regime au milieu du
         // nuage, puis redescent doucement -- jamais de mur de rochers.
+        // Champ confine a la region du nuage : la traversee commence
+        // avant la position Oort (premiers cailloux anticipes) mais
+        // s'ARRETE pile a la position du nuage -- au-dela on en ressort
+        // et l'espace redevient vide.
         const FIELD_Z0 = oortZ - 7.5;
-        const FIELD_Z1 = oortZ + 7.5;
+        const FIELD_Z1 = oortZ + 0.5;
         oortDensity = (cam) => {
             if (cam <= FIELD_Z0 || cam >= FIELD_Z1) return 0;
-            return Math.min(smooth01((cam - FIELD_Z0) / 5.5), smooth01((FIELD_Z1 - cam) / 5.5));
+            return Math.min(smooth01((cam - FIELD_Z0) / 5.5), smooth01((FIELD_Z1 - cam) / 1.6));
         };
         const rand = (a, b) => a + Math.random() * (b - a);
         const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -1599,7 +1609,7 @@ function playTravelAnimation(distance, onDone) {
         const SMALLS = OORT_MODELS.slice(0, 4);
         // Couche 1 -- tres loin : minuscules points glaces (immensite,
         // quasi immobiles, ils habillent la profondeur).
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 140; i++) {
             addObj(0, pick(SMALLS),
                 rand(5, 11), rand(0.25, 0.55),
                 rand(-0.62, 0.62) * W, rand(-0.42, 0.42) * H,
@@ -1607,7 +1617,7 @@ function playTravelAnimation(distance, onDone) {
         }
         // Couche 2 -- distance moyenne : fragments et asteroides
         // visibles, tailles variees, parallaxe marquee.
-        for (let i = 0; i < 55; i++) {
+        for (let i = 0; i < 110; i++) {
             addObj(1, pick(SMALLS),
                 rand(16, 44), rand(0.5, 0.85),
                 rand(-0.55, 0.55) * W, rand(-0.34, 0.34) * H,
@@ -1615,7 +1625,7 @@ function playTravelAnimation(distance, onDone) {
         }
         // Couche 3 -- fly-by proches : gros blocs rares qui traversent
         // vite le champ de vision, avec streak radial (motion blur).
-        for (let i = 0; i < 18; i++) {
+        for (let i = 0; i < 36; i++) {
             addObj(2, pick(OORT_MODELS),
                 rand(45, 110), rand(0.75, 0.95),
                 (Math.random() < 0.5 ? -1 : 1) * rand(0.16, 0.46) * W,
@@ -1755,9 +1765,9 @@ function playTravelAnimation(distance, onDone) {
         // que la scene ne soit pas statique.
         if (rocketEl) {
             const ph = (now - startTime) / 1000;
-            const swayX = Math.sin(ph * 0.9 + 0.4) * 7 + Math.sin(ph * 1.7) * 3;
-            const swayY = Math.sin(ph * 0.6) * 5;
-            const breathe = 1 + Math.sin(ph * 0.6 + 1.2) * 0.012;
+            const swayX = Math.sin(ph * 0.9 + 0.4) * 14 + Math.sin(ph * 1.7) * 6;
+            const swayY = Math.sin(ph * 0.6) * 10;
+            const breathe = 1 + Math.sin(ph * 0.6 + 1.2) * 0.024;
             rocketEl.style.left = (rocketX + swayX) + 'px';
             rocketEl.style.top = (rocketY + swayY) + 'px';
             rocketEl.style.transform = 'translate(-50%, -50%) scale(' + breathe.toFixed(4) + ')';
@@ -1852,7 +1862,11 @@ function playTravelAnimation(distance, onDone) {
             }
             b.el.style.left = pr.x.toFixed(1) + 'px';
             b.el.style.top = pr.y.toFixed(1) + 'px';
-            b.el.style.width = Math.max(6, pr.size * (b.scale || 1)).toFixed(1) + 'px';
+            // Planete suivant le Nuage d'Oort : discrete TANT QU'on
+            // traverse le nuage (55%), reprend sa taille normale a la
+            // sortie (la densite retombe a zero).
+            const distantK = b.distant ? (0.55 + 0.45 * (1 - Math.min(1, oortDensity(cameraZ) * 1.4))) : 1;
+            b.el.style.width = Math.max(6, pr.size * (b.scale || 1) * distantK).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
@@ -1871,7 +1885,13 @@ function playTravelAnimation(distance, onDone) {
             const density = oortDensity(cameraZ);
             oortField.forEach(o => {
                 const rel = o.z - cameraZ;
-                if (density <= 0 || rel <= 0.05 || rel > TRAVEL_LOOKAHEAD * 1.6) {
+                // Objets DEVANT la caméra... et objets DEPASSES (rel
+                // negatif) : ces derniers restent rendus en gros plan
+                // premier (projection miroir, |inv|) jusqu'a sortir de
+                // l'ecran -- la caméra est DANS le nuage, des cailloux
+                // passent devant elle.
+                const absInv = 1 / Math.max(0.12, Math.abs(rel));
+                if (density <= 0 || rel > TRAVEL_LOOKAHEAD * 1.6 || rel < -1.1) {
                     if (o.on) { o.el.style.display = 'none'; o.on = false; }
                     return;
                 }
@@ -1881,11 +1901,12 @@ function playTravelAnimation(distance, onDone) {
                     if (o.on) { o.el.style.display = 'none'; o.on = false; }
                     return;
                 }
-                const inv = 1 / rel;
-                const sx = W / 2 + o.ox * inv;
-                const sy = horizonY + pitchK * inv + o.oy * inv;
-                const size = Math.max(1.5, o.size * inv);
-                const op = o.op * appear * Math.min(1, rel * 2.2);
+                const inv = 1 / Math.max(0.12, rel);
+                const useInv = rel > 0 ? inv : absInv;
+                const sx = W / 2 + o.ox * useInv;
+                const sy = horizonY + pitchK * useInv + o.oy * useInv;
+                const size = Math.max(1.5, o.size * useInv);
+                const op = o.op * appear * (rel > 0 ? Math.min(1, rel * 2.2) : 1);
                 if (!o.on) { o.el.style.display = ''; o.on = true; }
                 o.el.style.left = sx.toFixed(1) + 'px';
                 o.el.style.top = sy.toFixed(1) + 'px';
@@ -1896,7 +1917,9 @@ function playTravelAnimation(distance, onDone) {
                 // Ordre de peinture identique aux planetes : plus c'est
                 // proche, plus c'est peint au-dessus. Les fly-by proches
                 // passent devant la fusee (z-index 12+).
-                o.el.style.zIndex = String(Math.min(30, Math.round(inv * 10) + 1));
+                // Objets depasses (rel < 0) : gros plan DEVANT la fusee,
+                // z-index au-dessus d'elle (la fusee est a 3).
+                o.el.style.zIndex = rel < 0 ? String(Math.min(30, 20 + Math.round(absInv * 6))) : String(Math.min(30, Math.round(useInv * 10) + 1));
                 // Streak de motion blur sur les objets proches : le halo
                 // s'allonge avec la proximite (sensation de vitesse).
                 if (o.layer === 2) {
