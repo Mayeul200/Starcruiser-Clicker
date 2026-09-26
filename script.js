@@ -1529,7 +1529,13 @@ function playTravelAnimation(distance, onDone) {
     // Facteur global d'echelle des planetes : -20% (vue un peu plus
     // reculee, comme si la camera etait plus loin de l'axe).
     const PLANET_SCALE = 0.8;
-    const baseSize = W * 0.52 * PLANET_SCALE;
+    // Adaptation mobile : sur un ecran portrait, W est petit et H grand --
+    // baser la taille des planetes sur la seule largeur les rend minuscules.
+    // On ancre l'echelle sur une diagonale normalisee : equivalente a W sur
+    // un ecran large (desktop), proche de 73% de la hauteur en 9:16.
+    const isPortrait = H > W * 1.15;
+    const sizeRef = isPortrait ? Math.min(W * 1.55, H * 0.75) : W;
+    const baseSize = sizeRef * 0.52 * PLANET_SCALE;
     // Fusee VERTICALE et DROITE (image dediee, aucune inclinaison).
 
     if (rocketEl) buildTravelRocketInto(rocketEl, H * 0.24);
