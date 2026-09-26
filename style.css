@@ -1425,6 +1425,41 @@ body {
     z-index: 1;            /* calque derriere la fusee (z-index 3) */
     pointer-events: none;
 }
+/* ---- Nuage d'Oort : champ volumetrique procedural ----
+   Cinq modeles reutilises, formes irregulieres via clip-path, aspect
+   glace/sombre. --streak pilote le motion blur radial des fly-by. */
+.travel-oort {
+    position: absolute;
+    will-change: transform, opacity, width;
+    pointer-events: none;
+}
+/* Particule glacee lointaine : simple point leger, teinte froide */
+.oort-particle {
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 34%, rgba(225, 238, 255, 0.95), rgba(160, 190, 230, 0.55) 60%, rgba(120, 150, 200, 0) 82%);
+}
+/* Petit fragment de glace/roche : eclat irregulier */
+.oort-chip {
+    background: radial-gradient(circle at 36% 30%, rgba(240, 248, 255, 0.9), rgba(185, 208, 236, 0.75) 42%, rgba(110, 135, 175, 0.5) 75%, rgba(70, 95, 135, 0.1) 100%);
+    clip-path: polygon(50% 0%, 78% 14%, 100% 42%, 88% 74%, 56% 100%, 22% 88%, 0% 55%, 12% 20%);
+}
+/* Asteroide sombre : roche brute, faible eclat de bord */
+.oort-asteroid {
+    background: radial-gradient(circle at 34% 28%, rgba(120, 128, 142, 0.95), rgba(78, 85, 98, 0.9) 45%, rgba(45, 50, 60, 0.85) 75%, rgba(28, 32, 40, 0.2) 100%);
+    clip-path: polygon(50% 0%, 72% 10%, 96% 38%, 82% 70%, 60% 98%, 28% 86%, 4% 52%, 18% 16%);
+}
+/* Noyau de comete : coeur glace lumineux + halo diffus */
+.oort-comet {
+    background:
+        radial-gradient(circle at 50% 50%, rgba(200, 225, 255, 0.5), rgba(160, 195, 240, 0) 72%),
+        radial-gradient(circle at 40% 36%, rgba(250, 252, 255, 0.98), rgba(190, 214, 245, 0.85) 45%, rgba(120, 150, 200, 0.45) 78%, rgba(90, 120, 170, 0) 100%);
+}
+/* Fly-by proches : motion blur pilote par --streak (0..1) -- plus
+   l'objet est proche, plus il est etire/floute sur sa trajectoire. */
+.travel-oort {
+    filter: blur(0.3px);
+    --streak: 0;
+}
 .travel-body {
     position: absolute;
     width: 300px;

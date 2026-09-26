@@ -1505,6 +1505,68 @@ function playTravelAnimation(distance, onDone) {
         return { el, z: i * DEPTH_STEP, lat, scale };
     });
 
+    // --- Nuage d'Oort : champ volumetrique de debris glaces ---
+    // La camera traverse un VOLUME 3D d'objets proceduraux (quelques
+    // modeles reutilises : particules, fragments glaces, asteroides
+    // sombres, noyaux de comete, gros blocs rares). Trois couches de
+    // profondeur, densite progressive (aucune apparition brutale),
+    // projection et z-index identiques aux planetes : la fusee entre
+    // reellement dans un environnement immense. Aucune logique de
+    // voyage modifiee -- uniquement la representation visuelle.
+    let oortDensity = () => 0;
+    const oortField = [];
+    const smooth01 = (x) => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    const oortIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
+    if (oortIdx >= 0) {
+        const oortZ = oortIdx * DEPTH_STEP;
+        const FIELD_Z0 = oortZ - 5.5;
+        const FIELD_Z1 = oortZ + 5.5;
+        oortDensity = (cam) => {
+            if (cam <= FIELD_Z0 || cam >= FIELD_Z1) return 0;
+            return Math.min(smooth01((cam - FIELD_Z0) / 3.2), smooth01((FIELD_Z1 - cam) / 3.2));
+        };
+        const rand = (a, b) => a + Math.random() * (b - a);
+        const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const addObj = (layer, cls, size, op, ox, oy, z) => {
+            const el = document.createElement('div');
+            el.className = 'travel-oort ' + cls;
+            el.style.display = 'none';
+            deepEl.appendChild(el);
+            oortField.push({
+                el, layer, z, ox, oy, size, op, on: false,
+                gate: layer === 0 ? 0.04 : (layer === 1 ? 0.22 : 0.45),
+                stag: Math.random(),
+                rot: rand(0, 360),
+                spin: rand(-40, 40)
+            });
+        };
+        // Couche 1 -- tres loin : minuscules points glaces (immensite,
+        // quasi immobiles, ils habillent la profondeur).
+        for (let i = 0; i < 46; i++) {
+            addObj(0, (i % 5 === 0) ? 'oort-chip' : 'oort-particle',
+                rand(5, 11), rand(0.25, 0.55),
+                rand(-0.62, 0.62) * W, rand(-0.42, 0.42) * H,
+                rand(FIELD_Z0, FIELD_Z1));
+        }
+        // Couche 2 -- distance moyenne : fragments et asteroides
+        // visibles, tailles variees, parallaxe marquee.
+        for (let i = 0; i < 34; i++) {
+            addObj(1, pick(['oort-chip', 'oort-asteroid', 'oort-chip', 'oort-comet']),
+                rand(16, 44), rand(0.5, 0.85),
+                rand(-0.55, 0.55) * W, rand(-0.34, 0.34) * H,
+                rand(FIELD_Z0 + 0.5, FIELD_Z1 - 0.5));
+        }
+        // Couche 3 -- fly-by proches : gros blocs rares qui traversent
+        // vite le champ de vision, avec streak radial (motion blur).
+        for (let i = 0; i < 12; i++) {
+            addObj(2, pick(['oort-asteroid', 'oort-chip', 'oort-asteroid']),
+                rand(45, 110), rand(0.75, 0.95),
+                (Math.random() < 0.5 ? -1 : 1) * rand(0.16, 0.46) * W,
+                rand(-0.26, 0.26) * H,
+                rand(FIELD_Z0 + 1.5, FIELD_Z1 - 1.5));
+        }
+    }
+
     // --- Couche vitesse : etoiles en parallaxe + trainees de vitesse ---
     // La profondeur d'avancee (0 -> 1) fait defiler les etoiles vers le
     // bas a des vitesses differentes selon leur profondeur (vraie
@@ -1690,6 +1752,49 @@ function playTravelAnimation(distance, onDone) {
             // Pas de fondu : l'astre depasse la camera en grossissant et
             // sort naturellement de l'ecran par le bas, plein echelle.
         });
+
+        // ---- Nuage d'Oort : traverssee volumetrique ----
+        // Densite progressive : vide -> premiers objets -> immersion.
+        // Chaque objet n'apparait que si la densite locale depasse son
+        // seuil (reparti par couche + alea de staging) -> montee douce,
+        // jamais un mur de rochers d'un coup.
+        if (oortField.length > 0) {
+            const density = oortDensity(cameraZ);
+            oortField.forEach(o => {
+                const rel = o.z - cameraZ;
+                if (density <= 0 || rel <= 0.05 || rel > TRAVEL_LOOKAHEAD * 1.6) {
+                    if (o.on) { o.el.style.display = 'none'; o.on = false; }
+                    return;
+                }
+                const local = Math.max(0, Math.min(1, (density - o.gate * 0.55) / (1 - o.gate * 0.55)));
+                const appear = smooth01(local - o.stag * 0.45);
+                if (appear <= 0.01) {
+                    if (o.on) { o.el.style.display = 'none'; o.on = false; }
+                    return;
+                }
+                const inv = 1 / rel;
+                const sx = W / 2 + o.ox * inv;
+                const sy = horizonY + pitchK * inv + o.oy * inv;
+                const size = Math.max(1.5, o.size * inv);
+                const op = o.op * appear * Math.min(1, rel * 2.2);
+                if (!o.on) { o.el.style.display = ''; o.on = true; }
+                o.el.style.left = sx.toFixed(1) + 'px';
+                o.el.style.top = sy.toFixed(1) + 'px';
+                o.el.style.width = size.toFixed(1) + 'px';
+                o.el.style.height = size.toFixed(1) + 'px';
+                o.el.style.opacity = op.toFixed(2);
+                o.el.style.transform = 'translate(-50%, -50%) rotate(' + (o.rot + o.spin * (o.layer === 2 ? 2.2 : 0.5)) + 'deg)';
+                // Ordre de peinture identique aux planetes : plus c'est
+                // proche, plus c'est peint au-dessus. Les fly-by proches
+                // passent devant la fusee (z-index 12+).
+                o.el.style.zIndex = String(Math.min(30, Math.round(inv * 10) + 1));
+                // Streak de motion blur sur les objets proches : le halo
+                // s'allonge avec la proximite (sensation de vitesse).
+                if (o.layer === 2) {
+                    o.el.style.setProperty('--streak', Math.min(1, (inv - 1) / 1.6).toFixed(2));
+                }
+            });
+        }
 
         if (linear >= 1) {
             finish();
