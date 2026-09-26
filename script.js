@@ -2684,7 +2684,7 @@ function updateMiniSpaceMap(distance) {
         if (!spaceship) {
             spaceship = document.createElement('div');
             spaceship.className = 'spaceship';
-            spaceship.innerHTML = '\u{1F680}';
+            spaceship.innerHTML = '<img src="images/rocket/Fusée3.png" alt="Fusée" class="spaceship-img">';
             container.appendChild(spaceship);
         }
         spaceship.style.left = `${shipPosition}%`;
