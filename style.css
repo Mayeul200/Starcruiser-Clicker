@@ -1416,7 +1416,7 @@ body {
 .travel-jet > .travel-flame-glow { animation-delay: var(--jet-delay); }
 .travel-jet > .travel-flame-core { animation-delay: var(--jet-delay); }
 .travel-jet > .travel-flame-tip { animation-delay: var(--jet-delay); }
-.travel-jet > div {
+.travel-jet div {
     position: absolute;
     transform-origin: 50% 0;
     pointer-events: none;
