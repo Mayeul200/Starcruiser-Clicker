@@ -1585,14 +1585,14 @@ function playTravelAnimation(distance, onDone) {
     const totalLegs = PLANETS.length - 1; // Terre -> Virgo (route complete)
     const V0_N = 0.35;                     // vitesse initiale (x vitesse moyenne locale)
     const ACCEL_N = 2 * (1 - V0_N);        // v0*T + a*T^2/2 = D -> a normalisee
-    const VMAX_N = V0_N + ACCEL_N;         // vitesse max de l'echelle globale (Virgo)
-    const speedPos = (x) => {
-        x = Math.min(Math.max(x, 0), 1);
-        return (V0_N + ACCEL_N * x) / VMAX_N;
-    };
+    // Multiplicateur de vitesse du fond : depart a 1 (le fond defile
+    // franchement des le premier ecran), croissance continue pendant le
+    // voyage ET d'un lancement a l'autre, max x3 atteint UNIQUEMENT a
+    // l'arrivee a Virgo.
+    const VIRGO_SPEED_MAX = 3;
     const endPos = Math.min(1, legs / totalLegs); // position du record sur la route
-    const vStart = speedPos(0);           // vitesse de depart (Terre)
-    const vEnd = speedPos(endPos);        // vitesse d'arrivee (record du voyage)
+    const vStart = 1;                      // vitesse de depart (Terre)
+    const vEnd = 1 + endPos * (VIRGO_SPEED_MAX - 1); // vitesse au record
     // Profil de position LOCAL : uniformement accelere (bouge des le
     // premier ecran, n'arrete jamais d'accelerer) et atteint EXACTEMENT
     // la cible quel que soit le voyage.
@@ -1606,13 +1606,15 @@ function playTravelAnimation(distance, onDone) {
     // le voyage ; la vitesse en km/s s'adapte donc a chaque troncon. Le
     // troncon final se termine sur la distance reellement atteinte.
     const kmAt = (cam) => {
-        if (cam <= 0) return 0;
+        if (cam <= CAM_START) return 0;
         const last = itinerary.length - 1;
         const bounds = [];
         for (let i = 1; i <= last - 1; i++) bounds.push(i * DEPTH_STEP);
         bounds.push(CAM_END);
         for (let i = 0; i < bounds.length; i++) {
-            const z0 = (i === 0) ? 0 : bounds[i - 1];
+            // Le premier troncon part de CAM_START : le compteur monte
+            // des la premiere image, fini le 0 km fige alors qu'on avance.
+            const z0 = (i === 0) ? CAM_START : bounds[i - 1];
             const z1 = bounds[i];
             if (cam < z1 || i === bounds.length - 1) {
                 const d0 = itinerary[i].distanceRequired;
