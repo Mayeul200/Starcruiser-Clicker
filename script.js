@@ -1624,12 +1624,11 @@ function playTravelAnimation(distance, onDone) {
         }
     }
 
-    // --- Couche vitesse : etoiles en parallaxe + trainees de vitesse ---
-    // La profondeur d'avancee (0 -> 1) fait defiler les etoiles vers le
-    // bas a des vitesses differentes selon leur profondeur (vraie
-    // sensation de mouvement, pas un fond fixe).
-    // Trainees verticales : opacite croissante avec la vitesse camera,
-    // longueur de trainee selon la profondeur (proche = rapide/longue).
+    // --- Couche vitesse : trainees de vitesse radiales 3D ---
+    // Chaque trainee vit dans le volume devant la camera (comme les
+    // etoiles et le nuage d'Oort) : elle coule depuis le point de fuite
+    // vers les bords de l'ecran, alignee sur l'axe camera -> trainee,
+    // et s'allonge avec la vitesse et la proximite.
     const streaksEl = document.createElement('div');
     streaksEl.className = 'travel-streaks';
     const oldStreaks = overlay.querySelectorAll('.travel-streaks');
@@ -1640,20 +1639,19 @@ function playTravelAnimation(distance, onDone) {
     for (let i = 0; i < streakCount; i++) {
         const s = document.createElement('div');
         s.className = 'travel-streak';
-        const depth = 0.25 + Math.random() * 0.75;
-        // Concentres vers l'axe central de voyage : distribution cubique
-        // (bords rares, centre dense) comme des trainees dans le sillage.
-        const r = Math.random() * 2 - 1;
-        const xPct = 50 + r * r * r * 46;
-        s.style.left = xPct.toFixed(1) + '%';
         s.style.opacity = '0';
         streaksEl.appendChild(s);
-        streaks.push({ el: s, depth, phase: Math.random(), baseH: 18 + depth * 60 });
+        streaks.push({
+            el: s,
+            ox: (Math.random() * 2 - 1) * 0.8,
+            oy: (Math.random() * 2 - 1) * 0.65,
+            rel: 0.3 + Math.random() * 3.2,
+            depth: 0.35 + Math.random() * 0.75
+        });
     }
 
     const startTime = performance.now();
     let lastNow = startTime;
-    let bgTravel = 0;
     let finished = false;
 
     const cleanup = () => {
@@ -1748,8 +1746,6 @@ function playTravelAnimation(distance, onDone) {
         const posNow = Math.min(1, posAt(linear));
         const speedNorm = posNow;                      // 0 Terre -> 1 Virgo
         const speed = 1 + speedNorm * (VIRGO_SPEED_MAX - 1);
-        const bgRate = 0.04 + speedNorm * 3.6;
-        bgTravel += bgRate * dt;
 
         // ---- Fusee : point focal ----
         // Leger balancement organique : derive latérale douce + avance/
@@ -1771,24 +1767,72 @@ function playTravelAnimation(distance, onDone) {
         // passage effectif de chaque planete ----
         if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(legs > 0 ? kmAt(cameraZ) : safeDistance * easeInOut(linear)));
 
-        // ---- Fond en parallaxe : chaque etoile defile vers le bas a une
-        // vitesse proportionnelle a la vitesse camera ET a sa propre
-        // profondeur (proches = rapides, lointaines = lentes).
+        // ---- Fond en parallaxe RADIALE 3D : chaque etoile vit dans le
+        // volume devant la camera. Elle s'approche a une vitesse
+        // proportionnelle a la vitesse reelle (les proches filent plus
+        // vite que les lointaines) et coule depuis le point de fuite
+        // (horizon) vers les bords -- coherent avec la vue chase-cam
+        // et la projection des planetes / du nuage d'Oort.
         travelStarsData.forEach(st => {
-            const y = (st.y + bgTravel * st.depth) % 1;
-            st.el.style.left = (st.x * W) + 'px';
-            st.el.style.top = (y * H) + 'px';
+            st.rel -= speed * st.depth * 0.55 * dt;
+            if (st.rel < 0.12) {
+                // Recyclage : l'etoile a depasse la camera, on la renvoie
+                // au fond du volume avec un nouvel angle.
+                st.rel = 2.6 + Math.random() * 0.9;
+                st.ox = (Math.random() * 2 - 1) * 0.85;
+                st.oy = (Math.random() * 2 - 1) * 0.7;
+            }
+            const inv = 1 / st.rel;
+            const x = W / 2 + st.ox * 0.5 * W * inv;
+            const y = horizonY + pitchK * inv + st.oy * H * 0.18 * inv;
+            st.el.style.left = x.toFixed(1) + 'px';
+            st.el.style.top = y.toFixed(1) + 'px';
+            // Grossit en s'approchant, scintillement conserve.
+            const sz = Math.min(5, st.size * (0.6 + inv * 0.55));
+            st.el.style.width = sz.toFixed(1) + 'px';
+            st.el.style.height = sz.toFixed(1) + 'px';
+            // Sorties d'ecran masquees (l'etoile reapparaitra au recyclage).
+            if (x < -6 || x > W + 6 || y < -6 || y > H + 6) {
+                st.el.style.opacity = '0';
+            } else {
+                st.el.style.opacity = '';
+            }
         });
-        // ---- Trainees de vitesse : longueur, vitesse et opacite ont
-        // toutes pour moteur la vitesse camera — plus on va vite, plus
-        // les traits s'allongent, filent et s'illuminent.
+        // ---- Trainees de vitesse RADIALES : chaque trainee vit dans le
+        // volume devant la camera. Elle coule depuis le point de fuite,
+        // alignee sur son propre axe camera -> trainee, et s'allonge
+        // avec la vitesse et la proximite -- meme physique que les
+        // etoiles et le nuage d'Oort.
         streaks.forEach(s => {
-            const y = (s.phase + bgTravel * (0.55 + s.depth)) % 1;
-            s.el.style.top = (y * H) + 'px';
-            // Trainees : LINEAIRES sur la position absolue, visibles
-            // des les premieres planetes et croissant regulirement.
-            s.el.style.height = (s.baseH * (0.2 + speedNorm * 2.2)).toFixed(1) + 'px';
-            s.el.style.opacity = (Math.min(1, 0.55 * speedNorm) * (0.35 + s.depth * 0.65)).toFixed(2);
+            s.rel -= speed * s.depth * 0.62 * dt;
+            if (s.rel < 0.15) {
+                s.rel = 2.6 + Math.random() * 0.9;
+                s.ox = (Math.random() * 2 - 1) * 0.8;
+                s.oy = (Math.random() * 2 - 1) * 0.65;
+            }
+            const inv = 1 / s.rel;
+            const x = W / 2 + s.ox * 0.5 * W * inv;
+            const y = horizonY + pitchK * inv + s.oy * H * 0.18 * inv;
+            // Direction du flot au point projete : vecteur point de
+            // fuite -> trainee, normalise.
+            const dx = x - W / 2;
+            const dy = y - horizonY;
+            const len = Math.max(1, Math.hypot(dx, dy));
+            const ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+            // Longueur : croit avec la vitesse et la proximite.
+            const streakLen = (8 + speedNorm * 46) * (0.35 + inv * 0.5);
+            s.el.style.left = x.toFixed(1) + 'px';
+            s.el.style.top = y.toFixed(1) + 'px';
+            s.el.style.height = streakLen.toFixed(1) + 'px';
+            s.el.style.transform = 'translate(-50%, -50%) rotate(' + ang.toFixed(1) + 'deg)';
+            // Opacite : visible des les premieres planetes, LINEAIRE
+            // sur la position absolue, pleine a haute vitesse.
+            const op = Math.min(1, 0.65 * speedNorm) * (0.3 + s.depth * 0.7) * Math.min(1, inv * 0.9);
+            if (x < -20 || x > W + 20 || y < -20 || y > H + 20) {
+                s.el.style.opacity = '0';
+            } else {
+                s.el.style.opacity = op.toFixed(2);
+            }
         });
 
         // ---- Astres : projection perspective + fondu de depassement ----
@@ -1898,11 +1942,17 @@ function fillTravelStars(overlay) {
         star.style.height = size + 'px';
         star.style.animationDelay = (Math.random() * 1.6) + 's';
         starsEl.appendChild(star);
+        // Champ 3D radial : chaque etoile vit dans le volume devant la
+        // camera (decalage ox/oy + profondeur rel). Projettee depuis le
+        // point de fuite (horizon) comme les planetes et le nuage d'Oort,
+        // elle coule vers la camera -- coherent avec la chase-cam.
         travelStarsData.push({
             el: star,
-            x: Math.random(),
-            y: Math.random(),
-            depth: 0.2 + Math.random() * 0.8
+            ox: (Math.random() * 2 - 1) * 0.85,
+            oy: (Math.random() * 2 - 1) * 0.7,
+            rel: 0.25 + Math.random() * 3.25,
+            depth: 0.35 + Math.random() * 0.75,
+            size: size
         });
     }
 }
