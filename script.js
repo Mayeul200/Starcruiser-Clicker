@@ -1806,7 +1806,7 @@ function playTravelAnimation(distance, onDone) {
             }
             const inv = 1 / st.rel;
             const x = W / 2 + st.ox * 0.5 * W * inv;
-            const y = horizonY + pitchK * inv + st.oy * H * 0.55 * inv;
+            const y = horizonY + pitchK * inv + st.oy * H * 0.85 * inv;
             st.el.style.left = x.toFixed(1) + 'px';
             st.el.style.top = y.toFixed(1) + 'px';
             // Grossit en s'approchant, scintillement conserve.
@@ -1834,7 +1834,7 @@ function playTravelAnimation(distance, onDone) {
             }
             const inv = 1 / s.rel;
             const x = W / 2 + s.ox * 0.5 * W * inv;
-            const y = horizonY + pitchK * inv + s.oy * H * 0.55 * inv;
+            const y = horizonY + pitchK * inv + s.oy * H * 0.85 * inv;
             // Direction du flot au point projete : vecteur point de
             // fuite -> trainee, normalise.
             const dx = x - W / 2;
@@ -1862,7 +1862,12 @@ function playTravelAnimation(distance, onDone) {
             if (b.hidden) return;
             // Fenetre de visibilite : on ne montre pas toute la ligne de
             // planetes, seulement les deux prochaines (la 2e en micro-point).
-            if (b.z - cameraZ > TRAVEL_LOOKAHEAD) {
+            // La planete qui suit le Nuage d'Oort apparait PLUS TARD et
+            // PLUS PETITE (fenetre resserree) : elle ne se reveille qu'une
+            // fois la traversee bien avancee, puis grossit uniquement par
+            // la perspective -- croissance continue, jamais de va-et-vient.
+            const lookahead = b.distant ? 7 : TRAVEL_LOOKAHEAD;
+            if (b.z - cameraZ > lookahead) {
                 b.el.style.display = 'none';
                 return;
             }
@@ -1874,11 +1879,7 @@ function playTravelAnimation(distance, onDone) {
             }
             b.el.style.left = pr.x.toFixed(1) + 'px';
             b.el.style.top = pr.y.toFixed(1) + 'px';
-            // Planete suivant le Nuage d'Oort : discrete TANT QU'on
-            // traverse le nuage (55%), reprend sa taille normale a la
-            // sortie (la densite retombe a zero).
-            const distantK = b.distant ? (0.55 + 0.45 * (1 - Math.min(1, oortDensity(cameraZ) * 1.4))) : 1;
-            b.el.style.width = Math.max(6, pr.size * (b.scale || 1) * distantK).toFixed(1) + 'px';
+            b.el.style.width = Math.max(6, pr.size * (b.scale || 1)).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
@@ -1897,13 +1898,12 @@ function playTravelAnimation(distance, onDone) {
             const density = oortDensity(cameraZ);
             oortField.forEach(o => {
                 const rel = o.z - cameraZ;
-                // Objets DEVANT la caméra... et objets DEPASSES (rel
-                // negatif) : ces derniers restent rendus en gros plan
-                // premier (projection miroir, |inv|) jusqu'a sortir de
-                // l'ecran -- la caméra est DANS le nuage, des cailloux
-                // passent devant elle.
-                const absInv = 1 / Math.max(0.12, Math.abs(rel));
-                if (density <= 0 || rel > TRAVEL_LOOKAHEAD * 1.6 || rel < -1.1) {
+                // Un objet depasse par la camera (rel <= 0) n'est PLUS
+                // rendu : le rendu miroir le faisait retr ecir apres le
+                // passage, comme s'il filait dans le meme sens que la
+                // fusee. Il grossit, croise la camera, disparait --
+                // exactement comme les planetes.
+                if (density <= 0 || rel <= 0.05 || rel > TRAVEL_LOOKAHEAD * 1.6) {
                     if (o.on) { o.el.style.display = 'none'; o.on = false; }
                     return;
                 }
@@ -1914,11 +1914,10 @@ function playTravelAnimation(distance, onDone) {
                     return;
                 }
                 const inv = 1 / Math.max(0.12, rel);
-                const useInv = rel > 0 ? inv : absInv;
-                const sx = W / 2 + o.ox * useInv;
-                const sy = horizonY + pitchK * useInv + o.oy * useInv;
-                const size = Math.max(1.5, o.size * useInv);
-                const op = o.op * appear * (rel > 0 ? Math.min(1, rel * 2.2) : 1);
+                const sx = W / 2 + o.ox * inv;
+                const sy = horizonY + pitchK * inv + o.oy * inv;
+                const size = Math.max(1.5, o.size * inv);
+                const op = o.op * appear * Math.min(1, rel * 2.2);
                 if (!o.on) { o.el.style.display = ''; o.on = true; }
                 o.el.style.left = sx.toFixed(1) + 'px';
                 o.el.style.top = sy.toFixed(1) + 'px';
@@ -1929,9 +1928,9 @@ function playTravelAnimation(distance, onDone) {
                 // Ordre de peinture identique aux planetes : plus c'est
                 // proche, plus c'est peint au-dessus. Les fly-by proches
                 // passent devant la fusee (z-index 12+).
-                // Objets depasses (rel < 0) : gros plan DEVANT la fusee,
-                // z-index au-dessus d'elle (la fusee est a 3).
-                o.el.style.zIndex = rel < 0 ? String(Math.min(30, 20 + Math.round(absInv * 6))) : String(Math.min(30, Math.round(useInv * 10) + 1));
+                // Ordre de peinture identique aux planetes : plus c'est
+                // proche, plus c'est peint au-dessus.
+                o.el.style.zIndex = String(Math.min(30, Math.round(inv * 10) + 1));
                 // Streak de motion blur sur les objets proches : le halo
                 // s'allonge avec la proximite (sensation de vitesse).
                 if (o.layer === 2) {
