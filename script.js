@@ -1406,6 +1406,24 @@ function buildTravelRocketInto(holder, targetH) {
     img.style.height = '100%';
     img.style.objectFit = 'contain';
     holder.appendChild(img);
+    // Flammes du reactor : structure dediee (taille proportionnelle a
+    // la fusee) -- lueur externe + flamme principale + base bleue +
+    // pointe fumeuse, animees independamment.
+    const flames = document.createElement('div');
+    flames.className = 'travel-flames';
+    const glow = document.createElement('div');
+    glow.className = 'travel-flame-glow';
+    const core = document.createElement('div');
+    core.className = 'travel-flame-core';
+    const blue = document.createElement('div');
+    blue.className = 'travel-flame-blue';
+    const tip = document.createElement('div');
+    tip.className = 'travel-flame-tip';
+    core.appendChild(blue);
+    core.appendChild(tip);
+    flames.appendChild(glow);
+    flames.appendChild(core);
+    holder.appendChild(flames);
 }
 
 // Projection d'un astre (decalage lateral lat, profondeur z) sur
