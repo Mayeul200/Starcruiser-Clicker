@@ -3585,12 +3585,12 @@ body {
     .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
     .buildings-list { gap: 6px; margin-top: 2px; }
     .building-item {
-        grid-template-columns: 64px 1fr 74px;
+        grid-template-columns: 88px 1fr 74px;
         grid-template-areas:
             "icon info buy";
         grid-template-rows: auto;
-        min-height: 0;
-        max-height: 100px;
+        min-height: 92px;
+        max-height: 110px;
         overflow: hidden;
         padding: 10px;
         gap: 4px 10px;
@@ -3600,7 +3600,11 @@ body {
     .building-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     .building-ownership { font-size: 0.7rem; flex-shrink: 0; }
     .building-center { grid-area: icon; align-self: stretch; display: flex; align-items: center; justify-content: center; min-height: 0; }
-    .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: 80px; filter: none; }
+    .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: 92px; object-fit: contain; filter: none; }
+    /* Reequilibre : neutralise les marges negatives desktop */
+    .building-item.nozzles .building-image, .building-item.workshop .building-image, .building-item.engines .building-image, .building-item.fuel-tank .building-image, .building-item.cockpit .building-image, .building-item.shield .building-image, .building-item.launch-pad .building-image, .building-item.astronaut .building-image { margin-left: 0; }
+    .building-item.nozzles .building-image { height: auto; max-height: 92px; }
+    .building-item.rocket-body .building-image, .building-item.boosters-left .building-image, .building-item.boosters-right .building-image { max-height: 92px; margin-left: 0; }
     .building-right { grid-area: buy; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; min-width: 0; }
     .building-item button {
         flex: 0 0 auto;
@@ -3732,9 +3736,9 @@ body {
     .medal { width: 130px; height: 130px; top: 42% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: 56px 1fr 68px; }
+    .building-item { grid-template-columns: 80px 1fr 68px; }
     .building-item button { width: 68px; height: 68px; font-size: 0.68rem; }
-    .building-image { max-height: 76px; min-width: 48px; }
+    .building-image { max-height: 88px; min-width: 0; }
     .building-name { font-size: 0.78rem; }
     .multiplier-btn { padding: 5px 10px; }
     .counters { width: 94vw; }
