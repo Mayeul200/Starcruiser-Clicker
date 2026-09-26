@@ -1867,9 +1867,11 @@ function playTravelAnimation(distance, onDone) {
             // Fenetre de visibilite : on ne montre pas toute la ligne de
             // planetes, seulement les deux prochaines (la 2e en micro-point).
             // La planete qui suit le Nuage d'Oort apparait PLUS TARD et
-            // PLUS PETITE (fenetre resserree) : elle ne se reveille qu'une
-            // fois la traversee bien avancee, puis grossit uniquement par
-            // la perspective -- croissance continue, jamais de va-et-vient.
+            // PLUS PETITE (fenetre resserree).
+            // TOUTES les planetes apparaissent en DOUCEUR : meme fondu
+            // d'entree que Proxima (smoothstep sur l'opacite des
+            // premieres unites de profondeur apres l'entree en fenetre),
+            // puis croissance perspective purement monotone.
             const lookahead = b.distant ? 9 : TRAVEL_LOOKAHEAD;
             if (b.z - cameraZ > lookahead) {
                 b.el.style.display = 'none';
@@ -1883,24 +1885,19 @@ function playTravelAnimation(distance, onDone) {
             }
             b.el.style.left = pr.x.toFixed(1) + 'px';
             b.el.style.top = pr.y.toFixed(1) + 'px';
-            // Planete apres le Nuage d'Oort : entree en douceur (fondu
-            // d'opacite sur les premieres unites de profondeur, taille
-            // de depart reduite) puis croissance perspective purement
-            // monotone -- jamais de pop ni de va-et-vient.
-            if (b.distant) {
-                const rel = b.z - cameraZ;
-                const fadeIn = Math.max(0, Math.min(1, (lookahead - rel) / 2.5));
-                b.el.style.opacity = (fadeIn * fadeIn * (3 - 2 * fadeIn)).toFixed(2);
-            } else {
-                b.el.style.opacity = '';
-            }
+            // Entree en douceur generalisee : fondu d'opacite au moment
+            // ou la planete entre dans sa fenetre de visibilite, taille
+            // de depart reduite pour la planete post-Oort.
+            const rel = b.z - cameraZ;
+            const fadeIn = Math.max(0, Math.min(1, (lookahead - rel) / 2.5));
+            b.el.style.opacity = (fadeIn * fadeIn * (3 - 2 * fadeIn)).toFixed(2);
             b.el.style.width = Math.max(6, pr.size * (b.scale || 1) * (b.distant ? 0.85 : 1)).toFixed(1) + 'px';
             b.el.style.transform = 'translate(-50%, -50%)';
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
             // derriere la camera gardent leur ordre naturel.
             b.el.style.zIndex = String(Math.max(1, Math.round(pr.inv * 10) + 1));
-            // Pas de fondu : l'astre depasse la camera en grossissant et
+            // A la sortie : l'astre depasse la camera en grossissant et
             // sort naturellement de l'ecran par le bas, plein echelle.
         });
 
