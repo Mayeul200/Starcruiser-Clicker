@@ -3862,6 +3862,16 @@ body {
     .building-image { max-height: 72px; }
 }
 
+/* Desktop : image du reveal doublee (mobile : 210px) */
+@media (min-width: 1025px) {
+    .new-building-modal { width: 92%; max-width: 560px; }
+    .nb-reveal { width: 420px; height: 420px; }
+    .new-building-body h3 { font-size: 1.6rem; }
+    .new-building-body p { font-size: 1rem; }
+    .nb-stat-label { font-size: 0.8rem; }
+    .nb-stat-value { font-size: 1.15rem; }
+}
+
 /* Grands ecrans (>1520) : grandes images conservees ; les noms longs
    se replient sur 2 lignes plutot que de couper ou de reduire les images */
 @media (min-width: 1521px) {
