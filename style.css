@@ -1270,13 +1270,14 @@ body {
     to { opacity: 0.9; }
 }
 /* Trainees de vitesse : traits verticaux semi-transparents qui
-   apparaissent avec la vitesse camera (sensation d'acceleration). */
+   apparaissent avec la vitesse camera. z-index 0 : TOUJOURS derriere
+   le calque des planetes (#travel-deep, z-index 1). */
 .travel-streaks {
     position: absolute;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
 }
 .travel-streak {
     position: absolute;

@@ -1542,14 +1542,19 @@ function playTravelAnimation(distance, onDone) {
         const s = document.createElement('div');
         s.className = 'travel-streak';
         const depth = 0.25 + Math.random() * 0.75;
-        s.style.left = (Math.random() * 100) + '%';
-        s.style.height = (18 + depth * 60) + 'px';
+        // Concentres vers l'axe central de voyage : distribution cubique
+        // (bords rares, centre dense) comme des trainees dans le sillage.
+        const r = Math.random() * 2 - 1;
+        const xPct = 50 + r * r * r * 46;
+        s.style.left = xPct.toFixed(1) + '%';
         s.style.opacity = '0';
         streaksEl.appendChild(s);
-        streaks.push({ el: s, x: Math.random(), depth, phase: Math.random() });
+        streaks.push({ el: s, depth, phase: Math.random(), baseH: 18 + depth * 60 });
     }
 
     const startTime = performance.now();
+    let lastNow = startTime;
+    let bgTravel = 0;
     let finished = false;
 
     const cleanup = () => {
@@ -1610,8 +1615,13 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
-        // Avancee normalisee du fond (0 -> 1) pour la parallaxe d'etoiles.
-        const depthTravel = linear;
+        // Vitesse normalisee de la camera (0 a l'arret, ~1 en croisiere)
+        // et avancee du fond INTEGREE sur le temps : plus on va vite,
+        // plus le defilement est rapide (vraie coherence physique).
+        const dt = Math.min(0.05, (now - lastNow) / 1000);
+        lastNow = now;
+        const speed = Math.min(1, Math.max(0, (profile(linear + 0.012) - profile(linear)) * 84));
+        bgTravel += speed * dt * 2.6;
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
         if (rocketEl) {
@@ -1626,21 +1636,22 @@ function playTravelAnimation(distance, onDone) {
         // passage effectif de chaque planete ----
         if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(legs > 0 ? kmAt(cameraZ) : safeDistance * easeInOut(linear)));
 
-        // ---- Fond en parallaxe : les etoiles defilent vers le bas a
-        // des vitesses lieées a leur profondeur ; vitesse = derivee du
-        // profil camera (acceleration visible au depart).
-        const speed = Math.min(1, Math.max(0, (profile(linear + 0.012) - profile(linear)) * 84));
+        // ---- Fond en parallaxe : chaque etoile defile vers le bas a une
+        // vitesse proportionnelle a la vitesse camera ET a sa propre
+        // profondeur (proches = rapides, lointaines = lentes).
         travelStarsData.forEach(st => {
-            const y = (st.y + depthTravel * st.depth) % 1;
+            const y = (st.y + bgTravel * st.depth) % 1;
             st.el.style.left = (st.x * W) + 'px';
             st.el.style.top = (y * H) + 'px';
         });
-        // ---- Trainees de vitesse : opacite et vitesse selon l'avancee ----
+        // ---- Trainees de vitesse : longueur, vitesse et opacite ont
+        // toutes pour moteur la vitesse camera — plus on va vite, plus
+        // les traits s'allongent, filent et s'illuminent.
         streaks.forEach(s => {
-            const v = (0.06 + s.depth * 0.22) * speed;
-            const y = (s.phase + depthTravel * s.depth * 2.2) % 1;
+            const y = (s.phase + bgTravel * (0.55 + s.depth)) % 1;
             s.el.style.top = (y * H) + 'px';
-            s.el.style.opacity = (speed > 0.25 ? (0.16 + s.depth * 0.3) * speed : 0).toFixed(2);
+            s.el.style.height = (s.baseH * (0.3 + speed * 1.7)).toFixed(1) + 'px';
+            s.el.style.opacity = ((0.08 + s.depth * 0.34) * speed).toFixed(2);
         });
 
         // ---- Astres : projection perspective + fondu de depassement ----
