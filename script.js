@@ -1372,7 +1372,7 @@ function closeLaunchResults() {
 // (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
 // jusqu'a la distance reellement atteinte par le lancer.
 // ============================================
-const TRAVEL_ANIM_LEG_MS = 9500;    // duree par troncon (Terre -> Lune = 1 troncon)
+const TRAVEL_ANIM_LEG_MS = 6000;    // duree par troncon (Terre -> Lune = 1 troncon)
 let travelAnimFrame = 0;
 let travelStarsData = [];
 
@@ -1577,20 +1577,28 @@ function playTravelAnimation(distance, onDone) {
     const lerp = (a, b, t) => a + (b - a) * t;
     const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
     // Profil de vitesse : ACCELERATION CONSTANTE du depart a la cible.
-    // Mouvement uniformement accelere : vitesse initiale non nulle (la
-    // camera bouge des le premier ecran), acceleration calculee pour
-    // atteindre exactement la cible, vitesse MAX atteinte au point
-    // d'arrivee -- la fusee n'arrete jamais d'accelerer jusqu'a son record.
-    const V0_N = 0.35;                     // vitesse initiale (x vitesse moyenne)
+    // Vitesse calibree sur la route GLOBALE Terre -> Virgo : la vitesse
+    // finale d'un voyage depend de sa position sur la route complete
+    // (Lune = lente, Virgo = vitesse MAX). Chaque nouveau record va donc
+    // plus vite que le precedent -- la vitesse max n'est atteinte QUE
+    // lors de l'arrivee a Virgo.
+    const totalLegs = PLANETS.length - 1; // Terre -> Virgo (route complete)
+    const V0_N = 0.35;                     // vitesse initiale (x vitesse moyenne locale)
     const ACCEL_N = 2 * (1 - V0_N);        // v0*T + a*T^2/2 = D -> a normalisee
-    const VMAX_N = V0_N + ACCEL_N;         // vitesse max, atteinte a la cible
+    const VMAX_N = V0_N + ACCEL_N;         // vitesse max de l'echelle globale (Virgo)
+    const speedPos = (x) => {
+        x = Math.min(Math.max(x, 0), 1);
+        return (V0_N + ACCEL_N * x) / VMAX_N;
+    };
+    const endPos = Math.min(1, legs / totalLegs); // position du record sur la route
+    const vStart = speedPos(0);           // vitesse de depart (Terre)
+    const vEnd = speedPos(endPos);        // vitesse d'arrivee (record du voyage)
+    // Profil de position LOCAL : uniformement accelere (bouge des le
+    // premier ecran, n'arrete jamais d'accelerer) et atteint EXACTEMENT
+    // la cible quel que soit le voyage.
     const profile = (x) => {
         x = Math.min(Math.max(x, 0), 1);
         return (V0_N + (ACCEL_N / 2) * x) * x;
-    };
-    const speedAt = (x) => {
-        x = Math.min(Math.max(x, 0), 1);
-        return (V0_N + ACCEL_N * x) / VMAX_N;
     };
     const camAt = (t) => lerp(CAM_START, CAM_END, profile(t));
     // Compteur km : interpolation REELLE entre planetes. Quand la camera
@@ -1620,12 +1628,12 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
-        // Vitesse normalisee de la camera (0.21 au depart -> 1.0 a la
-        // cible) et avancee du fond INTEGREE sur le temps : plus on va
-        // vite, plus le defilement est rapide (vraie coherence physique).
+        // Vitesse visuelle du fond : croit pendant le voyage (acceleration
+        // permanente) ET d'un lancement a l'autre (record plus loin =
+        // vitesse finale plus elevee ; Virgo = vitesse max absolue).
         const dt = Math.min(0.05, (now - lastNow) / 1000);
         lastNow = now;
-        const speed = speedAt(linear);
+        const speed = lerp(vStart, vEnd, profile(linear));
         bgTravel += speed * dt * 2.6;
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
