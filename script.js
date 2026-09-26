@@ -1737,13 +1737,20 @@ function playTravelAnimation(distance, onDone) {
         const bgRate = 0.04 + speedNorm * 3.6;
         bgTravel += bgRate * dt;
 
-        // ---- Fusee : point focal, inclinee dans son axe de voyage ----
+        // ---- Fusee : point focal ----
+        // Leger balancement organique : derive latérale douce + avance/
+        // recul dans l'axe de voyage (fleche verticale + tres legere
+        // variation d'echelle pour la profondeur). Fusée toujours
+        // verticale et droite, aucun tangage -- juste assez de vie pour
+        // que la scene ne soit pas statique.
         if (rocketEl) {
-            rocketEl.style.left = rocketX + 'px';
-            rocketEl.style.top = rocketY + 'px';
-            // perspective d'abord, puis leger basculement arriere (vue
-            // surelevee de la chase cam) et inclinaison vers la cible.
-            rocketEl.style.transform = 'translate(-50%, -50%)';
+            const ph = (now - startTime) / 1000;
+            const swayX = Math.sin(ph * 0.9 + 0.4) * 7 + Math.sin(ph * 1.7) * 3;
+            const swayY = Math.sin(ph * 0.6) * 5;
+            const breathe = 1 + Math.sin(ph * 0.6 + 1.2) * 0.012;
+            rocketEl.style.left = (rocketX + swayX) + 'px';
+            rocketEl.style.top = (rocketY + swayY) + 'px';
+            rocketEl.style.transform = 'translate(-50%, -50%) scale(' + breathe.toFixed(4) + ')';
         }
 
         // ---- Compteur de km : distances reelles, synchronisees au
