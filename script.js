@@ -1583,24 +1583,22 @@ function playTravelAnimation(distance, onDone) {
     // plus vite que le precedent -- la vitesse max n'est atteinte QUE
     // lors de l'arrivee a Virgo.
     const totalLegs = PLANETS.length - 1; // Terre -> Virgo (route complete)
-    const V0_N = 0.35;                     // vitesse initiale (x vitesse moyenne locale)
-    const ACCEL_N = 2 * (1 - V0_N);        // v0*T + a*T^2/2 = D -> a normalisee
     // Multiplicateur de vitesse du fond : LINEAIRE sur la position absolue
     // de la fusee sur la route Terre -> Virgo (pas sur le voyage en cours).
     // Passer Mars dans un voyage long montre exactement les memes effets
     // que l'arrivee a Mars d'un voyage court : coherent partout.
     const VIRGO_SPEED_MAX = 3;
-    const endPos = Math.min(1, legs / totalLegs); // position du record sur la route
-    const vStart = 1;                      // vitesse de depart (Terre)
-    const vEnd = 1 + endPos * (VIRGO_SPEED_MAX - 1); // vitesse au record
-    // Profil de position LOCAL : uniformement accelere (bouge des le
-    // premier ecran, n'arrete jamais d'accelerer) et atteint EXACTEMENT
-    // la cible quel que soit le voyage.
-    const profile = (x) => {
-        x = Math.min(Math.max(x, 0), 1);
-        return (V0_N + (ACCEL_N / 2) * x) * x;
+    // Vitesse camera CONSTANTE PAR TRONCON : chaque troncon dure
+    // exactement TRAVEL_ANIM_LEG_MS (6s), de l'echapement de la planete
+    // au passage de la suivante. La fusee croise chaque planete pile a
+    // la frontiere 6s/6s -- la sensation d'acceleration vient du fond,
+    // du compteur km (distances reelles croissantes) et des trainees.
+    const camAt = (t) => {
+        if (legs <= 0) return CAM_START;
+        const scaled = Math.min(t, 1) * legs;
+        const k = Math.min(legs - 1, Math.floor(scaled));
+        return lerp(k * DEPTH_STEP, (k === legs - 1) ? CAM_END : (k + 1) * DEPTH_STEP, scaled - k);
     };
-    const camAt = (t) => lerp(CAM_START, CAM_END, profile(t));
     // Position absolue normalisee sur la route COMPLETE (0 Terre, 1 Virgo) :
     // troncons deja franchis + avancement dans le troncon courant.
     const posAt = (t) => {

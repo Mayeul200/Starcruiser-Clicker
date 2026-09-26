@@ -1160,36 +1160,58 @@ body {
     top: 666px;
     left: 0;
     width: 100%;
-    height: 90px;
+    height: 140px;
     pointer-events: none;
     z-index: 2;
 }
+/* Flammes moteur style jeu video 2D : coeur incandescent + double halo
+   (orange puis rouge) + pointes dynamiques, pulsation rapide. */
 .launch-flame-jet {
     position: absolute;
     top: 0;
-    width: 26px;
-    height: 70px;
-    background: linear-gradient(180deg, #fff7cc 0%, #ffd23f 30%, #ff8a00 60%, #ff3d00 85%, rgba(255, 61, 0, 0) 100%);
-    border-radius: 50% 50% 45% 45% / 62% 62% 38% 38%;
-    filter: blur(1.5px);
+    width: 30px;
+    height: 92px;
+    background:
+        radial-gradient(ellipse 60% 34% at 50% 6%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 244, 200, 0) 70%),
+        linear-gradient(180deg, #fffbe6 0%, #ffd23f 22%, #ff9500 46%, #ff4d00 72%, rgba(255, 30, 0, 0) 100%);
+    border-radius: 48% 52% 60% 40% / 70% 70% 30% 30%;
+    filter: blur(1.2px) drop-shadow(0 0 12px rgba(255, 140, 0, 0.8)) drop-shadow(0 0 26px rgba(255, 60, 0, 0.45));
     transform-origin: 50% 0;
-    animation: launchFlameJet 0.16s ease-in-out infinite alternate;
+    animation: launchFlameJet 0.13s ease-in-out infinite alternate;
+}
+/* Pointe de flamme : effilure vivante sous le jet */
+.launch-flame-jet::after {
+    content: '';
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    width: 55%;
+    height: 70%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(255, 170, 40, 0.9) 0%, rgba(255, 80, 0, 0.55) 45%, rgba(255, 40, 0, 0) 100%);
+    border-radius: 50% 50% 46% 54% / 40% 40% 62% 58%;
+    filter: blur(2px);
+    animation: launchFlameTip 0.11s ease-in-out infinite alternate;
+}
+@keyframes launchFlameTip {
+    from { transform: translateX(-50%) scaleY(0.7) scaleX(1.15); opacity: 0.7; }
+    to { transform: translateX(-50%) scaleY(1.35) scaleX(0.8); opacity: 1; }
 }
 /* Positions des jets calculees en JS depuis ROCKET_PARTS (left en %).
-   Le 2e jet vacille a contre-temps pour l'effet moteur. */
-.launch-flame-jet:nth-child(2) { animation-name: launchFlameJet2; }
-.launch-flame-jet:nth-child(3) { animation-name: launchFlameJet3; }
+   Chaque jet vacille a contre-temps et a sa propre pulsation. */
+.launch-flame-jet:nth-child(2) { animation-name: launchFlameJet2; animation-duration: 0.11s; }
+.launch-flame-jet:nth-child(3) { animation-name: launchFlameJet3; animation-duration: 0.15s; }
 @keyframes launchFlameJet {
-    from { transform: scaleY(0.85) scaleX(1.05); opacity: 0.85; }
-    to { transform: scaleY(1.2) scaleX(0.9); opacity: 1; }
+    from { transform: scaleY(0.82) scaleX(1.12) rotate(-2deg); opacity: 0.9; }
+    to { transform: scaleY(1.25) scaleX(0.88) rotate(2deg); opacity: 1; }
 }
 @keyframes launchFlameJet2 {
-    from { transform: scaleY(1.15) scaleX(0.92); opacity: 1; }
-    to { transform: scaleY(0.8) scaleX(1.1); opacity: 0.85; }
+    from { transform: scaleY(1.2) scaleX(0.9) rotate(2.5deg); opacity: 1; }
+    to { transform: scaleY(0.78) scaleX(1.14) rotate(-2.5deg); opacity: 0.88; }
 }
 @keyframes launchFlameJet3 {
-    from { transform: scaleY(0.95) scaleX(1); opacity: 0.9; }
-    to { transform: scaleY(1.1) scaleX(0.95); opacity: 1; }
+    from { transform: scaleY(0.95) scaleX(1.05) rotate(-1.5deg); opacity: 0.92; }
+    to { transform: scaleY(1.15) scaleX(0.92) rotate(1.5deg); opacity: 1; }
 }
 /* Fumée au sol qui déborde du pas de tir (reste au sol pendant le vol) */
 .launch-smoke {
@@ -1198,20 +1220,48 @@ body {
        de 50px), on pose la fumée juste dessous, sur la ligne de sol */
     bottom: 96px;
     left: 50%;
-    width: 260px;
-    height: 60px;
+    width: 300px;
+    height: 150px;
     transform: translateX(-50%);
-    background: radial-gradient(ellipse at center, rgba(200, 205, 214, 0.85) 0%, rgba(160, 165, 175, 0.5) 45%, rgba(140, 145, 155, 0) 72%);
+    background:
+        radial-gradient(ellipse 42% 30% at 50% 92%, rgba(235, 238, 244, 0.95) 0%, rgba(210, 215, 224, 0.6) 50%, rgba(190, 195, 205, 0) 78%),
+        radial-gradient(ellipse 65% 40% at 50% 96%, rgba(205, 210, 220, 0.85) 0%, rgba(175, 180, 192, 0.5) 55%, rgba(160, 165, 178, 0) 80%),
+        radial-gradient(ellipse 90% 34% at 50% 100%, rgba(185, 190, 200, 0.55) 0%, rgba(170, 175, 188, 0) 75%);
     border-radius: 50%;
-    filter: blur(6px);
+    filter: blur(10px);
     pointer-events: none;
     z-index: 4;
-    animation: launchSmokeSpread 2.6s ease-out forwards;
+    animation: launchSmokeSpread 3.4s ease-out forwards;
+}
+/* Jaillissements lateraux : deux jets de vapeur qui debordent du pas de tir */
+.launch-smoke::before,
+.launch-smoke::after {
+    content: '';
+    position: absolute;
+    bottom: 6%;
+    width: 55%;
+    height: 62%;
+    background: radial-gradient(ellipse at center, rgba(225, 228, 236, 0.9) 0%, rgba(200, 205, 215, 0.55) 50%, rgba(190, 195, 208, 0) 75%);
+    border-radius: 50%;
+    filter: blur(8px);
+}
+.launch-smoke::before { left: -22%; animation: launchSmokeBurstL 3.4s ease-out forwards; }
+.launch-smoke::after { right: -22%; animation: launchSmokeBurstR 3.4s ease-out forwards; }
+@keyframes launchSmokeBurstL {
+    0% { transform: translateX(0) scale(0.2); opacity: 0; }
+    18% { opacity: 1; }
+    100% { transform: translateX(-70%) scale(1.35); opacity: 0; }
+}
+@keyframes launchSmokeBurstR {
+    0% { transform: translateX(0) scale(0.2); opacity: 0; }
+    18% { opacity: 1; }
+    100% { transform: translateX(70%) scale(1.35); opacity: 0; }
 }
 @keyframes launchSmokeSpread {
-    0% { transform: translateX(-50%) scale(0.4); opacity: 0; }
-    25% { opacity: 1; }
-    100% { transform: translateX(-50%) scale(2.4); opacity: 0; }
+    0% { transform: translateX(-50%) scale(0.3); opacity: 0; }
+    15% { opacity: 1; }
+    55% { opacity: 0.85; }
+    100% { transform: translateX(-50%) scale(2.8); opacity: 0; }
 }
 /* Responsive for launch button */
 /* Responsive for launch button */
@@ -1303,24 +1353,27 @@ body {
     pointer-events: none;
     filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
 }
-/* Petit jet de flamme sous la fusee pendant le vol */
+/* Jet de flamme sous la fusee pendant le vol : meme style jeu video que
+   le decollage (coeur incandescent + halo orange + pointe vive). */
 .travel-rocket::after {
     content: '';
     position: absolute;
     top: 100%;
     left: 50%;
-    width: 26px;
-    height: 44px;
+    width: 30px;
+    height: 64px;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, #fff7cc 0%, #ffd23f 35%, #ff8a00 65%, rgba(255, 61, 0, 0) 100%);
-    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-    filter: blur(1.5px);
+    background:
+        radial-gradient(ellipse 60% 34% at 50% 4%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 244, 200, 0) 70%),
+        linear-gradient(180deg, #fffbe6 0%, #ffd23f 22%, #ff9500 48%, #ff4d00 75%, rgba(255, 30, 0, 0) 100%);
+    border-radius: 48% 52% 60% 40% / 70% 70% 30% 30%;
+    filter: blur(1.2px) drop-shadow(0 0 12px rgba(255, 140, 0, 0.8));
     transform-origin: 50% 0;
-    animation: travelFlame 0.14s ease-in-out infinite alternate;
+    animation: travelFlame 0.12s ease-in-out infinite alternate;
 }
 @keyframes travelFlame {
-    from { transform: translateX(-50%) scaleY(0.75); opacity: 0.8; }
-    to { transform: translateX(-50%) scaleY(1.15); opacity: 1; }
+    from { transform: translateX(-50%) scaleY(0.72) scaleX(1.12) rotate(-2deg); opacity: 0.85; }
+    to { transform: translateX(-50%) scaleY(1.3) scaleX(0.88) rotate(2deg); opacity: 1; }
 }
 /* Planetes d'arrivee : Terre en bas, Lune en haut (visible une fois proche) */
 .travel-planet {
