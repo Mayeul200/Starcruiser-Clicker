@@ -1585,10 +1585,10 @@ function playTravelAnimation(distance, onDone) {
     const totalLegs = PLANETS.length - 1; // Terre -> Virgo (route complete)
     const V0_N = 0.35;                     // vitesse initiale (x vitesse moyenne locale)
     const ACCEL_N = 2 * (1 - V0_N);        // v0*T + a*T^2/2 = D -> a normalisee
-    // Multiplicateur de vitesse du fond : depart a 1 (le fond defile
-    // franchement des le premier ecran), croissance continue pendant le
-    // voyage ET d'un lancement a l'autre, max x3 atteint UNIQUEMENT a
-    // l'arrivee a Virgo.
+    // Multiplicateur de vitesse du fond : LINEAIRE sur la position absolue
+    // de la fusee sur la route Terre -> Virgo (pas sur le voyage en cours).
+    // Passer Mars dans un voyage long montre exactement les memes effets
+    // que l'arrivee a Mars d'un voyage court : coherent partout.
     const VIRGO_SPEED_MAX = 3;
     const endPos = Math.min(1, legs / totalLegs); // position du record sur la route
     const vStart = 1;                      // vitesse de depart (Terre)
@@ -1601,6 +1601,14 @@ function playTravelAnimation(distance, onDone) {
         return (V0_N + (ACCEL_N / 2) * x) * x;
     };
     const camAt = (t) => lerp(CAM_START, CAM_END, profile(t));
+    // Position absolue normalisee sur la route COMPLETE (0 Terre, 1 Virgo) :
+    // troncons deja franchis + avancement dans le troncon courant.
+    const posAt = (t) => {
+        if (legs <= 0) return 0;
+        const scaled = Math.min(t, 1) * legs;
+        const k = Math.min(legs - 1, Math.floor(scaled));
+        return Math.min(1, (k + (scaled - k)) / totalLegs);
+    };
     // Compteur km : interpolation REELLE entre planetes. Quand la camera
     // croise la Lune, le compteur lit exactement 384 400 km, quel que soit
     // le voyage ; la vitesse en km/s s'adapte donc a chaque troncon. Le
@@ -1630,15 +1638,16 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
-        // Vitesse visuelle du fond : normalisee 0 (depart, a peine
-        // perceptible) -> 1 (Virgo, vitesse max absolue). Courbe
-        // quadratique : les etoiles bougent a peine au debut et
-        // defilent vraiment vite uniquement a haute vitesse.
+        // Vitesse visuelle du fond : LINEAIRE, ancree a la position absolue
+        // sur la route (troncon courant + avancement dedans). Quasi
+        // immobile pres de la Terre, plein regime uniquement a Virgo --
+        // et identique a toute passe precedente, quel que soit le voyage.
         const dt = Math.min(0.05, (now - lastNow) / 1000);
         lastNow = now;
-        const speed = lerp(vStart, vEnd, profile(linear));
-        const speedNorm = Math.max(0, (speed - 1) / (VIRGO_SPEED_MAX - 1));
-        const bgRate = 0.15 + speedNorm * speedNorm * 3.5;
+        const posNow = Math.min(1, posAt(linear));
+        const speedNorm = posNow;                      // 0 Terre -> 1 Virgo
+        const speed = 1 + speedNorm * (VIRGO_SPEED_MAX - 1);
+        const bgRate = 0.04 + speedNorm * 3.6;
         bgTravel += bgRate * dt;
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
@@ -1668,11 +1677,10 @@ function playTravelAnimation(distance, onDone) {
         streaks.forEach(s => {
             const y = (s.phase + bgTravel * (0.55 + s.depth)) % 1;
             s.el.style.top = (y * H) + 'px';
-            // Les trainees n'apparaissent QUE quand on va vraiment vite :
-            // longueur et opacite pilotees par la vitesse normalisee.
-            const sPower = Math.pow(speedNorm, 1.5);
-            s.el.style.height = (s.baseH * (0.2 + sPower * 2.4)).toFixed(1) + 'px';
-            s.el.style.opacity = ((0.1 + s.depth * 0.4) * sPower).toFixed(2);
+            // Trainees : LINEAIRES sur la position absolue, visibles
+            // des les premieres planetes et croissant regulirement.
+            s.el.style.height = (s.baseH * (0.2 + speedNorm * 2.2)).toFixed(1) + 'px';
+            s.el.style.opacity = (Math.min(1, 0.55 * speedNorm) * (0.35 + s.depth * 0.65)).toFixed(2);
         });
 
         // ---- Astres : projection perspective + fondu de depassement ----
