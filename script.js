@@ -1372,8 +1372,7 @@ function closeLaunchResults() {
 // (bas de l'ecran) vers la Lune (haut). Le compteur de km defile de 0
 // jusqu'a la distance reellement atteinte par le lancer.
 // ============================================
-const TRAVEL_ANIM_BASE_MS = 9500;   // voyage court (Terre -> Lune)
-const TRAVEL_ANIM_STEP_MS = 2600;   // par planete intermediaire supplementaire
+const TRAVEL_ANIM_LEG_MS = 9500;    // duree par troncon (Terre -> Lune = 1 troncon)
 let travelAnimFrame = 0;
 
 // ============================================
@@ -1490,6 +1489,9 @@ function playTravelAnimation(distance, onDone) {
     // destination demarre tres loin (point minuscule a l'horizon), les
     // intermediaires demandent un vrai trajet. zMax = profondeur de la cible.
     const DEPTH_STEP = 5;
+    // Fenetre de visibilite : au plus deux planetes devant la camera
+    // (la suivante en micro-point a l'horizon), rien au-dela.
+    const TRAVEL_LOOKAHEAD = 2 * DEPTH_STEP + 1.15;
     const zMax = (itinerary.length - 1) * DEPTH_STEP;
 
     // Trajet de la camera : demarre PRES de la Terre (gros bout de
@@ -1498,8 +1500,16 @@ function playTravelAnimation(distance, onDone) {
     // grande, juste sous la fusee, dans l'axe).
     const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
     const CAM_END = zMax - 1.15;             // cible a rel ~1.15 a l'arrivee
-    // Duree adaptee : le voyage s'etire avec le nombre d'etapes.
-    const animMs = TRAVEL_ANIM_BASE_MS + Math.max(0, itinerary.length - 2) * TRAVEL_ANIM_STEP_MS;
+    // Temps EQUIVALENT par troncon : Terre -> Lune garde sa duree, chaque
+    // planete supplementaire ajoute un troncon de meme duree (Mars = deux
+    // fois Terre -> Lune).
+    const legs = itinerary.length - 1;
+    const animMs = Math.max(1, legs) * TRAVEL_ANIM_LEG_MS;
+    // Bornes camera de chaque troncon : la camera croise chaque planete
+    // intermediaire exactement a la frontiere entre deux troncons.
+    const camPoints = [CAM_START];
+    for (let i = 1; i <= itinerary.length - 2; i++) camPoints.push(i * DEPTH_STEP);
+    camPoints.push(CAM_END);
 
     // Corps celestes generes dynamiquement (calque de profondeur)
     deepEl.innerHTML = '';
@@ -1511,9 +1521,9 @@ function playTravelAnimation(distance, onDone) {
         img.alt = '';
         el.appendChild(img);
         deepEl.appendChild(el);
-        // Composition : tous sur l'axe ; la Terre legerement a gauche
-        // (point de depart depasse sur le cote au depassement).
-        const lat = (i === 0) ? -0.28 : 0;
+        // Composition : toutes les planetes sur l'axe central, sans
+        // decalage laterale (meme la Terre).
+        const lat = 0;
         // La Terre un peu plus petite que l'echelle globale des planetes.
         const scale = (i === 0) ? 0.75 : 1;
         return { el, z: i * DEPTH_STEP, lat, scale };
@@ -1540,10 +1550,38 @@ function playTravelAnimation(distance, onDone) {
     }
 
     const lerp = (a, b, t) => a + (b - a) * t;
-    // Profil cinematique : acceleration au depart, croisiere,
-    // ralentissement a l'approche de la destination.
+    // Profil cinematique PAR TRONCON : acceleration au depart de chaque
+    // planete, deceleration a l'approche de la suivante (rythme constant
+    // sur tout le voyage).
     const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2);
-    const camAt = (t) => lerp(CAM_START, CAM_END, easeInOut(t));
+    const camAt = (t) => {
+        if (legs <= 0) return CAM_START;
+        const scaled = Math.min(t, 1) * legs;
+        const k = Math.min(legs - 1, Math.floor(scaled));
+        return lerp(camPoints[k], camPoints[k + 1], easeInOut(scaled - k));
+    };
+    // Compteur km : interpolation REELLE entre planetes. Quand la camera
+    // croise la Lune, le compteur lit exactement 384 400 km, quel que soit
+    // le voyage ; la vitesse en km/s s'adapte donc a chaque troncon. Le
+    // troncon final se termine sur la distance reellement atteinte.
+    const kmAt = (cam) => {
+        if (cam <= 0) return 0;
+        const last = itinerary.length - 1;
+        const bounds = [];
+        for (let i = 1; i <= last - 1; i++) bounds.push(i * DEPTH_STEP);
+        bounds.push(CAM_END);
+        for (let i = 0; i < bounds.length; i++) {
+            const z0 = (i === 0) ? 0 : bounds[i - 1];
+            const z1 = bounds[i];
+            if (cam < z1 || i === bounds.length - 1) {
+                const d0 = itinerary[i].distanceRequired;
+                const d1 = (i === last - 1) ? safeDistance : itinerary[i + 1].distanceRequired;
+                const f = Math.max(0, Math.min(1, (cam - z0) / (z1 - z0)));
+                return d0 + (d1 - d0) * f;
+            }
+        }
+        return itinerary[last].distanceRequired;
+    };
 
     const tick = (now) => {
         if (finished) return;
@@ -1559,11 +1597,19 @@ function playTravelAnimation(distance, onDone) {
             rocketEl.style.transform = 'perspective(700px) translate(-50%, -50%) rotateX(7deg) rotate(' + ROCKET_TILT + 'deg)';
         }
 
-        // ---- Compteur de km : synchronise sur l'avancee camera ----
-        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(safeDistance * easeInOut(linear)));
+        // ---- Compteur de km : distances reelles, synchronisees au
+        // passage effectif de chaque planete ----
+        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(legs > 0 ? kmAt(cameraZ) : safeDistance * easeInOut(linear)));
 
         // ---- Astres : projection perspective + fondu de depassement ----
         bodies.forEach(b => {
+            // Fenetre de visibilite : on ne montre pas toute la ligne de
+            // planetes, seulement les deux prochaines (la 2e en micro-point).
+            if (b.z - cameraZ > TRAVEL_LOOKAHEAD) {
+                b.el.style.display = 'none';
+                return;
+            }
+            b.el.style.display = '';
             const pr = travelProject(b.lat, b.z, cameraZ, W, horizonY, pitchK, baseSize);
             if (!pr.visible) {
                 b.el.style.opacity = '0';
