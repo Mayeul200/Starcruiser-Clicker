@@ -1630,13 +1630,16 @@ function playTravelAnimation(distance, onDone) {
         if (finished) return;
         const linear = Math.min(1, (now - startTime) / animMs);
         const cameraZ = camAt(linear);
-        // Vitesse visuelle du fond : croit pendant le voyage (acceleration
-        // permanente) ET d'un lancement a l'autre (record plus loin =
-        // vitesse finale plus elevee ; Virgo = vitesse max absolue).
+        // Vitesse visuelle du fond : normalisee 0 (depart, a peine
+        // perceptible) -> 1 (Virgo, vitesse max absolue). Courbe
+        // quadratique : les etoiles bougent a peine au debut et
+        // defilent vraiment vite uniquement a haute vitesse.
         const dt = Math.min(0.05, (now - lastNow) / 1000);
         lastNow = now;
         const speed = lerp(vStart, vEnd, profile(linear));
-        bgTravel += speed * dt * 2.6;
+        const speedNorm = Math.max(0, (speed - 1) / (VIRGO_SPEED_MAX - 1));
+        const bgRate = 0.15 + speedNorm * speedNorm * 3.5;
+        bgTravel += bgRate * dt;
 
         // ---- Fusee : point focal, inclinee dans son axe de voyage ----
         if (rocketEl) {
@@ -1665,8 +1668,11 @@ function playTravelAnimation(distance, onDone) {
         streaks.forEach(s => {
             const y = (s.phase + bgTravel * (0.55 + s.depth)) % 1;
             s.el.style.top = (y * H) + 'px';
-            s.el.style.height = (s.baseH * (0.3 + speed * 1.7)).toFixed(1) + 'px';
-            s.el.style.opacity = ((0.08 + s.depth * 0.34) * speed).toFixed(2);
+            // Les trainees n'apparaissent QUE quand on va vraiment vite :
+            // longueur et opacite pilotees par la vitesse normalisee.
+            const sPower = Math.pow(speedNorm, 1.5);
+            s.el.style.height = (s.baseH * (0.2 + sPower * 2.4)).toFixed(1) + 'px';
+            s.el.style.opacity = ((0.1 + s.depth * 0.4) * sPower).toFixed(2);
         });
 
         // ---- Astres : projection perspective + fondu de depassement ----
