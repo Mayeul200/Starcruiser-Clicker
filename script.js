@@ -1406,23 +1406,38 @@ function buildTravelRocketInto(holder, targetH) {
     img.style.height = '100%';
     img.style.objectFit = 'contain';
     holder.appendChild(img);
-    // Flammes du reactor : structure dediee (taille proportionnelle a
-    // la fusee) -- lueur externe + flamme principale + base bleue +
-    // pointe fumeuse, animees independamment.
+    // Flammes des TROIS moteurs : structure dediee proportionnelle a la
+    // fusee. Positions mesurees sur Fusee-travel.png (tuyeres a 20.8%,
+    // 50.3% et 79.8% de la largeur, sortie a ~86% de la hauteur). Chaque
+    // jet = lueur externe + flamme principale (coeur blanc-jaune, colonne
+    // orange) + base bleue + pointe fumeuse, animees independamment.
+    const JETS = [
+        { left: 20.8, scale: 0.9 },   // booster gauche
+        { left: 50.3, scale: 1.0 },   // moteur central
+        { left: 79.8, scale: 0.9 }    // booster droit
+    ];
     const flames = document.createElement('div');
     flames.className = 'travel-flames';
-    const glow = document.createElement('div');
-    glow.className = 'travel-flame-glow';
-    const core = document.createElement('div');
-    core.className = 'travel-flame-core';
-    const blue = document.createElement('div');
-    blue.className = 'travel-flame-blue';
-    const tip = document.createElement('div');
-    tip.className = 'travel-flame-tip';
-    core.appendChild(blue);
-    core.appendChild(tip);
-    flames.appendChild(glow);
-    flames.appendChild(core);
+    JETS.forEach((j, idx) => {
+        const jet = document.createElement('div');
+        jet.className = 'travel-jet';
+        jet.style.left = j.left + '%';
+        jet.style.setProperty('--jet-scale', String(j.scale));
+        jet.style.setProperty('--jet-delay', (idx * 0.06) + 's');
+        const glow = document.createElement('div');
+        glow.className = 'travel-flame-glow';
+        const core = document.createElement('div');
+        core.className = 'travel-flame-core';
+        const blue = document.createElement('div');
+        blue.className = 'travel-flame-blue';
+        const tip = document.createElement('div');
+        tip.className = 'travel-flame-tip';
+        core.appendChild(blue);
+        core.appendChild(tip);
+        jet.appendChild(glow);
+        jet.appendChild(core);
+        flames.appendChild(jet);
+    });
     holder.appendChild(flames);
 }
 
@@ -1506,8 +1521,14 @@ function playTravelAnimation(distance, onDone) {
     const animMs = Math.max(1, legs) * TRAVEL_ANIM_LEG_MS;
 
     // Corps celestes generes dynamiquement (calque de profondeur)
+    // Le Nuage d'Oort n'a PAS de sprite : il est remplace par le champ
+    // volumetrique procedural (oortField) -- troncon, timing et km
+    // inchanges, uniquement la representation visuelle.
     deepEl.innerHTML = '';
     const bodies = itinerary.map((p, i) => {
+        if (p.id === 'oort-cloud') {
+            return { el: null, z: i * DEPTH_STEP, lat: 0, scale: 1, hidden: true };
+        }
         const el = document.createElement('div');
         el.className = 'travel-body';
         const img = document.createElement('img');
@@ -1537,11 +1558,15 @@ function playTravelAnimation(distance, onDone) {
     const oortIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
     if (oortIdx >= 0) {
         const oortZ = oortIdx * DEPTH_STEP;
-        const FIELD_Z0 = oortZ - 5.5;
-        const FIELD_Z1 = oortZ + 5.5;
+        // Champ elargi et montee plus douce : les premiers cailloux
+        // apparaissent PLUS TOT (des le passage de Pluton), la densite
+        // monte progressivement vers le plein regime au milieu du
+        // nuage, puis redescent doucement -- jamais de mur de rochers.
+        const FIELD_Z0 = oortZ - 7.5;
+        const FIELD_Z1 = oortZ + 7.5;
         oortDensity = (cam) => {
             if (cam <= FIELD_Z0 || cam >= FIELD_Z1) return 0;
-            return Math.min(smooth01((cam - FIELD_Z0) / 3.2), smooth01((FIELD_Z1 - cam) / 3.2));
+            return Math.min(smooth01((cam - FIELD_Z0) / 5.5), smooth01((FIELD_Z1 - cam) / 5.5));
         };
         const rand = (a, b) => a + Math.random() * (b - a);
         const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -1552,7 +1577,7 @@ function playTravelAnimation(distance, onDone) {
             deepEl.appendChild(el);
             oortField.push({
                 el, layer, z, ox, oy, size, op, on: false,
-                gate: layer === 0 ? 0.04 : (layer === 1 ? 0.22 : 0.45),
+                gate: layer === 0 ? 0.02 : (layer === 1 ? 0.14 : 0.30),
                 stag: Math.random(),
                 rot: rand(0, 360),
                 spin: rand(-40, 40)
@@ -1747,6 +1772,7 @@ function playTravelAnimation(distance, onDone) {
 
         // ---- Astres : projection perspective + fondu de depassement ----
         bodies.forEach(b => {
+            if (b.hidden) return;
             // Fenetre de visibilite : on ne montre pas toute la ligne de
             // planetes, seulement les deux prochaines (la 2e en micro-point).
             if (b.z - cameraZ > TRAVEL_LOOKAHEAD) {
@@ -1785,7 +1811,7 @@ function playTravelAnimation(distance, onDone) {
                     return;
                 }
                 const local = Math.max(0, Math.min(1, (density - o.gate * 0.55) / (1 - o.gate * 0.55)));
-                const appear = smooth01(local - o.stag * 0.45);
+                const appear = smooth01(local - o.stag * 0.85);
                 if (appear <= 0.01) {
                     if (o.on) { o.el.style.display = 'none'; o.on = false; }
                     return;
