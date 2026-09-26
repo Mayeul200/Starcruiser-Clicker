@@ -1706,7 +1706,11 @@ function playTravelAnimation(distance, onDone) {
     // de la fusee sur la route Terre -> Virgo (pas sur le voyage en cours).
     // Passer Mars dans un voyage long montre exactement les memes effets
     // que l'arrivee a Mars d'un voyage court : coherent partout.
-    const VIRGO_SPEED_MAX = 3;
+    // Plafond volontairement INSENSE : la vitesse finale (Virgo) est
+    // abstraitement enorme -- le fond doit donner l'impression d'un
+    // trou de ver, quitte a defier la realite. Reste lineaire et ancre
+    // a la position absolue : Terre = 1, Virgo = 8.
+    const VIRGO_SPEED_MAX = 8;
     // Vitesse camera CONSTANTE PAR TRONCON : chaque troncon dure
     // exactement TRAVEL_ANIM_LEG_MS (6s), de l'echapement de la planete
     // au passage de la suivante. La fusee croise chaque planete pile a
@@ -1842,7 +1846,7 @@ function playTravelAnimation(distance, onDone) {
             const len = Math.max(1, Math.hypot(dx, dy));
             const ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
             // Longueur : croit avec la vitesse et la proximite.
-            const streakLen = (16 + speedNorm * 52) * (0.35 + inv * 0.5);
+            const streakLen = (16 + speedNorm * 150) * (0.35 + inv * 0.5);
             s.el.style.left = x.toFixed(1) + 'px';
             s.el.style.top = y.toFixed(1) + 'px';
             s.el.style.height = streakLen.toFixed(1) + 'px';
