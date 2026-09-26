@@ -1612,15 +1612,16 @@ function playTravelAnimation(distance, onDone) {
         for (let i = 0; i < 140; i++) {
             addObj(0, pick(SMALLS),
                 rand(5, 11), rand(0.25, 0.55),
-                rand(-0.62, 0.62) * W, rand(-0.42, 0.42) * H,
+                rand(-1.15, 1.15) * W, rand(-0.85, 0.85) * H,
                 rand(FIELD_Z0, FIELD_Z1));
         }
         // Couche 2 -- distance moyenne : fragments et asteroides
-        // visibles, tailles variees, parallaxe marquee.
+        // visibles, tailles variees, parallaxe marquee -- repartis sur
+        // TOUT l'ecran, pas seulement l'axe central.
         for (let i = 0; i < 110; i++) {
             addObj(1, pick(SMALLS),
                 rand(16, 44), rand(0.5, 0.85),
-                rand(-0.55, 0.55) * W, rand(-0.34, 0.34) * H,
+                rand(-1.05, 1.05) * W, rand(-0.75, 0.75) * H,
                 rand(FIELD_Z0 + 0.5, FIELD_Z1 - 0.5));
         }
         // Couche 3 -- fly-by proches : gros blocs rares qui traversent
@@ -1631,6 +1632,17 @@ function playTravelAnimation(distance, onDone) {
                 (Math.random() < 0.5 ? -1 : 1) * rand(0.16, 0.46) * W,
                 rand(-0.26, 0.26) * H,
                 rand(FIELD_Z0 + 1.5, FIELD_Z1 - 1.5));
+        }
+        // Couche 4 -- AUTOUR DE LA CAMERA : gros blocs derives sur les
+        // bords de l'ecran, au niveau de la camera elle-meme (rel tres
+        // faible). La camera est DANS le nuage : des cailloux l'entourent,
+        // passent devant la fusee et derriere elle.
+        for (let i = 0; i < 24; i++) {
+            addObj(2, pick(OORT_MODELS),
+                rand(50, 130), rand(0.6, 0.9),
+                (Math.random() < 0.5 ? -1 : 1) * rand(0.55, 1.15) * W,
+                rand(-0.7, 0.7) * H,
+                rand(FIELD_Z0 + 0.3, FIELD_Z1 - 0.3));
         }
     }
 
@@ -1794,7 +1806,7 @@ function playTravelAnimation(distance, onDone) {
             }
             const inv = 1 / st.rel;
             const x = W / 2 + st.ox * 0.5 * W * inv;
-            const y = horizonY + pitchK * inv + st.oy * H * 0.18 * inv;
+            const y = horizonY + pitchK * inv + st.oy * H * 0.55 * inv;
             st.el.style.left = x.toFixed(1) + 'px';
             st.el.style.top = y.toFixed(1) + 'px';
             // Grossit en s'approchant, scintillement conserve.
@@ -1822,7 +1834,7 @@ function playTravelAnimation(distance, onDone) {
             }
             const inv = 1 / s.rel;
             const x = W / 2 + s.ox * 0.5 * W * inv;
-            const y = horizonY + pitchK * inv + s.oy * H * 0.18 * inv;
+            const y = horizonY + pitchK * inv + s.oy * H * 0.55 * inv;
             // Direction du flot au point projete : vecteur point de
             // fuite -> trainee, normalise.
             const dx = x - W / 2;
