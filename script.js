@@ -2905,19 +2905,26 @@ function spawnRandomBonus(shower) {
     const TRAIL_INTERVAL_MS = 16;
     const TRAIL_LIFE_MS = 900;
     const dirX = goRight ? 1 : -1;
+    // Fraction du noyau dans le conteneur (identique aux variables CSS --nx/--ny)
+    const nucX = goRight ? 0.7444 : 0.25;
+    const nucY = goRight ? 0.75 : 0.7444;
     const trailInterval = setInterval(() => {
         const rect = bonusElement.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
+        // Emettre au NOYAU reel, et scaler la derive a la taille de la comete
+        const cx = rect.left + rect.width * nucX;
+        const cy = rect.top + rect.height * nucY;
+        const tsc = Math.max(0.6, Math.min(1, rect.width / 180));
         // 2 particules par tick : une coeur brillant, une poussiere
         for (let i = 0; i < 2; i++) {
             const trail = document.createElement('div');
             trail.className = 'comet-trail' + (i === 0 ? ' core' : ' dust');
+            trail.style.width = ((i === 0 ? 20 : 11) * tsc).toFixed(1) + 'px';
+            trail.style.height = ((i === 0 ? 20 : 11) * tsc).toFixed(1) + 'px';
             trail.style.left = `${cx}px`;
             trail.style.top = `${cy}px`;
             document.body.appendChild(trail);
-            const drift = 40 + Math.random() * 70;   // poussee vers l'arriere
-            const spread = (Math.random() * 2 - 1) * 26; // ecart lateral
+            const drift = (40 + Math.random() * 70) * tsc;   // poussee vers l'arriere
+            const spread = ((Math.random() * 2 - 1) * 26) * tsc; // ecart lateral
             requestAnimationFrame(() => {
                 trail.style.opacity = '0';
                 trail.style.transform = `translate(-50%, -50%) translate(${-dirX * drift + spread * 0.4}px, ${-drift * 0.72 + spread * 0.6}px) scale(0.2)`;
@@ -2989,11 +2996,19 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     const cometRect = cometEl.getBoundingClientRect();
     // Nucleau reel de la comete via les variables CSS --nx/--ny (le sprite est
     // horizontal avec queue integree, le noyau n'est PAS au centre du canvas).
+    // Les variables sont en POURCENTAGE du conteneur : convertir en px selon
+    // la taille reelle, pour que le point de rendez-vous reste exact quelle
+    // que soit la taille de la comete (desktop 180px, mobile 130px, pluie 120px).
     const cs = getComputedStyle(cometEl);
-    const nx = parseFloat(cs.getPropertyValue('--nx')) || 90;
-    const ny = parseFloat(cs.getPropertyValue('--ny')) || 90;
+    const nxRaw = parseFloat(cs.getPropertyValue('--nx')) || 74.44;
+    const nyRaw = parseFloat(cs.getPropertyValue('--ny')) || 75;
+    const nx = cometRect.width * nxRaw / 100;
+    const ny = cometRect.height * nyRaw / 100;
     const cx = cometRect.left + nx;
     const cy = cometRect.top + ny;
+    // Facteur d'echelle des effets (missile, explosion) : 1 pour une comete
+    // de 180px, proportionnellement plus petit pour les cometes reduites.
+    const scale = Math.max(0.6, Math.min(1, cometRect.width / 180));
     const goRight = !cometEl.classList.contains('reverse');
     const fromLeft = goRight;
     // Vecteur vitesse de la comete (px/ms) sur sa trajectoire lineaire.
@@ -3028,7 +3043,7 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     const mH = mRect.height || 14;
     missile.style.left = (launchXadj - mW / 2) + 'px';
     missile.style.top = (launchY - mH / 2) + 'px';
-    missile.style.transform = `rotate(${angle}rad)`;
+    missile.style.transform = `rotate(${angle}rad) scale(${scale})`;
     // Vol rapide mais lisible : borné entre 240 et 600 ms selon la distance.
     requestAnimationFrame(() => {
         missile.style.transition = `left ${flightMs}ms linear, top ${flightMs}ms linear`;
@@ -3038,18 +3053,21 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     setTimeout(() => {
         if (!missile.isConnected) return;
         missile.remove();
-        spawnCometExplosion(tx, ty);
+        spawnCometExplosion(tx, ty, scale);
         onDestroy();
     }, flightMs + 20);
 }
 // Explosion de la comète à l'impact : lueur, flash blanc, boule de feu,
 // ondes de choc, gerbe d'étincelles et fumée. Chaque couche est un div
 // positionné au point d'impact, animée en CSS puis nettoyée.
-function spawnCometExplosion(cx, cy) {
+function spawnCometExplosion(cx, cy, scale) {
+    // Echelle des effets : proportionnelle a la taille de la comete detruite
+    const sc = Math.max(0.5, Math.min(1, scale || 1));
     const explosion = document.createElement('div');
     explosion.className = 'comet-explosion';
     explosion.style.left = cx + 'px';
     explosion.style.top = cy + 'px';
+    explosion.style.setProperty('--es', sc);
     document.body.appendChild(explosion);
 
     const layer = (cls) => {
@@ -3074,13 +3092,13 @@ function spawnCometExplosion(cx, cy) {
     for (let i = 0; i < SPARKS; i++) {
         const spark = layer('exp-spark');
         const theta = (i / SPARKS) * Math.PI * 2 + Math.random() * 0.35;
-        const dist = 50 + Math.random() * 110;
+        const dist = (50 + Math.random() * 110) * sc;
         const sx = Math.cos(theta) * dist;
         const sy = Math.sin(theta) * dist;
         spark.style.setProperty('--sx', sx.toFixed(1) + 'px');
         spark.style.setProperty('--sy', sy.toFixed(1) + 'px');
         spark.style.setProperty('--sr', (Math.random() * 220 - 110).toFixed(0) + 'deg');
-        spark.style.setProperty('--ssize', (3 + Math.random() * 3.5).toFixed(1) + 'px');
+        spark.style.setProperty('--ssize', ((3 + Math.random() * 3.5) * sc).toFixed(1) + 'px');
         spark.style.setProperty('--sd', (0.5 + Math.random() * 0.35).toFixed(2) + 's');
     }
 
@@ -3088,7 +3106,7 @@ function spawnCometExplosion(cx, cy) {
     for (let i = 0; i < 6; i++) {
         const smoke = layer('exp-smoke');
         const theta = -Math.PI / 2 + (Math.random() - 0.5) * 1.9;
-        const dist = 26 + Math.random() * 60;
+        const dist = (26 + Math.random() * 60) * sc;
         smoke.style.setProperty('--sx', (Math.cos(theta) * dist).toFixed(1) + 'px');
         smoke.style.setProperty('--sy', (Math.sin(theta) * dist).toFixed(1) + 'px');
         smoke.style.setProperty('--sscale', (0.7 + Math.random() * 0.9).toFixed(2));

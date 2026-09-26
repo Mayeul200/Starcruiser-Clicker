@@ -796,12 +796,14 @@ body {
        est horizontal, noyau a ~85% de la largeur, queue integree ;
        rendu contain + rotation 45deg place le noyau ici, pas au centre
        du canvas). Tous les effets s'ancrent sur ces coordonnees. */
-    --nx: 134px;
-    --ny: 135px;
+    /* Noyau en POURCENTAGE du conteneur : suit la taille de la comete
+       (180px desktop, 130px mobile, 120px pluie) sans decalage */
+    --nx: 74.44%;
+    --ny: 75%;
 }
 .random-bonus.comet.reverse {
-    --nx: 45px;
-    --ny: 134px;
+    --nx: 25%;
+    --ny: 74.44%;
 }
 .comet-img {
     width: 180px;
@@ -818,8 +820,8 @@ body {
     position: absolute;
     left: var(--nx);
     top: var(--ny);
-    width: 230px;
-    height: 230px;
+    width: 127.78%;
+    height: 127.78%;
     transform: translate(-50%, -50%);
     border-radius: 50%;
     background:
@@ -837,10 +839,10 @@ body {
    blanc-bleu qui s'affine, leger ondulement */
 .comet-tail-plasma {
     position: absolute;
-    left: calc(var(--nx) - 320px);
-    top: calc(var(--ny) - 23px);
-    width: 320px;
-    height: 46px;
+    left: calc(var(--nx) - 177.78%);
+    top: calc(var(--ny) - 12.78%);
+    width: 177.78%;
+    height: 25.56%;
     transform-origin: 100% 50%;
     transform: rotate(45deg);
     border-radius: 50% 40% 40% 50% / 60% 45% 45% 60%;
@@ -866,10 +868,10 @@ body {
    celle de plasma, comme sur les vraies cometes) */
 .comet-tail-dust {
     position: absolute;
-    left: calc(var(--nx) - 260px);
-    top: calc(var(--ny) - 33px);
-    width: 260px;
-    height: 66px;
+    left: calc(var(--nx) - 144.44%);
+    top: calc(var(--ny) - 18.33%);
+    width: 144.44%;
+    height: 36.67%;
     transform-origin: 100% 50%;
     transform: rotate(30deg);
     border-radius: 50% 45% 45% 50% / 65% 50% 50% 65%;
@@ -946,8 +948,8 @@ body {
 /* Lueur globale : éclat doux qui éclaire la zone puis retombe */
 .exp-light {
     position: absolute;
-    width: 340px;
-    height: 340px;
+    width: calc(340px * var(--es, 1));
+    height: calc(340px * var(--es, 1));
     border-radius: 50%;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle, rgba(255, 244, 214, 0.95) 0%, rgba(255, 190, 90, 0.55) 30%, rgba(255, 150, 50, 0) 68%);
@@ -961,8 +963,8 @@ body {
 /* Coeur blanc : flash suraigu au point d'impact */
 .exp-core {
     position: absolute;
-    width: 44px;
-    height: 44px;
+    width: calc(44px * var(--es, 1));
+    height: calc(44px * var(--es, 1));
     border-radius: 50%;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle, #ffffff 0%, #fff4c8 55%, rgba(255, 235, 160, 0) 75%);
@@ -976,8 +978,8 @@ body {
 /* Boule de feu : orange vif, grossit en s'éteignant */
 .exp-fireball {
     position: absolute;
-    width: 90px;
-    height: 90px;
+    width: calc(90px * var(--es, 1));
+    height: calc(90px * var(--es, 1));
     border-radius: 50%;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle, #fff7d6 0%, #ffd23f 28%, #ff8a00 58%, rgba(255, 61, 0, 0.85) 82%, rgba(255, 61, 0, 0) 100%);
@@ -992,8 +994,8 @@ body {
 /* Ondes de choc : deux anneaux qui se propagent, le second en retard */
 .exp-ring {
     position: absolute;
-    width: 14px;
-    height: 14px;
+    width: calc(14px * var(--es, 1));
+    height: calc(14px * var(--es, 1));
     border-radius: 50%;
     border: 3px solid rgba(255, 236, 180, 0.95);
     box-shadow: 0 0 14px rgba(255, 200, 100, 0.55), inset 0 0 10px rgba(255, 220, 140, 0.4);
@@ -1027,8 +1029,8 @@ body {
     position: absolute;
     left: 0;
     top: 0;
-    width: 56px;
-    height: 56px;
+    width: calc(56px * var(--es, 1));
+    height: calc(56px * var(--es, 1));
     border-radius: 50%;
     background: radial-gradient(circle, rgba(186, 192, 204, 0.5) 0%, rgba(140, 146, 160, 0.32) 45%, rgba(120, 126, 140, 0) 72%);
     filter: blur(5px);
