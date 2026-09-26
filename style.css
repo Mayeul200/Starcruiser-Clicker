@@ -1488,6 +1488,49 @@ body {
     display: block;
     pointer-events: auto;
 }
+/* Fond lointain : nebuleuses + poussiere d'etoiles statique. Couche la
+   plus profonde, derriere les etoiles parallaxe. */
+.travel-deepfield {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.travel-nebula {
+    position: absolute;
+    width: 70vmin;
+    height: 70vmin;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%,
+        rgba(88, 60, 180, 0.22) 0%,
+        rgba(58, 40, 130, 0.14) 38%,
+        rgba(30, 25, 80, 0.07) 62%,
+        transparent 78%);
+    filter: blur(6px);
+    transform: translate(-50%, -50%);
+    animation: nebulaDrift 26s ease-in-out infinite alternate;
+}
+.travel-nebula.nebula-b {
+    width: 90vmin;
+    height: 90vmin;
+    background: radial-gradient(circle at 55% 55%,
+        rgba(20, 110, 150, 0.16) 0%,
+        rgba(18, 70, 120, 0.10) 40%,
+        transparent 72%);
+    animation-duration: 34s;
+    animation-delay: -12s;
+}
+@keyframes nebulaDrift {
+    from { transform: translate(-50%, -50%) scale(1); opacity: 0.85; }
+    to   { transform: translate(-46%, -54%) scale(1.18); opacity: 1; }
+}
+.travel-dust {
+    position: absolute;
+    border-radius: 50%;
+    background: #cdd8ff;
+    opacity: 0.4;
+    animation: travelStarTwinkle 2.6s ease-in-out infinite alternate;
+}
 /* Champ d'etoiles en parallaxe : positions pilotees en JS selon la
    profondeur propre a chaque etoile (le fond defile avec le voyage). */
 .travel-stars {

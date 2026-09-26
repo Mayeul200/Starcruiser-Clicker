@@ -1697,7 +1697,7 @@ function playTravelAnimation(distance, onDone) {
     for (let i = 0; i < oldStreaks.length; i++) oldStreaks[i].remove();
     overlay.appendChild(streaksEl);
     const streaks = [];
-    const streakCount = 78;
+    const streakCount = 120;
     for (let i = 0; i < streakCount; i++) {
         const s = document.createElement('div');
         s.className = 'travel-streak';
@@ -1705,8 +1705,8 @@ function playTravelAnimation(distance, onDone) {
         streaksEl.appendChild(s);
         streaks.push({
             el: s,
-            ox: (Math.random() * 2 - 1) * 0.8,
-            oy: (Math.random() * 2 - 1) * 0.65,
+            ox: (Math.random() * 2 - 1) * 1.6,
+            oy: (Math.random() * 2 - 1) * 1.25,
             rel: 0.3 + Math.random() * 3.2,
             depth: 0.35 + Math.random() * 0.75
         });
@@ -1845,8 +1845,8 @@ function playTravelAnimation(distance, onDone) {
                 // Recyclage : l'etoile a depasse la camera, on la renvoie
                 // au fond du volume avec un nouvel angle.
                 st.rel = 2.6 + Math.random() * 0.9;
-                st.ox = (Math.random() * 2 - 1) * 0.85;
-                st.oy = (Math.random() * 2 - 1) * 0.7;
+                st.ox = (Math.random() * 2 - 1) * 1.6;
+                st.oy = (Math.random() * 2 - 1) * 1.25;
             }
             const inv = 1 / st.rel;
             const x = W / 2 + st.ox * 0.5 * W * inv;
@@ -1873,8 +1873,8 @@ function playTravelAnimation(distance, onDone) {
             s.rel -= speed * s.depth * 0.8 * dt;
             if (s.rel < 0.15) {
                 s.rel = 2.6 + Math.random() * 0.9;
-                s.ox = (Math.random() * 2 - 1) * 0.8;
-                s.oy = (Math.random() * 2 - 1) * 0.65;
+                s.ox = (Math.random() * 2 - 1) * 1.6;
+                s.oy = (Math.random() * 2 - 1) * 1.25;
             }
             const inv = 1 / s.rel;
             const x = W / 2 + s.ox * 0.5 * W * inv;
@@ -2014,11 +2014,39 @@ function playTravelAnimation(distance, onDone) {
 function fillTravelStars(overlay) {
     // Etoiles reconstruites a chaque voyage : positions pilotees en JS
     // (parallaxe selon la profondeur propre a chaque etoile).
+    const deepFieldEl = overlay.querySelector('.travel-deepfield');
+    if (deepFieldEl) {
+        // Fond lointain riche : 2 halos de nebuleuse + poussiere d'etoiles
+        // statique + micro-etoiles scintillantes, toutes en CSS pur (aucune
+        // image chargee) -- la profondeur lointaine que le voyage manquait.
+        deepFieldEl.innerHTML = '';
+        const nebA = document.createElement('div');
+        nebA.className = 'travel-nebula';
+        nebA.style.left = (Math.random() * 50 + 8) + '%';
+        nebA.style.top = (Math.random() * 35 + 5) + '%';
+        deepFieldEl.appendChild(nebA);
+        const nebB = document.createElement('div');
+        nebB.className = 'travel-nebula nebula-b';
+        nebB.style.left = (Math.random() * 40 + 45) + '%';
+        nebB.style.top = (Math.random() * 40 + 40) + '%';
+        deepFieldEl.appendChild(nebB);
+        const dustCount = 90;
+        for (let i = 0; i < dustCount; i++) {
+            const d = document.createElement('div');
+            d.className = 'travel-dust';
+            d.style.left = (Math.random() * 100) + '%';
+            d.style.top = (Math.random() * 100) + '%';
+            d.style.width = (Math.random() * 1.6 + 0.6) + 'px';
+            d.style.height = d.style.width;
+            d.style.animationDelay = (Math.random() * 2.4) + 's';
+            deepFieldEl.appendChild(d);
+        }
+    }
     const starsEl = overlay.querySelector('.travel-stars');
     if (!starsEl) return;
     starsEl.innerHTML = '';
     travelStarsData = [];
-    const count = 210;
+    const count = 320;
     for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
         star.className = 'travel-star';
@@ -2034,8 +2062,8 @@ function fillTravelStars(overlay) {
         // elle coule vers la camera -- coherent avec la chase-cam.
         travelStarsData.push({
             el: star,
-            ox: (Math.random() * 2 - 1) * 0.85,
-            oy: (Math.random() * 2 - 1) * 0.7,
+            ox: (Math.random() * 2 - 1) * 1.6,
+            oy: (Math.random() * 2 - 1) * 1.25,
             rel: 0.25 + Math.random() * 3.25,
             depth: 0.35 + Math.random() * 0.75,
             size: size
