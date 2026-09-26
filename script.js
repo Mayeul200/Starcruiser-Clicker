@@ -1657,7 +1657,7 @@ function playTravelAnimation(distance, onDone) {
     for (let i = 0; i < oldStreaks.length; i++) oldStreaks[i].remove();
     overlay.appendChild(streaksEl);
     const streaks = [];
-    const streakCount = 39;
+    const streakCount = 78;
     for (let i = 0; i < streakCount; i++) {
         const s = document.createElement('div');
         s.className = 'travel-streak';
@@ -1796,7 +1796,7 @@ function playTravelAnimation(distance, onDone) {
         // (horizon) vers les bords -- coherent avec la vue chase-cam
         // et la projection des planetes / du nuage d'Oort.
         travelStarsData.forEach(st => {
-            st.rel -= speed * st.depth * 0.55 * dt;
+            st.rel -= speed * st.depth * 0.7 * dt;
             if (st.rel < 0.12) {
                 // Recyclage : l'etoile a depasse la camera, on la renvoie
                 // au fond du volume avec un nouvel angle.
@@ -1826,7 +1826,7 @@ function playTravelAnimation(distance, onDone) {
         // avec la vitesse et la proximite -- meme physique que les
         // etoiles et le nuage d'Oort.
         streaks.forEach(s => {
-            s.rel -= speed * s.depth * 0.62 * dt;
+            s.rel -= speed * s.depth * 0.8 * dt;
             if (s.rel < 0.15) {
                 s.rel = 2.6 + Math.random() * 0.9;
                 s.ox = (Math.random() * 2 - 1) * 0.8;
@@ -1842,14 +1842,14 @@ function playTravelAnimation(distance, onDone) {
             const len = Math.max(1, Math.hypot(dx, dy));
             const ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
             // Longueur : croit avec la vitesse et la proximite.
-            const streakLen = (8 + speedNorm * 46) * (0.35 + inv * 0.5);
+            const streakLen = (16 + speedNorm * 52) * (0.35 + inv * 0.5);
             s.el.style.left = x.toFixed(1) + 'px';
             s.el.style.top = y.toFixed(1) + 'px';
             s.el.style.height = streakLen.toFixed(1) + 'px';
             s.el.style.transform = 'translate(-50%, -50%) rotate(' + ang.toFixed(1) + 'deg)';
             // Opacite : visible des les premieres planetes, LINEAIRE
             // sur la position absolue, pleine a haute vitesse.
-            const op = Math.min(1, 0.65 * speedNorm) * (0.3 + s.depth * 0.7) * Math.min(1, inv * 0.9);
+            const op = Math.min(1, 0.32 + 0.68 * speedNorm) * (0.3 + s.depth * 0.7) * Math.min(1, inv * 0.9);
             if (x < -20 || x > W + 20 || y < -20 || y > H + 20) {
                 s.el.style.opacity = '0';
             } else {
@@ -1977,7 +1977,7 @@ function fillTravelStars(overlay) {
     if (!starsEl) return;
     starsEl.innerHTML = '';
     travelStarsData = [];
-    const count = 105;
+    const count = 210;
     for (let i = 0; i < count; i++) {
         const star = document.createElement('div');
         star.className = 'travel-star';
