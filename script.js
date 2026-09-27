@@ -549,6 +549,7 @@ function showToast(message, icon, durationMs) {
         toast.appendChild(iconEl);
     }
     const textEl = document.createElement('span');
+    textEl.className = 'toast-text';
     textEl.textContent = message;
     toast.appendChild(textEl);
     toast.classList.add('active');
