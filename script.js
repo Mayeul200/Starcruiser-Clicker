@@ -5168,7 +5168,7 @@ function updateConstructionScene() {
 }
 
 function checkRocketComplete() {
-    const allConstructed = ROCKET_PARTS.every(p => constructedParts.has(p.id));
+    const allConstructed = ROCKET_PARTS.every(p => p.purchased && constructedParts.has(p.id));
     
     const scene = document.getElementById('construction-scene');
     if (allConstructed && scene) {
