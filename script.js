@@ -1534,7 +1534,7 @@ function playTravelAnimation(distance, onDone) {
     // On ancre l'echelle sur une diagonale normalisee : equivalente a W sur
     // un ecran large (desktop), proche de 73% de la hauteur en 9:16.
     const isPortrait = H > W * 1.15;
-    const sizeRef = isPortrait ? Math.min(W * 1.55, H * 0.75) : W;
+    const sizeRef = isPortrait ? Math.min(W * 1.95, H * 0.92) : W;
     const baseSize = sizeRef * 0.52 * PLANET_SCALE;
     // Fusee VERTICALE et DROITE (image dediee, aucune inclinaison).
 
