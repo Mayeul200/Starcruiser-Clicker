@@ -3513,6 +3513,19 @@ body {
         -webkit-tap-highlight-color: transparent;
     }
     .mobile-nav button .nav-icon { font-size: 1.3rem; line-height: 1; }
+    .mobile-nav button .nav-icon .nav-img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+    .mobile-nav button .nav-icon .nav-img.nav-rocket {
+        width: 18px;
+        height: 30px;
+        transform: rotate(-45deg);
+        margin-left: 8px;
+    }
     .mobile-nav button.active { color: var(--accent-light); }
 
     /* Les panneaux occupent tout l'écran; seule la vue active est affichée */
