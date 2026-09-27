@@ -4014,3 +4014,98 @@ body {
         font-size: 0.85rem;
     }
 }
+
+/* ===== Grosse notification : fusée prête pour la planète suivante ===== */
+.next-planet-notification {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1300;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+.next-planet-notification.active {
+    display: flex;
+    opacity: 1;
+}
+.npn-content {
+    text-align: center;
+    padding: 28px 30px 32px;
+    max-width: 480px;
+    width: min(92vw, 480px);
+    background: linear-gradient(160deg, var(--bg-panel), var(--secondary-light));
+    border: 2px solid var(--primary-light);
+    border-radius: 20px;
+    box-shadow: 0 0 60px rgba(59, 130, 246, 0.45), 0 25px 50px rgba(0, 0, 0, 0.6);
+    animation: npnPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes npnPopIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+.npn-planet-img {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+.npn-planet-img img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    animation: npnPlanetSpin 14s linear infinite;
+    filter: drop-shadow(0 8px 30px rgba(59, 130, 246, 0.55));
+}
+@keyframes npnPlanetSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+.npn-title {
+    margin: 0 0 6px;
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--accent-light);
+    text-shadow: 0 0 18px rgba(59, 130, 246, 0.8);
+}
+.npn-subtitle {
+    margin: 0 0 4px;
+    font-size: 1.15rem;
+    color: var(--text);
+}
+.npn-planet-name {
+    margin: 2px 0 4px;
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--primary-light);
+}
+.npn-distance {
+    font-size: 1rem;
+    color: var(--text-dark, #94a3b8);
+    margin-bottom: 18px;
+}
+.npn-launch-btn {
+    padding: 14px 34px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 68, 68, 0.5);
+    transition: all 0.2s ease;
+}
+.npn-launch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(255, 68, 68, 0.7);
+}
+@media (max-width: 480px) {
+    .npn-title { font-size: 1.5rem; }
+    .npn-subtitle { font-size: 1rem; }
+    .npn-planet-name { font-size: 1.7rem; }
+    .npn-planet-img img { width: 110px; height: 110px; }
+    .npn-launch-btn { padding: 12px 26px; font-size: 1.05rem; }
+}

@@ -343,6 +343,7 @@ const ROCKET_PART_POSITIONS = {
 
 let isLaunching = false;
 let launchSequenceActive = false;
+let nextPlanetNotified = false;
 
 // ============================================
 // SPACE MAP SYSTEM (Planets & Bonuses)
@@ -2315,6 +2316,7 @@ function confirmPostTravelReset() {
     BUILDINGS.forEach(b => b.count = 0);
     ROCKET_PARTS.forEach(p => p.purchased = false);
     constructedParts = new Set();
+    nextPlanetNotified = false;
     const scene = document.getElementById('rocket-parts-container');
     if (scene) scene.innerHTML = '';
     unlockedBuildings = new Set();
@@ -4608,6 +4610,19 @@ function updateLaunchTimer() {
 
 function init() {
     initGlobals();
+    const npnLaunchBtn = document.getElementById('npn-launch-btn');
+    if (npnLaunchBtn) {
+        npnLaunchBtn.addEventListener('click', () => {
+            closeNextPlanetNotification();
+            launchRocket();
+        });
+    }
+    const npnOverlay = document.getElementById('next-planet-notification');
+    if (npnOverlay) {
+        npnOverlay.addEventListener('click', (e) => {
+            if (e.target === npnOverlay) closeNextPlanetNotification();
+        });
+    }
     loadGame();
     applyStartupBonus();
 
@@ -5158,10 +5173,36 @@ function checkRocketComplete() {
     const scene = document.getElementById('construction-scene');
     if (allConstructed && scene) {
         scene.classList.add('rocket-complete');
-        showToast("🚀 " + t("Fusée complète ! Prête pour le décollage !"));
+        if (!nextPlanetNotified) {
+            nextPlanetNotified = true;
+            showNextPlanetNotification();
+        }
     } else if (scene) {
         scene.classList.remove('rocket-complete');
     }
+}
+function showNextPlanetNotification() {
+    const notif = document.getElementById('next-planet-notification');
+    if (!notif) return;
+    const progress = calculatePlanetProgress(maxDistance);
+    const planet = progress && progress.nextPlanet ? progress.nextPlanet : null;
+    const imgEl = document.getElementById('npn-planet-img');
+    const nameEl = document.getElementById('npn-planet-name');
+    const distEl = document.getElementById('npn-planet-distance');
+    if (planet) {
+        imgEl.src = planet.imgPath;
+        nameEl.textContent = planet.name;
+        distEl.textContent = formatNumber(planet.distanceRequired) + ' km';
+    } else {
+        imgEl.src = 'images/rocket/Fusée3.png';
+        nameEl.textContent = t('Dernière destination atteinte !');
+        distEl.textContent = '';
+    }
+    notif.classList.add('active');
+}
+function closeNextPlanetNotification() {
+    const notif = document.getElementById('next-planet-notification');
+    if (notif) notif.classList.remove('active');
 }
 
 // Call in buyBuilding
