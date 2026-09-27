@@ -1219,8 +1219,26 @@ function calculateDistance() {
 }
 
 function getCurrentDistance() {
-    // Retourne la dernière distance calculée au lancement
+// Retourne la dernière distance calculée au lancement
     return lastLaunchDistance;
+}
+// Vitesse du prochain voyage : distance atteignable / durée de l'animation.
+// Chaque tronçon dure TRAVEL_ANIM_LEG_MS ; le nombre de tronçons suit le
+// nombre de planètes jusqu'ê la destination atteignable (même logique
+// que l'animation : la vitesse en km/s s'adapte ê chaque tronçon).
+function calculateTravelSpeedKmS() {
+    const distance = calculateDistance();
+    if (distance <= 0) return 0;
+    const progress = calculatePlanetProgress(distance);
+    const planetIndex = PLANETS.findIndex(p => p.name === (progress.nextPlanet ? progress.nextPlanet.name : progress.currentPlanet.name));
+    const legs = Math.max(1, planetIndex + 1);
+    const durationSec = (legs * TRAVEL_ANIM_LEG_MS) / 1000;
+    return distance / durationSec;
+}
+function formatTravelSpeed(kmS) {
+    if (kmS <= 0) return '0 km/s';
+    if (kmS >= 1000) return formatNumber(kmS) + ' km/s';
+    return (Math.round(kmS * 10) / 10).toLocaleString('fr-FR') + ' km/s';
 }
 
 function launchRocket() {
@@ -2580,6 +2598,7 @@ function updateSpaceProgress() {
     // Mettre à jour les stats
     const sidebarDistance = document.getElementById('sidebar-distance');
     const sidebarDistanceMax = document.getElementById('sidebar-distance-max');
+    const sidebarSpeed = document.getElementById('sidebar-speed');
     const sidebarBonus = document.getElementById('sidebar-bonus');
     const sidebarPlanets = document.getElementById('sidebar-planets');
 
@@ -2588,6 +2607,9 @@ function updateSpaceProgress() {
     }
     if (sidebarDistanceMax) {
         sidebarDistanceMax.textContent = formatNumber(traveledDistance) + ' ' + t('km');
+    }
+    if (sidebarSpeed) {
+        sidebarSpeed.textContent = formatTravelSpeed(calculateTravelSpeedKmS());
     }
     if (sidebarBonus) {
         const totalBonus = 1 + getTotalPlanetBonus();
@@ -3602,6 +3624,7 @@ function updateStatsDynamicValues(container) {
         'x' + getTotalProductionMultiplier().toFixed(2),
         formatNumber(getClickPower()),
         formatNumber(getTotalBuildingsOwned()),
+        formatTravelSpeed(calculateTravelSpeedKmS()),
         getGameDuration(),
         String(clickedBonusesCount)
     ];
@@ -3625,6 +3648,7 @@ function renderStats() {
         { label: t("Multiplicateur de production"), value: 'x' + getTotalProductionMultiplier().toFixed(2) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
+        { label: t("Vitesse de voyage"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },
         { label: t("Partie commenc\u00e9e"), value: getGameDuration() },
         { label: t("Com\u00e8tes D\u00e9truites"), value: clickedBonusesCount }
     ];
