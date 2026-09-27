@@ -36,6 +36,9 @@
     display: none;
 }
 html, body {
+    /* Desactive le double-tap zoom sur mobile (pas de zoom au double clic) */
+    touch-action: manipulation;
+
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
