@@ -3553,7 +3553,7 @@ body {
     .construction-scene-100x100 { min-height: 0; }
     .rocket-parts-shop {
         position: fixed;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 8px);
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 78px);
         left: 8px;
         top: auto;
         width: 150px;
@@ -3568,9 +3568,9 @@ body {
     .medal {
         /* !important : la medaille porte un style inline (right/top) dans index.html */
         left: auto !important; right: 4% !important;
-        top: 35% !important;
+        top: 30% !important;
         transform: translateY(-50%);
-        width: 150px; height: 150px;
+        width: 120px; height: 120px;
     }
     .medal:hover { transform: translateY(-50%) scale(1.05); }
     .medal:active { transform: translateY(-50%) scale(0.95); }
@@ -3583,7 +3583,7 @@ body {
 
     /* --- Bouton lancement : pilule rouge centree en bas du panneau central --- */
     .launch-button {
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px);
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 4px);
         left: 50%;
         right: auto;
         transform: translateX(-50%);
@@ -3629,7 +3629,7 @@ body {
     .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
     .buildings-list { gap: 6px; margin-top: 2px; }
     .building-item {
-        grid-template-columns: 88px 1fr 200px;
+        grid-template-columns: 88px 1fr 25%;
         grid-template-areas:
             "icon info buy";
         grid-template-rows: auto;
@@ -3779,7 +3779,7 @@ body {
     .medal { width: 130px; height: 130px; top: 42% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: 80px 1fr 200px; }
+    .building-item { grid-template-columns: 80px 1fr 25%; }
     .building-item button { width: 100%; min-height: 68px; height: auto; font-size: 0.8rem; }
     .building-image { max-height: 88px; min-width: 0; }
     .building-name { font-size: 0.78rem; }
