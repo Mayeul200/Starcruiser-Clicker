@@ -245,6 +245,10 @@ body {
     from { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
     to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
+@keyframes nbModalInMobile {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
 .new-building-body {
     display: flex;
     flex-direction: column;
@@ -3709,6 +3713,9 @@ body {
         padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     }
     .modal-button { padding: 14px; font-size: 1rem; }
+    /* Reveal nouveau batiment : animation sans translate (modal plein ecran,
+       le translate des keyframes desktop le faisait flasher en haut a gauche) */
+    .new-building-modal.active { animation: nbModalInMobile 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
 
     /* Atelier galactique / Contrats / Collection : plein écran */
