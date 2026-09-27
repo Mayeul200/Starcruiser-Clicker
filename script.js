@@ -2893,8 +2893,8 @@ function spawnRandomBonus(shower) {
     const startY = -180;
     const endY = containerHeight + 180;
     const verticalTravel = endY - startY;
-    // À 45°, déplacement horizontal = déplacement vertical
-    const horizontalTravel = verticalTravel;
+    // À 60°, déplacement horizontal = vertical / tan(60°) ~ 0.577
+    const horizontalTravel = verticalTravel * 0.577;
     // Direction aléatoire: gauche→droite ou droite→gauche
     const goRight = Math.random() < 0.5;
     let startX, endX;
@@ -2944,8 +2944,8 @@ function spawnRandomBonus(shower) {
     const TRAIL_LIFE_MS = 900;
     const dirX = goRight ? 1 : -1;
     // Fraction du noyau dans le conteneur (identique aux variables CSS --nx/--ny)
-    const nucX = goRight ? 0.7444 : 0.25;
-    const nucY = goRight ? 0.75 : 0.7444;
+    const nucX = goRight ? 0.6716 : 0.3216;
+    const nucY = goRight ? 0.8051 : 0.8012;
     const trailInterval = setInterval(() => {
         const rect = bonusElement.getBoundingClientRect();
         // Emettre au NOYAU reel, et scaler la derive a la taille de la comete
@@ -2965,7 +2965,7 @@ function spawnRandomBonus(shower) {
             const spread = ((Math.random() * 2 - 1) * 26) * tsc; // ecart lateral
             requestAnimationFrame(() => {
                 trail.style.opacity = '0';
-                trail.style.transform = `translate(-50%, -50%) translate(${-dirX * drift + spread * 0.4}px, ${-drift * 0.72 + spread * 0.6}px) scale(0.2)`;
+                trail.style.transform = `translate(-50%, -50%) translate(${-dirX * drift * 0.5 + spread * 0.4}px, ${-drift * 0.866 + spread * 0.6}px) scale(0.2)`;
             });
             setTimeout(() => trail.remove(), TRAIL_LIFE_MS);
         }

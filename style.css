@@ -798,22 +798,22 @@ body {
        du canvas). Tous les effets s'ancrent sur ces coordonnees. */
     /* Noyau en POURCENTAGE du conteneur : suit la taille de la comete
        (180px desktop, 130px mobile, 120px pluie) sans decalage */
-    --nx: 74.44%;
-    --ny: 75%;
+    --nx: 67.16%;
+    --ny: 80.51%;
 }
 .random-bonus.comet.reverse {
-    --nx: 25%;
-    --ny: 74.44%;
+    --nx: 32.16%;
+    --ny: 80.12%;
 }
 .comet-img {
     width: 180px;
     height: 180px;
     object-fit: contain;
-    transform: rotate(45deg);
+    transform: rotate(60deg);
     pointer-events: none;
 }
 .random-bonus.comet.reverse .comet-img {
-    transform: rotate(135deg);
+    transform: rotate(120deg);
 }
 /* Chevelure (coma) : halo diffus bleute-cyan autour du noyau, anime */
 .comet-coma {
@@ -844,7 +844,7 @@ body {
     width: 177.78%;
     height: 25.56%;
     transform-origin: 100% 50%;
-    transform: rotate(45deg);
+    transform: rotate(60deg);
     border-radius: 50% 40% 40% 50% / 60% 45% 45% 60%;
     background: linear-gradient(270deg,
         rgba(255, 255, 255, 0.9) 0%,
@@ -857,7 +857,7 @@ body {
     animation: cometPlasma 0.6s ease-in-out infinite alternate;
 }
 .random-bonus.comet.reverse .comet-tail-plasma {
-    transform: rotate(135deg);
+    transform: rotate(120deg);
 }
 @keyframes cometPlasma {
     from { opacity: 0.75; filter: blur(3px) saturate(1); }
@@ -873,7 +873,7 @@ body {
     width: 144.44%;
     height: 36.67%;
     transform-origin: 100% 50%;
-    transform: rotate(30deg);
+    transform: rotate(45deg);
     border-radius: 50% 45% 45% 50% / 65% 50% 50% 65%;
     background: linear-gradient(270deg,
         rgba(255, 235, 190, 0.42) 0%,
@@ -885,7 +885,7 @@ body {
     animation: cometDust 0.7s ease-in-out infinite alternate;
 }
 .random-bonus.comet.reverse .comet-tail-dust {
-    transform: rotate(150deg);
+    transform: rotate(135deg);
 }
 @keyframes cometDust {
     from { opacity: 0.7; }
@@ -2040,7 +2040,7 @@ body {
 .mini-space-map .spaceship {
     animation: spaceshipBounce 2s ease-in-out infinite;
     position: absolute;
-    top: 50%;
+    top: 34%;
     transform: translateY(-50%) translateX(-50%) rotate(90deg);
     width: 19.2px;
     height: 36px;
