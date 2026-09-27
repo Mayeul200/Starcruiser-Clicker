@@ -2042,8 +2042,8 @@ body {
     position: absolute;
     top: 34%;
     transform: translateY(-50%) translateX(-50%) rotate(90deg);
-    width: 19.2px;
-    height: 36px;
+    width: 23px;
+    height: 43px;
     z-index: 3;
 }
 .mini-space-map .spaceship .spaceship-img {
@@ -2055,8 +2055,8 @@ body {
 
 /* Planet images in mini map */
 .mini-space-map .planet-image {
-    width: 60px;
-    height: 60px;
+    width: 76px;
+    height: 76px;
     border-radius: 50%;
     object-fit: cover;
     filter: drop-shadow(0 0 3px var(--planet-color));
@@ -2064,7 +2064,7 @@ body {
 
 /* Planet names in mini map */
 .mini-space-map .planet-name {
-    font-size: 0.7rem;
+    font-size: 0.78rem;
     color: var(--text);
     text-align: center;
     margin-top: 5px;
@@ -2072,7 +2072,7 @@ body {
     text-shadow: 0 0 2px var(--text);
 }
 .mini-space-map .planet-distance {
-    font-size: 0.6rem;
+    font-size: 0.66rem;
     color: var(--text-light);
     text-align: center;
     white-space: nowrap;
@@ -3523,8 +3523,8 @@ body {
     .mobile-nav button .nav-icon .nav-img.nav-rocket {
         width: 18px;
         height: 30px;
-        transform: rotate(-45deg);
-        margin-left: 8px;
+        transform: rotate(-35deg);
+        margin-left: 7px;
     }
     .mobile-nav button.active { color: var(--accent-light); }
 
@@ -3615,9 +3615,9 @@ body {
     /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
     .left-panel h3 { flex-shrink: 0; }
     .mini-space-map { height: 148px; }
-    .mini-space-map .planet-image { width: 36px; height: 36px; }
-    .mini-space-map .planet-name { font-size: 0.6rem; margin-top: 1px; }
-    .mini-space-map .planet-distance { font-size: 0.55rem; margin-top: 1px; }
+    .mini-space-map .planet-image { width: 48px; height: 48px; }
+    .mini-space-map .planet-name { font-size: 0.66rem; margin-top: 1px; }
+    .mini-space-map .planet-distance { font-size: 0.6rem; margin-top: 1px; }
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     /* Cartes mini-jeux empilees verticalement : plus propre a lire,
        l'utilisateur scrolle si necessaire. */

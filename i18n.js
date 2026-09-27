@@ -449,7 +449,7 @@ const TRANSLATIONS = {
         'Acheter 50 à la fois': 'Buy 50 at a time',
         'Acheter le maximum possible': 'Buy the maximum possible',
         // --- Clés HTML avec emoji ---
-        '🌌 Progression Spatiale': '🌌 Space Progress',
+        'Progression Spatiale': 'Space Progress',
         '📦 Collection de Cartes': '📦 Card Collection',
         '🚀 Mission Résultats': '🚀 Mission Results',
     }
