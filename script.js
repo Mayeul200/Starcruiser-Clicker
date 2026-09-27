@@ -1227,13 +1227,25 @@ function getCurrentDistance() {
 // nombre de planètes jusqu'ê la destination atteignable (même logique
 // que l'animation : la vitesse en km/s s'adapte ê chaque tronçon).
 function calculateTravelSpeedKmS() {
-    const distance = calculateDistance();
-    if (distance <= 0) return 0;
-    const progress = calculatePlanetProgress(distance);
-    const planetIndex = PLANETS.findIndex(p => p.name === (progress.nextPlanet ? progress.nextPlanet.name : progress.currentPlanet.name));
-    const legs = Math.max(1, planetIndex + 1);
-    const durationSec = (legs * TRAVEL_ANIM_LEG_MS) / 1000;
-    return distance / durationSec;
+    // Vitesse REELLE : combien de km la stat "Distance atteignable" gagne
+    // par seconde. Distance = f(partsSinceLaunch) et partsSinceLaunch croit
+    // de partsPerSecond chaque seconde -> vitesse = f'(parts) * pps.
+    // On derive exactement la meme formule que calculateDistance().
+    const parts = Math.max(partsSinceLaunch, 0);
+    if (parts <= 0 || partsPerSecond <= 0) return 0;
+    const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
+    const partsMult = Math.pow(PIECE_DISTANCE_MULT, partsUnlocked);
+    let dFactor;
+    if (parts <= DISTANCE_MOON_PARTS) {
+        // scoreFactor lineaire : MOON_DISTANCE * (parts / DISTANCE_MOON_PARTS)
+        dFactor = MOON_DISTANCE / DISTANCE_MOON_PARTS;
+    } else {
+        // scoreFactor puissance : derivee de MOON_DISTANCE * x^EXP avec x = parts/DISTANCE_MOON_PARTS
+        dFactor = MOON_DISTANCE * DISTANCE_SCORE_EXP * Math.pow(parts / DISTANCE_MOON_PARTS, DISTANCE_SCORE_EXP - 1) / DISTANCE_MOON_PARTS;
+    }
+    const prestige = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
+    const prestigeDistanceBoost = 1 + (prestige - 1) / 2;
+    return partsPerSecond * partsMult * dFactor * prestigeDistanceBoost * getDistanceBonus();
 }
 function formatTravelSpeed(kmS) {
     if (kmS <= 0) return '0 km/s';
@@ -2969,8 +2981,13 @@ function spawnRandomBonus(shower) {
     // vol) et s'ecartent legerement sur les cotes -- comme la queue
     // reelle d'une comete, courbee et diffuse, pas un chapelet de
     // cercles fixes.
-    const TRAIL_INTERVAL_MS = 16;
+    // Performance : sur mobile/tablette la pluie genere trop d'elements DOM
+    // (12 cometes x 2 particules / 16 ms ~ 1500 nodes/s). Interval x3 et
+    // une seule particule par tick -> ~8x moins de travail, meme look.
+    const isMobileLike = window.matchMedia('(max-width: 1024px)').matches;
+    const TRAIL_INTERVAL_MS = isMobileLike ? 48 : 16;
     const TRAIL_LIFE_MS = 900;
+    const PARTICLES_PER_TICK = isMobileLike ? 1 : 2;
     const dirX = goRight ? 1 : -1;
     // Fraction du noyau dans le conteneur (identique aux variables CSS --nx/--ny)
     const nucX = goRight ? 0.6716 : 0.3216;
@@ -2982,7 +2999,7 @@ function spawnRandomBonus(shower) {
         const cy = rect.top + rect.height * nucY;
         const tsc = Math.max(0.6, Math.min(1, rect.width / 180));
         // 2 particules par tick : une coeur brillant, une poussiere
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < PARTICLES_PER_TICK; i++) {
             const trail = document.createElement('div');
             trail.className = 'comet-trail' + (i === 0 ? ' core' : ' dust');
             trail.style.width = ((i === 0 ? 20 : 11) * tsc).toFixed(1) + 'px';
@@ -4606,7 +4623,9 @@ function startCometShower() {
     if (cometShowerActive) return;
     cometShowerActive = true;
     showToast('\ud83c\udf20 ' + t('Pluie de com\u00e8tes ! Attrapez-les !'));
-    const COUNT = 12;
+    // Mobile/tablette : moitie moins de cometes, la pluie y coute tres cher
+    const isMobileLike = window.matchMedia('(max-width: 1024px)').matches;
+    const COUNT = isMobileLike ? 6 : 12;
     const SPREAD_MS = 8000;
     for (let i = 0; i < COUNT; i++) {
         setTimeout(() => spawnRandomBonus(true), (i / COUNT) * SPREAD_MS + Math.random() * 400);

@@ -2018,7 +2018,7 @@ body {
 }
 /* Mini Space Map */
 .mini-space-map {
-    height: 127px;
+    height: 158px;
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
     border: 1px solid var(--border);
@@ -2037,7 +2037,7 @@ body {
 }
 .mini-space-map .space-planet {
     position: absolute;
-    top: 20%;
+    top: 10%;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
@@ -2062,7 +2062,7 @@ body {
 .mini-space-map .spaceship {
     animation: spaceshipBounce 2s ease-in-out infinite;
     position: absolute;
-    top: 34%;
+    top: 28%;
     transform: translateY(-50%) translateX(-50%) rotate(90deg);
     width: 23px;
     height: 43px;
@@ -2077,8 +2077,8 @@ body {
 
 /* Planet images in mini map */
 .mini-space-map .planet-image {
-    width: 76px;
-    height: 76px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     object-fit: cover;
     filter: drop-shadow(0 0 3px var(--planet-color));
@@ -2087,10 +2087,11 @@ body {
    memes proportions que la version PC (76px / 127px  soit 60cqh). */
 @supports (width: 1cqh) {
     .mini-space-map { container-type: size; }
-    .mini-space-map .planet-image { width: max(60cqh, 40px); height: max(60cqh, 40px); }
-    .mini-space-map .planet-name { font-size: max(10cqh, 0.6rem); }
-    .mini-space-map .planet-distance { font-size: max(9cqh, 0.55rem); }
-    .mini-space-map .spaceship { width: max(18cqh, 14px); height: max(34cqh, 26px); }
+    /* image + nom + km DOIVENT tenir dans la case : ~58cqh + 2 lignes */
+    .mini-space-map .planet-image { width: max(55cqh, 36px); height: max(55cqh, 36px); }
+    .mini-space-map .planet-name { font-size: max(9.5cqh, 0.58rem); }
+    .mini-space-map .planet-distance { font-size: max(8.5cqh, 0.52rem); }
+    .mini-space-map .spaceship { width: max(17cqh, 14px); height: max(32cqh, 26px); }
 }
 
 /* Planet names in mini map */
@@ -3660,7 +3661,7 @@ body {
     .left-panel { padding: 12px; }
     /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
     .left-panel h3 { flex-shrink: 0; }
-    .mini-space-map { height: 148px; }
+    .mini-space-map { height: 178px; }
 
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     /* Cartes mini-jeux empilees verticalement : plus propre a lire,
