@@ -609,7 +609,6 @@ body {
 
 /* Styles spécifiques pour les images des bâtiments */
 .building-item.nozzles .building-image,
-.building-item.workshop .building-image,
 .building-item.engines .building-image,
 .building-item.fuel-tank .building-image,
 .building-item.cockpit .building-image,
