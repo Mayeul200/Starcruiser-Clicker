@@ -1307,32 +1307,29 @@ body {
     8% { transform: translate3d(0, 0, 0) scale(1); }
     100% { transform: translate3d(0, -110vh, 0) scale(1.05); opacity: 0; }
 }
-/* Astronaute : court hors du pas de tir dès le clic sur Lancer.
-   Course rapide (foulées courtes) vers la gauche, sans retour. */
-/* Astronaute : court hors du pas de tir des le clic sur Lancer.
-   Il traverse le fond jusqu'au bord GAUCHE de l'image du panneau central :
-   deplacement en px (le % serait relatif a sa propre largeur de 25px,
-   soit seulement quelques pixels). Il part de x=40% du monde (410px)
-   et doit sortir du cadre gauche (monde 1024px). */
+/* Astronaute : place a DROITE du pas de tir ; des le clic sur Lancer,
+   il court vers le bord DROIT de l'image du panneau central (monde 1024px).
+   Deplacement en px (le % serait relatif a sa propre largeur de 25px).
+   Il part de x=73% du monde (747px) et doit sortir du cadre droit. */
 .astronaut-running {
     animation: astronautRunOut 1.5s linear forwards !important;
 }
 @keyframes astronautRunOut {
     0% { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
-    8% { transform: translate(calc(-50% - 36px), 0) rotate(3deg); }
-    16% { transform: translate(calc(-50% - 72px), 0) rotate(-3deg); }
-    24% { transform: translate(calc(-50% - 108px), 0) rotate(3deg); }
-    32% { transform: translate(calc(-50% - 144px), 0) rotate(-3deg); }
-    40% { transform: translate(calc(-50% - 180px), 0) rotate(3deg); }
-    48% { transform: translate(calc(-50% - 216px), 0) rotate(-3deg); }
-    56% { transform: translate(calc(-50% - 252px), 0) rotate(3deg); }
-    64% { transform: translate(calc(-50% - 288px), 0) rotate(-3deg); }
-    72% { transform: translate(calc(-50% - 324px), 0) rotate(3deg); }
-    80% { transform: translate(calc(-50% - 360px), 0) rotate(-3deg); }
-    88% { transform: translate(calc(-50% - 396px), 0) rotate(3deg); }
-    96% { transform: translate(calc(-50% - 420px), 0) rotate(-2deg); }
-    99% { transform: translate(calc(-50% - 425px), 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(calc(-50% - 430px), 0) rotate(0deg); opacity: 0; }
+    8% { transform: translate(calc(-50% + 36px), 0) rotate(-3deg); }
+    16% { transform: translate(calc(-50% + 72px), 0) rotate(3deg); }
+    24% { transform: translate(calc(-50% + 108px), 0) rotate(-3deg); }
+    32% { transform: translate(calc(-50% + 144px), 0) rotate(3deg); }
+    40% { transform: translate(calc(-50% + 180px), 0) rotate(-3deg); }
+    48% { transform: translate(calc(-50% + 216px), 0) rotate(3deg); }
+    56% { transform: translate(calc(-50% + 252px), 0) rotate(-3deg); }
+    64% { transform: translate(calc(-50% + 288px), 0) rotate(3deg); }
+    72% { transform: translate(calc(-50% + 324px), 0) rotate(-3deg); }
+    80% { transform: translate(calc(-50% + 360px), 0) rotate(3deg); }
+    88% { transform: translate(calc(-50% + 396px), 0) rotate(-2deg); }
+    96% { transform: translate(calc(-50% + 420px), 0) rotate(2deg); }
+    99% { transform: translate(calc(-50% + 425px), 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(calc(-50% + 430px), 0) rotate(0deg); opacity: 0; }
 }
 /* Flammes sous les moteurs : jets coniques orangés vacillants.
    Ancrées au bas des tuyères (y=666) : le HAUT des jets affleure les
@@ -2655,7 +2652,7 @@ body {
 /* Bouton de lancement */
 .launch-button {
     position: absolute;
-    bottom: 20px;
+    bottom: 25px;
     left: 50%;
     transform: translateX(-50%);
     padding: 12px 24px;
@@ -3525,10 +3522,10 @@ body {
         margin: 0 auto;
     }
     .mobile-nav button .nav-icon .nav-img.nav-rocket {
-        width: 18px;
-        height: 30px;
-        transform: rotate(-35deg);
-        margin-left: 7px;
+        width: 14px;
+        height: 24px;
+        transform: rotate(60deg);
+        margin-left: 0;
     }
     .mobile-nav button.active { color: var(--accent-light); }
 
@@ -3584,7 +3581,7 @@ body {
     /* Médaille cliquable plus grosse et plus accessible */
     .medal {
         /* !important : la medaille porte un style inline (right/top) dans index.html */
-        left: auto !important; right: 4% !important;
+        left: 4% !important; right: auto !important;
         top: 30% !important;
         transform: translateY(-50%);
         width: 100px; height: 100px;
@@ -3592,16 +3589,15 @@ body {
     .medal:hover { transform: translateY(-50%) scale(1.05); }
     .medal:active { transform: translateY(-50%) scale(0.95); }
 
-    /* Paysage : espace vertical trop serre a droite du fait du bouton
-       lancement ; la medaille se place juste a sa gauche, sous les compteurs */
+    /* Paysage : espace vertical trop serre ; la medaille reste a gauche, sous les compteurs */
     @media (max-width: 1024px) and (orientation: landscape) {
-        .medal { top: 55% !important; right: 88px !important; width: 96px; height: 96px; }
+        .medal { top: 55% !important; width: 96px; height: 96px; }
     }
 
     /* --- Bouton lancement : pilule rouge collee a la barre de navigation, ancree au viewport --- */
     .launch-button {
         position: fixed;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 4px);
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 9px);
         left: 50%;
         right: auto;
         transform: translateX(-50%);
@@ -3623,6 +3619,14 @@ body {
     .mini-space-map .planet-image { width: 48px; height: 48px; }
     .mini-space-map .planet-name { font-size: 0.66rem; margin-top: 1px; }
     .mini-space-map .planet-distance { font-size: 0.6rem; margin-top: 1px; }
+    /* Elements proportionnels a la hauteur de la mini map (adaptatif, fallback px ci-dessus) */
+    @supports (width: 1cqh) {
+        .mini-space-map { container-type: size; }
+        .mini-space-map .planet-image { width: 38cqh; height: 38cqh; }
+        .mini-space-map .planet-name { font-size: 7.2cqh; }
+        .mini-space-map .planet-distance { font-size: 6.5cqh; }
+        .mini-space-map .spaceship { width: 17cqh; height: 32cqh; }
+    }
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     /* Cartes mini-jeux empilees verticalement : plus propre a lire,
        l'utilisateur scrolle si necessaire. */
