@@ -3112,7 +3112,7 @@ body {
     max-width: 346px;
     height: auto;
     aspect-ratio: 2 / 3;
-    border-radius: 26px;
+    border-radius: clamp(10px, 7.5%, 26px);
     padding: 0;
     box-sizing: border-box;
     position: relative;
@@ -3144,7 +3144,7 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    border-radius: 26px;
+    border-radius: clamp(10px, 7.5%, 26px);
     overflow: hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -3175,7 +3175,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 26px;
+    border-radius: clamp(10px, 7.5%, 26px);
     display: block;
 }
 .cc-card-name {
@@ -3230,7 +3230,7 @@ body {
 .cc-album-card {
     width: 192px;
     height: 288px;
-    border-radius: 26px;
+    border-radius: clamp(10px, 7.5%, 26px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -3618,7 +3618,7 @@ body {
     .control-button { width: 38px; height: 38px; font-size: 16px; }
 
     /* --- Compteurs --- */
-    .counters { top: 56px; width: min(50vw, 320px); gap: 10px; padding: 6px 10px; }
+    .counters { top: 56px; width: min(60vw, 384px); gap: 10px; padding: 6px 10px; }
     .counter { font-size: 0.95rem; min-width: 0; }
     .bonus-timer { top: 104px; left: 50%; transform: translateX(-50%); }
 
@@ -3827,6 +3827,13 @@ body {
     .cc-album-card { width: 100%; height: auto; aspect-ratio: 2 / 3; }
     .cc-reveal-cards { gap: 8px; }
     .cc-reveal-card { width: calc((100% - (var(--card-count, 3) - 1) * 8px) / var(--card-count, 3)); height: auto; }
+    /* Carte seule : largeur limitee pour rester lisible, pas plein ecran */
+    .cc-reveal-cards:has(> .cc-reveal-card:only-child) { max-width: 60vw; margin: 0 auto; }
+    .cc-reveal-card:only-child { max-width: 60vw; }
+    /* 3 cartes : grille 2 colonnes (2 en haut, 1 centree en bas) */
+    .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 8px; }
+    .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) .cc-reveal-card { width: 100%; max-width: none; }
+    .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) .cc-reveal-card:nth-child(3) { grid-column: 1 / -1; justify-self: center; max-width: 50%; }
 
     /* Toast au-dessus de la nav */
     #toast-container { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
@@ -3904,7 +3911,7 @@ body {
     .building-image { max-height: 88px; min-width: 0; }
     .building-name { font-size: 0.95rem; }
     .multiplier-btn { padding: 5px 10px; }
-    .counters { width: 50vw; }
+    .counters { width: 60vw; }
     .counter { font-size: 0.85rem; }
 }
 /* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
@@ -4015,7 +4022,7 @@ body {
     width: 100%;
     max-height: 72vh;
     object-fit: contain;
-    border-radius: 26px;
+    border-radius: clamp(10px, 7.5%, 26px);
     box-shadow: 0 0 40px rgba(59, 130, 246, 0.35);
     cursor: pointer;
 }
