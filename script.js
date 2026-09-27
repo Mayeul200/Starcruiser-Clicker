@@ -301,6 +301,8 @@ let activatedClickUpgrades = [];
 let unlockedBuildings = new Set();
 let totalGeneratedByBuilding = {};
 let totalGeneratedAtLaunchStart = 0;
+let totalPartsEarnedAllTime = 0;
+let totalPartsEarnedThisLaunch = 0;
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
 let lastRocketPartsUpdate = 0;
@@ -573,6 +575,8 @@ function saveGame() {
         autoMultiplier: autoMultiplier,
         clickMultiplier: clickMultiplier,
         totalPartsFromClicks: totalPartsFromClicks,
+        totalPartsEarnedAllTime: totalPartsEarnedAllTime,
+        totalPartsEarnedThisLaunch: totalPartsEarnedThisLaunch,
         activatedClickUpgrades: [...activatedClickUpgrades],
         unlockedBuildings: Array.from(unlockedBuildings),
         autoMultipliers: [...autoMultipliers],
@@ -730,6 +734,16 @@ function loadGame() {
             for (const buildingId in parsed.totalGeneratedByBuilding) {
                 totalGeneratedByBuilding[buildingId] = parsed.totalGeneratedByBuilding[buildingId] || 0;
             }
+        }
+        if (parsed.totalPartsEarnedAllTime !== undefined) {
+            totalPartsEarnedAllTime = parsed.totalPartsEarnedAllTime || 0;
+        } else {
+            totalPartsEarnedAllTime = calculateTotalGenerated() + totalPartsFromClicks;
+        }
+        if (parsed.totalPartsEarnedThisLaunch !== undefined) {
+            totalPartsEarnedThisLaunch = parsed.totalPartsEarnedThisLaunch || 0;
+        } else {
+            totalPartsEarnedThisLaunch = calculateTotalGenerated() + totalPartsFromClicks;
         }
 
         // Charger les bonus actifs
@@ -2313,6 +2327,7 @@ function confirmPostTravelReset() {
     totalGeneratedAtLaunchStart = calculateTotalGenerated();
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
+    totalPartsEarnedThisLaunch = 0;
     resetContractState();
     updateDisplay();
     saveGame();
@@ -2417,6 +2432,7 @@ function applyOfflineEarnings(lastSave) {
     if (totalGain <= 0) return;
     score += totalGain;
     partsSinceLaunch += totalGain;
+    trackPartsEarned(totalGain);
     const capped = cappedSec < elapsedSec;
     const timeStr = formatDurationHMS(cappedSec * 1000);
     showToast('\ud83c\udf19 ' + t('Production hors-ligne (') + timeStr + (capped ? ', ' + t('plafonn\u00e9e)') : '') + ' +' + formatNumber(totalGain) + ' ' + t('Parts'));
@@ -3047,6 +3063,7 @@ function spawnRandomBonus(shower) {
                 const instantProduction = partsPerSecond * (shower ? 5 : 10);
                 score += instantProduction;
                 partsSinceLaunch += instantProduction;
+                trackPartsEarned(instantProduction);
                 showToast(`\u2705 ${t(bonus.name)}: +${formatNumber(instantProduction)} ${t("Parts")}!`);
             }
             else if (bonus.id === "flare") {
@@ -3229,6 +3246,7 @@ function addScore(points, event) {
     score += totalPoints;
     partsSinceLaunch += totalPoints;
     totalPartsFromClicks += totalPoints;
+    trackPartsEarned(totalPoints);
 
     showClickEffect(Math.round(totalPoints), event);
     spawnFallingCoin(event);
@@ -3380,6 +3398,7 @@ function gameLoop() {
     const tickGain = partsPerSecond * dtSeconds;
     score += tickGain;
     partsSinceLaunch += tickGain;
+    trackPartsEarned(tickGain);
     updateLaunchTimer();
 
     if (dtSeconds > 0) {
@@ -3414,6 +3433,11 @@ function gameLoop() {
 // STATISTICS
 // ============================================
 
+function trackPartsEarned(amount) {
+    if (!(amount > 0)) return;
+    totalPartsEarnedAllTime += amount;
+    totalPartsEarnedThisLaunch += amount;
+}
 function calculateTotalGenerated() {
     let total = 0;
     for (const key in totalGeneratedByBuilding) {
@@ -3635,8 +3659,8 @@ function refreshStatsLive() {
 function updateStatsDynamicValues(container) {
     const values = [
         formatNumber(score, true),
-        formatNumber(calculateTotalGenerated()),
-        formatNumber(calculateLaunchGenerated()),
+        formatNumber(totalPartsEarnedAllTime),
+        formatNumber(totalPartsEarnedThisLaunch),
         formatNumber(partsPerSecond),
         'x' + getTotalProductionMultiplier().toFixed(2),
         formatNumber(getClickPower()),
@@ -3659,8 +3683,8 @@ function renderStats() {
     container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Statistiques Globales') + '</h4>';
     const globalStats = [
         { label: t("Parts actuelles"), value: formatNumber(score, true) },
-        { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(calculateTotalGenerated()) },
-        { label: t("Parts g\u00e9n\u00e9r\u00e9s pour ce lancement"), value: formatNumber(calculateLaunchGenerated()) },
+        { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
+        { label: t("Parts g\u00e9n\u00e9r\u00e9s pour ce lancement"), value: formatNumber(totalPartsEarnedThisLaunch) },
         { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
         { label: t("Multiplicateur de production"), value: 'x' + getTotalProductionMultiplier().toFixed(2) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
@@ -4844,6 +4868,7 @@ const Debug = {
     addScore(n) {
         score += n;
         partsSinceLaunch += n;
+        trackPartsEarned(n);
         updateDisplay();
     },
     addStardust(n) {
