@@ -2075,6 +2075,15 @@ body {
     object-fit: cover;
     filter: drop-shadow(0 0 3px var(--planet-color));
 }
+/* Elements proportionnels a la hauteur de la mini map : adaptatif partout,
+   memes proportions que la version PC (76px / 127px  soit 60cqh). */
+@supports (width: 1cqh) {
+    .mini-space-map { container-type: size; }
+    .mini-space-map .planet-image { width: max(60cqh, 40px); height: max(60cqh, 40px); }
+    .mini-space-map .planet-name { font-size: max(10cqh, 0.6rem); }
+    .mini-space-map .planet-distance { font-size: max(9cqh, 0.55rem); }
+    .mini-space-map .spaceship { width: max(18cqh, 14px); height: max(34cqh, 26px); }
+}
 
 /* Planet names in mini map */
 .mini-space-map .planet-name {
@@ -2132,7 +2141,9 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    /* Les gardent leur hauteur minimale : la section scrolle si besoin */
     min-height: 0;
+    overflow-y: auto;
 }
 .mini-games-section h4 {
     color: var(--text-light);
@@ -2171,7 +2182,8 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     flex: 1;
-    min-height: 0;
+    /* Hauteur minimale preservee quand l'ecran perd de la hauteur (PC/tablette) */
+    min-height: 84px;
 }
 .mini-game-card .game-icon {
     font-size: 2.4rem;
@@ -2596,6 +2608,19 @@ body {
 }
 .medal:active {
     transform: translateY(-50%) scale(0.96);
+}
+/* Medaille adaptative : proportionnelle a la hauteur du panneau central,
+   memes proportions que la version PC (204px pour ~978px  soit 21cqh). */
+@supports (width: 1cqh) {
+    .center-content { container-type: size; }
+    .medal {
+        width: 21cqh;
+        height: 21cqh;
+        min-width: 115px;
+        min-height: 115px;
+        max-width: 250px;
+        max-height: 250px;
+    }
 }
 /* Wrapper : agrandissement de la pièce + squash & stretch au clic.
    Le scale de base (1.05) : la nouvelle image de la piece est quasi carree et remplie. */
@@ -3597,14 +3622,13 @@ body {
         left: 4% !important; right: auto !important;
         top: 30% !important;
         transform: translateY(-50%);
-        width: 120px; height: 120px;
     }
     .medal:hover { transform: translateY(-50%) scale(1.05); }
     .medal:active { transform: translateY(-50%) scale(0.95); }
 
     /* Paysage : espace vertical trop serre ; la medaille reste a gauche, sous les compteurs */
     @media (max-width: 1024px) and (orientation: landscape) {
-        .medal { top: 55% !important; width: 115px; height: 115px; }
+        .medal { top: 55% !important; }
     }
 
     /* --- Bouton lancement : pilule rouge collee a la barre de navigation, ancree au viewport --- */
@@ -3629,17 +3653,7 @@ body {
     /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
     .left-panel h3 { flex-shrink: 0; }
     .mini-space-map { height: 148px; }
-    .mini-space-map .planet-image { width: 48px; height: 48px; }
-    .mini-space-map .planet-name { font-size: 0.66rem; margin-top: 1px; }
-    .mini-space-map .planet-distance { font-size: 0.6rem; margin-top: 1px; }
-    /* Elements proportionnels a la hauteur de la mini map (adaptatif, fallback px ci-dessus) */
-    @supports (width: 1cqh) {
-        .mini-space-map { container-type: size; }
-        .mini-space-map .planet-image { width: 38cqh; height: 38cqh; }
-        .mini-space-map .planet-name { font-size: 7.2cqh; }
-        .mini-space-map .planet-distance { font-size: 6.5cqh; }
-        .mini-space-map .spaceship { width: 17cqh; height: 32cqh; }
-    }
+
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     /* Cartes mini-jeux empilees verticalement : plus propre a lire,
        l'utilisateur scrolle si necessaire. */
@@ -3788,9 +3802,7 @@ body {
     .contract-buy-btn { min-height: 44px; padding: 12px 18px; font-size: 0.95rem; align-self: stretch; }
     .modal-button { min-height: 48px; }
     .control-button { width: 42px; height: 42px; }
-    /* Minimap : km et noms lisibles */
-    .mini-space-map .planet-distance { font-size: 0.6rem; }
-    .mini-space-map .planet-name { font-size: 0.65rem; }
+    /* Minimap : tailles gerees par les unites conteneur (cqh) */
     /* Cartes mini-jeux : texte a taille lisible */
     .mini-game-card .game-name { font-size: 0.85rem; }
     .mini-game-card .game-cost { font-size: 0.75rem; }
@@ -3808,13 +3820,12 @@ body {
     .mini-games-container { max-width: 100%; box-sizing: border-box; }
     .mini-game-card { min-width: 0; }
     .game-info { min-width: 0; overflow: hidden; }
-    /* km de la minimap legèrement plus grands (>= 10px) */
-    .mini-space-map .planet-distance { font-size: 0.625rem; }
+    /* km de la minimap : taille adaptative via cqh */
 }
 
 /* Petits écrans (<480px) : resserrage supplémentaire */
 @media (max-width: 480px) {
-    .medal { width: 120px; height: 120px; top: 30% !important; }
+    .medal { top: 30% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
     .building-item { grid-template-columns: 80px 1fr 30%; }
@@ -3825,10 +3836,7 @@ body {
     .counters { width: 50vw; }
     .counter { font-size: 0.85rem; }
 }
-/* Tres petits ecrans : la medaille se reduit pour ne pas toucher la fusee */
-@media (max-width: 350px) {
-    .medal { width: 115px; height: 115px; }
-}
+/* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
 
 /* Ecrans desktop etroits / tablette large (1025-1280) : panneaux lateraux
    elargis et contenus compacts pour eviter tout debordement des cadres */
