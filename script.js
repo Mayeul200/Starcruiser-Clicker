@@ -532,8 +532,29 @@ function resetMultipliers() {
 }
 
 let toastHideTimer = null;
+const TOAST_MAX_STACK = 4;
+function getToastContainer() {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        const legacy = document.getElementById('toast');
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        if (legacy && legacy.parentElement) {
+            legacy.parentElement.insertBefore(container, legacy);
+            legacy.remove();
+        } else {
+            document.body.appendChild(container);
+        }
+    }
+    return container;
+}
 function showToast(message, icon, durationMs) {
-    const toast = document.getElementById('toast');
+    const container = getToastContainer();
+    while (container.children.length >= TOAST_MAX_STACK) {
+        container.firstElementChild.remove();
+    }
+    const toast = document.createElement('div');
+    toast.className = 'toast';
     toast.innerHTML = '';
     if (icon) {
         const iconEl = document.createElement('span');
@@ -552,17 +573,21 @@ function showToast(message, icon, durationMs) {
     textEl.className = 'toast-text';
     textEl.textContent = message;
     toast.appendChild(textEl);
-    toast.classList.add('active');
-    if (toastHideTimer) clearTimeout(toastHideTimer);
-    toastHideTimer = setTimeout(() => toast.classList.remove('active'), durationMs || TOAST_DURATION_MS);
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('active'));
+    toast._hideTimer = setTimeout(() => dismissToast(toast), durationMs || TOAST_DURATION_MS);
+}
+function dismissToast(toast) {
+    if (!toast || !toast.classList.contains('active')) return;
+    if (toast._hideTimer) clearTimeout(toast._hideTimer);
+    toast.classList.remove('active');
+    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+    setTimeout(() => { if (toast.isConnected) toast.remove(); }, 400);
 }
 // Un clic sur la notification la fait disparaitre immediatement.
 document.addEventListener('click', (e) => {
-    const toast = e.target.closest('#toast');
-    if (toast && toast.classList.contains('active')) {
-        if (toastHideTimer) clearTimeout(toastHideTimer);
-        toast.classList.remove('active');
-    }
+    const toast = e.target.closest('.toast');
+    if (toast) dismissToast(toast);
 });
 
 // ============================================
@@ -952,9 +977,11 @@ function buyBuilding(buildingId) {
         renderUpgrades();
         checkBuildingUnlocks();
         const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
+        hideTooltip();
         showToast(`\u2705 +${buildingsToBuy} ${t(building.name)}${maxText}`);
         checkTrophies();
     } else {
+        hideTooltip();
         showToast("\u274c " + t("Pas assez de Parts"));
     }
 }
