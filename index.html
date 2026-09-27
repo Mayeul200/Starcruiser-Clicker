@@ -173,6 +173,7 @@
                 <button class="modal-button" onclick="exportSave()">📤 <span data-i18n="Export">Export</span></button>
                 <textarea id="import-textarea" data-i18n-placeholder="Paste your save here..." placeholder="Paste your save here..."></textarea>
                 <button class="modal-button" onclick="importSave()">📥 <span data-i18n="Import">Import</span></button>
+                <button class="modal-button" onclick="toggleSettings(); startTutorial(true)">🎓 <span data-i18n="Revoir le tutoriel">Revoir le tutoriel</span></button>
                 <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ <span data-i18n="Delete">Delete</span></button>
             </div>
         </div>
@@ -380,6 +381,22 @@
             <h3 class="npn-planet-name" id="npn-planet-name"></h3>
             <div class="npn-distance" id="npn-planet-distance"></div>
             <button class="npn-launch-btn" id="npn-launch-btn" data-i18n="Lancer la fusée">Lancer la fusée</button>
+        </div>
+    </div>
+
+    <!-- TUTORIEL DEBUT DE PARTIE -->
+    <div class="tutorial-overlay" id="tutorial-overlay">
+        <div class="tutorial-popup">
+            <button class="tutorial-close-btn" onclick="skipTutorial()" title="Fermer">&times;</button>
+            <div class="tutorial-step-badge"><span id="tutorial-step-current">1</span>/<span id="tutorial-step-total">7</span></div>
+            <div class="tutorial-visual" id="tutorial-visual"></div>
+            <h2 class="tutorial-title" id="tutorial-title"></h2>
+            <p class="tutorial-text" id="tutorial-text"></p>
+            <div class="tutorial-actions">
+                <button class="tutorial-btn tutorial-skip-btn" id="tutorial-skip-btn" onclick="skipTutorial()" data-i18n="Passer le tutoriel">Passer le tutoriel</button>
+                <button class="tutorial-btn tutorial-next-btn" id="tutorial-next-btn" onclick="nextTutorialStep()"></button>
+            </div>
+            <div class="tutorial-progress" id="tutorial-progress"></div>
         </div>
     </div>
 

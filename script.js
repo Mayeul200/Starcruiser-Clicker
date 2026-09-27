@@ -309,6 +309,7 @@ let lastRocketPartsUpdate = 0;
 let lastSpaceProgressUpdate = 0;
 let gameStartTime = 0;
 let startupBonusApplied = false;
+let tutorialSeen = false;
 let buyMultiplier = 1;
 let clickedBonusesCount = 0;
 let unlockedTrophies = new Set();
@@ -638,6 +639,7 @@ function saveGame() {
             purchased: part.purchased
         })),
         startupBonusApplied: startupBonusApplied,
+        tutorialSeen: tutorialSeen,
         contractState: {
             offers: contractState.offers,
             active: contractState.active,
@@ -714,6 +716,16 @@ function loadGame() {
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
         gameStartTime = parsed.gameStartTime || 0;
         startupBonusApplied = !!parsed.startupBonusApplied;
+        // Migration : les anciennes saves n'ont pas tutorialSeen. Un joueur qui a
+        // deja progresse (score, batiments, lancements) ne doit pas voir le tuto.
+        if (parsed.tutorialSeen !== undefined) {
+            tutorialSeen = !!parsed.tutorialSeen;
+        } else {
+            const hasProgress = (parsed.score || 0) > 0
+                || (parsed.rocketsLaunched || 0) > 0
+                || (parsed.unlockedBuildings || []).length > 0;
+            tutorialSeen = hasProgress;
+        }
         if (parsed.contractState) {
             contractState.offers = parsed.contractState.offers || [];
             contractState.active = parsed.contractState.active || null;
@@ -4630,6 +4642,117 @@ function updateLaunchTimer() {
 // INITIALIZATION
 // ============================================
 
+// ============================================
+// TUTORIEL DEBUT DE PARTIE
+// Pop-ups guident le nouveau joueur : objectif, sections, batiments, etc.
+// Persiste dans la save (tutorialSeen) pour ne jamais revenir seul.
+// ============================================
+const TUTORIAL_STEPS = [
+    {
+        img: 'images/logo.png',
+        titleKey: 'Bienvenue dans Starcruiser !',
+        textKey: 'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?',
+    },
+    {
+        img: 'images/parts.png',
+        titleKey: 'Les Parts',
+        textKey: 'Les Parts sont ta ressource principale.\nClique sur la fusée pour en gagner, puis investis-les dans des bâtiments et des améliorations.',
+    },
+    {
+        img: 'images/buildings/workshop.png',
+        titleKey: 'Les Bâtiments',
+        textKey: 'Les bâtiments produisent des Parts automatiquement, même quand tu es absent.\nChaque bâtiment débloqué est plus puissant que le précédent. Achète-les dans le panneau Bâtiments !',
+    },
+    {
+        img: 'images/rocket/Fus\u00e9e3.png',
+        titleKey: 'La Fusée',
+        textKey: 'Achète les 10 pièces de fusée pour compléter ton vaisseau.\nChaque pièce augmente aussi la distance de ton prochain lancement.',
+    },
+    {
+        img: 'images/planets/moon.png',
+        titleKey: 'Voyage Spatial',
+        textKey: 'Lance ta fusée pour voyager dans l\'espace et atteindre de nouvelles planètes.\nChaque lancement reset ta partie... en échange d\'un bonus permanent. Va de plus en plus loin !',
+    },
+    {
+        img: 'images/effects/com\u00e8te.png',
+        titleKey: 'Comètes et Bonus',
+        textKey: 'Garde l\'œil ouvert : des comètes traversent régulièrement l\'écran.\nClique dessus pour des bonus instantanés et des multiplicateurs temporaires !',
+    },
+    {
+        img: 'images/cards/collection/booster1.png',
+        titleKey: 'Cartes, Contrats et plus',
+        textKey: 'Complète des albums de cartes et des contrats de fabrication pour des bonus supplémentaires.\nTout se trouve dans le panneau Espace. Bonne chance, commandant !',
+    },
+];
+let tutorialStep = 0;
+let tutorialActive = false;
+
+function isTutorialSeen() {
+    return !!tutorialSeen;
+}
+
+function startTutorial(force) {
+    if (tutorialActive) return;
+    if (!force && isTutorialSeen()) return;
+    tutorialActive = true;
+    tutorialStep = 0;
+    renderTutorialStep();
+    const overlay = document.getElementById('tutorial-overlay');
+    if (overlay) overlay.classList.add('active');
+}
+
+function renderTutorialStep() {
+    const step = TUTORIAL_STEPS[tutorialStep];
+    if (!step) { endTutorial(); return; }
+    const visual = document.getElementById('tutorial-visual');
+    const titleEl = document.getElementById('tutorial-title');
+    const textEl = document.getElementById('tutorial-text');
+    const nextBtn = document.getElementById('tutorial-next-btn');
+    const skipBtn = document.getElementById('tutorial-skip-btn');
+    const curEl = document.getElementById('tutorial-step-current');
+    const totalEl = document.getElementById('tutorial-step-total');
+    const progressEl = document.getElementById('tutorial-progress');
+    if (!visual || !titleEl || !textEl) return;
+
+    visual.innerHTML = '<img src="' + step.img + '" alt="">';
+    titleEl.textContent = t(step.titleKey);
+    textEl.textContent = t(step.textKey);
+    if (curEl) curEl.textContent = tutorialStep + 1;
+    if (totalEl) totalEl.textContent = TUTORIAL_STEPS.length;
+    if (nextBtn) nextBtn.textContent = tutorialStep === TUTORIAL_STEPS.length - 1 ? t('C\'est parti !') : t('Suivant');
+    if (skipBtn) skipBtn.style.display = tutorialStep === TUTORIAL_STEPS.length - 1 ? 'none' : '';
+    if (progressEl) {
+        progressEl.innerHTML = '';
+        TUTORIAL_STEPS.forEach((_, i) => {
+            const dot = document.createElement('span');
+            if (i < tutorialStep) dot.className = 'done';
+            else if (i === tutorialStep) dot.className = 'current';
+            progressEl.appendChild(dot);
+        });
+    }
+}
+
+function nextTutorialStep() {
+    tutorialStep++;
+    if (tutorialStep >= TUTORIAL_STEPS.length) {
+        endTutorial();
+    } else {
+        renderTutorialStep();
+    }
+}
+
+function skipTutorial() {
+    endTutorial();
+}
+
+function endTutorial() {
+    tutorialActive = false;
+    tutorialSeen = true;
+    saveGame();
+    const overlay = document.getElementById('tutorial-overlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
 function init() {
     initGlobals();
     const npnLaunchBtn = document.getElementById('npn-launch-btn');
@@ -4665,6 +4788,7 @@ function init() {
         setMobileView(mobileActiveView);
         applySceneScale();
     }
+    startTutorial(false);
 }
 
 // ============================================

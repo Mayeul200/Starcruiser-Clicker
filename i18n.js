@@ -459,6 +459,26 @@ const TRANSLATIONS = {
         'Progression Spatiale': 'Space Progress',
         '📦 Collection de Cartes': '📦 Card Collection',
         '🚀 Mission Résultats': '🚀 Mission Results',
+        // --- Tutoriel ---
+        'Bienvenue dans Starcruiser !': 'Welcome to Starcruiser!',
+        'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'Your mission: build a rocket piece by piece and explore the depths of space.\nEvery planet you reach makes you stronger. Ready for takeoff?',
+        'Les Parts': 'Parts',
+        'Les Parts sont ta ressource principale.\nClique sur la fusée pour en gagner, puis investis-les dans des bâtiments et des améliorations.': 'Parts are your main resource.\nClick the rocket to earn some, then invest them in buildings and upgrades.',
+        'Les Bâtiments': 'Buildings',
+        'Les bâtiments produisent des Parts automatiquement, même quand tu es absent.\nChaque bâtiment débloqué est plus puissant que le précédent. Achète-les dans le panneau Bâtiments !': 'Buildings produce Parts automatically, even while you are away.\nEach one unlocked is more powerful than the last. Buy them in the Buildings panel!',
+        'La Fusée': 'The Rocket',
+        'Achète les 10 pièces de fusée pour compléter ton vaisseau.\nChaque pièce augmente aussi la distance de ton prochain lancement.': 'Buy the 10 rocket pieces to complete your ship.\nEach piece also boosts the distance of your next launch.',
+        'Voyage Spatial': 'Space Travel',
+        'Lance ta fusée pour voyager dans l\'espace et atteindre de nouvelles planètes.\nChaque lancement reset ta partie... en échange d\'un bonus permanent. Va de plus en plus loin !': 'Launch your rocket to travel through space and reach new planets.\nEach launch resets your run... in exchange for a permanent bonus. Go further each time!',
+        'Comètes et Bonus': 'Comets and Bonuses',
+        'Garde l\'œil ouvert : des comètes traversent régulièrement l\'écran.\nClique dessus pour des bonus instantanés et des multiplicateurs temporaires !': 'Keep an eye out: comets cross the screen regularly.\nClick them for instant bonuses and temporary multipliers!',
+        'Cartes, Contrats et plus': 'Cards, Contracts and More',
+        'Complète des albums de cartes et des contrats de fabrication pour des bonus supplémentaires.\nTout se trouve dans le panneau Espace. Bonne chance, commandant !': 'Complete card albums and manufacturing contracts for extra bonuses.\nEverything is in the Space panel. Good luck, commander!',
+        'Suivant': 'Next',
+        'C\'est parti !': 'Let\u2019s go!',
+        'Passer le tutoriel': 'Skip tutorial',
+        'Revoir le tutoriel': 'Replay tutorial',
+
     }
 };
 if (localStorage.getItem('starcruiser-language') === null && localStorage.getItem('starship-language') !== null) {

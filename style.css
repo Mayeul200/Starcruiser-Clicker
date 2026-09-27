@@ -4181,3 +4181,166 @@ body {
     .npn-planet-img img { width: 110px; height: 110px; }
     .npn-launch-btn { padding: 12px 26px; font-size: 1.05rem; }
 }
+
+/* ============================================ */
+/* TUTORIEL DEBUT DE PARTIE */
+/* ============================================ */
+.tutorial-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.72);
+    backdrop-filter: blur(3px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 14000;
+    padding: 20px;
+}
+.tutorial-overlay.active {
+    display: flex;
+}
+.tutorial-popup {
+    position: relative;
+    width: min(92vw, 440px);
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    background: linear-gradient(160deg, var(--bg-panel), var(--secondary-light));
+    border: 2px solid #a855f7;
+    border-radius: 20px;
+    padding: 26px 24px 20px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(168, 85, 247, 0.35), 0 25px 50px rgba(0, 0, 0, 0.6);
+    animation: tutorialPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes tutorialPopIn {
+    from { transform: scale(0.7) translateY(20px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.tutorial-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--border-light);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--text);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+.tutorial-close-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: scale(1.08);
+}
+.tutorial-step-badge {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #c4b5fd;
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    border-radius: 999px;
+    padding: 3px 12px;
+}
+.tutorial-visual {
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+.tutorial-visual img {
+    max-height: 110px;
+    max-width: 200px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 24px rgba(168, 85, 247, 0.45));
+    animation: tutorialFloat 3.2s ease-in-out infinite;
+}
+@keyframes tutorialFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.tutorial-title {
+    margin: 0 0 8px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent-light);
+    text-shadow: 0 0 16px rgba(168, 85, 247, 0.6);
+}
+.tutorial-text {
+    margin: 0 0 18px;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--text);
+    white-space: pre-line;
+}
+.tutorial-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.tutorial-btn {
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+.tutorial-next-btn {
+    color: white;
+    background: linear-gradient(135deg, #a855f7, #7c3aed);
+    box-shadow: 0 4px 18px rgba(168, 85, 247, 0.5);
+}
+.tutorial-next-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(168, 85, 247, 0.7);
+}
+.tutorial-skip-btn {
+    color: var(--text-light);
+    background: transparent;
+    border: 1px solid var(--border-light);
+}
+.tutorial-skip-btn:hover {
+    color: var(--text);
+    border-color: var(--border-light);
+    background: rgba(255, 255, 255, 0.05);
+}
+.tutorial-progress {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 16px;
+}
+.tutorial-progress span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+.tutorial-progress span.done {
+    background: #a855f7;
+}
+.tutorial-progress span.current {
+    background: #c4b5fd;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
+}
+@media (max-width: 480px) {
+    .tutorial-popup { padding: 22px 16px 16px; }
+    .tutorial-title { font-size: 1.3rem; }
+    .tutorial-text { font-size: 0.95rem; }
+    .tutorial-visual { height: 100px; }
+    .tutorial-visual img { max-height: 92px; }
+    .tutorial-btn { padding: 9px 18px; font-size: 0.95rem; }
+}
