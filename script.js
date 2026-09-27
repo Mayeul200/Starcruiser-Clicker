@@ -1171,6 +1171,7 @@ function renderBuilding(building) {
 
     if (!IS_TOUCH) {
         buildingElement.addEventListener('mouseenter', (e) => {
+            if (building.count === 0) return;
             const rect = buildingElement.getBoundingClientRect();
             showTooltip(getBuildingTooltip(building), rect.left, rect.top, {
                 align: 'left',
@@ -1183,6 +1184,7 @@ function renderBuilding(building) {
     if (IS_TOUCH) {
         buildingElement.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
+            if (building.count === 0) return;
             showTouchTooltip(buildingElement, getBuildingTooltip(building));
             tooltipLiveRefresh = () => getBuildingTooltip(building);
         });
@@ -2677,6 +2679,7 @@ function updateSpaceProgress() {
         const unlockedCount = unlockedPlanets.size - (unlockedPlanets.has('earth') ? 1 : 0);
         sidebarPlanets.textContent = unlockedCount + '/10';
     }
+    checkNextPlanetNotification();
 }
 
 function updateMiniSpaceMap(distance) {
@@ -3611,20 +3614,15 @@ function renderTrophies() {
         trophyElement.style.cursor = 'pointer';
         trophyElement.style.position = 'relative';
         trophyElement.style.transition = 'all 0.2s';
-        const colors = TROPHY_COLORS[trophy.type] || ['#94a3b8'];
-        const idx = colorCounters[trophy.type] || 0;
-        colorCounters[trophy.type] = idx + 1;
-        const color = colors[idx % colors.length];
-        trophyElement.style.border = '2px solid #e2e8f0';
-        trophyElement.style.background = '#f8fafc';
-        trophyElement.style.isolation = 'isolate';
-        
         if (unlockedTrophies.has(trophy.id)) {
-            trophyElement.style.background = '#dbeafe';
-            trophyElement.style.boxShadow = 'var(--shadow), 0 0 6px ' + color;
+            trophyElement.style.border = '1px solid var(--border-light)';
+            trophyElement.style.background = 'var(--secondary-light)';
+            trophyElement.style.boxShadow = 'var(--shadow)';
             trophyElement.style.opacity = '1';
         } else {
-            trophyElement.style.opacity = '0.4';
+            trophyElement.style.border = '1px solid var(--border)';
+            trophyElement.style.background = 'var(--secondary)';
+            trophyElement.style.opacity = '0.35';
             trophyElement.style.filter = 'grayscale(100%)';
         }
         
@@ -3634,10 +3632,6 @@ function renderTrophies() {
         trophyElement.innerHTML = trophy.icon.startsWith('images/')
             ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: ${imgSize}; height: ${imgSize}; object-fit: contain;">`
             : trophy.icon;
-        const tint = document.createElement('span');
-        tint.style.cssText = `position: absolute; inset: 0; border-radius: 50%; pointer-events: none; mix-blend-mode: color; opacity: 0.65; background: ${color};`;
-        trophyElement.appendChild(tint);
-        
         trophyElement.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
             const name = t(trophy.name);
@@ -5201,12 +5195,21 @@ function checkRocketComplete() {
     const scene = document.getElementById('construction-scene');
     if (allConstructed && scene) {
         scene.classList.add('rocket-complete');
-        if (!nextPlanetNotified) {
-            nextPlanetNotified = true;
-            showNextPlanetNotification();
-        }
     } else if (scene) {
         scene.classList.remove('rocket-complete');
+    }
+    checkNextPlanetNotification();
+}
+function checkNextPlanetNotification() {
+    if (nextPlanetNotified) return;
+    const allConstructed = ROCKET_PARTS.every(p => p.purchased && constructedParts.has(p.id));
+    if (!allConstructed) return;
+    const progress = calculatePlanetProgress(maxDistance);
+    const nextPlanet = progress && progress.nextPlanet ? progress.nextPlanet : null;
+    const kmReached = !nextPlanet || calculateDistance() >= nextPlanet.distanceRequired;
+    if (kmReached) {
+        nextPlanetNotified = true;
+        showNextPlanetNotification();
     }
 }
 function showNextPlanetNotification() {
