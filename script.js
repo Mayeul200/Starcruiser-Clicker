@@ -4003,7 +4003,7 @@ function completeContract() {
         contractState.buildingBonuses[c.buildingId] = stacks + 1;
     }
     const mult = getContractBuildingMultiplier(c.buildingId);
-    showToast('\uD83E\uDDF1 ' + tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
+    showToast(tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
     contractState.active = null;
     contractState.offers = [];
     // Contrat termine : le timer repart de zero, prochaine offre dans 2 min.
@@ -4393,10 +4393,12 @@ function renderRevealCards(cards) {
     document.getElementById('cc-reveal-album-btn').style.display = 'none';
     const total = cards.length;
     let revealed = 0;
+    const revealAllBtn = document.getElementById('cc-reveal-all-btn');
     const checkAllRevealed = function () {
         if (revealed >= total) {
             document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
             document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
+            if (revealAllBtn) revealAllBtn.style.display = 'none';
         }
     };
     cards.forEach((card, idx) => {
@@ -4428,6 +4430,8 @@ function revealAllCards() {
     });
     document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
     document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
+    const revealAllBtn = document.getElementById('cc-reveal-all-btn');
+    if (revealAllBtn) revealAllBtn.style.display = 'none';
 }
 
 function renderCardAlbum() {
@@ -4487,6 +4491,12 @@ function isMobileLayout() {
     return window.matchMedia('(max-width: 1024px)').matches;
 }
 
+function closeAllModalsForMobileNav() {
+    document.querySelectorAll('.modal.active').forEach(m => {
+        if (m.classList.contains('post-travel')) return;
+        m.classList.remove('active');
+    });
+}
 function setMobileView(view) {
     mobileActiveView = view;
     const grid = document.querySelector('.main-grid');
@@ -4541,7 +4551,10 @@ function initMobileNav() {
     const nav = document.getElementById('mobile-nav');
     if (!nav) return;
     nav.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => setMobileView(btn.dataset.view));
+        btn.addEventListener('click', () => {
+            closeAllModalsForMobileNav();
+            setMobileView(btn.dataset.view);
+        });
     });
     if (isMobileLayout()) setMobileView(mobileActiveView);
     let resizeTimer = null;

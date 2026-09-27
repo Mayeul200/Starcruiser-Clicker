@@ -1120,9 +1120,9 @@ body {
     transform: translateX(-50%) translateY(100px);
     background: var(--secondary-light);
     color: var(--text);
-    padding: 12px 24px;
+    padding: 16px 31px;
     border-radius: var(--radius);
-    font-size: 1rem;
+    font-size: 1.3rem;
     z-index: 1000;
     opacity: 0;
     transition: all 0.3s;
@@ -1146,9 +1146,9 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    margin-right: 10px;
+    width: 36px;
+    height: 36px;
+    margin-right: 13px;
     vertical-align: middle;
     flex-shrink: 0;
 }
@@ -3803,7 +3803,7 @@ body {
     .cc-reveal-card { width: calc((100% - (var(--card-count, 3) - 1) * 8px) / var(--card-count, 3)); height: auto; }
 
     /* Toast au-dessus de la nav */
-    .toast { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); font-size: 0.9rem; padding: 10px 16px; max-width: 90vw; }
+    .toast { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); font-size: 1.17rem; padding: 13px 21px; max-width: 90vw; }
 
     /* Comètes un peu plus petites */
     .random-bonus { width: 130px; height: 130px; }
