@@ -3688,10 +3688,11 @@ body {
     .multiplier-buttons { gap: 3px; }
     .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
     .buildings-list { gap: 6px; margin-top: 2px; }
-    /* Cases batiments : meme agencement que la version tablette
-       (icone a gauche, infos et bouton d'achat empiles a droite) */
+    /* Cases batiments mobile : l'image occupe AU MINIMUM 25% de la largeur,
+       et tous les textes (nom, possedes, production) tiennent sur UNE SEULE
+       LIGNE au-dessus du bouton acheter. */
     .building-item {
-        grid-template-columns: 72px 1fr;
+        grid-template-columns: minmax(25%, 96px) 1fr;
         grid-template-areas:
             "icon info"
             "icon buy";
@@ -3704,16 +3705,17 @@ body {
         padding: 10px;
         align-items: center;
     }
-    .building-left { grid-area: info; display: flex; flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 2px; min-width: 0; }
-    .building-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .building-left { grid-area: info; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; gap: 8px; min-width: 0; white-space: nowrap; }
+    .building-name { font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; flex: 0 1 auto; }
     .building-ownership { font-size: 0.7rem; flex-shrink: 0; }
+    .building-production { font-size: 0.7rem; flex-shrink: 0; color: var(--accent-light); }
     .building-center { grid-area: icon; align-self: stretch; display: flex; align-items: center; justify-content: center; min-height: 0; }
     .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: 72px; object-fit: contain; filter: none; }
     /* Reequilibre : neutralise les marges negatives desktop */
     .building-item.nozzles .building-image, .building-item.workshop .building-image, .building-item.engines .building-image, .building-item.fuel-tank .building-image, .building-item.cockpit .building-image, .building-item.shield .building-image, .building-item.launch-pad .building-image, .building-item.astronaut .building-image { margin-left: 0; }
     .building-item.nozzles .building-image { height: auto; max-height: 72px; }
     .building-item.rocket-body .building-image, .building-item.boosters-left .building-image, .building-item.boosters-right .building-image { max-height: 72px; margin-left: 0; }
-    .building-right { grid-area: buy; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 6px; min-width: 0; }
+    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
     .building-item button {
         flex: 1;
         width: auto; height: auto; min-height: 44px;
@@ -3847,7 +3849,7 @@ body {
     .medal { top: 30% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: 72px 1fr; grid-template-areas: "icon info" "icon buy"; }
+    .building-item { grid-template-columns: minmax(25%, 96px) 1fr; grid-template-areas: "icon info" "icon buy"; }
     .building-item button { width: auto; min-height: 44px; height: auto; font-size: 0.8rem; }
     .building-image { max-height: 88px; min-width: 0; }
     .building-name { font-size: 0.78rem; }

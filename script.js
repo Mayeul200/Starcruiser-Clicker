@@ -1114,6 +1114,7 @@ function renderBuilding(building) {
             <div class="building-ownership">
                 ${t("Owned:")} ${building.count}
             </div>
+            <div class="building-production">${formatNumber(totalGain)}/s</div>
         </div>
         <div class="building-center">
             ${imageHtml}
@@ -1122,7 +1123,6 @@ function renderBuilding(building) {
             <button onclick="buyBuilding('${building.id}')" ${!isAffordable ? 'disabled' : ''}>
                 ${formatNumber(currentCost)} ${t("Parts")}
             </button>
-            <div class="building-production">${formatNumber(totalGain)}/s</div>
         </div>
     `;
 
