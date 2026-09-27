@@ -25,6 +25,8 @@ const TRANSLATIONS = {
         'Distance max atteinte:': 'Max distance reached:',
         'Distance atteignable:': 'Reachable distance:',
         'Bonus planètes:': 'Planet bonus:',
+        'soit {rate} {unit}/s': 'i.e. {rate} {unit}/s',
+        'requis : {rate} {unit}/s': 'required: {rate} {unit}/s',
         'Vitesse:': 'Speed:',
         'Vitesse de voyage': 'Travel speed',
         'Objectifs:': 'Milestones:',
