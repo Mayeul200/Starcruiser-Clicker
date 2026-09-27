@@ -3791,6 +3791,16 @@ body {
     }
     .galactic-tree { grid-template-columns: 1fr; }
     .galactic-node-desc { min-height: 0; }
+    /* Bouton d'achat des ameliorations galactiques : plus grand en mobile,
+       il occupe la largeur disponible du noeud. */
+    .galactic-node-bottom { display: flex; }
+    .galactic-btn {
+        flex: 1;
+        width: 100%;
+        padding: 12px 10px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
 
 
     /* Collection de cartes */
