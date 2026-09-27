@@ -300,6 +300,7 @@ let totalPartsFromClicks = 0;
 let activatedClickUpgrades = [];
 let unlockedBuildings = new Set();
 let totalGeneratedByBuilding = {};
+let totalGeneratedAtLaunchStart = 0;
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
 let lastRocketPartsUpdate = 0;
@@ -2279,6 +2280,7 @@ function confirmPostTravelReset() {
     activatedClickUpgrades = [];
     buildingUpgrades = {};
     buildingUpgradeCosts = {};
+    totalGeneratedAtLaunchStart = calculateTotalGenerated();
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
     resetContractState();
@@ -3380,6 +3382,11 @@ function calculateTotalGenerated() {
     }
     return total;
 }
+// Cumul des Parts generees depuis le dernier lancement : snapshot du total
+// historique pris au moment du reset de la run (confirmPostTravelReset).
+function calculateLaunchGenerated() {
+    return Math.max(0, calculateTotalGenerated() - totalGeneratedAtLaunchStart);
+}
 
 function getClickPower() {
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
@@ -3590,6 +3597,7 @@ function updateStatsDynamicValues(container) {
     const values = [
         formatNumber(score, true),
         formatNumber(calculateTotalGenerated()),
+        formatNumber(calculateLaunchGenerated()),
         formatNumber(partsPerSecond),
         'x' + getTotalProductionMultiplier().toFixed(2),
         formatNumber(getClickPower()),
@@ -3612,12 +3620,13 @@ function renderStats() {
     const globalStats = [
         { label: t("Parts actuelles"), value: formatNumber(score, true) },
         { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(calculateTotalGenerated()) },
+        { label: t("Parts g\u00e9n\u00e9r\u00e9s pour ce lancement"), value: formatNumber(calculateLaunchGenerated()) },
         { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
         { label: t("Multiplicateur de production"), value: 'x' + getTotalProductionMultiplier().toFixed(2) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
         { label: t("Partie commenc\u00e9e"), value: getGameDuration() },
-        { label: t("Bonus cliqu\u00e9s"), value: clickedBonusesCount }
+        { label: t("Com\u00e8tes D\u00e9truites"), value: clickedBonusesCount }
     ];
 
     globalStats.forEach(stat => {

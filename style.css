@@ -385,9 +385,22 @@ body {
     font-size: 24px;
     cursor: pointer;
     color: white;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-radius: 8px;
+    padding: 4px;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.25);
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 .close-button:hover {
     opacity: 0.8;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.8);
 }
 .modal-body {
     padding: 16px;
@@ -3651,7 +3664,7 @@ body {
     .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
     .buildings-list { gap: 6px; margin-top: 2px; }
     .building-item {
-        grid-template-columns: 88px 1fr 25%;
+        grid-template-columns: 88px 1fr 30%;
         grid-template-areas:
             "icon info buy";
         grid-template-rows: auto;
@@ -3785,7 +3798,7 @@ body {
     .counter { font-size: 1rem; }
     .counter-label { font-size: 0.7rem; }
     /* Boutons de fermeture de modals plus faciles a toucher */
-    .close-button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+    .close-button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.45); border-radius: 8px; padding: 4px; flex-shrink: 0; background: rgba(0, 0, 0, 0.25); }
     /* Boutons langue et params */
     .lang-btn { min-height: 48px; }
     /* Titres de modals : cedent la place au bouton fermer, jamais de debordement */
@@ -3804,7 +3817,7 @@ body {
     .medal { width: 120px; height: 120px; top: 30% !important; }
     .rocket-parts-shop { width: 128px; }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: 80px 1fr 25%; }
+    .building-item { grid-template-columns: 80px 1fr 30%; }
     .building-item button { width: 100%; min-height: 68px; height: auto; font-size: 0.8rem; }
     .building-image { max-height: 88px; min-width: 0; }
     .building-name { font-size: 0.78rem; }
