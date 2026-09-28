@@ -2947,9 +2947,7 @@ body {
     position: absolute;
     top: 48px;
     left: 50%;
-    /* Recentre le HUD sur l'espace libre a droite de la boutique de pieces
-       (~24cqw a gauche) : jamais de chevauchement, quelle que soit la largeur. */
-    transform: translateX(calc(-50% + 12cqw));
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -2976,7 +2974,7 @@ body {
     font-size: 1.1rem;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    flex: 1 1 0;
+    flex: 0 1 auto;
     min-width: 0;
     text-align: center;
     white-space: nowrap;
@@ -2988,6 +2986,22 @@ body {
     color: #ffd700;
     display: inline-block;
     min-width: 1ch;
+}
+
+/* Tres petites largeurs (<1150px) : une seule rangee ne peut pas tenir entre
+   la boutique de pieces et le bord du panneau central sans rogner "Parts".
+   On empile les deux compteurs et on borne la boite a l'espace libre reel. */
+@media (max-width: 1150px) {
+    .counters {
+        flex-direction: column;
+        gap: 2px;
+        height: auto;
+        padding: 4px 10px;
+        width: min(clamp(min(280px, 52cqw), 25vw, 380px), calc(100cqw - 270px));
+    }
+    .counter {
+        padding: 0 2px;
+    }
 }
 /* Barre des upgrades */
 .upgrades-bar {
