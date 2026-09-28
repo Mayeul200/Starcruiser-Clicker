@@ -533,7 +533,7 @@ function resetMultipliers() {
 }
 
 let toastHideTimer = null;
-const TOAST_MAX_STACK = 4;
+const TOAST_MAX_STACK = 3;
 function getToastContainer() {
     let container = document.getElementById('toast-container');
     if (!container) {
