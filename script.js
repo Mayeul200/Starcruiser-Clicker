@@ -2453,8 +2453,11 @@ function buyGalacticUpgrade(upgradeId) {
 // Credit la production accumulée pendant l'absence, plafonnée au palier débloqué.
 // ============================================
 
+// Plafond hors-ligne de base, gratuit des le debut du jeu (10 minutes).
+// Les ameliorations galactiques de la branche hors-ligne augmentent ce plafond.
+const BASE_OFFLINE_CAP_HOURS = 10 / 60;
 function getOfflineCapHours() {
-    let hours = 0;
+    let hours = BASE_OFFLINE_CAP_HOURS;
     for (const up of GALACTIC_UPGRADES) {
         if (up.branch === 'offline' && getGalacticUpgradeLevel(up.id) > 0) {
             hours = Math.max(hours, up.effectPerLevel);
@@ -4661,17 +4664,17 @@ const TUTORIAL_STEPS = [
     {
         img: 'images/parts.png',
         titleKey: 'Les Parts',
-        textKey: 'Les Parts sont ta ressource principale.\nClique sur la fusée pour en gagner, puis investis-les dans des bâtiments et des améliorations.',
+        textKey: 'Les Parts sont ta ressource principale.\nClique sur la Pièce pour en gagner, puis investis-les dans des bâtiments et des améliorations.',
     },
     {
         img: 'images/buildings/workshop.png',
         titleKey: 'Les Bâtiments',
-        textKey: 'Les bâtiments produisent des Parts automatiquement, même quand tu es absent.\nChaque bâtiment débloqué est plus puissant que le précédent. Achète-les dans le panneau Bâtiments !',
+        textKey: 'Les bâtiments produisent des Parts automatiquement.\nTu gagnes jusqu\'a 10 minutes de production hors-ligne gratuite ; pour plus, regarde les améliorations galactiques.\nAchète-les dans le panneau Bâtiments !',
     },
     {
         img: 'images/rocket/Fus\u00e9e3.png',
         titleKey: 'La Fusée',
-        textKey: 'Achète les 10 pièces de fusée pour compléter ton vaisseau.\nChaque pièce augmente aussi la distance de ton prochain lancement.',
+        textKey: 'Achète les 10 pièces de fusée pour compléter ton vaisseau.\nUne fois complet, tu pourras lancer ta fusée vers de nouvelles planètes !',
     },
     {
         img: 'images/planets/moon.png',
