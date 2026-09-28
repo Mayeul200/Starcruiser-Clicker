@@ -587,7 +587,26 @@ function dismissToast(toast) {
 }
 // Les toasts sont en pointer-events: none : ils ne doivent jamais
 // intercepter les gestes (scroll tactile) derriere eux.
-// Cette seconde de garde-fou les supprime s'ils restent coinces au DOM.
+// Un tap (sans glissement) sur une notification la ferme quand meme :
+// on teste geometriquement la position du doigt/curseur contre les toasts.
+let toastTapCandidate = null;
+document.addEventListener('pointerdown', (e) => {
+    toastTapCandidate = { x: e.clientX, y: e.clientY, id: e.pointerId };
+});
+document.addEventListener('pointerup', (e) => {
+    const start = toastTapCandidate;
+    toastTapCandidate = null;
+    if (!start || start.id !== e.pointerId) return;
+    if (Math.abs(e.clientX - start.x) > 10 || Math.abs(e.clientY - start.y) > 10) return;
+    const toasts = document.querySelectorAll('.toast.active');
+    for (const toast of toasts) {
+        const r = toast.getBoundingClientRect();
+        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+            dismissToast(toast);
+            return;
+        }
+    }
+});
 
 // ============================================
 // SAVE / LOAD
@@ -994,9 +1013,7 @@ function buyBuilding(buildingId) {
         updateAllBuildingButtons();
         renderUpgrades();
         checkBuildingUnlocks();
-        const maxText = buyMultiplier === 'max' ? ' (Max)' : '';
         hideTooltip();
-        showToast(`\u2705 +${buildingsToBuy} ${t(building.name)}${maxText}`);
         checkTrophies();
     } else {
         hideTooltip();
