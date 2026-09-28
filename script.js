@@ -3490,33 +3490,30 @@ function spawnFallingCoin(event) {
 // PLUIE DE PIECES (panneau central)
 // ============================================
 // Densite liee aux Parts/s : 1 piece / 10 s a 1 Parts/s,
-// jusqu'a 10 pieces / s (atteint vers 100 000 Parts/s).
+// 100 pieces / s a 1 000 000 Parts/s (progression racine, sans plafond).
 const partsRain = {
     container: null,
-    lastSpawn: 0,
-    spawnedThisSecond: 0,
-    secondStart: 0
+    spawnDebt: 0,
+    lastTick: 0
 };
 function getPartsRainRate() {
     if (partsPerSecond <= 0) return 0;
-    return Math.min(0.1 * Math.sqrt(partsPerSecond), 10);
+    return 0.1 * Math.sqrt(partsPerSecond);
 }
 function tickPartsRain(now) {
     if (!partsRain.container) partsRain.container = document.getElementById('parts-rain');
     if (!partsRain.container) return;
     const rate = getPartsRainRate();
-    if (rate <= 0) return;
-    if (!partsRain.secondStart) partsRain.secondStart = now;
-    if (now - partsRain.secondStart >= 1000) {
-        partsRain.secondStart = now;
-        partsRain.spawnedThisSecond = 0;
+    if (rate <= 0) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
+    if (!partsRain.lastTick) partsRain.lastTick = now;
+    // Accumulateur : autorise plusieurs spawns par tick aux debits eleves,
+    // tout en gardant le rythme exact aux faibles debits.
+    partsRain.spawnDebt += (rate * (now - partsRain.lastTick)) / 1000;
+    partsRain.lastTick = now;
+    while (partsRain.spawnDebt >= 1) {
+        partsRain.spawnDebt -= 1;
+        spawnRainPart(partsRain.container);
     }
-    const interval = 1000 / rate;
-    if (now - partsRain.lastSpawn < interval) return;
-    if (partsRain.spawnedThisSecond >= Math.ceil(rate)) return;
-    partsRain.lastSpawn = now;
-    partsRain.spawnedThisSecond++;
-    spawnRainPart(partsRain.container);
 }
 function spawnRainPart(container) {
     const part = document.createElement('div');

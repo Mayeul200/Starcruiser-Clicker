@@ -547,6 +547,7 @@ body {
     overflow: hidden;
     pointer-events: none;
     z-index: 4;
+    perspective: 900px;
 }
 .parts-rain .rain-part {
     position: absolute;
@@ -568,10 +569,10 @@ body {
 }
 @keyframes rain-fall {
     from {
-        transform: translate(0, 0) rotate(0deg);
+        transform: translate(0, 0) rotateX(0deg);
     }
     to {
-        transform: translate(var(--rain-drift, 0px), 110vh) rotate(var(--rain-spin, 360deg));
+        transform: translate(var(--rain-drift, 0px), 110vh) rotateX(var(--rain-spin, 360deg));
     }
 }
 @keyframes pulse {
