@@ -3,6 +3,9 @@
    Version 2.0.0
    ============================================ */
 :root {
+    /* Largeur maximale du jeu : sur ultrawide, la grille est bornee et
+       centree ; les modales plein panneau utilisent la meme borne. */
+    --game-max-width: 1720px;
     --primary: #1e3a8a;
     --primary-dark: #1e40af;
     --primary-light: #3b82f6;
@@ -77,9 +80,20 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     padding: 0 16px;
     z-index: 1000;
     box-shadow: var(--shadow);
+}
+/* Sur ultrawide, le contenu de la barre reste aligne au jeu (borne et centre),
+   pas colle aux bords physiques de l'ecran. */
+.top-bar-logo, .top-bar-controls {
+    min-width: 0;
+}
+.top-bar-controls .stardust-display {
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .top-bar-logo {
     display: flex;
@@ -475,12 +489,20 @@ body {
 /* MAIN GRID */
 .main-grid {
     display: grid;
-    grid-template-columns: 25% 50% 25%;
+    /* Colonnes fluides avec minimums : sur ecran etroit les panneaux lat eraux
+       ne descendent jamais sous 17.5rem ; sur ultrawide, max-width (ci-dessous)
+       borne l'ensemble pour garder les proportions du jeu. */
+    grid-template-columns: minmax(17.5rem, 25%) minmax(0, 1fr) minmax(17.5rem, 25%);
     height: calc(100vh - var(--top-height));
+    height: calc(100dvh - var(--top-height));
     position: fixed;
     top: var(--top-height);
     left: 0;
     right: 0;
+    /* Ultrawide : le jeu garde sa composition (max ~1720px), le reste est
+       un fond tampon plutot qu'un etirement de l'interface. */
+    max-width: var(--game-max-width);
+    margin: 0 auto;
     gap: 1px;
     background: var(--border);
     overflow: visible;
@@ -2801,7 +2823,7 @@ body {
     top: var(--top-height);
     left: 0;
     bottom: 0;
-    width: clamp(140px, 24cqw, 185px);
+    width: clamp(132px, 24cqw, 185px);
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -2930,11 +2952,13 @@ body {
     position: absolute;
     top: 48px;
     left: 50%;
-    transform: translateX(-50%);
+    /* Recentre le HUD sur l'espace libre a droite de la boutique de pieces
+       (~24cqw a gauche) : jamais de chevauchement, quelle que soit la largeur. */
+    transform: translateX(calc(-50% + 12cqw));
     display: flex;
     align-items: center;
     gap: 8px;
-    max-width: 52cqw;
+    max-width: calc(100cqw - 28cqw);
     z-index: 100;
 }
 .counters {
@@ -2942,7 +2966,9 @@ body {
     justify-content: center;
     align-items: center;
     gap: clamp(8px, 1.2vw, 24px);
-    width: clamp(280px, 25vw, 380px);
+    /* Largeur fluide bornee : le min depend du panneau central (cqw) pour
+       que le compteur se comprime plutot que chevaucher la boutique. */
+    width: clamp(min(280px, 52cqw), 25vw, 380px);
     height: clamp(42px, 4.5vh, 48px);
     flex: 0 1 auto;
     min-width: 0;
@@ -3016,12 +3042,14 @@ body {
 }
 #card-collection-modal.modal {
     width: calc(55% + 20px);
-    max-width: calc(55% + 20px);
+    max-width: min(calc(55% + 20px), 900px);
     top: var(--top-height);
     left: 50%;
     transform: translateX(-50%);
     height: calc(100vh - var(--top-height));
+    height: calc(100dvh - var(--top-height));
     max-height: calc(100vh - var(--top-height));
+    max-height: calc(100dvh - var(--top-height));
 }
 .card-collection-modal {
     width: 100%;
@@ -3349,12 +3377,14 @@ body {
 /* ATELIER GALACTIQUE - Arbre d'améliorations */
 #galactic-shop-modal.modal {
     width: calc(55% + 20px);
-    max-width: calc(55% + 20px);
+    max-width: min(calc(55% + 20px), 900px);
     top: var(--top-height);
     left: 50%;
     transform: translateX(-50%);
     height: calc(100vh - var(--top-height));
+    height: calc(100dvh - var(--top-height));
     max-height: calc(100vh - var(--top-height));
+    max-height: calc(100dvh - var(--top-height));
 }
 #galactic-shop-modal .modal-content {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
@@ -3681,7 +3711,8 @@ body {
     .control-button { width: 38px; height: 38px; font-size: 16px; }
 
     /* --- Compteurs --- */
-    .hud-top-row { top: 56px; flex-wrap: nowrap; max-width: calc(100% - 24px); }
+    /* Mobile : la boutique est en bas, le HUD revient centre normalement. */
+    .hud-top-row { top: 56px; flex-wrap: nowrap; max-width: calc(100% - 24px); transform: translateX(-50%); }
     .counters { width: clamp(280px, 44vw, 420px); gap: clamp(6px, 0.8vw, 10px); padding: 6px clamp(8px, 1vw, 12px); }
     .counter { font-size: 0.95rem; min-width: 0; }
     .bonus-timer { max-width: 34vw; }
@@ -4017,8 +4048,9 @@ body {
     .building-left { overflow: visible; }
 }
 
-/* Desktop : nav mobile masquée (souris ou écran large) */
-@media (min-width: 1025px), (hover: hover) and (pointer: fine) {
+/* Desktop : nav mobile masquée sauf sur écrans tactiles étroits.
+   Pointeur absent (headless) ou fin = layout PC. */
+@media not all and ((max-width: 1024px) and (pointer: coarse)) {
     .mobile-nav { display: none; }
 }
 
