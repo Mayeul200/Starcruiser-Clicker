@@ -438,6 +438,9 @@ body {
     margin-bottom: 8px;
     transition: all 0.2s;
 }
+/* Reglages : boutons de langue en grille fixe — aucun reaffichage quand
+   la langue change (les libelles FR/EN/ES... ont la meme largeur). */
+#settings-modal .language-selector .modal-button { margin-bottom: 0; white-space: nowrap; }
 .modal-button:hover {
     background: var(--primary-light);
     box-shadow: var(--glow);
@@ -655,14 +658,14 @@ body {
 .building-item.nozzles .building-image {
     height: 50%;
     width: auto;
-    max-height: 56px;
+    max-height: 3.5rem;
 }
 
 .building-item.workshop .building-image {
     height: auto;
     width: auto;
     max-width: 100%;
-    max-height: 76px;
+    max-height: 4.75rem;
     margin: 0 auto;
 }
 
@@ -672,7 +675,7 @@ body {
     transform: rotate(65deg);
     transform-origin: center;
     height: 100%;
-    max-height: 84px;
+    max-height: 5.25rem;
     opacity: 0.7;
     margin-left: -5px;
 }
@@ -691,6 +694,25 @@ body {
 .building-item > .building-left,
 .building-item > .building-center,
 .building-item > .building-right { min-width: 0; }
+/* Nom trop long : il passe en superposition sur l'image avec un contour
+   noir pour rester lisible quelle que soit la largeur de la case. */
+.building-item.text-over .building-name {
+    position: absolute;
+    left: 50%;
+    bottom: 0.125rem;
+    transform: translateX(-50%);
+    max-width: 92%;
+    white-space: nowrap;
+    text-overflow: clip;
+    color: #fff;
+    text-shadow:
+        -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000,
+        -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000,
+        0 0 4px #000, 0 0 6px rgba(0,0,0,0.9);
+    z-index: 4;
+    pointer-events: none;
+}
+.building-item.text-over .building-center { position: relative; }
 .building-production {
     font-size: 1rem;
     color: var(--accent-light);
@@ -1169,9 +1191,9 @@ body {
     pointer-events: auto;
     background: var(--secondary-light);
     color: var(--text);
-    padding: clamp(10px, 1.6vh, 16px) clamp(18px, 2vw, 31px);
+    padding: clamp(6px, 1vh, 10px) clamp(12px, 1.4vw, 20px);
     border-radius: var(--radius);
-    font-size: clamp(1.05rem, 1.4vw + 0.4rem, 1.3rem);
+    font-size: clamp(0.85rem, 1vw + 0.35rem, 1.05rem);
     z-index: 11000;
     opacity: 0;
     transform: translateY(20px);
@@ -3876,8 +3898,8 @@ body {
 
     /* Toast au-dessus de la nav */
     #toast-container { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
-    .toast { font-size: clamp(0.9rem, 1.6vw + 0.55rem, 1.25rem); padding: clamp(8px, 1.2vw, 12px) clamp(12px, 2vw, 20px); max-width: 94vw; display: flex; align-items: center; text-align: left; }
-    .toast .toast-icon { width: clamp(24px, 3.5vw, 34px); height: clamp(24px, 3.5vw, 34px); margin-right: 8px; }
+    .toast { font-size: clamp(0.8rem, 1.3vw + 0.45rem, 1.05rem); padding: clamp(6px, 1vw, 9px) clamp(10px, 1.6vw, 16px); max-width: 94vw; display: flex; align-items: center; text-align: left; }
+    .toast .toast-icon { width: clamp(18px, 2.6vw, 26px); height: clamp(18px, 2.6vw, 26px); margin-right: 8px; }
     .toast-text {
         display: -webkit-box;
         -webkit-line-clamp: 2;
