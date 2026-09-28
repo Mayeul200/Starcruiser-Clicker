@@ -737,7 +737,7 @@ body {
     color: white;
     border: none;
     border-radius: var(--radius);
-    padding: 0.9cqw 2.7cqw;
+    padding: 1.9cqw 2.7cqw;
     font-size: 3.58cqw;
     cursor: pointer;
     transition: all 0.2s;
