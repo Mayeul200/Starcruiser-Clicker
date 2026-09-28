@@ -1200,7 +1200,7 @@ body {
 }
 .toast {
     position: relative;
-    pointer-events: auto;
+    pointer-events: none;
     background: var(--secondary-light);
     color: var(--text);
     padding: clamp(6px, 1vh, 10px) clamp(12px, 1.4vw, 20px);

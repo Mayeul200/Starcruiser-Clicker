@@ -585,11 +585,9 @@ function dismissToast(toast) {
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
     setTimeout(() => { if (toast.isConnected) toast.remove(); }, 400);
 }
-// Un clic sur la notification la fait disparaitre immediatement.
-document.addEventListener('click', (e) => {
-    const toast = e.target.closest('.toast');
-    if (toast) dismissToast(toast);
-});
+// Les toasts sont en pointer-events: none : ils ne doivent jamais
+// intercepter les gestes (scroll tactile) derriere eux.
+// Cette seconde de garde-fou les supprime s'ils restent coinces au DOM.
 
 // ============================================
 // SAVE / LOAD
