@@ -2797,8 +2797,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 14px 10px;
+    gap: 0.5rem;
+    padding: 0.625rem 0.625rem;
     background: var(--secondary-light);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -2830,12 +2830,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
+    width: 2.75rem;
+    height: 2.75rem;
 }
 .rocket-part-icon {
-    width: 56px;
-    height: 56px;
+    width: 2.5rem;
+    height: 2.5rem;
     object-fit: contain;
     opacity: 0.85;
     pointer-events: none;
@@ -2843,8 +2843,8 @@ body {
 }
 .rocket-part-icon-placeholder {
     display: block;
-    width: 56px;
-    height: 56px;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: var(--radius);
     background: var(--secondary);
 }
@@ -2852,7 +2852,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 0.1875rem;
     text-align: center;
 }
 .rocket-part-name {
@@ -2866,7 +2866,7 @@ body {
 }
 .rocket-part-btn {
     width: 100%;
-    padding: 8px 12px;
+    padding: 0.375rem 0.625rem;
     background: var(--primary);
     color: white;
     border: none;

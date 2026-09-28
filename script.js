@@ -3225,10 +3225,13 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     missile.style.top = (launchY - mH / 2) + 'px';
     missile.style.transform = `rotate(${angle}rad) scale(${scale})`;
     // Vol rapide mais lisible : borné entre 240 et 600 ms selon la distance.
+    // Animation en transform (compositee GPU) : left/top forcerait le layout
+    // a chaque frame et ferait saccader le vol.
+    const dx = tx - launchXadj;
+    const dy = ty - launchY;
     requestAnimationFrame(() => {
-        missile.style.transition = `left ${flightMs}ms linear, top ${flightMs}ms linear`;
-        missile.style.left = (tx - mW / 2) + 'px';
-        missile.style.top = (ty - mH / 2) + 'px';
+        missile.style.transition = `transform ${flightMs}ms linear`;
+        missile.style.transform = `translate(${dx}px, ${dy}px) rotate(${angle}rad) scale(${scale})`;
     });
     setTimeout(() => {
         if (!missile.isConnected) return;
