@@ -4290,8 +4290,9 @@ body {
     width: min(92vw, 440px);
     /* Taille fixe : la modale ne change jamais de hauteur d'une etape a
        l'autre, quel que soit le texte ; l'image et le texte se placent
-       dans l'espace disponible. */
-    height: 400px;
+       dans l'espace disponible. 460px : la page 3 (bâtiments), la plus
+       verbeuse, tient sans scroll. */
+    height: 460px;
     max-height: calc(100dvh - 40px);
     display: flex;
     flex-direction: column;
