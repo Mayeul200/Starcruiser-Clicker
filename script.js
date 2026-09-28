@@ -1504,13 +1504,10 @@ function showLaunchResults(distance) {
     // Protéger contre NaN et undefined
     const safeDistance = isNaN(distance) || distance === undefined ? 0 : distance;
     const safeMultiplier = isNaN(prestigeMultiplier) || prestigeMultiplier === undefined ? 1 : prestigeMultiplier;
-    // Afficher le multiplicateur REELLEMENT applique (production + distance),
-    // pas la valeur brute du prestige : boost = 1 + (prestige - 1) / 2.
-    const appliedMultiplier = 1 + (safeMultiplier - 1) / 2;
     const safeRockets = rocketsLaunched === undefined ? 0 : rocketsLaunched;
     
     distanceElement.textContent = formatNumber(safeDistance) + ' km';
-    multiplierElement.textContent = 'x' + appliedMultiplier.toFixed(2);
+    multiplierElement.textContent = 'x' + safeMultiplier.toFixed(2);
     rocketsElement.textContent = safeRockets;
     const stardustEl = document.getElementById('launch-results-stardust');
     if (stardustEl) {
