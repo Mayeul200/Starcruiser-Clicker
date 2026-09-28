@@ -3522,8 +3522,6 @@ function spawnRainPart(container) {
     // Tailles variees : de minuscule (5px) a petite (22px), petit plus frequent.
     const size = 5 + Math.random() * Math.random() * 17;
     part.style.setProperty('--rain-size', size.toFixed(1) + 'px');
-    // Les plus petites sont un peu plus transparentes.
-    part.style.setProperty('--rain-opacity', (0.3 + Math.min(size / 22, 1) * 0.35).toFixed(2));
     // Deviation laterale : trajectoire en diagonale, jamais parfaitement droite.
     const drift = (Math.random() - 0.5) * 160;
     part.style.setProperty('--rain-drift', drift.toFixed(0) + 'px');

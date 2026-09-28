@@ -563,7 +563,7 @@ body {
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
-    opacity: var(--rain-opacity, 0.5);
+    opacity: 1;
     animation: rain-fall linear forwards;
     will-change: transform;
 }
