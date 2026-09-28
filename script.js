@@ -3469,6 +3469,52 @@ function spawnFallingCoin(event) {
 // MAIN GAME LOOP
 // ============================================
 
+// ============================================
+// PLUIE DE PIECES (panneau central)
+// ============================================
+// Densite liee aux Parts/s : 1 piece / 10 s a 1 Parts/s,
+// jusqu'a 10 pieces / s (atteint vers 100 000 Parts/s).
+const partsRain = {
+    container: null,
+    lastSpawn: 0,
+    spawnedThisSecond: 0,
+    secondStart: 0
+};
+function getPartsRainRate() {
+    if (partsPerSecond <= 0) return 0;
+    return Math.min(0.1 * Math.sqrt(partsPerSecond), 10);
+}
+function tickPartsRain(now) {
+    if (!partsRain.container) partsRain.container = document.getElementById('parts-rain');
+    if (!partsRain.container) return;
+    const rate = getPartsRainRate();
+    if (rate <= 0) return;
+    if (!partsRain.secondStart) partsRain.secondStart = now;
+    if (now - partsRain.secondStart >= 1000) {
+        partsRain.secondStart = now;
+        partsRain.spawnedThisSecond = 0;
+    }
+    const interval = 1000 / rate;
+    if (now - partsRain.lastSpawn < interval) return;
+    if (partsRain.spawnedThisSecond >= Math.ceil(rate)) return;
+    partsRain.lastSpawn = now;
+    partsRain.spawnedThisSecond++;
+    spawnRainPart(partsRain.container);
+}
+function spawnRainPart(container) {
+    const part = document.createElement('div');
+    part.className = 'rain-part';
+    part.style.left = (Math.random() * 92) + '%';
+    const size = 12 + Math.random() * 12;
+    part.style.width = size + 'px';
+    part.style.height = size + 'px';
+    part.style.setProperty('--rain-color', UPGRADE_COLORS[Math.floor(Math.random() * UPGRADE_COLORS.length)]);
+    const duration = 5 + Math.random() * 4;
+    part.style.animationDuration = duration + 's';
+    part.addEventListener('animationend', () => part.remove());
+    container.appendChild(part);
+}
+
 function gameLoop() {
     let totalGain = 0;
 
@@ -3478,6 +3524,7 @@ function gameLoop() {
     });
 
     partsPerSecond = totalGain;
+    tickPartsRain(Date.now());
     const now = Date.now();
     const dtSeconds = (now - lastGameTick) / 1000;
     lastGameTick = now;

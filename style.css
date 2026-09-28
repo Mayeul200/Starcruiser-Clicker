@@ -538,6 +538,37 @@ body {
     z-index: 1;
     container-type: inline-size;
 }
+/* Pluie de pieces en arriere-plan du panneau central */
+.parts-rain {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+.parts-rain .rain-part {
+    position: absolute;
+    top: -40px;
+    width: 18px;
+    height: 18px;
+    background-color: var(--rain-color, #66b2ff);
+    -webkit-mask-image: url('images/parts.png');
+    mask-image: url('images/parts.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    opacity: 0.5;
+    filter: drop-shadow(0 0 4px var(--rain-color, #66b2ff));
+    animation: rain-fall linear forwards;
+    will-change: transform;
+}
+@keyframes rain-fall {
+    from { transform: translateY(0) rotate(0deg); }
+    to { transform: translateY(110vh) rotate(360deg); }
+}
 @keyframes pulse {
     0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
     50% { box-shadow: 0 0 20px rgba(30, 58, 138, 0.8), var(--shadow-lg); }
