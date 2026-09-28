@@ -551,9 +551,9 @@ body {
 .parts-rain .rain-part {
     position: absolute;
     top: -40px;
-    width: 18px;
-    height: 18px;
-    background-color: var(--rain-color, #66b2ff);
+    width: var(--rain-size, 18px);
+    height: var(--rain-size, 18px);
+    background-color: #cbd5e1;
     -webkit-mask-image: url('images/parts.png');
     mask-image: url('images/parts.png');
     -webkit-mask-size: contain;
@@ -562,14 +562,17 @@ body {
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
-    opacity: 0.5;
-    filter: drop-shadow(0 0 4px var(--rain-color, #66b2ff));
+    opacity: var(--rain-opacity, 0.5);
     animation: rain-fall linear forwards;
     will-change: transform;
 }
 @keyframes rain-fall {
-    from { transform: translateY(0) rotate(0deg); }
-    to { transform: translateY(110vh) rotate(360deg); }
+    from {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    to {
+        transform: translate(var(--rain-drift, 0px), 110vh) rotate(var(--rain-spin, 360deg));
+    }
 }
 @keyframes pulse {
     0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }

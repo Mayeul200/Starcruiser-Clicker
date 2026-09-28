@@ -3521,11 +3521,18 @@ function tickPartsRain(now) {
 function spawnRainPart(container) {
     const part = document.createElement('div');
     part.className = 'rain-part';
-    part.style.left = (Math.random() * 92) + '%';
-    const size = 12 + Math.random() * 12;
-    part.style.width = size + 'px';
-    part.style.height = size + 'px';
-    part.style.setProperty('--rain-color', UPGRADE_COLORS[Math.floor(Math.random() * UPGRADE_COLORS.length)]);
+    part.style.left = (Math.random() * 94) + '%';
+    // Tailles variees : de minuscule (5px) a petite (22px), petit plus frequent.
+    const size = 5 + Math.random() * Math.random() * 17;
+    part.style.setProperty('--rain-size', size.toFixed(1) + 'px');
+    // Les plus petites sont un peu plus transparentes.
+    part.style.setProperty('--rain-opacity', (0.3 + Math.min(size / 22, 1) * 0.35).toFixed(2));
+    // Deviation laterale : trajectoire en diagonale, jamais parfaitement droite.
+    const drift = (Math.random() - 0.5) * 160;
+    part.style.setProperty('--rain-drift', drift.toFixed(0) + 'px');
+    // Rotation sur elle-meme : vitesse et sens aleatoires.
+    const spin = (Math.random() < 0.5 ? -1 : 1) * (180 + Math.random() * 540);
+    part.style.setProperty('--rain-spin', spin.toFixed(0) + 'deg');
     const duration = 5 + Math.random() * 4;
     part.style.animationDuration = duration + 's';
     part.addEventListener('animationend', () => part.remove());
