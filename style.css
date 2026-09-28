@@ -1139,9 +1139,9 @@ body {
     pointer-events: auto;
     background: var(--secondary-light);
     color: var(--text);
-    padding: 16px 31px;
+    padding: clamp(10px, 1.6vh, 16px) clamp(18px, 2vw, 31px);
     border-radius: var(--radius);
-    font-size: 1.3rem;
+    font-size: clamp(1.05rem, 1.4vw + 0.4rem, 1.3rem);
     z-index: 11000;
     opacity: 0;
     transform: translateY(20px);
@@ -2040,7 +2040,7 @@ body {
 }
 /* Mini Space Map */
 .mini-space-map {
-    height: 158px;
+    height: clamp(120px, 22vh, 158px);
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
     border: 1px solid var(--border);
@@ -2758,7 +2758,7 @@ body {
     top: var(--top-height);
     left: 0;
     bottom: 0;
-    width: 190px;
+    width: clamp(160px, 14vw, 190px);
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -2891,12 +2891,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 24px;
-    width: 320px;
-    height: 48px;
+    gap: clamp(8px, 1.2vw, 24px);
+    width: clamp(280px, 25vw, 380px);
+    height: clamp(42px, 4.5vh, 48px);
     z-index: 100;
     background: rgba(0, 0, 0, 0.5);
-    padding: 8px 16px;
+    padding: 6px clamp(8px, 1vw, 16px);
     border-radius: 10px;
 }
 .counter {
@@ -3921,7 +3921,7 @@ body {
     .building-image { max-height: 88px; min-width: 0; }
     .building-name { font-size: 0.95rem; }
     .multiplier-btn { padding: 5px 10px; }
-    .counters { width: 60vw; }
+    .counters { width: clamp(260px, 42vw, 340px); }
     .counter { font-size: 0.85rem; }
 }
 /* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
