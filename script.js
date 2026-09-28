@@ -936,10 +936,8 @@ function setBuyMultiplier(multiplier) {
     
     if (multiplier === 'max') {
         document.getElementById('multiplier-max').classList.add('active');
-        showToast(t("Multiplicateur:") + " Max");
     } else {
         document.getElementById(`multiplier-x${multiplier}`).classList.add('active');
-        showToast(t("Multiplicateur:") + ` x${multiplier}`);
     }
     
     updateAllBuildingButtons();
@@ -1136,6 +1134,8 @@ function checkBuildingUnlocks() {
     if (needsRerender) {
         renderBuildings();
     }
+    renderCollectionCardStatus();
+    renderContractsCardStatus();
 }
 
 function renderBuildings() {
@@ -3964,7 +3964,11 @@ let contractState = {
     unlockedSeen: false
 };
 
-const CONTRACT_UNLOCK_BUILDING_TYPES = 3;
+const CONTRACT_UNLOCK_BUILDING_TYPES = 4;
+const CARD_COLLECTION_UNLOCK_BUILDING_TYPES = 2;
+function areCardsUnlocked() {
+    return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES;
+}
 function areContractsUnlocked() {
     return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES;
 }
@@ -4128,6 +4132,19 @@ function tickContracts() {
         renderContracts();
     }
     renderContractsCardStatus();
+    renderCollectionCardStatus();
+}
+
+function renderCollectionCardStatus() {
+    const statusEl = document.getElementById('collection-card-status');
+    if (!statusEl) return;
+    if (!areCardsUnlocked()) {
+        statusEl.className = 'game-status visible';
+        statusEl.textContent = '\uD83D\uDD12 ' + tf('{count} batiments requis', { count: CARD_COLLECTION_UNLOCK_BUILDING_TYPES });
+        return;
+    }
+    statusEl.className = 'game-status';
+    statusEl.textContent = '';
 }
 
 function renderContractsCardStatus() {
@@ -4136,7 +4153,7 @@ function renderContractsCardStatus() {
     const now = Date.now();
     if (!areContractsUnlocked()) {
         statusEl.className = 'game-status visible';
-        statusEl.textContent = '\uD83D\uDD12 ' + t('3 batiments requis');
+        statusEl.textContent = '\uD83D\uDD12 ' + tf('{count} batiments requis', { count: CONTRACT_UNLOCK_BUILDING_TYPES });
         return;
     }
     if (contractState.active) {
@@ -4331,6 +4348,10 @@ let galacticUpgrades = {};
 let cardCollection = {};
 
 function openCardCollection() {
+    if (!areCardsUnlocked()) {
+        showToast('\uD83D\uDD12 ' + tf('Debloque {count} types de batiments pour la collection', { count: CARD_COLLECTION_UNLOCK_BUILDING_TYPES }));
+        return;
+    }
     showExclusiveModal('card-collection-modal', () => {
         updateCardCollectionDisplay();
         showCardShop();
