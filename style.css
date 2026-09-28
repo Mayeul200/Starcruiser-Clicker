@@ -360,7 +360,14 @@ body {
     border: 1px solid var(--border-light);
 }
 .modal.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+}
+.modal.active > .modal-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
 }
 .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -422,7 +429,8 @@ body {
 .modal-body {
     padding: 16px;
     overflow-y: auto;
-    max-height: calc(80vh - 60px);
+    flex: 1;
+    min-height: 0;
     background: var(--bg-panel);
     color: var(--text);
 }
@@ -504,6 +512,7 @@ body {
     height: 100%;
     position: relative;
     z-index: 1;
+    container-type: inline-size;
 }
 @keyframes pulse {
     0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
@@ -515,10 +524,8 @@ body {
     text-shadow: var(--glow);
 }
 .bonus-timer {
-    position: absolute;
-    top: 56px;
-    left: calc(50% + 160px + 12px);
-    z-index: 100;
+    position: static;
+    flex: 0 0 auto;
     font-size: 1rem;
     color: var(--accent-light);
     font-weight: 600;
@@ -527,6 +534,10 @@ body {
     border-radius: var(--radius);
     display: none;
     border: 1px solid var(--accent);
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 /* RIGHT PANEL */
 .right-panel {
@@ -694,25 +705,6 @@ body {
 .building-item > .building-left,
 .building-item > .building-center,
 .building-item > .building-right { min-width: 0; }
-/* Nom trop long : il passe en superposition sur l'image avec un contour
-   noir pour rester lisible quelle que soit la largeur de la case. */
-.building-item.text-over .building-name {
-    position: absolute;
-    left: 50%;
-    bottom: 0.125rem;
-    transform: translateX(-50%);
-    max-width: 92%;
-    white-space: nowrap;
-    text-overflow: clip;
-    color: #fff;
-    text-shadow:
-        -1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000,
-        -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000,
-        0 0 4px #000, 0 0 6px rgba(0,0,0,0.9);
-    z-index: 4;
-    pointer-events: none;
-}
-.building-item.text-over .building-center { position: relative; }
 .building-production {
     font-size: 1rem;
     color: var(--accent-light);
@@ -2809,7 +2801,7 @@ body {
     top: var(--top-height);
     left: 0;
     bottom: 0;
-    width: clamp(160px, 14vw, 190px);
+    width: clamp(140px, 24cqw, 185px);
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -2934,18 +2926,26 @@ body {
     letter-spacing: 1px;
 }
 /* Compteurs */
-.counters {
+.hud-top-row {
     position: absolute;
     top: 48px;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 52cqw;
+    z-index: 100;
+}
+.counters {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: clamp(8px, 1.2vw, 24px);
     width: clamp(280px, 25vw, 380px);
     height: clamp(42px, 4.5vh, 48px);
-    z-index: 100;
+    flex: 0 1 auto;
+    min-width: 0;
     background: rgba(0, 0, 0, 0.5);
     padding: 6px clamp(8px, 1vw, 16px);
     border-radius: 10px;
@@ -2956,9 +2956,11 @@ body {
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     flex: 1 1 0;
-    min-width: 90px;
+    min-width: 0;
     text-align: center;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     padding: 0 8px;
 }
 .counter span {
@@ -3679,9 +3681,10 @@ body {
     .control-button { width: 38px; height: 38px; font-size: 16px; }
 
     /* --- Compteurs --- */
-    .counters { top: 56px; width: clamp(280px, 44vw, 420px); gap: clamp(6px, 0.8vw, 10px); padding: 6px clamp(8px, 1vw, 12px); }
+    .hud-top-row { top: 56px; flex-wrap: nowrap; max-width: calc(100% - 24px); }
+    .counters { width: clamp(280px, 44vw, 420px); gap: clamp(6px, 0.8vw, 10px); padding: 6px clamp(8px, 1vw, 12px); }
     .counter { font-size: 0.95rem; min-width: 0; }
-    .bonus-timer { top: 104px; left: 50%; transform: translateX(-50%); }
+    .bonus-timer { max-width: 34vw; }
 
     /* --- Barre d'upgrades (horizontale, déjà scrollable) --- */
     .upgrades-bar { height: 44px; }
@@ -3951,7 +3954,17 @@ body {
     /* Boutons de fermeture de modals plus faciles a toucher */
     .close-button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.45); border-radius: 8px; padding: 4px; flex-shrink: 0; background: rgba(0, 0, 0, 0.25); }
     /* Boutons langue et params */
-    .lang-btn { min-height: 48px; }
+    .lang-btn {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 1.05rem;
+        white-space: nowrap;
+    }
+    .lang-btn .lang-flag { font-size: 1.4rem; line-height: 1; }
+    .lang-btn .lang-code { font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
     /* Titres de modals : cedent la place au bouton fermer, jamais de debordement */
     .modal-header h2 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .close-button { flex-shrink: 0; }

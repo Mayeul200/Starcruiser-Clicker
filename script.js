@@ -1134,7 +1134,6 @@ function checkBuildingUnlocks() {
     if (needsRerender) {
         renderBuildings();
     }
-    refreshBuildingTextOver();
     renderCollectionCardStatus();
     renderContractsCardStatus();
 }
@@ -1212,17 +1211,6 @@ function renderBuilding(building) {
     relocateBuildingProductions();
 }
 
-// Nom trop long pour la colonne : bascule la case en mode "texte sur image"
-// (contour noir) pour rester lisible au lieu d'etre coupe par l'ellipsis.
-function refreshBuildingTextOver() {
-    document.querySelectorAll('.building-item').forEach(item => {
-        const name = item.querySelector('.building-name');
-        if (!name) return;
-        item.classList.remove('text-over');
-        const overflowing = name.scrollWidth > name.clientWidth + 1;
-        item.classList.toggle('text-over', overflowing);
-    });
-}
 
 function relocateBuildingProductions() {
     document.querySelectorAll('.building-item').forEach(item => {
@@ -4679,7 +4667,6 @@ function initMobileNav() {
         resizeTimer = setTimeout(() => {
             relocateBuildingProductions();
             applyUiScale();
-            refreshBuildingTextOver();
             if (isMobileLayout()) {
                 setMobileView(mobileActiveView);
             }

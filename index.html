@@ -194,13 +194,13 @@
             <div class="modal-body">
                 <div class="language-selector" style="margin-bottom: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
                     <span data-i18n="Language" style="font-size: 0.9rem; color: #64748b;">Language</span>
-                    <button class="modal-button lang-btn" data-lang="fr" onclick="setGameLanguage('fr')">🇫🇷 FR</button>
-                    <button class="modal-button lang-btn" data-lang="en" onclick="setGameLanguage('en')">🇬🇧 EN</button>
-                    <button class="modal-button lang-btn" data-lang="es" onclick="setGameLanguage('es')">🇪🇸 ES</button>
-                    <button class="modal-button lang-btn" data-lang="de" onclick="setGameLanguage('de')">🇩🇪 DE</button>
-                    <button class="modal-button lang-btn" data-lang="it" onclick="setGameLanguage('it')">🇮🇹 IT</button>
-                    <button class="modal-button lang-btn" data-lang="pt" onclick="setGameLanguage('pt')">🇵🇹 PT</button>
-                    <button class="modal-button lang-btn" data-lang="nl" onclick="setGameLanguage('nl')">🇳🇱 NL</button>
+                    <button class="modal-button lang-btn" data-lang="fr" onclick="setGameLanguage('fr')"><span class="lang-flag">🇫🇷</span><span class="lang-code">FR</span></button>
+                    <button class="modal-button lang-btn" data-lang="en" onclick="setGameLanguage('en')"><span class="lang-flag">🇬🇧</span><span class="lang-code">EN</span></button>
+                    <button class="modal-button lang-btn" data-lang="es" onclick="setGameLanguage('es')"><span class="lang-flag">🇪🇸</span><span class="lang-code">ES</span></button>
+                    <button class="modal-button lang-btn" data-lang="de" onclick="setGameLanguage('de')"><span class="lang-flag">🇩🇪</span><span class="lang-code">DE</span></button>
+                    <button class="modal-button lang-btn" data-lang="it" onclick="setGameLanguage('it')"><span class="lang-flag">🇮🇹</span><span class="lang-code">IT</span></button>
+                    <button class="modal-button lang-btn" data-lang="pt" onclick="setGameLanguage('pt')"><span class="lang-flag">🇵🇹</span><span class="lang-code">PT</span></button>
+                    <button class="modal-button lang-btn" data-lang="nl" onclick="setGameLanguage('nl')"><span class="lang-flag">🇳🇱</span><span class="lang-code">NL</span></button>
                 </div>
                 <button class="modal-button" onclick="exportSave()">📤 <span data-i18n="Export">Export</span></button>
                 <textarea id="import-textarea" data-i18n-placeholder="Paste your save here..." placeholder="Paste your save here..."></textarea>
@@ -333,11 +333,13 @@
                     <span class="launch-button-text" data-i18n="LANCER LA FUSÉE">LANCER LA FUSÉE</span>
                 </button>
 
-                <div class="counters">
-                    <div class="counter"><span id="score-value">0</span> <span data-i18n="Parts">Parts</span></div>
-                    <div class="counter">+<span id="gain-value">0</span>/s</div>
+                <div class="hud-top-row">
+                    <div class="counters">
+                        <div class="counter"><span id="score-value">0</span> <span data-i18n="Parts">Parts</span></div>
+                        <div class="counter">+<span id="gain-value">0</span>/s</div>
+                    </div>
+                    <div class="bonus-timer" id="bonus-timer"></div>
                 </div>
-                <div class="bonus-timer" id="bonus-timer"></div>
             </div>
         </div>
 
