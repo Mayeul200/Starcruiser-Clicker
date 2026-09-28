@@ -4617,16 +4617,28 @@ function setMobileView(view) {
 function applyUiScale() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
+    if (isMobileLayout()) {
+        // Reference visuelle mobile : iPhone 13 (390x844). Le master layout
+        // mobile etait regle a la main avec --ui-scale = 0.8 (plancher
+        // desktop) : on le preserve et on applique partout la meme echelle
+        // uniforme (px via --mscale, rem via --ui-scale).
+        const wScale = vw / 390;
+        const hScale = vh / 844;
+        const mscale = Math.max(0.85, Math.min(1.35, Math.min(wScale, hScale)));
+        document.documentElement.style.setProperty('--mscale', mscale.toFixed(3));
+        document.documentElement.style.setProperty('--ui-scale', (0.8 * mscale).toFixed(3));
+        return;
+    }
+    document.documentElement.style.removeProperty('--mscale');
     // Echelle pilotee surtout par la hauteur : c'est elle qui manque sur
     // les fenetres desktop compactes. La largeur ne compte que sous 1150px.
     const wScale = Math.min(1, vw / 1150);
     const hScale = Math.min(1, vh / 820);
     // Plancher 0.8 : sous cette taille le texte deviendrait illisible ;
-    // les panneaux lat eraux scrollent deja en interne.
+    // les panneaux lateraux scrollent deja en interne.
     const scale = Math.max(0.8, Math.min(wScale, hScale));
     document.documentElement.style.setProperty('--ui-scale', scale.toFixed(3));
 }
-
 function applySceneScale() {
     // Le monde scene-world (1024x744, dimensions natives du fond) contient le
     // decor ET la fusée dans le meme repere : une seule echelle uniforme,

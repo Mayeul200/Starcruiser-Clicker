@@ -1276,14 +1276,14 @@ body {
 }
 /* RESPONSIVE */
 @media (max-width: 992px) and (pointer: coarse) {
-    .top-bar-controls { flex-direction: row; gap: 8px; }
-    .control-button { width: 36px; height: 36px; font-size: 14px; }
+    .top-bar-controls { flex-direction: row; gap: calc(8px * var(--mscale, 1)); }
+    .control-button { width: calc(36px * var(--mscale, 1)); height: calc(36px * var(--mscale, 1)); font-size: calc(14px * var(--mscale, 1)); }
 }
 @media (max-width: 768px) and (pointer: coarse) {
-    .galactic-shop-btn { font-size: 0.68rem; padding: 6px 8px; }
+    .galactic-shop-btn { font-size: 0.68rem; padding: calc(6px * var(--mscale, 1)) calc(8px * var(--mscale, 1)); }
 }
 @media (max-width: 480px) and (pointer: coarse) {
-    .medal { width: 180px; height: 180px; }
+    .medal { width: calc(180px * var(--mscale, 1)); height: calc(180px * var(--mscale, 1)); }
 }
 /* ============================================
    ROCKET LAUNCH SYSTEM
@@ -3641,7 +3641,7 @@ body {
    avec navigation par onglets en bas d'écran. */
 @media (max-width: 1024px) and (pointer: coarse) {
 
-    :root { --mobile-nav-height: 56px; }
+    :root { --mobile-nav-height: calc(56px * var(--mscale, 1)); }
 
     html, body { overflow: hidden; }
 
@@ -3661,8 +3661,8 @@ body {
         height: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
         padding-bottom: env(safe-area-inset-bottom, 0px);
         background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
-        border-top: 1px solid var(--border);
-        box-shadow: 0 -4px 12px rgba(0,0,0,0.5);
+        border-top: calc(1px * var(--mscale, 1)) solid var(--border);
+        box-shadow: 0 -calc(4px * var(--mscale, 1)) calc(12px * var(--mscale, 1)) rgba(0,0,0,0.5);
         /* Au-dessus des modals (1200) : la nav reste visible et cliquable
            meme dans Collection / Contrats / Atelier. */
         z-index: 1350;
@@ -3673,7 +3673,7 @@ body {
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        gap: 6px;
+        gap: calc(6px * var(--mscale, 1));
         background: none;
         border: none;
         color: var(--text-light);
@@ -3684,19 +3684,19 @@ body {
         -webkit-tap-highlight-color: transparent;
     }
     .mobile-nav button + button {
-        border-left: 1px solid var(--border);
+        border-left: calc(1px * var(--mscale, 1)) solid var(--border);
     }
     .mobile-nav button .nav-icon { font-size: 1.3rem; line-height: 1; display: flex; align-items: center; }
     .mobile-nav button .nav-icon .nav-img {
-        width: 24px;
-        height: 24px;
+        width: calc(24px * var(--mscale, 1));
+        height: calc(24px * var(--mscale, 1));
         object-fit: contain;
         display: block;
         margin: 0;
     }
     .mobile-nav button .nav-icon .nav-img.nav-rocket {
-        width: 16px;
-        height: 26px;
+        width: calc(16px * var(--mscale, 1));
+        height: calc(26px * var(--mscale, 1));
         transform: rotate(60deg);
         margin-left: 0;
         margin-right: 0;
@@ -3718,41 +3718,41 @@ body {
     .main-grid.mobile-view-right > .right-panel { display: block; overflow-y: auto; }
 
     /* --- Barre du haut compacte --- */
-    .top-bar { height: 54px !important; min-height: 54px; max-height: 54px; padding: 0 10px; }
-    .top-logo-img { height: 34px; }
-    .top-logo-text-img { height: 30px; }
+    .top-bar { height: calc(54px * var(--mscale, 1)) !important; min-height: calc(54px * var(--mscale, 1)); max-height: calc(54px * var(--mscale, 1)); padding: 0 calc(10px * var(--mscale, 1)); }
+    .top-logo-img { height: calc(34px * var(--mscale, 1)); }
+    .top-logo-text-img { height: calc(30px * var(--mscale, 1)); }
     .top-bar-controls { flex-direction: row; }
-    .control-button { width: 38px; height: 38px; font-size: 16px; }
+    .control-button { width: calc(38px * var(--mscale, 1)); height: calc(38px * var(--mscale, 1)); font-size: calc(16px * var(--mscale, 1)); }
 
     /* --- Compteurs --- */
     /* Mobile : la boutique est en bas, le HUD revient centre normalement. */
-    .hud-top-row { top: 56px; flex-wrap: nowrap; max-width: calc(100% - 24px); transform: translateX(-50%); }
-    .counters { width: clamp(280px, 44vw, 420px); gap: clamp(6px, 0.8vw, 10px); padding: 6px clamp(8px, 1vw, 12px); }
+    .hud-top-row { top: calc(56px * var(--mscale, 1)); flex-wrap: nowrap; max-width: calc(100% - calc(24px * var(--mscale, 1))); transform: translateX(-50%); }
+    .counters { width: clamp(calc(280px * var(--mscale, 1)), calc(44vw * var(--mscale, 1)), calc(420px * var(--mscale, 1))); gap: clamp(calc(6px * var(--mscale, 1)), calc(0.8vw * var(--mscale, 1)), calc(10px * var(--mscale, 1))); padding: calc(6px * var(--mscale, 1)) clamp(calc(8px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(12px * var(--mscale, 1))); }
     .counter { font-size: 0.95rem; min-width: 0; }
     .bonus-timer { max-width: 34vw; }
 
     /* --- Barre d'upgrades (horizontale, déjà scrollable) --- */
-    .upgrades-bar { height: 44px; }
+    .upgrades-bar { height: calc(44px * var(--mscale, 1)); }
     .upgrades-title { display: none; }
-    .upgrades-container-center { margin-left: 0; gap: 8px; }
-    .upgrade-icon { min-width: 40px; height: 40px; }
-    .upgrade-img { width: 24px; height: 24px; }
+    .upgrades-container-center { margin-left: 0; gap: calc(8px * var(--mscale, 1)); }
+    .upgrade-icon { min-width: calc(40px * var(--mscale, 1)); height: calc(40px * var(--mscale, 1)); }
+    .upgrade-img { width: calc(24px * var(--mscale, 1)); height: calc(24px * var(--mscale, 1)); }
 
     /* --- Scène de construction : zoom adaptatif --- */
-    .center-content { height: calc(100% - 44px) !important; }
+    .center-content { height: calc(100% - calc(44px * var(--mscale, 1))) !important; }
     .construction-scene-100x100 { min-height: 0; }
     .rocket-parts-shop {
         position: fixed;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 78px);
-        left: 8px;
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(78px * var(--mscale, 1)));
+        left: calc(8px * var(--mscale, 1));
         top: auto;
-        width: clamp(132px, 14vw, 175px);
+        width: clamp(calc(132px * var(--mscale, 1)), calc(14vw * var(--mscale, 1)), calc(175px * var(--mscale, 1)));
         max-height: calc(60vh - var(--mobile-nav-height));
         overflow-y: auto;
         z-index: 58;
     }
-    .rocket-part-left { width: 44px; height: 44px; }
-    .rocket-part-icon, .rocket-part-icon-placeholder { width: 40px; height: 40px; }
+    .rocket-part-left { width: calc(44px * var(--mscale, 1)); height: calc(44px * var(--mscale, 1)); }
+    .rocket-part-icon, .rocket-part-icon-placeholder { width: calc(40px * var(--mscale, 1)); height: calc(40px * var(--mscale, 1)); }
 
     /* Médaille cliquable plus grosse et plus accessible */
     .medal {
@@ -3772,25 +3772,25 @@ body {
     /* --- Bouton lancement : pilule rouge collee a la barre de navigation, ancree au viewport --- */
     .launch-button {
         position: fixed;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 9px);
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(9px * var(--mscale, 1)));
         left: 50%;
         right: auto;
         transform: translateX(-50%);
-        padding: 12px 18px;
+        padding: calc(12px * var(--mscale, 1)) calc(18px * var(--mscale, 1));
         width: auto; height: auto;
-        border-radius: 999px;
+        border-radius: calc(999px * var(--mscale, 1));
         justify-content: center;
         font-size: 0.85rem;
     }
-    .launch-button:hover { transform: translateX(-50%) translateY(-2px); }
+    .launch-button:hover { transform: translateX(-50%) translateY(-calc(2px * var(--mscale, 1))); }
     .launch-button:active { transform: translateX(-50%) translateY(0); }
-    .launch-button-text { display: block; font-size: 0.85rem; letter-spacing: 0.5px; }
+    .launch-button-text { display: block; font-size: 0.85rem; letter-spacing: calc(0.5px * var(--mscale, 1)); }
 
     /* --- Panneau gauche (Espace) --- */
-    .left-panel { padding: 12px; }
+    .left-panel { padding: calc(12px * var(--mscale, 1)); }
     /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
     .left-panel h3 { flex-shrink: 0; }
-    .mini-space-map { height: clamp(140px, 24vh, 200px); flex-shrink: 0; }
+    .mini-space-map { height: clamp(calc(140px * var(--mscale, 1)), calc(24vh * var(--mscale, 1)), calc(200px * var(--mscale, 1))); flex-shrink: 0; }
 
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     /* Cartes mini-jeux empilees verticalement : plus propre a lire,
@@ -3801,53 +3801,53 @@ body {
     .mini-games-section { display: flex !important; flex: 0 0 auto; }
 
     /* --- Panneau droit (Bâtiments) --- */
-    .right-panel { padding: 0 6px calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
+    .right-panel { padding: 0 calc(6px * var(--mscale, 1)) calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(12px * var(--mscale, 1))); }
     .buildings-header {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        gap: 6px;
-        height: 44px;
-        padding: 0 4px;
+        gap: calc(6px * var(--mscale, 1));
+        height: calc(44px * var(--mscale, 1));
+        padding: 0 calc(4px * var(--mscale, 1));
     }
     .buildings-header h3 { font-size: 0.9rem; margin: 0; white-space: nowrap; }
-    .multiplier-buttons { gap: 3px; }
-    .multiplier-btn { padding: 4px 9px; font-size: 0.75rem; }
-    .buildings-list { gap: 6px; margin-top: 2px; }
+    .multiplier-buttons { gap: calc(3px * var(--mscale, 1)); }
+    .multiplier-btn { padding: calc(4px * var(--mscale, 1)) calc(9px * var(--mscale, 1)); font-size: 0.75rem; }
+    .buildings-list { gap: calc(6px * var(--mscale, 1)); margin-top: calc(2px * var(--mscale, 1)); }
     /* Cases batiments mobile : l'image occupe AU MINIMUM 25% de la largeur,
        et tous les textes (nom, possedes, production) tiennent sur UNE SEULE
        LIGNE au-dessus du bouton acheter. */
     .building-item {
-        grid-template-columns: minmax(25%, 96px) 1fr;
+        grid-template-columns: minmax(25%, calc(96px * var(--mscale, 1))) 1fr;
         grid-template-areas:
             "icon info"
             "icon buy";
         grid-template-rows: auto auto;
-        row-gap: 6px;
-        column-gap: 10px;
+        row-gap: calc(6px * var(--mscale, 1));
+        column-gap: calc(10px * var(--mscale, 1));
         min-height: 0;
         max-height: none;
         overflow: hidden;
-        padding: 10px;
+        padding: calc(10px * var(--mscale, 1));
         align-items: center;
     }
-    .building-left { grid-area: info; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; gap: 8px; min-width: 0; white-space: nowrap; }
+    .building-left { grid-area: info; display: flex; flex-direction: row; flex-wrap: nowrap; align-items: baseline; gap: calc(8px * var(--mscale, 1)); min-width: 0; white-space: nowrap; }
     .building-name { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; flex: 0 1 auto; }
     .building-ownership { font-size: 0.85rem; flex-shrink: 0; }
     .building-production { font-size: 0.85rem; flex-shrink: 0; color: var(--accent-light); }
     .building-center { grid-area: icon; align-self: stretch; display: flex; align-items: center; justify-content: center; min-height: 0; }
-    .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: 72px; object-fit: contain; filter: none; }
+    .building-image { height: auto; width: auto; max-width: 100%; min-width: 0; max-height: calc(72px * var(--mscale, 1)); object-fit: contain; filter: none; }
     /* Reequilibre : neutralise les marges negatives desktop */
     .building-item.nozzles .building-image, .building-item.workshop .building-image, .building-item.engines .building-image, .building-item.fuel-tank .building-image, .building-item.cockpit .building-image, .building-item.shield .building-image, .building-item.launch-pad .building-image, .building-item.astronaut .building-image { margin-left: 0; }
-    .building-item.nozzles .building-image { height: auto; max-height: 72px; }
-    .building-item.rocket-body .building-image, .building-item.boosters-left .building-image, .building-item.boosters-right .building-image { max-height: 72px; margin-left: 0; }
-    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+    .building-item.nozzles .building-image { height: auto; max-height: calc(72px * var(--mscale, 1)); }
+    .building-item.rocket-body .building-image, .building-item.boosters-left .building-image, .building-item.boosters-right .building-image { max-height: calc(72px * var(--mscale, 1)); margin-left: 0; }
+    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: calc(8px * var(--mscale, 1)); min-width: 0; }
     .building-item button {
         flex: 1;
-        width: auto; height: auto; min-height: 32px;
+        width: auto; height: auto; min-height: calc(32px * var(--mscale, 1));
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        padding: 4px 6px;
+        padding: calc(4px * var(--mscale, 1)) calc(6px * var(--mscale, 1));
         font-size: 0.95rem;
         line-height: 1.15;
         border-radius: var(--radius);
@@ -3876,33 +3876,33 @@ body {
         border-radius: 0 !important;
         display: flex; flex-direction: column;
     }
-    .modal-header { flex-shrink: 0; padding: 10px 12px; gap: 8px; }
+    .modal-header { flex-shrink: 0; padding: calc(10px * var(--mscale, 1)) calc(12px * var(--mscale, 1)); gap: calc(8px * var(--mscale, 1)); }
     .modal-header h2 { font-size: 1.05rem; }
-    .modal-parts-counter { font-size: 0.8rem; padding: 4px 10px; }
+    .modal-parts-counter { font-size: 0.8rem; padding: calc(4px * var(--mscale, 1)) calc(10px * var(--mscale, 1)); }
     .modal-body {
         flex: 1;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         max-height: none !important;
-        padding: 12px;
-        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        padding: calc(12px * var(--mscale, 1));
+        padding-bottom: calc(calc(12px * var(--mscale, 1)) + env(safe-area-inset-bottom, 0px));
     }
-    .modal-button { padding: 14px; font-size: 1rem; }
+    .modal-button { padding: calc(14px * var(--mscale, 1)); font-size: 1rem; }
     /* Reveal nouveau batiment : animation sans translate (modal plein ecran,
        le translate des keyframes desktop le faisait flasher en haut a gauche) */
     .new-building-modal.active { animation: nbModalInMobile 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
     /* Pop-up nouveau batiment : petite fenetre centree comme sur PC,
        mais proportionnellement plus grande ; hauteur auto (max 80dvh). */
     .new-building-modal {
-        width: 90vw !important; max-width: 480px !important;
+        width: 90vw !important; max-width: calc(480px * var(--mscale, 1)) !important;
         height: auto !important; max-height: 80dvh !important;
         top: 50% !important; left: 50% !important;
         transform: translate(-50%, -50%) !important;
         border-radius: var(--radius);
-        border: 1px solid var(--border-light);
+        border: calc(1px * var(--mscale, 1)) solid var(--border-light);
         padding-bottom: 0;
     }
-    .nb-reveal { width: 40dvh; height: 40dvh; max-width: 300px; max-height: 300px; margin-bottom: 8px; }
+    .nb-reveal { width: 40dvh; height: 40dvh; max-width: calc(300px * var(--mscale, 1)); max-height: calc(300px * var(--mscale, 1)); margin-bottom: calc(8px * var(--mscale, 1)); }
     .modal-body.new-building-body { justify-content: center; }
 
 
@@ -3922,32 +3922,32 @@ body {
     .galactic-btn {
         flex: 1;
         width: 100%;
-        padding: 12px 10px;
+        padding: calc(12px * var(--mscale, 1)) calc(10px * var(--mscale, 1));
         font-size: 1rem;
-        border-radius: 10px;
+        border-radius: calc(10px * var(--mscale, 1));
     }
 
 
     /* Collection de cartes */
     .cc-booster-options { flex-direction: column; align-items: stretch; }
     .cc-booster-btn { min-width: 0; max-width: none; }
-    .cc-booster-img { max-width: 140px; }
-    .cc-album-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .cc-booster-img { max-width: calc(140px * var(--mscale, 1)); }
+    .cc-album-grid { grid-template-columns: repeat(2, 1fr); gap: calc(10px * var(--mscale, 1)); }
     .cc-album-card { width: 100%; height: auto; aspect-ratio: 2 / 3; }
-    .cc-reveal-cards { gap: 8px; }
-    .cc-reveal-card { width: min(calc((100cqw - (var(--card-count, 3) - 1) * 8px) / var(--card-count, 3)), calc(66.6cqh)); height: auto; }
+    .cc-reveal-cards { gap: calc(8px * var(--mscale, 1)); }
+    .cc-reveal-card { width: min(calc((100cqw - (var(--card-count, 3) - 1) * calc(8px * var(--mscale, 1))) / var(--card-count, 3)), calc(66.6cqh)); height: auto; }
     /* Carte seule : largeur limitee pour rester lisible, pas plein ecran */
     .cc-reveal-cards:has(> .cc-reveal-card:only-child) { max-width: 60vw; margin: 0 auto; }
     .cc-reveal-card:only-child { max-width: 60vw; }
     /* 3 cartes : grille 2 colonnes (2 en haut, 1 centree en bas) */
-    .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 8px; }
+    .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: calc(8px * var(--mscale, 1)); }
     .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) .cc-reveal-card { width: 100%; max-width: none; }
     .cc-reveal-cards:has(> .cc-reveal-card:nth-child(3):last-child) .cc-reveal-card:nth-child(3) { grid-column: 1 / -1; justify-self: center; max-width: 50%; }
 
     /* Toast au-dessus de la nav */
-    #toast-container { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 12px); }
-    .toast { font-size: clamp(0.8rem, 1.3vw + 0.45rem, 1.05rem); padding: clamp(6px, 1vw, 9px) clamp(10px, 1.6vw, 16px); max-width: 94vw; display: flex; align-items: center; text-align: left; }
-    .toast .toast-icon { width: clamp(18px, 2.6vw, 26px); height: clamp(18px, 2.6vw, 26px); margin-right: 8px; }
+    #toast-container { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(12px * var(--mscale, 1))); }
+    .toast { font-size: clamp(0.8rem, 1.3vw + 0.45rem, 1.05rem); padding: clamp(calc(6px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(9px * var(--mscale, 1))) clamp(calc(10px * var(--mscale, 1)), calc(1.6vw * var(--mscale, 1)), calc(16px * var(--mscale, 1))); max-width: 94vw; display: flex; align-items: center; text-align: left; }
+    .toast .toast-icon { width: clamp(calc(18px * var(--mscale, 1)), calc(2.6vw * var(--mscale, 1)), calc(26px * var(--mscale, 1))); height: clamp(calc(18px * var(--mscale, 1)), calc(2.6vw * var(--mscale, 1)), calc(26px * var(--mscale, 1))); margin-right: calc(8px * var(--mscale, 1)); }
     .toast-text {
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -3957,15 +3957,15 @@ body {
         min-width: 0;
         flex: 1;
         width: auto;
-        max-width: min(84vw, 620px);
+        max-width: min(84vw, calc(620px * var(--mscale, 1)));
     }
 
     /* Comètes un peu plus petites */
-    .random-bonus { width: clamp(96px, 15vw, 150px); height: clamp(96px, 15vw, 150px); }
-    .comet-img { width: clamp(96px, 15vw, 150px); height: clamp(96px, 15vw, 150px); }
+    .random-bonus { width: clamp(calc(96px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(150px * var(--mscale, 1))); height: clamp(calc(96px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(150px * var(--mscale, 1))); }
+    .comet-img { width: clamp(calc(96px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(150px * var(--mscale, 1))); height: clamp(calc(96px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(150px * var(--mscale, 1))); }
 
     /* Tooltip : plus lisible au doigt, reste au-dessus du clavier virtuel */
-    .upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: pre-line; border-left-width: 3px; }
+    .upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: pre-line; border-left-width: calc(3px * var(--mscale, 1)); }
 
     /* Sur mobile, pas de tooltip CSS au survol (pas de hover) */
     .building-item:hover::after { opacity: 0; visibility: hidden; }
@@ -3981,14 +3981,14 @@ body {
         margin-left: 0;
         margin-right: 0;
     }
-    /* Cibles tactiles >= 44px (recommandation Apple/Google) */
-    .multiplier-btn { min-height: 40px; padding: 8px 12px; font-size: 0.85rem; }
-    .building-item button { min-height: 54px; padding: 14px 8px; font-size: 0.9rem; }
-    .rocket-part-btn { min-height: 36px; padding: 8px 6px; font-size: 0.75rem; }
-    .galactic-shop-btn { min-height: 44px; }
-    .contract-buy-btn { min-height: 44px; padding: 12px 18px; font-size: 0.95rem; align-self: stretch; }
-    .modal-button { min-height: 48px; }
-    .control-button { width: 42px; height: 42px; }
+    /* Cibles tactiles >= calc(44px * var(--mscale, 1)) (recommandation Apple/Google) */
+    .multiplier-btn { min-height: calc(40px * var(--mscale, 1)); padding: calc(8px * var(--mscale, 1)) calc(12px * var(--mscale, 1)); font-size: 0.85rem; }
+    .building-item button { min-height: calc(54px * var(--mscale, 1)); padding: calc(14px * var(--mscale, 1)) calc(8px * var(--mscale, 1)); font-size: 0.9rem; }
+    .rocket-part-btn { min-height: calc(36px * var(--mscale, 1)); padding: calc(8px * var(--mscale, 1)) calc(6px * var(--mscale, 1)); font-size: 0.75rem; }
+    .galactic-shop-btn { min-height: calc(44px * var(--mscale, 1)); }
+    .contract-buy-btn { min-height: calc(44px * var(--mscale, 1)); padding: calc(12px * var(--mscale, 1)) calc(18px * var(--mscale, 1)); font-size: 0.95rem; align-self: stretch; }
+    .modal-button { min-height: calc(48px * var(--mscale, 1)); }
+    .control-button { width: calc(42px * var(--mscale, 1)); height: calc(42px * var(--mscale, 1)); }
     /* Minimap : tailles gerees par les unites conteneur (cqh) */
     /* Cartes mini-jeux : texte a taille lisible */
     .mini-game-card .game-name { font-size: 0.85rem; }
@@ -3997,10 +3997,10 @@ body {
     .counter { font-size: 1rem; }
     .counter-label { font-size: 0.7rem; }
     /* Boutons de fermeture de modals plus faciles a toucher */
-    .close-button { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 2px solid rgba(255, 255, 255, 0.45); border-radius: 8px; padding: 4px; flex-shrink: 0; background: rgba(0, 0, 0, 0.25); }
+    .close-button { min-width: calc(44px * var(--mscale, 1)); min-height: calc(44px * var(--mscale, 1)); display: inline-flex; align-items: center; justify-content: center; border: calc(2px * var(--mscale, 1)) solid rgba(255, 255, 255, 0.45); border-radius: calc(8px * var(--mscale, 1)); padding: calc(4px * var(--mscale, 1)); flex-shrink: 0; background: rgba(0, 0, 0, 0.25); }
     /* Boutons langue et params */
     .lang-btn {
-        min-height: 48px;
+        min-height: calc(48px * var(--mscale, 1));
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -4008,7 +4008,7 @@ body {
         font-size: 1.05rem;
         white-space: nowrap;
     }
-    .lang-btn .lang-code { font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
+    .lang-btn .lang-code { font-size: 1rem; font-weight: 600; letter-spacing: calc(0.5px * var(--mscale, 1)); }
     /* Titres de modals : cedent la place au bouton fermer, jamais de debordement */
     .modal-header h2 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .close-button { flex-shrink: 0; }
@@ -4019,17 +4019,17 @@ body {
     /* km de la minimap : taille adaptative via cqh */
 }
 
-/* Petits écrans (<480px) : resserrage supplémentaire */
+/* Petits écrans (<calc(480px * var(--mscale, 1))) : resserrage supplémentaire */
 @media (max-width: 480px) and (pointer: coarse) {
     .medal { top: 30% !important; }
-    .rocket-parts-shop { width: clamp(118px, 12.5vw, 132px); }
+    .rocket-parts-shop { width: clamp(calc(118px * var(--mscale, 1)), calc(12.5vw * var(--mscale, 1)), calc(132px * var(--mscale, 1))); }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
-    .building-item { grid-template-columns: minmax(25%, 96px) 1fr; grid-template-areas: "icon info" "icon buy"; }
-    .building-item button { width: auto; min-height: 32px; height: auto; font-size: 0.95rem; }
-    .building-image { max-height: 88px; min-width: 0; }
+    .building-item { grid-template-columns: minmax(25%, calc(96px * var(--mscale, 1))) 1fr; grid-template-areas: "icon info" "icon buy"; }
+    .building-item button { width: auto; min-height: calc(32px * var(--mscale, 1)); height: auto; font-size: 0.95rem; }
+    .building-image { max-height: calc(88px * var(--mscale, 1)); min-width: 0; }
     .building-name { font-size: 0.95rem; }
-    .multiplier-btn { padding: 5px 10px; }
-    .counters { width: clamp(260px, 42vw, 340px); }
+    .multiplier-btn { padding: calc(5px * var(--mscale, 1)) calc(10px * var(--mscale, 1)); }
+    .counters { width: clamp(calc(260px * var(--mscale, 1)), calc(42vw * var(--mscale, 1)), calc(340px * var(--mscale, 1))); }
     .counter { font-size: 0.85rem; }
 }
 /* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
@@ -4137,7 +4137,7 @@ body {
 @media (max-width: 1024px) and (pointer: coarse) {
     .cc-lightbox-body {
         max-width: 88vw;
-        gap: 10px;
+        gap: calc(10px * var(--mscale, 1));
     }
     .cc-lightbox-img {
         max-height: 62vh;
@@ -4264,8 +4264,8 @@ body {
     .npn-title { font-size: 1.5rem; }
     .npn-subtitle { font-size: 1rem; }
     .npn-planet-name { font-size: 1.7rem; }
-    .npn-planet-img img { width: 110px; height: 110px; }
-    .npn-launch-btn { padding: 12px 26px; font-size: 1.05rem; }
+    .npn-planet-img img { width: calc(110px * var(--mscale, 1)); height: calc(110px * var(--mscale, 1)); }
+    .npn-launch-btn { padding: calc(12px * var(--mscale, 1)) calc(26px * var(--mscale, 1)); font-size: 1.05rem; }
 }
 
 /* ============================================ */
@@ -4435,12 +4435,12 @@ body {
     box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
 }
 @media (max-width: 480px) and (pointer: coarse) {
-    .tutorial-popup { padding: 22px 16px 16px; }
+    .tutorial-popup { padding: calc(22px * var(--mscale, 1)) calc(16px * var(--mscale, 1)) calc(16px * var(--mscale, 1)); }
     .tutorial-title { font-size: 1.3rem; }
     .tutorial-text { font-size: 0.95rem; }
-    .tutorial-visual { height: 100px; }
-    .tutorial-visual img { max-height: 92px; }
-    .tutorial-btn { padding: 9px 18px; font-size: 0.95rem; }
+    .tutorial-visual { height: calc(100px * var(--mscale, 1)); }
+    .tutorial-visual img { max-height: calc(92px * var(--mscale, 1)); }
+    .tutorial-btn { padding: calc(9px * var(--mscale, 1)) calc(18px * var(--mscale, 1)); font-size: 0.95rem; }
 }
 
 /* CHOIX DE LA LANGUE (premiere visite) */
