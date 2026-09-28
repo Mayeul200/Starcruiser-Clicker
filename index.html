@@ -192,10 +192,15 @@
                 <span class="close-button" onclick="toggleSettings()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="language-selector" style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
+                <div class="language-selector" style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
                     <span data-i18n="Language" style="font-size: 0.9rem; color: #64748b;">Language</span>
-                    <button class="modal-button lang-btn" id="lang-fr" onclick="setGameLanguage('fr')" style="flex: 1;">🇫🇷 FR</button>
-                    <button class="modal-button lang-btn" id="lang-en" onclick="setGameLanguage('en')" style="flex: 1;">🇬🇧 EN</button>
+                    <button class="modal-button lang-btn" data-lang="fr" onclick="setGameLanguage('fr')" style="flex: 1;">🇫🇷 FR</button>
+                    <button class="modal-button lang-btn" data-lang="en" onclick="setGameLanguage('en')" style="flex: 1;">🇬🇧 EN</button>
+                    <button class="modal-button lang-btn" data-lang="es" onclick="setGameLanguage('es')" style="flex: 1;">🇪🇸 ES</button>
+                    <button class="modal-button lang-btn" data-lang="de" onclick="setGameLanguage('de')" style="flex: 1;">🇩🇪 DE</button>
+                    <button class="modal-button lang-btn" data-lang="it" onclick="setGameLanguage('it')" style="flex: 1;">🇮🇹 IT</button>
+                    <button class="modal-button lang-btn" data-lang="pt" onclick="setGameLanguage('pt')" style="flex: 1;">🇵🇹 PT</button>
+                    <button class="modal-button lang-btn" data-lang="nl" onclick="setGameLanguage('nl')" style="flex: 1;">🇳🇱 NL</button>
                 </div>
                 <button class="modal-button" onclick="exportSave()">📤 <span data-i18n="Export">Export</span></button>
                 <textarea id="import-textarea" data-i18n-placeholder="Paste your save here..." placeholder="Paste your save here..."></textarea>
@@ -424,6 +429,26 @@
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('en')">
                     <span class="lang-picker-flag">🇬🇧</span>
                     <span>English</span>
+                </button>
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('es')">
+                    <span class="lang-picker-flag">🇪🇸</span>
+                    <span>Español</span>
+                </button>
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('de')">
+                    <span class="lang-picker-flag">🇩🇪</span>
+                    <span>Deutsch</span>
+                </button>
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('it')">
+                    <span class="lang-picker-flag">🇮🇹</span>
+                    <span>Italiano</span>
+                </button>
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('pt')">
+                    <span class="lang-picker-flag">🇵🇹</span>
+                    <span>Português</span>
+                </button>
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('nl')">
+                    <span class="lang-picker-flag">🇳🇱</span>
+                    <span>Nederlands</span>
                 </button>
             </div>
         </div>
