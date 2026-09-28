@@ -3750,9 +3750,14 @@ function renderTrophies() {
         const imgSize = (trophy.id === 'launch-1' || trophy.id === 'launch-5' || trophy.id === 'first-click-upgrade') ? '80%'
             : trophy.icon === 'images/parts.png' ? '100%'
             : '100%';
-        trophyElement.innerHTML = trophy.icon.startsWith('images/')
-            ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: ${imgSize}; height: ${imgSize}; object-fit: contain;">`
-            : trophy.icon;
+        // Trophée non débloqué : contenu masqué par un point d'interrogation.
+        if (unlockedTrophies.has(trophy.id)) {
+            trophyElement.innerHTML = trophy.icon.startsWith('images/')
+                ? `<img src="${trophy.icon}" alt="${trophy.name}" style="width: ${imgSize}; height: ${imgSize}; object-fit: contain;">`
+                : trophy.icon;
+        } else {
+            trophyElement.innerHTML = '?';
+        }
         trophyElement.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
             const name = t(trophy.name);
