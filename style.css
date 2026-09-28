@@ -464,7 +464,7 @@ body {
 /* MAIN GRID */
 .main-grid {
     display: grid;
-    grid-template-columns: 22.5% 55% 22.5%;
+    grid-template-columns: 25% 50% 25%;
     height: calc(100vh - var(--top-height));
     position: fixed;
     top: var(--top-height);
