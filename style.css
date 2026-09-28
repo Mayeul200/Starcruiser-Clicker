@@ -1214,14 +1214,14 @@ body {
     filter: grayscale(100%);
 }
 /* RESPONSIVE */
-@media (max-width: 992px) {
+@media (max-width: 992px) and (pointer: coarse) {
     .top-bar-controls { flex-direction: row; gap: 8px; }
     .control-button { width: 36px; height: 36px; font-size: 14px; }
 }
-@media (max-width: 768px) {
+@media (max-width: 768px) and (pointer: coarse) {
     .galactic-shop-btn { font-size: 0.68rem; padding: 6px 8px; }
 }
-@media (max-width: 480px) {
+@media (max-width: 480px) and (pointer: coarse) {
     .medal { width: 180px; height: 180px; }
 }
 /* ============================================
@@ -3542,7 +3542,7 @@ body {
 
 /* Breakpoint principal : en dessous de 1024px on passe en vue "mobile"
    avec navigation par onglets en bas d'écran. */
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (pointer: coarse) {
 
     :root { --mobile-nav-height: 56px; }
 
@@ -3666,7 +3666,7 @@ body {
     .medal:active { transform: translateY(-50%) scale(0.95); }
 
     /* Paysage : espace vertical trop serre ; la medaille reste a gauche, sous les compteurs */
-    @media (max-width: 1024px) and (orientation: landscape) {
+    @media (max-width: 1024px) and (pointer: coarse) and (orientation: landscape) {
         .medal { top: 55% !important; }
     }
 
@@ -3912,7 +3912,7 @@ body {
 }
 
 /* Petits écrans (<480px) : resserrage supplémentaire */
-@media (max-width: 480px) {
+@media (max-width: 480px) and (pointer: coarse) {
     .medal { top: 30% !important; }
     .rocket-parts-shop { width: clamp(118px, 12.5vw, 132px); }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
@@ -3926,44 +3926,13 @@ body {
 }
 /* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
 
-/* Ecrans desktop etroits / tablette large (1025-1280) : panneaux lateraux
-   elargis et contenus compacts pour eviter tout debordement des cadres */
+/* Ecrans desktop etroits : memes proportions que le layout de base
+   (22.5% / 55% / 22.5%). Plus aucun remaniement : l'UI reste identique
+   a toutes les tailles desktop, seul le rendu deltaire s'adapte. */
 @media (min-width: 1025px) and (max-width: 1520px) {
-    .main-grid { grid-template-columns: 25.5% 49% 25.5%; }
-    .left-panel { padding: 10px; }
-    .right-panel { padding: 0 8px 12px; }
-    .buildings-header { gap: 4px; padding: 0 2px; }
-    .buildings-header h3 { font-size: 0.9rem; white-space: nowrap; }
-    .multiplier-btn { padding: 4px 7px; font-size: 0.75rem; }
-    .building-item { padding: 10px; }
-    .building-item button { padding: 4px 6px; font-size: 0.95rem; }
-    .building-name { font-size: 0.95rem; }
-    .building-ownership { font-size: 0.85rem; }
-    .building-production { font-size: 0.85rem; }
-    .building-image { max-height: 60px; }
-    .mini-game-card { padding: 8px 10px; gap: 8px; }
-    .mini-game-card .game-icon { font-size: 1.8rem; }
-    .mini-game-card .game-icon img { max-width: 40px; max-height: 60px; }
-    .mini-game-card .game-name { font-size: 0.82rem; }
-    .mini-game-card .game-description { font-size: 0.72rem; }
-    .galactic-shop-btn { font-size: 0.8rem; }
-    .galactic-shop-label { font-size: 0.8rem; }
-    .stat-label, .stat-value { font-size: 0.75rem; }
-    .left-panel h3 { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
-    .building-item {
-        grid-template-columns: 72px 1fr;
-        grid-template-areas:
-            "icon info"
-            "icon buy";
-        grid-template-rows: auto auto;
-        row-gap: 6px;
-        column-gap: 10px;
-    }
-    .building-left { grid-area: info; display: flex; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; }
-    .building-center { grid-area: icon; align-self: stretch; max-width: none; min-width: 0; }
-    .building-right { grid-area: buy; display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
-    .building-item button { flex: 1; }
-    .building-image { max-height: 72px; }
+    .building-name { white-space: normal; line-height: 1.15; }
+    .building-item { max-height: none; }
+    .building-left { overflow: visible; }
 }
 
 /* Desktop : image du reveal doublee (mobile : 210px) */
@@ -3984,8 +3953,8 @@ body {
     .building-left { overflow: visible; }
 }
 
-/* Desktop : nav mobile masquée */
-@media (min-width: 1025px) {
+/* Desktop : nav mobile masquée (souris ou écran large) */
+@media (min-width: 1025px), (hover: hover) and (pointer: fine) {
     .mobile-nav { display: none; }
 }
 
@@ -4055,7 +4024,7 @@ body {
     margin-top: 4px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (pointer: coarse) {
     .cc-lightbox-body {
         max-width: 88vw;
         gap: 10px;
@@ -4181,7 +4150,7 @@ body {
     background: rgba(0, 0, 0, 0.6);
     transform: scale(1.08);
 }
-@media (max-width: 480px) {
+@media (max-width: 480px) and (pointer: coarse) {
     .npn-title { font-size: 1.5rem; }
     .npn-subtitle { font-size: 1rem; }
     .npn-planet-name { font-size: 1.7rem; }
@@ -4343,7 +4312,7 @@ body {
     background: #c4b5fd;
     box-shadow: 0 0 8px rgba(168, 85, 247, 0.8);
 }
-@media (max-width: 480px) {
+@media (max-width: 480px) and (pointer: coarse) {
     .tutorial-popup { padding: 22px 16px 16px; }
     .tutorial-title { font-size: 1.3rem; }
     .tutorial-text { font-size: 0.95rem; }

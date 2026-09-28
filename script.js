@@ -3079,7 +3079,7 @@ function spawnRandomBonus(shower) {
     // Performance : sur mobile/tablette la pluie genere trop d'elements DOM
     // (12 cometes x 2 particules / 16 ms ~ 1500 nodes/s). Interval x3 et
     // une seule particule par tick -> ~8x moins de travail, meme look.
-    const isMobileLike = window.matchMedia('(max-width: 1024px)').matches;
+    const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
     const TRAIL_INTERVAL_MS = isMobileLike ? 48 : 16;
     const TRAIL_LIFE_MS = 900;
     const PARTICLES_PER_TICK = isMobileLike ? 1 : 2;
@@ -4558,7 +4558,7 @@ function closeCardLightbox() {
 let mobileActiveView = 'center';
 
 function isMobileLayout() {
-    return window.matchMedia('(max-width: 1024px)').matches;
+    return window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
 }
 
 function closeAllModalsForMobileNav() {
@@ -4886,7 +4886,7 @@ function startCometShower() {
     cometShowerActive = true;
     showToast('\ud83c\udf20 ' + t('Pluie de com\u00e8tes ! Attrapez-les !'));
     // Mobile/tablette : moitie moins de cometes, la pluie y coute tres cher
-    const isMobileLike = window.matchMedia('(max-width: 1024px)').matches;
+    const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
     const COUNT = isMobileLike ? 6 : 12;
     const SPREAD_MS = 8000;
     for (let i = 0; i < COUNT; i++) {
