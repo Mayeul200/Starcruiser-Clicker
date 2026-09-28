@@ -4609,9 +4609,9 @@ function setMobileView(view) {
 function applyUiScale() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const wScale = Math.min(1, vw / 1280);
-    const hScale = Math.min(1, vh / 900);
-    const scale = Math.max(0.6, Math.min(wScale, hScale));
+    const wScale = Math.min(1, vw / 1150);
+    const hScale = Math.min(1, vh / 820);
+    const scale = Math.max(0.72, Math.min(wScale, hScale));
     document.documentElement.style.setProperty('--ui-scale', scale.toFixed(3));
 }
 

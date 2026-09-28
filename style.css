@@ -267,8 +267,9 @@ body {
 }
 .nb-reveal {
     position: relative;
-    width: 210px;
-    height: 210px;
+    width: 13.125rem;
+    height: 13.125rem;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -277,7 +278,7 @@ body {
 .nb-reveal::before {
     content: '';
     position: absolute;
-    inset: -18px;
+    inset: -1.125rem;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(136, 201, 238, 0.35) 0%, rgba(136, 201, 238, 0.12) 45%, transparent 70%);
     animation: nbGlow 1.6s ease-in-out infinite alternate;
@@ -543,20 +544,36 @@ body {
     flex-direction: column;
     gap: 8px;
     margin-top: 8px;
+    container-type: inline-size;
+}
+/* Panneau etroit : la case bascule en 2 rangees (info | bouton, image dessous)
+   pour que textes et bouton ne debordent jamais. */
+@container (max-width: 17rem) {
+    .building-item {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        grid-template-areas:
+            "info buy"
+            "icon buy";
+        grid-template-rows: auto 1fr;
+        max-height: none;
+    }
+    .building-left { grid-area: info; }
+    .building-center { grid-area: icon; }
+    .building-right { grid-area: buy; align-items: stretch; }
 }
 /* Building items */
 .building-item {
     background: var(--secondary);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 12px;
+    padding: 0.75rem;
     display: grid;
-    grid-template-columns: minmax(96px, 1fr) minmax(64px, 150px) minmax(112px, 1.4fr);
+    grid-template-columns: minmax(0, 1fr) minmax(3rem, 9.375rem) minmax(0, 1.4fr);
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
-    min-height: 70px;
-    max-height: 100px;
+    min-height: 4.5rem;
+    max-height: 6.25rem;
     overflow: hidden;
     position: relative;
 }
@@ -570,12 +587,15 @@ body {
     flex-direction: column;
     gap: 4px;
     min-width: 0;
+    max-width: 100%;
 }
 .building-right {
     display: flex;
     flex-direction: column;
     gap: 4px;
     align-items: flex-end;
+    min-width: 0;
+    max-width: 100%;
 }
 .building-center {
     display: flex;
@@ -603,7 +623,7 @@ body {
     height: auto;
     width: auto;
     max-width: 100%;
-    max-height: 76px;
+    max-height: 4.75rem;
     object-fit: contain;
     margin: 0 auto;
     opacity: 1;
@@ -666,6 +686,11 @@ body {
     text-overflow: ellipsis;
     max-width: 100%;
 }
+/* Enfants de la grille : min-width 0 pour que les colonnes puissent
+   resserer sous la taille de leur contenu sans deborder de la case. */
+.building-item > .building-left,
+.building-item > .building-center,
+.building-item > .building-right { min-width: 0; }
 .building-production {
     font-size: 1rem;
     color: var(--accent-light);
@@ -686,9 +711,8 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 .building-item button:hover:not(:disabled) {
     background: var(--primary-light);
@@ -3940,10 +3964,11 @@ body {
     .building-left { overflow: visible; }
 }
 
-/* Desktop : image du reveal doublee (mobile : 210px) */
+/* Desktop : image du reveal doublee (mobile : 210px).
+   Bornée à 30dvh pour laisser la place aux textes du bas dans le cadre. */
 @media (min-width: 1025px) {
-    .new-building-modal { width: 92%; max-width: 560px; }
-    .nb-reveal { width: 420px; height: 420px; }
+    .new-building-modal { width: 92%; max-width: 35rem; }
+    .nb-reveal { width: 26.25rem; height: 26.25rem; max-width: 100%; max-height: min(30dvh, 26.25rem); }
     .new-building-body h3 { font-size: 1.6rem; }
     .new-building-body p { font-size: 1rem; }
     .nb-stat-label { font-size: 0.8rem; }
