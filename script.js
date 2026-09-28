@@ -3664,8 +3664,12 @@ function renderTrophies() {
         trophyElement.style.cursor = 'pointer';
         trophyElement.style.position = 'relative';
         trophyElement.style.transition = 'all 0.2s';
+        // Couleur du palier : uniquement sur le bord du cercle, fond neutre.
+        const family = trophiesByFamily[trophy.type] || [];
+        const familyIndex = family.indexOf(trophy);
+        const tierColor = getUpgradeTierColor(familyIndex);
         if (unlockedTrophies.has(trophy.id)) {
-            trophyElement.style.border = '1px solid var(--border-light)';
+            trophyElement.style.border = '2px solid ' + tierColor;
             trophyElement.style.background = 'var(--secondary-light)';
             trophyElement.style.boxShadow = 'var(--shadow)';
             trophyElement.style.opacity = '1';
