@@ -3963,7 +3963,6 @@ body {
         font-size: 1.05rem;
         white-space: nowrap;
     }
-    .lang-btn .lang-flag { font-size: 1.4rem; line-height: 1; }
     .lang-btn .lang-code { font-size: 1rem; font-weight: 600; letter-spacing: 0.5px; }
     /* Titres de modals : cedent la place au bouton fermer, jamais de debordement */
     .modal-header h2 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -4456,6 +4455,24 @@ body {
     background: rgba(96, 165, 250, 0.12);
 }
 
+.lang-flag {
+    display: inline-flex;
+    line-height: 1;
+}
 .lang-picker-flag {
-    font-size: 1.4rem;
+    display: inline-flex;
+    line-height: 1;
+}
+.flag-svg {
+    display: block;
+    width: 1.5em;
+    height: 1em;
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+.lang-picker-flag .flag-svg {
+    width: 1.5em;
+    height: 1em;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
 }

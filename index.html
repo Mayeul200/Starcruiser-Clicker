@@ -194,13 +194,13 @@
             <div class="modal-body">
                 <div class="language-selector" style="margin-bottom: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
                     <span data-i18n="Language" style="font-size: 0.9rem; color: #64748b;">Language</span>
-                    <button class="modal-button lang-btn" data-lang="fr" onclick="setGameLanguage('fr')"><span class="lang-flag">🇫🇷</span><span class="lang-code">FR</span></button>
-                    <button class="modal-button lang-btn" data-lang="en" onclick="setGameLanguage('en')"><span class="lang-flag">🇬🇧</span><span class="lang-code">EN</span></button>
-                    <button class="modal-button lang-btn" data-lang="es" onclick="setGameLanguage('es')"><span class="lang-flag">🇪🇸</span><span class="lang-code">ES</span></button>
-                    <button class="modal-button lang-btn" data-lang="de" onclick="setGameLanguage('de')"><span class="lang-flag">🇩🇪</span><span class="lang-code">DE</span></button>
-                    <button class="modal-button lang-btn" data-lang="it" onclick="setGameLanguage('it')"><span class="lang-flag">🇮🇹</span><span class="lang-code">IT</span></button>
-                    <button class="modal-button lang-btn" data-lang="pt" onclick="setGameLanguage('pt')"><span class="lang-flag">🇵🇹</span><span class="lang-code">PT</span></button>
-                    <button class="modal-button lang-btn" data-lang="nl" onclick="setGameLanguage('nl')"><span class="lang-flag">🇳🇱</span><span class="lang-code">NL</span></button>
+                    <button class="modal-button lang-btn" data-lang="fr" onclick="setGameLanguage('fr')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg></span><span class="lang-code">FR</span></button>
+                    <button class="modal-button lang-btn" data-lang="en" onclick="setGameLanguage('en')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#012169"/><rect width="3" height="0.4" y="0.8" fill="#fff"/><rect width="3" height="0.4" y="-0.6" fill="#fff" transform="rotate(60 1.5 1)"/><rect width="3" height="0.4" y="0.8" fill="#fff" transform="rotate(60 1.5 1)"/><rect width="3" height="0.4" y="0.8" fill="#fff" transform="rotate(-60 1.5 1)"/><rect width="3" height="0.4" y="0.8" fill="#fff" transform="rotate(-60 1.5 1)"/><rect width="3" height="0.25" y="0.875" fill="#C8102E"/><rect width="3" height="0.25" y="0.875" fill="#C8102E" transform="rotate(60 1.5 1)"/><rect width="3" height="0.25" y="0.875" fill="#C8102E" transform="rotate(-60 1.5 1)"/><rect x="1.25" width="0.5" height="2" fill="#fff"/><rect x="1.375" width="0.25" height="2" fill="#C8102E"/></svg></span><span class="lang-code">EN</span></button>
+                    <button class="modal-button lang-btn" data-lang="es" onclick="setGameLanguage('es')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#AA151B"/><rect y="0.5" width="3" height="1" fill="#F1BF00"/></svg></span><span class="lang-code">ES</span></button>
+                    <button class="modal-button lang-btn" data-lang="de" onclick="setGameLanguage('de')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#000"/><rect y="0.667" width="3" height="0.667" fill="#DD0000"/><rect y="1.333" width="3" height="0.667" fill="#FFCE00"/></svg></span><span class="lang-code">DE</span></button>
+                    <button class="modal-button lang-btn" data-lang="it" onclick="setGameLanguage('it')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="1" height="2" fill="#008C45"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CD212A"/></svg></span><span class="lang-code">IT</span></button>
+                    <button class="modal-button lang-btn" data-lang="pt" onclick="setGameLanguage('pt')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#FF0000"/><rect width="1.2" height="2" fill="#006600"/><circle cx="1.2" cy="1" r="0.35" fill="#FFFF00"/></svg></span><span class="lang-code">PT</span></button>
+                    <button class="modal-button lang-btn" data-lang="nl" onclick="setGameLanguage('nl')"><span class="lang-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#AE1C28"/><rect y="0.667" width="3" height="0.667" fill="#fff"/><rect y="1.333" width="3" height="0.667" fill="#21468B"/></svg></span><span class="lang-code">NL</span></button>
                 </div>
                 <button class="modal-button" onclick="exportSave()">📤 <span data-i18n="Export">Export</span></button>
                 <textarea id="import-textarea" data-i18n-placeholder="Paste your save here..." placeholder="Paste your save here..."></textarea>
@@ -426,31 +426,31 @@
             <h2 class="lang-picker-title">Choose your language</h2>
             <div class="lang-picker-buttons">
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('fr')">
-                    <span class="lang-picker-flag">🇫🇷</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg></span>
                     <span>Français</span>
                 </button>
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('en')">
-                    <span class="lang-picker-flag">🇬🇧</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#012169"/><rect width="3" height="0.4" y="0.8" fill="#fff"/><rect width="3" height="0.4" y="-0.6" fill="#fff" transform="rotate(60 1.5 1)"/><rect width="3" height="0.4" y="0.8" fill="#fff" transform="rotate(60 1.5 1)"/><rect width="3" height="0.4" y="0.8" fill="#fff" transform="rotate(-60 1.5 1)"/><rect width="3" height="0.4" y="0.8" fill="#fff" transform="rotate(-60 1.5 1)"/><rect width="3" height="0.25" y="0.875" fill="#C8102E"/><rect width="3" height="0.25" y="0.875" fill="#C8102E" transform="rotate(60 1.5 1)"/><rect width="3" height="0.25" y="0.875" fill="#C8102E" transform="rotate(-60 1.5 1)"/><rect x="1.25" width="0.5" height="2" fill="#fff"/><rect x="1.375" width="0.25" height="2" fill="#C8102E"/></svg></span>
                     <span>English</span>
                 </button>
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('es')">
-                    <span class="lang-picker-flag">🇪🇸</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#AA151B"/><rect y="0.5" width="3" height="1" fill="#F1BF00"/></svg></span>
                     <span>Español</span>
                 </button>
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('de')">
-                    <span class="lang-picker-flag">🇩🇪</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#000"/><rect y="0.667" width="3" height="0.667" fill="#DD0000"/><rect y="1.333" width="3" height="0.667" fill="#FFCE00"/></svg></span>
                     <span>Deutsch</span>
                 </button>
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('it')">
-                    <span class="lang-picker-flag">🇮🇹</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="1" height="2" fill="#008C45"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#CD212A"/></svg></span>
                     <span>Italiano</span>
                 </button>
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('pt')">
-                    <span class="lang-picker-flag">🇵🇹</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#FF0000"/><rect width="1.2" height="2" fill="#006600"/><circle cx="1.2" cy="1" r="0.35" fill="#FFFF00"/></svg></span>
                     <span>Português</span>
                 </button>
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('nl')">
-                    <span class="lang-picker-flag">🇳🇱</span>
+                    <span class="lang-picker-flag"><svg viewBox="0 0 3 2" class="flag-svg"><rect width="3" height="2" fill="#AE1C28"/><rect y="0.667" width="3" height="0.667" fill="#fff"/><rect y="1.333" width="3" height="0.667" fill="#21468B"/></svg></span>
                     <span>Nederlands</span>
                 </button>
             </div>
