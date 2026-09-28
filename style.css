@@ -35,6 +35,12 @@
 *::-webkit-scrollbar {
     display: none;
 }
+html {
+    /* Echelle UI globale, pilotee par applyUiScale() dans script.js.
+       Toute la typographie du jeu est en rem : un seul facteur fait
+       evoluer textes, boutons, pop-ups et espacements proportionnellement. */
+    font-size: calc(16px * var(--ui-scale, 1));
+}
 html, body {
     /* Desactive le double-tap zoom sur mobile (pas de zoom au double clic) */
     touch-action: manipulation;
@@ -2169,12 +2175,11 @@ body {
     margin-top: 12px;
     padding-top: 10px;
     border-top: 1px solid var(--border);
-    flex: 1;
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    /* Les gardent leur hauteur minimale : la section scrolle si besoin */
+    /* Hauteur naturelle : c'est le panneau gauche entier qui scrolle */
     min-height: 0;
-    overflow-y: auto;
 }
 .mini-games-section h4 {
     color: var(--text-light);

@@ -4585,6 +4585,15 @@ function setMobileView(view) {
 // Mise à l'échelle de la scène de construction : la fusée fait ~700px
 // de haut en taille réelle (pièces positionnées en pixels fixes). On applique
 // un transform: scale() pour qu'elle tienne toujours dans l'écran.
+function applyUiScale() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const wScale = Math.min(1, vw / 1280);
+    const hScale = Math.min(1, vh / 900);
+    const scale = Math.max(0.6, Math.min(wScale, hScale));
+    document.documentElement.style.setProperty('--ui-scale', scale.toFixed(3));
+}
+
 function applySceneScale() {
     // Le monde scene-world (1024x744, dimensions natives du fond) contient le
     // decor ET la fusée dans le meme repere : une seule echelle uniforme,
@@ -4632,6 +4641,7 @@ function initMobileNav() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             relocateBuildingProductions();
+            applyUiScale();
             if (isMobileLayout()) {
                 setMobileView(mobileActiveView);
             }
@@ -4640,8 +4650,10 @@ function initMobileNav() {
         }, 150);
     });
     window.addEventListener('orientationchange', () => {
+        applyUiScale();
         setTimeout(applySceneScale, 250);
     });
+    applyUiScale();
 }
 
 // --- Chronometre depuis le dernier lancement ---
