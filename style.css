@@ -330,6 +330,13 @@ body {
     color: var(--accent-light);
 }
 
+.wb-capped {
+    margin: 12px 0 0;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-style: italic;
+}
+
 /* MODALS */
 .modal {
     position: fixed;

@@ -2486,9 +2486,35 @@ function applyOfflineEarnings(lastSave) {
     partsSinceLaunch += totalGain;
     trackPartsEarned(totalGain);
     const capped = cappedSec < elapsedSec;
-    const timeStr = formatDurationHMS(cappedSec * 1000);
-    showToast('\ud83c\udf19 ' + t('Production hors-ligne (') + timeStr + (capped ? ', ' + t('plafonn\u00e9e)') : '') + ' +' + formatNumber(totalGain) + ' ' + t('Parts'));
+    showWelcomeBackModal(totalGain, cappedSec, capped);
     updateDisplay();
+}
+
+// Pop-up de reconnexion : resume les Parts gagnees pendant l'absence.
+// Reutilise le style de la modale Nouveau batiment.
+function showWelcomeBackModal(gain, seconds, capped) {
+    const modal = document.getElementById('welcome-back-modal');
+    if (!modal) return;
+    const img = document.getElementById('wb-image');
+    if (img) {
+        // relance l'animation de pop a chaque ouverture
+        img.style.animation = 'none';
+        void img.offsetWidth;
+        img.style.animation = '';
+    }
+    document.getElementById('wb-gain').textContent = '+' + formatNumber(gain) + ' ' + t('Parts');
+    document.getElementById('wb-duration').textContent = formatDurationHMS(seconds * 1000);
+    const cappedEl = document.getElementById('wb-capped');
+    if (cappedEl) {
+        cappedEl.style.display = capped ? '' : 'none';
+        if (capped) cappedEl.textContent = t("Plafonné aux capacités de production hors-ligne. Améliore-les dans l'atelier galactique !");
+    }
+    modal.classList.add('active');
+}
+
+function closeWelcomeBackModal() {
+    const modal = document.getElementById('welcome-back-modal');
+    if (modal) modal.classList.remove('active');
 }
 
 function getUpgradeEffect(upgradeId) {

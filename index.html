@@ -49,6 +49,33 @@
         </div>
     </div>
 
+    <!-- RECONNEXION / GAINS HORS-LIGNE -->
+    <div class="modal new-building-modal" id="welcome-back-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="Bon retour !">Bon retour !</h2>
+                <span class="close-button" onclick="closeWelcomeBackModal()">&times;</span>
+            </div>
+            <div class="modal-body new-building-body">
+                <div class="nb-reveal">
+                    <img id="wb-image" src="images/parts.png" alt="Parts">
+                </div>
+                <h3 id="wb-title" data-i18n="Pendant ton absence...">Pendant ton absence...</h3>
+                <div class="nb-stats">
+                    <div class="nb-stat">
+                        <span class="nb-stat-label" data-i18n="Parts gagnées">Parts gagnées</span>
+                        <span class="nb-stat-value" id="wb-gain"></span>
+                    </div>
+                    <div class="nb-stat">
+                        <span class="nb-stat-label" data-i18n="Durée d'absence">Durée d'absence</span>
+                        <span class="nb-stat-value" id="wb-duration"></span>
+                    </div>
+                </div>
+                <p id="wb-capped" class="wb-capped" style="display: none;"></p>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="stats-modal">
         <div class="modal-content">
             <div class="modal-header">
