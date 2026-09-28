@@ -4351,3 +4351,75 @@ body {
     .tutorial-visual img { max-height: 92px; }
     .tutorial-btn { padding: 9px 18px; font-size: 0.95rem; }
 }
+
+/* CHOIX DE LA LANGUE (premiere visite) */
+.lang-picker-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 14500;
+}
+
+.lang-picker-overlay.active {
+    display: flex;
+}
+
+.lang-picker-box {
+    background: var(--bg-panel, #1e293b);
+    border: 1px solid var(--border-light, rgba(148, 163, 184, 0.25));
+    border-radius: 22px;
+    padding: 34px 30px 30px;
+    width: min(88vw, 400px);
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+    animation: tutorialPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lang-picker-rocket {
+    font-size: 2.6rem;
+    margin-bottom: 10px;
+    animation: tutorialFloat 2.2s ease-in-out infinite;
+}
+
+.lang-picker-title {
+    margin: 0 0 22px;
+    font-size: 1.4rem;
+    color: var(--text-dark, #f1f5f9);
+}
+
+.lang-picker-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lang-picker-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 18px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-dark, #f1f5f9);
+    background: var(--bg-main, #0f172a);
+    border: 1px solid var(--border-light, rgba(148, 163, 184, 0.25));
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.lang-picker-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-light, #60a5fa);
+    background: rgba(96, 165, 250, 0.12);
+}
+
+.lang-picker-flag {
+    font-size: 1.4rem;
+}

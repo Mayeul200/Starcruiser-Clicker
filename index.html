@@ -258,7 +258,7 @@
                         <div class="game-icon"><img src="images/cards/collection/booster1.png" alt=""></div>
                         <div class="game-info">
                             <div class="game-name" data-i18n="Collection de Cartes">Collection de Cartes</div>
-                            <div class="game-description" data-i18n="Ouvre des boosters et compléte ton album !">Ouvre des boosters et compléte ton album !</div>
+                            <div class="game-description" data-i18n="Ouvre des boosters et complète ton album !">Ouvre des boosters et complète ton album !</div>
                             <div class="game-cost"><img src="images/parts.png" class="coin-icon" alt=""> <span data-i18n="Boosters payants">Boosters payants</span></div>
                         </div>
                     </div>
@@ -411,6 +411,23 @@
         </div>
     </div>
 
+    <!-- CHOIX DE LA LANGUE (premiere visite) -->
+    <div class="lang-picker-overlay" id="lang-picker-overlay">
+        <div class="lang-picker-box">
+            <div class="lang-picker-rocket">🚀</div>
+            <h2 class="lang-picker-title">Choose your language</h2>
+            <div class="lang-picker-buttons">
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('fr')">
+                    <span class="lang-picker-flag">🇫🇷</span>
+                    <span>Français</span>
+                </button>
+                <button class="lang-picker-btn" onclick="chooseGameLanguage('en')">
+                    <span class="lang-picker-flag">🇬🇧</span>
+                    <span>English</span>
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- TUTORIEL DEBUT DE PARTIE -->
     <div class="tutorial-overlay" id="tutorial-overlay">
         <div class="tutorial-popup">

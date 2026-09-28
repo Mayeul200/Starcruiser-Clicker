@@ -4725,6 +4725,30 @@ function isTutorialSeen() {
     return !!tutorialSeen;
 }
 
+// Choix de la langue a la premiere visite : affiche le sélecteur
+// au-dessus de tout (z-index 14500) et differe le tutoriel.
+function shouldAskLanguage() {
+    return localStorage.getItem('starcruiser-language') === null;
+}
+
+function showLanguagePicker() {
+    const overlay = document.getElementById('lang-picker-overlay');
+    if (!overlay) return;
+    overlay.classList.add('active');
+}
+
+function closeLanguagePicker() {
+    const overlay = document.getElementById('lang-picker-overlay');
+    if (overlay) overlay.classList.remove('active');
+}
+
+function chooseGameLanguage(lang) {
+    setGameLanguage(lang);
+    closeLanguagePicker();
+    // Le tutoriel attend que la langue soit choisie pour demarrer.
+    if (!tutorialActive && !isTutorialSeen()) startTutorial(false);
+}
+
 function startTutorial(force) {
     if (tutorialActive) return;
     if (!force && isTutorialSeen()) return;
@@ -4822,7 +4846,11 @@ function init() {
         setMobileView(mobileActiveView);
         applySceneScale();
     }
-    startTutorial(false);
+    if (shouldAskLanguage()) {
+        showLanguagePicker();
+    } else {
+        startTutorial(false);
+    }
 }
 
 // ============================================
@@ -5290,7 +5318,7 @@ function updateConstructionScene() {
             // La pièce n'existe pas encore, la créer
             const piece = document.createElement('div');
             piece.className = `rocket-piece ${part.id}`;
-            piece.title = part.name;
+            piece.title = t(part.name);
             
             // Positionnement en pixels pour empilement parfait
             const x = part.x || 50;
@@ -5380,7 +5408,7 @@ function showNextPlanetNotification() {
     const distEl = document.getElementById('npn-planet-distance');
     if (planet) {
         imgEl.src = planet.imgPath;
-        nameEl.textContent = planet.name;
+        nameEl.textContent = t(planet.name);
         distEl.textContent = formatNumber(planet.distanceRequired) + ' km';
     } else {
         imgEl.src = 'images/rocket/Fusée3.png';
