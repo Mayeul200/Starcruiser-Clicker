@@ -612,7 +612,9 @@ body {
     padding: 2.7cqw;
     display: grid;
     /* Colonnes du rendu 1920x1080 : 92px / 150px / 129px sur 447px */
-    grid-template-columns: minmax(0, 20.6cqw) 33.6cqw minmax(0, 28.9cqw);
+    /* 1fr final : le bouton s'etire jusqu'au bord droit, aucun espace mort
+       (les proportions des autres colonnes restent calibrees 1920x1080). */
+    grid-template-columns: minmax(0, 20.6cqw) 33.6cqw minmax(0, 1fr);
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
