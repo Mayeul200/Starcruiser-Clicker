@@ -3616,7 +3616,7 @@ body {
         border: none !important;
         padding-bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px));
     }
-    .main-grid.mobile-view-left  > .left-panel  { display: flex; }
+    .main-grid.mobile-view-left  > .left-panel  { display: flex; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .main-grid.mobile-view-center > .center-panel { display: flex; }
     .main-grid.mobile-view-right > .right-panel { display: block; overflow-y: auto; }
 
@@ -3628,7 +3628,7 @@ body {
     .control-button { width: 38px; height: 38px; font-size: 16px; }
 
     /* --- Compteurs --- */
-    .counters { top: 56px; width: min(60vw, 384px); gap: 10px; padding: 6px 10px; }
+    .counters { top: 56px; width: clamp(280px, 44vw, 420px); gap: clamp(6px, 0.8vw, 10px); padding: 6px clamp(8px, 1vw, 12px); }
     .counter { font-size: 0.95rem; min-width: 0; }
     .bonus-timer { top: 104px; left: 50%; transform: translateX(-50%); }
 
@@ -3647,7 +3647,7 @@ body {
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 78px);
         left: 8px;
         top: auto;
-        width: 150px;
+        width: clamp(132px, 14vw, 175px);
         max-height: calc(60vh - var(--mobile-nav-height));
         overflow-y: auto;
         z-index: 58;
@@ -3691,7 +3691,7 @@ body {
     .left-panel { padding: 12px; }
     /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
     .left-panel h3 { flex-shrink: 0; }
-    .mini-space-map { height: 178px; }
+    .mini-space-map { height: clamp(140px, 24vh, 200px); flex-shrink: 0; }
 
     .mini-space-map .space-planet .planet-emoji { font-size: 0.95rem; }
     /* Cartes mini-jeux empilees verticalement : plus propre a lire,
@@ -3857,13 +3857,13 @@ body {
         line-height: 1.25;
         min-width: 0;
         flex: 1;
-        width: 84vw;
-        max-width: 84vw;
+        width: auto;
+        max-width: min(84vw, 620px);
     }
 
     /* Comètes un peu plus petites */
-    .random-bonus { width: 130px; height: 130px; }
-    .comet-img { width: 130px; height: 130px; }
+    .random-bonus { width: clamp(96px, 15vw, 150px); height: clamp(96px, 15vw, 150px); }
+    .comet-img { width: clamp(96px, 15vw, 150px); height: clamp(96px, 15vw, 150px); }
 
     /* Tooltip : plus lisible au doigt, reste au-dessus du clavier virtuel */
     .upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: pre-line; border-left-width: 3px; }
@@ -3914,7 +3914,7 @@ body {
 /* Petits écrans (<480px) : resserrage supplémentaire */
 @media (max-width: 480px) {
     .medal { top: 30% !important; }
-    .rocket-parts-shop { width: 128px; }
+    .rocket-parts-shop { width: clamp(118px, 12.5vw, 132px); }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
     .building-item { grid-template-columns: minmax(25%, 96px) 1fr; grid-template-areas: "icon info" "icon buy"; }
     .building-item button { width: auto; min-height: 32px; height: auto; font-size: 0.95rem; }
@@ -4110,8 +4110,8 @@ body {
     margin-bottom: 14px;
 }
 .npn-planet-img img {
-    width: 140px;
-    height: 140px;
+    width: clamp(96px, 16vh, 140px);
+    height: clamp(96px, 16vh, 140px);
     object-fit: contain;
     animation: npnPlanetSpin 14s linear infinite;
     filter: drop-shadow(0 8px 30px rgba(59, 130, 246, 0.55));
