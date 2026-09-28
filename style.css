@@ -538,13 +538,15 @@ body {
     z-index: 1;
     container-type: inline-size;
 }
-/* Pluie de pieces en arriere-plan du panneau central */
+/* Pluie de pieces en arriere-plan du panneau central.
+   Au-dessus du ciel de la scene (qui masquerait la pluie) mais sous
+   les elements interactifs (bouton Lancer z-100, modals, HUD). */
 .parts-rain {
     position: absolute;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: 4;
 }
 .parts-rain .rain-part {
     position: absolute;
