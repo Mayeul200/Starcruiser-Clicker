@@ -4284,7 +4284,13 @@ body {
 .tutorial-popup {
     position: relative;
     width: min(92vw, 440px);
+    /* Taille fixe : la modale ne change jamais de hauteur d'une etape a
+       l'autre, quel que soit le texte ; l'image et le texte se placent
+       dans l'espace disponible. */
+    height: 400px;
     max-height: calc(100dvh - 40px);
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     background: linear-gradient(160deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid #a855f7;
@@ -4334,6 +4340,7 @@ body {
 }
 .tutorial-visual {
     height: 120px;
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -4363,6 +4370,10 @@ body {
     line-height: 1.55;
     color: var(--text);
     white-space: pre-line;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .tutorial-actions {
     display: flex;
