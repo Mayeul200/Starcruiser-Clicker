@@ -3983,7 +3983,7 @@ body {
     }
     /* Cibles tactiles >= 44px (recommandation Apple/Google) */
     .multiplier-btn { min-height: 40px; padding: 8px 12px; font-size: 0.85rem; }
-    .building-item button { min-height: 44px; padding: 10px 8px; font-size: 0.85rem; }
+    .building-item button { min-height: 54px; padding: 14px 8px; font-size: 0.9rem; }
     .rocket-part-btn { min-height: 36px; padding: 8px 6px; font-size: 0.75rem; }
     .galactic-shop-btn { min-height: 44px; }
     .contract-buy-btn { min-height: 44px; padding: 12px 18px; font-size: 0.95rem; align-self: stretch; }
