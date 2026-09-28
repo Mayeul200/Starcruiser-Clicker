@@ -2395,6 +2395,9 @@ function confirmPostTravelReset() {
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
     totalPartsEarnedThisLaunch = 0;
+    activeRandomBonuses = [];
+    rebuildAutoMultipliers();
+    updateBonusTimer();
     resetContractState();
     updateDisplay();
     saveGame();
