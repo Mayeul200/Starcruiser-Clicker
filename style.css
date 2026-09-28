@@ -1297,18 +1297,22 @@ body {
    ============================================ */
 /* Launch Button */
 .launch-button:hover {
-    transform: translateY(-3px);
+    /* translateX(-50%) conserve : le bouton est ancre left:50%, sans lui il
+       saute a droite (visible surtout au tap mobile, ou :hover est collant). */
+    transform: translateX(-50%) translateY(-3px);
     box-shadow: var(--shadow-lg), 0 0 30px rgba(239, 68, 68, 0.6);
     background: linear-gradient(135deg, #f87171, #ef4444);
 }
 .launch-button:active {
-    transform: translateY(1px);
+    transform: translateX(-50%) translateY(1px);
     background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 .launch-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
+    /* Conserve le centrage translateX(-50%) : le bouton est ancre left:50% ;
+       sans lui, il saute a droite pendant l'etat disabled du lancement. */
+    transform: translateX(-50%);
 }
 /* Launch Results Modal */
 .launch-modal {
