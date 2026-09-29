@@ -642,7 +642,7 @@ body {
 .cch-reel {
     display: flex;
     flex-direction: column;
-    transition: transform 0.65s cubic-bezier(0.25, 0.9, 0.3, 1);
+    transition: transform 0.24s cubic-bezier(0.25, 0.9, 0.3, 1);
     will-change: transform;
 }
 .cch-reel .digit {
@@ -3847,7 +3847,7 @@ body {
         grid-template-columns: 1fr;
         grid-template-rows: 100%;
         height: calc(100vh - var(--top-height));
-        height: calc(100dvh - var(--top-height));
+        height: calc(100svh - var(--top-height));
     }
 
     /* --- Nav bas d'écran --- */
@@ -4141,7 +4141,7 @@ body {
     .cc-reveal-card { width: min(calc((100cqw - (var(--card-count, 3) - 1) * calc(8px * var(--mscale, 1))) / var(--card-count, 3)), calc(40cqh)); height: auto; }
     /* Carte seule : largeur limitee pour rester lisible, pas plein ecran */
     .cc-reveal-cards:has(> .cc-reveal-card.pack:only-child) { max-width: none; }
-    .cc-reveal-card.pack { width: min(70cqw, 46vh); max-width: 74vw; }
+    .cc-reveal-card.pack { width: min(63cqw, 41vh); max-width: 67vw; }
     /* 3 cartes : grille 2 colonnes (2 en haut, 1 centree en bas) */
 
     /* Toast au-dessus de la nav */
