@@ -1275,11 +1275,12 @@ body {
     transition: all 0.5s;
     pointer-events: none;
 }
-@keyframes floatUp {
-    0% { opacity: 0; transform: translate(-50%, 6px) scale(0.6); }
-    12% { opacity: 1; transform: translate(-50%, -12px) scale(1.25); }
-    25% { transform: translate(-50%, -16px) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -110px) scale(0.92); }
+/* +X du clic : part du point de clique vers une direction aleatoire
+   (--ce-dx/--ce-dy), avec une legere rotation, a vitesse lisible. */
+@keyframes clickBurst {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    12% { opacity: 1; transform: translate(calc(-50% + var(--ce-dx, 0px) * 0.25), calc(-50% + var(--ce-dy, 0px) * 0.25)) scale(1.2); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--ce-dx, 0px)), calc(-50% + var(--ce-dy, 0px))) rotate(var(--ce-rot, 0deg)) scale(0.95); }
 }
 .click-effect {
     position: absolute;
@@ -1290,11 +1291,45 @@ body {
     background: rgba(30, 58, 138, 0.7);
     padding: 2px 8px;
     border-radius: 4px;
-    animation: floatUp 1.2s ease-out forwards;
+    animation: clickBurst 1.2s ease-out forwards;
     opacity: 0;
     z-index: 1000;
     white-space: nowrap;
-    transform: translate(-50%, 0);
+    pointer-events: none;
+}
+
+/* Gros popup de bonus (+X Parts / Production x5) au centre de l'ecran,
+   position et angle aleatoires. */
+.bonus-pop {
+    position: absolute;
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    font-weight: 900;
+    white-space: nowrap;
+    transform: translate(-50%, -50%) rotate(var(--bpop-rot, 0deg));
+    pointer-events: none;
+    z-index: 1200;
+    animation: bonusPop 1.9s cubic-bezier(0.22, 1.2, 0.36, 1) forwards;
+    text-shadow: 0 3px 14px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 0, 0, 0.5);
+}
+.bonus-pop-instant {
+    color: #ffd700;
+    filter: drop-shadow(0 0 18px rgba(255, 190, 40, 0.55));
+}
+.bonus-pop-mult {
+    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffee00, #00e676, #00b0ff, #b388ff, #ff0080);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: bonusPop 1.9s cubic-bezier(0.22, 1.2, 0.36, 1) forwards,
+               rainbow-slide 1.5s linear infinite;
+}
+@keyframes bonusPop {
+    0% { opacity: 0; scale: 0.3; }
+    14% { opacity: 1; scale: 1.15; }
+    24% { scale: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; scale: 0.92; }
 }
 #toast-container {
     position: fixed;

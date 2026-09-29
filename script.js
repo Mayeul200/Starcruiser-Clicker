@@ -3432,9 +3432,13 @@ function showClickEffect(value, event) {
     const effect = document.createElement('div');
     effect.className = 'click-effect';
     effect.textContent = `+${formatNumber(value)}`;
+    const dir = Math.random() * Math.PI * 2;
+    const dist = 55 + Math.random() * 45;
     effect.style.left = `${x}px`;
     effect.style.top = `${y}px`;
-
+    effect.style.setProperty('--ce-dx', (Math.cos(dir) * dist).toFixed(1) + 'px');
+    effect.style.setProperty('--ce-dy', (Math.sin(dir) * dist).toFixed(1) + 'px');
+    effect.style.setProperty('--ce-rot', ((Math.random() - 0.5) * 22).toFixed(1) + 'deg');
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 1200);
 }
