@@ -82,6 +82,8 @@ const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
 const BONUS_SPAWN_INTERVAL_MS = 30000;
 const SAVE_INTERVAL_MS = 30000;
+const DISPLAY_UPDATE_INTERVAL_MS = 250;
+const SLOW_UPDATE_INTERVAL_MS = 1000;
 const TOAST_DURATION_MS = 3000;
 const MAX_BUILDING_DISPLAY = 100;
 const BUILDING_UPDATE_INTERVAL_MS = 500;
@@ -307,6 +309,8 @@ let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
 let lastRocketPartsUpdate = 0;
 let lastSpaceProgressUpdate = 0;
+let lastDisplayUpdate = 0;
+let lastSlowUpdate = 0;
 let gameStartTime = 0;
 let startupBonusApplied = false;
 let tutorialSeen = false;
@@ -519,6 +523,7 @@ function formatNumber(num, isTotalScore) {
 
 function updateAutoMultiplier() {
     autoMultiplier = autoMultipliers.reduce((a, b) => a * b, 1);
+    invalidateBuildingGainsCache();
 }
 
 function updateClickMultiplier() {
@@ -1015,6 +1020,7 @@ function buyBuilding(buildingId) {
         score -= totalCost;
         building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
+        invalidateBuildingGainsCache();
         if (isNewType) showNewBuildingModal(building);
         updateDisplay();
         updateConstructionScene();
@@ -1101,6 +1107,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     }
     
     buildingUpgrades[buildingId].push(threshold);
+    invalidateBuildingGainsCache();
     updateDisplay();
     saveGame();
     hideTooltip();
@@ -2301,6 +2308,7 @@ function applyNewPlanets(newlyUnlocked) {
     newlyUnlocked.forEach(planet => {
         unlockedPlanets.add(planet.id);
         planetBonuses[planet.id] = planet.bonusPercent / 100;
+        invalidateBuildingGainsCache();
     });
 }
 
@@ -2477,6 +2485,7 @@ function buyGalacticUpgrade(upgradeId) {
             if (atelier) {
                 atelier.count += extra;
                 unlockedBuildings.add(atelier.id);
+                invalidateBuildingGainsCache();
                 startupBonusApplied = true;
                 renderBuildings();
                 updateDisplay();
@@ -2648,6 +2657,7 @@ function applyStartupBonus() {
             unlockedBuildings.add(usine.id);
         }
     }
+    invalidateBuildingGainsCache();
 }
 
 function renderGalacticShop() {
@@ -3558,15 +3568,30 @@ function spawnRainPart(container) {
     container.appendChild(part);
 }
 
+let buildingGainsCache = null;
+let cachedGainPerBuilding = new Map();
+
+function invalidateBuildingGainsCache() {
+    buildingGainsCache = null;
+}
+
+function getBuildingGainsSnapshot() {
+    if (buildingGainsCache === null) {
+        let totalGain = 0;
+        cachedGainPerBuilding = new Map();
+        BUILDINGS.forEach(building => {
+            const buildingGain = calculateBuildingGain(building);
+            cachedGainPerBuilding.set(building.id, buildingGain);
+            totalGain += buildingGain;
+        });
+        partsPerSecond = totalGain;
+        buildingGainsCache = totalGain;
+    }
+    return buildingGainsCache;
+}
+
 function gameLoop() {
-    let totalGain = 0;
-
-    BUILDINGS.forEach(building => {
-        const buildingGain = calculateBuildingGain(building);
-        totalGain += buildingGain;
-    });
-
-    partsPerSecond = totalGain;
+    getBuildingGainsSnapshot();
     tickPartsRain(Date.now());
     const now = Date.now();
     const dtSeconds = (now - lastGameTick) / 1000;
@@ -3576,33 +3601,37 @@ function gameLoop() {
     partsSinceLaunch += tickGain;
     trackPartsEarned(tickGain);
     updateLaunchTimer();
-
     if (dtSeconds > 0) {
         BUILDINGS.forEach(building => {
             if (building.count > 0) {
-                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (calculateBuildingGain(building) * dtSeconds);
+                totalGeneratedByBuilding[building.id] = (totalGeneratedByBuilding[building.id] || 0) + (cachedGainPerBuilding.get(building.id) || 0) * dtSeconds;
             }
         });
     }
-
-    if (Date.now() - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
-        lastBuildingsUpdate = Date.now();
+    if (now - lastBuildingsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
+        lastBuildingsUpdate = now;
         updateAllBuildingButtons();
         refreshLiveTooltip();
         checkNewUpgrades();
     }
-    if (Date.now() - lastRocketPartsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
-        lastRocketPartsUpdate = Date.now();
+    if (now - lastRocketPartsUpdate > BUILDING_UPDATE_INTERVAL_MS) {
+        lastRocketPartsUpdate = now;
         renderRocketPartsShop();
     }
-    updateDisplay();
-    if (Date.now() - lastSpaceProgressUpdate > SPACE_UPDATE_INTERVAL_MS) {
-        lastSpaceProgressUpdate = Date.now();
+    if (now - lastDisplayUpdate > DISPLAY_UPDATE_INTERVAL_MS) {
+        lastDisplayUpdate = now;
+        updateDisplay();
+    }
+    if (now - lastSpaceProgressUpdate > SPACE_UPDATE_INTERVAL_MS) {
+        lastSpaceProgressUpdate = now;
         updateSpaceProgress();
     }
-    checkBuildingUnlocks();
-    refreshStatsLive();
-    checkTrophies();
+    if (now - lastSlowUpdate > SLOW_UPDATE_INTERVAL_MS) {
+        lastSlowUpdate = now;
+        checkBuildingUnlocks();
+        refreshStatsLive();
+        checkTrophies();
+    }
 }
 
 // ============================================
@@ -3991,9 +4020,27 @@ function toggleStats() {
 // DISPLAY
 // ============================================
 
+let displayElementsCache = null;
+
+function getDisplayElements() {
+    if (displayElementsCache === null) {
+        displayElementsCache = {
+            scoreValue: document.getElementById('score-value'),
+            gainValue: document.getElementById('gain-value'),
+            modalPartsValues: Array.from(document.querySelectorAll('.modal-parts-value')),
+            modalPartsGains: Array.from(document.querySelectorAll('.modal-parts-gain')),
+            stardustValues: Array.from(document.querySelectorAll('#stardust-value, #stardust-value-2')),
+            bonusTimer: document.getElementById('bonus-timer')
+        };
+    }
+    return displayElementsCache;
+}
+
 function updateDisplay() {
-    document.getElementById('score-value').textContent = formatNumber(score, true);
-    document.getElementById('gain-value').textContent = formatNumber(partsPerSecond);
+    getBuildingGainsSnapshot();
+    const els = getDisplayElements();
+    if (els.scoreValue) els.scoreValue.textContent = formatNumber(score, true);
+    if (els.gainValue) els.gainValue.textContent = formatNumber(partsPerSecond);
     updateModalPartsCounter();
     updateStardustDisplay();
     updateStardustPreview();
@@ -4001,15 +4048,19 @@ function updateDisplay() {
 }
 
 function updateModalPartsCounter() {
+    const els = getDisplayElements();
+    const hasOpenModal = document.querySelector('.modal.active') !== null;
+    if (!hasOpenModal) return;
     const scoreText = formatNumber(score, true);
     const gainText = formatNumber(partsPerSecond);
-    document.querySelectorAll('.modal-parts-value').forEach(el => { el.textContent = scoreText; });
-    document.querySelectorAll('.modal-parts-gain').forEach(el => { el.textContent = gainText; });
+    els.modalPartsValues.forEach(el => { el.textContent = scoreText; });
+    els.modalPartsGains.forEach(el => { el.textContent = gainText; });
 }
 
 function updateStardustDisplay() {
+    const els = getDisplayElements();
     const text = formatNumber(starDust);
-    document.querySelectorAll('#stardust-value, #stardust-value-2').forEach(el => { el.textContent = text; });
+    els.stardustValues.forEach(el => { el.textContent = text; });
 }
 
 function updateStardustPreview() {
@@ -4027,22 +4078,31 @@ function updateStardustPreview() {
     previewBar.style.width = (fracPart * 100) + '%';
 }
 
-function updateBonusTimer() {
-    const timerElement = document.getElementById('bonus-timer');
-    if (!timerElement) return;
+let bonusTimerLastKey = null;
 
+function updateBonusTimer() {
+    const els = getDisplayElements();
+    const timerElement = els.bonusTimer;
+    if (!timerElement) return;
     const activeBonuses = activeRandomBonuses.filter(b => b.effect === 'multiplier' || b.id === 'flare');
     if (activeBonuses.length === 0) {
-        timerElement.textContent = '';
-        timerElement.style.display = 'none';
+        if (bonusTimerLastKey !== null) {
+            bonusTimerLastKey = null;
+            timerElement.textContent = '';
+            timerElement.style.display = 'none';
+        }
         return;
     }
-
+    const now = Date.now();
     const labels = activeBonuses.map(bonus => {
-        const remainingTime = Math.max(0, bonus.endTime - Date.now());
+        const remainingTime = Math.max(0, bonus.endTime - now);
         return `\u23f3 \u00d7${bonus.multiplier} (${formatDurationHMS(remainingTime)})`;
     });
-    timerElement.innerHTML = labels.join('<br>');
+    const content = labels.join('\n');
+    const key = activeBonuses.map(b => b.id + ':' + b.endTime).join('|');
+    if (key === bonusTimerLastKey && timerElement.textContent === content) return;
+    bonusTimerLastKey = key;
+    timerElement.textContent = content;
     timerElement.style.display = 'block';
 }
 
@@ -4181,6 +4241,7 @@ function completeContract() {
     const maxed = stacks >= CONTRACT_REWARD_MAX_STACKS;
     if (!maxed) {
         contractState.buildingBonuses[c.buildingId] = stacks + 1;
+        invalidateBuildingGainsCache();
     }
     const mult = getContractBuildingMultiplier(c.buildingId);
     showToast(tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
@@ -4546,6 +4607,7 @@ function buyBooster(type) {
 
     for (const card of drawn) {
         cardCollection[card.id] = (cardCollection[card.id] || 0) + 1;
+        invalidateBuildingGainsCache();
     }
 
     renderRevealCards(drawn);
