@@ -621,17 +621,30 @@ body {
 .cch-sep {
     white-space: pre;
 }
+/* Ruban vertical (odometre) : une colonne = un chiffre, le ruban des 10
+   chiffres glisse verticalement avec une transition douce. */
 #score-value .cch,
 .stat-value .cch {
-    display: inline-block;
-    min-width: 0.62em;
+    display: inline-flex;
+    overflow: hidden;
+    width: 0.62em;
+    height: 1.25em;
+    line-height: 1.25;
+    vertical-align: bottom;
+}
+.cch-reel {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.35s cubic-bezier(0.25, 0.9, 0.3, 1);
+    will-change: transform;
+}
+.cch-reel .digit {
+    display: block;
+    height: 1.25em;
+    line-height: 1.25;
     text-align: center;
-    animation: cch-roll 0.35s ease-out;
 }
-@keyframes cch-roll {
-    0% { transform: translateY(0.65em); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-}
+
 /* Bonus actif : le compteur devient arc-en-ciel et pulse */
 .counters.bonus-active {
     animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
@@ -865,8 +878,7 @@ body {
     justify-content: space-between;
     align-items: center;
     height: 47px;
-    padding: 0 8px;
-    border-bottom: 1px solid var(--border);
+    padding: 8px;
 }
 
 .multiplier-buttons {

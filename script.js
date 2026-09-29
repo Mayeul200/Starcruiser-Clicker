@@ -3811,15 +3811,29 @@ function renderTrophies() {
         } else {
             trophyElement.innerHTML = '?';
         }
-        trophyElement.addEventListener('mouseenter', (e) => {
-            const rect = e.target.getBoundingClientRect();
+        const showTrophyTooltip = (target) => {
+            const rect = target.getBoundingClientRect();
             const name = t(trophy.name);
             const description = t(trophy.description);
             const isUnlocked = unlockedTrophies.has(trophy.id);
             const status = isUnlocked ? t('D\u00e9bloqu\u00e9') : t('Verrouill\u00e9');
             showTooltip(`${name}\n${description}\n${status}`, rect.left + rect.width/2, rect.top, { anchorBottom: rect.bottom });
-        });
-        trophyElement.addEventListener('mouseleave', hideTooltip);
+        };
+        if (!IS_TOUCH) {
+            trophyElement.addEventListener('mouseenter', (e) => showTrophyTooltip(e.target));
+            trophyElement.addEventListener('mouseleave', hideTooltip);
+        } else {
+            trophyElement.addEventListener('click', (e) => {
+                if (touchTooltipElement === trophyElement) {
+                    touchTooltipElement = null;
+                    hideTooltip();
+                } else {
+                    touchTooltipElement = trophyElement;
+                    showTrophyTooltip(trophyElement);
+                }
+                e.stopPropagation();
+            });
+        }
         
         trophiesGrid.appendChild(trophyElement);
     });
@@ -4047,12 +4061,9 @@ function updateDisplay() {
 // Compteur fluide : la valeur affichee rattrape le score reel en douceur,
 // et chaque chiffre qui change deroule comme une machine a sous.
 let animatedScore = null;
-let scoreTextCols = null;
-// Decoupe le texte formate en segments stables : groupes de chiffres d'un
-// cote, separateurs (suffixe, espaces, lettres) de l'autre. Chaque groupe de
-// chiffres garde un nombre fixe de colonnes (padding gauche) : les unites
-// restent alignees quand le nombre gagne une dizaine, et chaque colonne
-// roule comme une machine a sous.
+// Ruban vertical type odometre : chaque colonne contient les 10 chiffres
+// empiles ; changer de chiffre deplace le ruban (transition CSS douce).
+// L'effet reste fluide meme si la valeur change a chaque frame.
 function splitCounterText(text) {
     const segs = [];
     let i = 0;
@@ -4065,11 +4076,28 @@ function splitCounterText(text) {
     }
     return segs;
 }
+function makeDigitCol() {
+    const col = document.createElement('span');
+    col.className = 'cch';
+    const reel = document.createElement('span');
+    reel.className = 'cch-reel';
+    for (let d = 0; d < 10; d++) {
+        const dn = document.createElement('span');
+        dn.className = 'digit';
+        dn.textContent = String(d);
+        reel.appendChild(dn);
+    }
+    col.appendChild(reel);
+    return { col, reel };
+}
 function renderCounterChars(el, text) {
     if (!el) return;
     const segs = splitCounterText(text);
     const prev = el.__segs;
-    if (!prev || prev.length !== segs.length || prev.some((p, k) => p.digits !== segs[k].digits)) {
+    const sameShape = prev
+        && prev.length === segs.length
+        && prev.every((p, k) => p.digits === segs[k].digits);
+    if (!sameShape) {
         while (el.firstChild) el.removeChild(el.firstChild);
         const nodes = [];
         segs.forEach(seg => {
@@ -4084,14 +4112,13 @@ function renderCounterChars(el, text) {
                 wrap.className = 'cch-group';
                 const cols = [];
                 for (const ch of seg.str) {
-                    const sp = document.createElement('span');
-                    sp.className = 'cch droll';
-                    sp.textContent = ch;
-                    wrap.appendChild(sp);
-                    cols.push(sp);
+                    const c = makeDigitCol();
+                    c.reel.style.transform = 'translateY(-' + (+ch) + '00%)';
+                    wrap.appendChild(c.col);
+                    cols.push(c.reel);
                 }
                 el.appendChild(wrap);
-                nodes.push({ wrap, cols });
+                nodes.push(cols);
             }
         });
         el.__segs = segs.map(sg => ({ digits: sg.digits, len: sg.str.length }));
@@ -4104,38 +4131,25 @@ function renderCounterChars(el, text) {
             if (nodes[k] && nodes[k].textContent !== seg.str) nodes[k].textContent = seg.str;
             return;
         }
-        const node = nodes[k];
+        const cols = nodes[k];
         const oldLen = el.__segs[k].len;
         const newLen = seg.str.length;
         if (newLen === oldLen) {
-            let changed = false;
             for (let c = 0; c < newLen; c++) {
-                if (node.cols[c].textContent !== seg.str[c]) {
-                    node.cols[c].textContent = seg.str[c];
-                    changed = true;
-                }
-            }
-            if (changed) {
-                for (let c = 0; c < newLen; c++) {
-                    node.cols[c].classList.remove('droll');
-                    void node.cols[c].offsetWidth;
-                    node.cols[c].classList.add('droll');
-                }
+                const target = 'translateY(-' + (+seg.str[c]) + '00%)';
+                if (cols[c].style.transform !== target) cols[c].style.transform = target;
             }
         } else {
-            // Le nombre de chiffres change (dizaine gagnee/perte) :
-            // on reconstruit le groupe avec un roll complet.
-            const wrap = node.wrap;
+            const wrap = cols[0].parentElement;
             while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
-            const cols = [];
+            const newCols = [];
             for (const ch of seg.str) {
-                const sp = document.createElement('span');
-                sp.className = 'cch droll';
-                sp.textContent = ch;
-                wrap.appendChild(sp);
-                cols.push(sp);
+                const c = makeDigitCol();
+                c.reel.style.transform = 'translateY(-' + (+ch) + '00%)';
+                wrap.appendChild(c.col);
+                newCols.push(c.reel);
             }
-            node.cols = cols;
+            nodes[k] = newCols;
             el.__segs[k].len = newLen;
         }
     });
@@ -4234,32 +4248,16 @@ function updateStardustPreview() {
     previewBar.style.width = (fracPart * 100) + '%';
 }
 
-let bonusTimerLastKey = null;
-
 function updateBonusTimer() {
     const els = getDisplayElements();
-    const timerElement = els.bonusTimer;
-    if (!timerElement) return;
-    const activeBonuses = activeRandomBonuses.filter(b => b.effect === 'multiplier' || b.id === 'flare');
-    if (activeBonuses.length === 0) {
-        if (bonusTimerLastKey !== null) {
-            bonusTimerLastKey = null;
-            timerElement.textContent = '';
-            timerElement.style.display = 'none';
-        }
-        return;
+    if (els.bonusTimer) {
+        els.bonusTimer.textContent = '';
+        els.bonusTimer.style.display = 'none';
     }
-    const now = Date.now();
-    const labels = activeBonuses.map(bonus => {
-        const remainingTime = Math.max(0, bonus.endTime - now);
-        return `\u23f3 \u00d7${bonus.multiplier} (${formatDurationHMS(remainingTime)})`;
-    });
-    const content = labels.join('\n');
-    const key = activeBonuses.map(b => b.id + ':' + b.endTime).join('|');
-    if (key === bonusTimerLastKey && timerElement.textContent === content) return;
-    bonusTimerLastKey = key;
-    timerElement.textContent = content;
-    timerElement.style.display = 'block';
+    const countersEl = document.querySelector('.counters');
+    if (!countersEl) return;
+    const hasBonus = activeRandomBonuses.some(b => b.effect === 'multiplier' || b.id === 'flare');
+    countersEl.classList.toggle('bonus-active', hasBonus);
 }
 
 // ============================================
