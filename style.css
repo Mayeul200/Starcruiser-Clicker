@@ -4141,7 +4141,7 @@ body {
     .cc-reveal-card { width: min(calc((100cqw - (var(--card-count, 3) - 1) * calc(8px * var(--mscale, 1))) / var(--card-count, 3)), calc(40cqh)); height: auto; }
     /* Carte seule : largeur limitee pour rester lisible, pas plein ecran */
     .cc-reveal-cards:has(> .cc-reveal-card.pack:only-child) { max-width: none; }
-    .cc-reveal-card.pack { width: min(88cqw, 58vh); max-width: 92vw; }
+    .cc-reveal-card.pack { width: min(70cqw, 46vh); max-width: 74vw; }
     /* 3 cartes : grille 2 colonnes (2 en haut, 1 centree en bas) */
 
     /* Toast au-dessus de la nav */

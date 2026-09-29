@@ -4235,9 +4235,9 @@ function counterAnimLoop() {
             : Math.round(animatedScore);
         const text = shown < 1000 ? shown.toFixed(1) : formatNumber(shown, true);        renderCounterChars(el, text);
     }
-    requestAnimationFrame(counterAnimLoop);
+    setTimeout(counterAnimLoop, 250);
 }
-requestAnimationFrame(counterAnimLoop);
+setTimeout(counterAnimLoop, 250);
 
 function rollCounterText(el, text) {
     renderCounterChars(el, text);
@@ -5096,7 +5096,10 @@ function initMobileNav() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             relocateBuildingProductions();
-            applyUiScale();
+            // Barre d'URL mobile : un resize de hauteur seul (scroll masque la
+            // barre) ne doit pas rescaler l'UI en plein scroll, sinon la
+            // hauteur du contenu change et le scrollTop est reclampe.
+            if (window.innerWidth !== lastResizeW) applyUiScale();
             // Sur mobile, scroller masque/affiche la barre d'URL du navigateur :
             // un changement de hauteur seul ne doit pas reinitialiser la vue,
             // sinon le scroll du panneau batiments remonte de force.
