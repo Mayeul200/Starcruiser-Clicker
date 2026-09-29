@@ -537,15 +537,9 @@ const TOAST_MAX_STACK = 3;
 function getToastContainer() {
     let container = document.getElementById('toast-container');
     if (!container) {
-        const legacy = document.getElementById('toast');
         container = document.createElement('div');
         container.id = 'toast-container';
-        if (legacy && legacy.parentElement) {
-            legacy.parentElement.insertBefore(container, legacy);
-            legacy.remove();
-        } else {
-            document.body.appendChild(container);
-        }
+        document.body.appendChild(container);
     }
     return container;
 }
@@ -900,8 +894,15 @@ function loadGame() {
 
     } catch (e) {
         console.error("Erreur de chargement :", e);
-        localStorage.removeItem('starcruiserClickerSave');
-        showToast("\u26a0\ufe0f " + t("Sauvegarde corrompue. Nouvelle partie."));
+        if (e instanceof SyntaxError) {
+            localStorage.removeItem('starcruiserClickerSave');
+            showToast("\u26a0\ufe0f " + t("Sauvegarde corrompue. Nouvelle partie."));
+        } else {
+            // Sauvegarde illisible seulement si le JSON lui-meme est casse.
+            // Pour toute autre erreur (code, DOM), on conserve la sauvegarde :
+            // la supprimer ferait perdre au joueur des heures de progression.
+            showToast("\u26a0\ufe0f " + t("Erreur de chargement. Sauvegarde conserv\u00e9e."));
+        }
     }
 }
 
@@ -921,7 +922,11 @@ function importSave() {
     if (!importText) { showToast("\u274c " + t("Rien à importer.")); return; }
     try {
         const testParse = JSON.parse(importText);
-        if (testParse.version && testParse.buildings && testParse.buildingUpgrades) {
+        if (testParse.version !== SAVE_VERSION) {
+            showToast("\u274c " + t("Version de sauvegarde incompatible."));
+            return;
+        }
+        if (testParse.buildings && testParse.buildingUpgrades) {
             localStorage.setItem('starcruiserClickerSave', importText);
             showToast("\u2705 " + t("Importé ! Redémarrage..."));
             setTimeout(() => window.location.reload(), 1000);
@@ -940,6 +945,8 @@ function confirmDeleteSave() {
 }
 
 function deleteSave() {
+    clearTimeout(bonusSpawnTimer);
+    bonusSpawnTimer = null;
     localStorage.removeItem('starcruiserClickerSave');
     showToast("\ud83d\uddd1\ufe0f " + t("Supprimé !"));
     setTimeout(() => window.location.reload(), 1000);
@@ -972,12 +979,14 @@ function showNewBuildingModal(building) {
     const modal = document.getElementById('new-building-modal');
     if (!modal) return;
     const img = document.getElementById('nb-image');
-    img.src = building.imgPath || '';
-    img.alt = building.name;
-    // relance l'animation de pop a chaque ouverture
-    img.style.animation = 'none';
-    void img.offsetWidth;
-    img.style.animation = '';
+    if (img) {
+        img.src = building.imgPath || '';
+        img.alt = building.name;
+        // relance l'animation de pop a chaque ouverture
+        img.style.animation = 'none';
+        void img.offsetWidth;
+        img.style.animation = '';
+    }
     document.getElementById('nb-name').textContent = t(building.name);
     document.getElementById('nb-description').textContent = t(building.description);
     document.getElementById('nb-gain').textContent = '+' + formatNumber(building.gain) + ' ' + t('Parts') + '/s';
@@ -1022,21 +1031,32 @@ function buyBuilding(buildingId) {
 }
 
 function calculateMaxAffordable(building) {
-    let maxAffordable = 0;
-    let cumulativeCost = 0;
-    let i = 0;
-    while (true) {
-        const costForOne = calculateBuildingCost({...building, count: building.count + i});
-        if (cumulativeCost + costForOne <= score) {
-            cumulativeCost += costForOne;
-            maxAffordable++;
-            i++;
-        } else {
-            break;
-        }
-        if (i > 100000) break; // Sécurité
+    // Formule fermee (somme geometrique) au lieu d'une boucle couteuse :
+    // cost(i) = floor(base * r^i * (1 - red)), i = 0..n-1.
+    // La boucle precedente etait O(n) par batement et par frame, avec un
+    // score eleve n pouvait atteindre des dizaines de milliers d'unites.
+    if (score < calculateBuildingCost(building)) return 0;
+    const reduction = getBuildingCostReduction();
+    const unit = Math.floor(building.baseCost * (1 - reduction));
+    if (unit <= 0) return 0;
+    const r = BUILDING_PRICE_GROWTH_RATE;
+    let n = Math.floor(Math.log(1 + (score * (r - 1)) / (unit * Math.pow(r, building.count))) / Math.log(r));
+    if (!(n > 0)) return 0;
+    // Ajustement fin : l'arrondi floor() par unite rend les couts reels
+    // legerement differents de la somme geometrique continue. On corrige de
+    // part et d'autre avec le cout exact (quelques iterations seulement).
+    while (n > 0 && calculateTotalBuildingCost(building, n) > score) n--;
+    let guard = 0;
+    while (guard++ < 1000 && calculateTotalBuildingCost(building, n + 1) <= score) n++;
+    return n;
+}
+function calculateTotalBuildingCost(building, count) {
+    // Somme geometrique des couts des `count` prochaines unites.
+    let totalCost = 0;
+    for (let i = 0; i < count; i++) {
+        totalCost += calculateBuildingCost({...building, count: building.count + i});
     }
-    return maxAffordable;
+    return totalCost;
 }
 
 function buyClickUpgrade(threshold) {
@@ -3167,16 +3187,20 @@ function spawnRandomBonus(shower) {
                 showToast(`\u2705 ${t(bonus.name)}: +${formatNumber(instantProduction)} ${t("Parts")}!`);
             }
             else if (bonus.id === "flare") {
+                // Chaque flare porte un endTime unique : le timer d'expiration
+                // retire uniquement CE bonus. Filtrer par id retirerait tous les
+                // flares actifs du meme type d'un seul coup.
+                const flareEndTime = Date.now() + bonus.duration;
                 activeRandomBonuses.push({
                     id: bonus.id,
                     effect: bonus.effect,
                     multiplier: bonus.multiplier,
-                    endTime: Date.now() + bonus.duration
+                    endTime: flareEndTime
                 });
                 rebuildAutoMultipliers();
                 showToast(`\u2705 ${t(bonus.name)}: \u00d7${bonus.multiplier} ${t("Parts")}/s ${t("for")} ${bonus.duration / 1000}s`);
                 setTimeout(() => {
-                    activeRandomBonuses = activeRandomBonuses.filter(b => b.id !== bonus.id);
+                    activeRandomBonuses = activeRandomBonuses.filter(b => b.endTime !== flareEndTime);
                     rebuildAutoMultipliers();
                     updateDisplay();
                     showToast(`\u23f0 ${t(bonus.name)} ${t("expir\u00e9")}`);
@@ -4989,10 +5013,12 @@ function init() {
 // TIMERS
 // ============================================
 
+let bonusSpawnTimer = null;
 function scheduleBonusSpawn() {
     const bonus = getCometFrequencyBonus();
     const delay = Math.max(800, BONUS_SPAWN_INTERVAL_MS / (1 + bonus));
-    setTimeout(() => {
+    clearTimeout(bonusSpawnTimer);
+    bonusSpawnTimer = setTimeout(() => {
         if (!cometShowerActive) spawnRandomBonus();
         scheduleBonusSpawn();
     }, delay);
