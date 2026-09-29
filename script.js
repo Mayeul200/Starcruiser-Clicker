@@ -2764,10 +2764,10 @@ function updateSpaceProgress() {
         sidebarDistance.textContent = formatNumber(reachableDistance) + ' ' + t('km');
     }
     if (sidebarDistanceMax) {
-        sidebarDistanceMax.textContent = formatNumber(traveledDistance) + ' ' + t('km');
+        rollCounterText(sidebarDistanceMax, formatNumber(traveledDistance) + ' ' + t('km'));
     }
     if (sidebarSpeed) {
-        sidebarSpeed.textContent = formatTravelSpeed(calculateTravelSpeedKmS());
+        rollCounterText(sidebarSpeed, formatTravelSpeed(calculateTravelSpeedKmS()));
     }
     if (sidebarBonus) {
         const totalBonus = 1 + getTotalPlanetBonus();
@@ -4047,6 +4047,31 @@ function updateDisplay() {
 // Compteur fluide : la valeur affichee rattrape le score reel en douceur,
 // et chaque chiffre qui change deroule comme une machine a sous.
 let animatedScore = null;
+function rollCounterText(el, text) {
+    if (!el) return;
+    const prev = el.__chars;
+    if (prev && prev.length === text.length) {
+        for (let i = 0; i < text.length; i++) {
+            if (prev[i].textContent !== text[i]) {
+                prev[i].textContent = text[i];
+                prev[i].classList.remove('droll');
+                void prev[i].offsetWidth;
+                prev[i].classList.add('droll');
+            }
+        }
+        return;
+    }
+    while (el.firstChild) el.removeChild(el.firstChild);
+    const spans = [];
+    for (const ch of text) {
+        const sp = document.createElement('span');
+        sp.className = 'cch droll';
+        sp.textContent = ch;
+        el.appendChild(sp);
+        spans.push(sp);
+    }
+    el.__chars = spans;
+}
 function setCounterChars(el, text) {
     const prev = el.__chars;
     if (prev && prev.length === text.length) {

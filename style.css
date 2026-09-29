@@ -531,10 +531,22 @@ body {
     }
 }
 /* LEFT PANEL */
-.left-panel h3 {
+.left-panel h3,
+.right-panel h3,
+.buildings-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px 0;
+    padding: 8px 10px;
     color: var(--accent-light);
-    margin-bottom: 8px;
     font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.18), rgba(59, 130, 246, 0.05));
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
 }
 .left-panel p {
     color: var(--text-dark);
@@ -601,7 +613,8 @@ body {
     text-shadow: var(--glow);
 }
 /* Chiffres du compteur : deroulement type machine a sous */
-#score-value .cch {
+#score-value .cch,
+.stat-value .cch {
     display: inline-block;
     animation: cch-roll 0.35s ease-out;
 }
@@ -658,11 +671,7 @@ body {
     height: 100%;
     color: var(--text);
 }
-.right-panel h3 {
-    color: var(--accent-light);
-    margin-bottom: 8px;
-    font-size: 1rem;
-}
+
 .buildings-list {
     display: flex;
     flex-direction: column;
@@ -851,8 +860,6 @@ body {
 }
 .buildings-header h3 {
     margin: 0;
-    color: var(--accent-light);
-    font-size: 1rem;
 }
 .multiplier-buttons {
     display: flex;
