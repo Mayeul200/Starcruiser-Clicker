@@ -4787,7 +4787,8 @@ function applyUiScale() {
         const hScale = vh / 844;
         const mscale = Math.max(0.85, Math.min(1.35, Math.min(wScale, hScale)));
         document.documentElement.style.setProperty('--mscale', mscale.toFixed(3));
-        document.documentElement.style.setProperty('--ui-scale', (0.8 * mscale).toFixed(3));
+        // 0.9 : texte mobile plus lisible (base 14.4px sur iPhone 13 au lieu de 12.8)
+        document.documentElement.style.setProperty('--ui-scale', (0.9 * mscale).toFixed(3));
         return;
     }
     document.documentElement.style.removeProperty('--mscale');

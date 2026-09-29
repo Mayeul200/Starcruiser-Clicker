@@ -3989,7 +3989,7 @@ body {
 
     /* Toast au-dessus de la nav */
     #toast-container { bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(12px * var(--mscale, 1))); }
-    .toast { font-size: clamp(0.8rem, 1.3vw + 0.45rem, 1.05rem); padding: clamp(calc(6px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(9px * var(--mscale, 1))) clamp(calc(10px * var(--mscale, 1)), calc(1.6vw * var(--mscale, 1)), calc(16px * var(--mscale, 1))); display: flex; align-items: center; justify-content: center; text-align: center; }
+    .toast { font-size: clamp(0.95rem, 1.3vw + 0.6rem, 1.2rem); padding: clamp(calc(6px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(9px * var(--mscale, 1))) clamp(calc(10px * var(--mscale, 1)), calc(1.6vw * var(--mscale, 1)), calc(16px * var(--mscale, 1))); display: flex; align-items: center; justify-content: center; text-align: center; }
     .toast .toast-icon { width: clamp(calc(18px * var(--mscale, 1)), calc(2.6vw * var(--mscale, 1)), calc(26px * var(--mscale, 1))); height: clamp(calc(18px * var(--mscale, 1)), calc(2.6vw * var(--mscale, 1)), calc(26px * var(--mscale, 1))); margin-right: calc(8px * var(--mscale, 1)); }
     .toast-text {
         display: -webkit-box;
