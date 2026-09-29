@@ -1190,6 +1190,10 @@ function checkBuildingUnlocks() {
 
 function renderBuildings() {
     const container = document.getElementById('buildings-list');
+    // Preserver la position de scroll : un rerendu (ex. deblocage d'un
+    // batiment pendant que le score monte) ne doit jamais remonter la liste.
+    const scrollPanel = container.closest('.right-panel');
+    const savedScroll = scrollPanel ? scrollPanel.scrollTop : 0;
     container.innerHTML = '';
 
     BUILDINGS.forEach((building) => {
@@ -1197,6 +1201,7 @@ function renderBuildings() {
             renderBuilding(building);
         }
     });
+    if (scrollPanel && savedScroll > 0) scrollPanel.scrollTop = savedScroll;
 }
 
 function renderBuilding(building) {
@@ -3572,14 +3577,30 @@ function tickPartsRain(now) {
     if (rate <= 0) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
     if (!partsRain.lastTick) partsRain.lastTick = now;
     // Accumulateur : autorise plusieurs spawns par tick aux debits eleves,
-    // tout en gardant le rythme exact aux faibles debits.
-    partsRain.spawnDebt += (rate * (now - partsRain.lastTick)) / 1000;
+    // tout en gardant le rythme exact aux faibles debits. Plafonne a 1 s de
+    // dette : une absence prolongee (onglet masque, timers throttlEs) ne
+    // doit jamais vider un stock de pieces d'un seul coup au retour.
+    partsRain.spawnDebt = Math.min(partsRain.spawnDebt + (rate * (now - partsRain.lastTick)) / 1000, rate);
     partsRain.lastTick = now;
     while (partsRain.spawnDebt >= 1) {
         partsRain.spawnDebt -= 1;
         spawnRainPart(partsRain.container);
     }
 }
+// Purge de la pluie quand la page est masquee : au rechargement ou au retour
+// d'onglet, aucune piece stockee ne doit se mettre a tourner d'un coup.
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        partsRain.suspended = true;
+        if (partsRain.container) partsRain.container.innerHTML = '';
+        partsRain.spawnDebt = 0;
+    } else {
+        // Ne reactiver que si la vue affiche bien le panneau central :
+        // sur mobile la navigation gere sa propre suspension.
+        partsRain.suspended = (typeof isMobileLayout === 'function' && isMobileLayout() && mobileActiveView !== 'center');
+        partsRain.lastTick = Date.now();
+    }
+});
 function spawnRainPart(container) {
     const part = document.createElement('div');
     part.className = 'rain-part';
@@ -5070,14 +5091,20 @@ function initMobileNav() {
     });
     if (isMobileLayout()) setMobileView(mobileActiveView);
     let resizeTimer = null;
+    let lastResizeW = window.innerWidth;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             relocateBuildingProductions();
             applyUiScale();
-            if (isMobileLayout()) {
+            // Sur mobile, scroller masque/affiche la barre d'URL du navigateur :
+            // un changement de hauteur seul ne doit pas reinitialiser la vue,
+            // sinon le scroll du panneau batiments remonte de force.
+            const widthChanged = window.innerWidth !== lastResizeW;
+            if (isMobileLayout() && widthChanged) {
                 setMobileView(mobileActiveView);
             }
+            lastResizeW = window.innerWidth;
             // La scène se recale à toutes les tailles d'écran (desktop inclus)
             applySceneScale();
         }, 150);
