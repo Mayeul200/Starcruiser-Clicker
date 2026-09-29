@@ -4135,7 +4135,7 @@ body {
     .cc-booster-options { flex-direction: column; align-items: stretch; }
     .cc-booster-btn { min-width: 0; max-width: none; }
     .cc-booster-img { max-width: calc(140px * var(--mscale, 1)); }
-    .cc-album-grid { grid-template-columns: repeat(3, 1fr); gap: calc(8px * var(--mscale, 1)); }
+    .cc-album-grid { grid-template-columns: repeat(2, 1fr); gap: calc(10px * var(--mscale, 1)); }
     .cc-album-card { width: 100%; height: auto; aspect-ratio: 2 / 3; }
     .cc-reveal-cards { gap: calc(8px * var(--mscale, 1)); }
     .cc-reveal-card { width: min(calc((100cqw - (var(--card-count, 3) - 1) * calc(8px * var(--mscale, 1))) / var(--card-count, 3)), calc(40cqh)); height: auto; }
@@ -4224,8 +4224,8 @@ body {
     .medal { top: 30% !important; }
     .rocket-parts-shop { width: calc(150px * var(--mscale, 1)); }
     /* Cartes album plus grandes : une seule colonne pleine largeur sur petits ecrans */
-    .cc-album-grid { grid-template-columns: repeat(3, 1fr); }
-    .cc-album-card { width: 100%; max-width: none; margin: 0; }
+    .cc-album-grid { grid-template-columns: 1fr; }
+    .cc-album-card { width: 100%; max-width: calc(340px * var(--mscale, 1)); margin: 0 auto; }
     .building-item { grid-template-columns: minmax(25%, calc(96px * var(--mscale, 1))) 1fr; grid-template-areas: "icon info" "icon buy"; }
     .building-item button { width: auto; min-height: calc(32px * var(--mscale, 1)); height: auto; font-size: 0.95rem; }
     .building-image { max-height: calc(88px * var(--mscale, 1)); min-width: 0; }
