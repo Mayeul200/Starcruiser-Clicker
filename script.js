@@ -4770,8 +4770,11 @@ function setMobileView(view) {
             if (partsRain.container) partsRain.container.innerHTML = '';
         }
     }
-    grid.classList.remove('mobile-view-left', 'mobile-view-center', 'mobile-view-right');
-    grid.classList.add('mobile-view-' + view);
+    const viewClass = 'mobile-view-' + view;
+    if (!grid.classList.contains(viewClass)) {
+        grid.classList.remove('mobile-view-left', 'mobile-view-center', 'mobile-view-right');
+        grid.classList.add(viewClass);
+    }
     if (nav) {
         nav.querySelectorAll('button').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.view === view);
