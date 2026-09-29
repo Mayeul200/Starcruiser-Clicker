@@ -4853,7 +4853,9 @@ function renderRevealCards(cards) {
         const card = cards[idx];
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
-        el.className = 'cc-reveal-card pack rarity-' + card.rarity;
+        // Les cartes suivantes arrivent deja retournees (face visible), comme
+        // si le booster montrait la carte gagnee avant de passer a la suivante.
+        el.className = 'cc-reveal-card pack rarity-' + card.rarity + (idx > 0 ? ' flipped' : '');
         el.innerHTML =
             '<div class="cc-reveal-inner">' +
                 '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
@@ -4862,10 +4864,12 @@ function renderRevealCards(cards) {
                     (isNew ? '<div class="cc-card-new">' + t('NOUVELLE !') + '</div>' : '') +
                 '</div>' +
             '</div>';
+        let discovered = false;
         el.addEventListener('click', function () {
-            if (!el.classList.contains('flipped')) {
-                // Premier clic : retourner la carte, elle reste affichee
-                el.classList.add('flipped');
+            if (!discovered) {
+                // Premier clic : retourner (ou decouvrir) la carte, elle reste affichee
+                discovered = true;
+                if (!el.classList.contains('flipped')) el.classList.add('flipped');
                 revealed++;
                 revealedCards.push({ card, isNew });
                 return;
@@ -4886,7 +4890,7 @@ function renderRevealCards(cards) {
 function revealAllCards() {
     // Paquet sequential : retourner la carte courante puis l'envoler,
     // en chaine, jusqu'au recap final.
-    const el = document.querySelector('#cc-reveal-cards .cc-reveal-card.pack');
+    const el = document.querySelector('#cc-reveal-cards .cc-reveal-card.pack:not(.pack-out)');
     if (el) {
         el.click();
         if (el.classList.contains('flipped')) {
@@ -4894,6 +4898,7 @@ function revealAllCards() {
                 if (el.isConnected) el.click();
             }, 750);
         }
+        setTimeout(function () { revealAllCards(); }, 1200);
     } else {
         document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
         document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';

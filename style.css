@@ -4223,7 +4223,9 @@ body {
 @media (max-width: 480px) and (pointer: coarse) {
     .medal { top: 30% !important; }
     .rocket-parts-shop { width: calc(150px * var(--mscale, 1)); }
-    .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
+    /* Cartes album plus grandes : une seule colonne pleine largeur sur petits ecrans */
+    .cc-album-grid { grid-template-columns: 1fr; }
+    .cc-album-card { width: 100%; max-width: calc(340px * var(--mscale, 1)); margin: 0 auto; }
     .building-item { grid-template-columns: minmax(25%, calc(96px * var(--mscale, 1))) 1fr; grid-template-areas: "icon info" "icon buy"; }
     .building-item button { width: auto; min-height: calc(32px * var(--mscale, 1)); height: auto; font-size: 0.95rem; }
     .building-image { max-height: calc(88px * var(--mscale, 1)); min-width: 0; }
