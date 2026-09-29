@@ -4795,13 +4795,12 @@ function drawCard(rarities) {
 function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
-    container.style.setProperty('--card-count', cards.length);
     document.getElementById('cc-reveal-shop-btn').style.display = 'none';
     document.getElementById('cc-reveal-album-btn').style.display = 'none';
-    const total = cards.length;
-    let revealed = 0;
     const revealAllBtn = document.getElementById('cc-reveal-all-btn');
     if (revealAllBtn) revealAllBtn.style.display = '';
+    const total = cards.length;
+    let revealed = 0;
     const checkAllRevealed = function () {
         if (revealed >= total) {
             document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
@@ -4809,11 +4808,17 @@ function renderRevealCards(cards) {
             if (revealAllBtn) revealAllBtn.style.display = 'none';
         }
     };
-    cards.forEach((card, idx) => {
+
+    // Paquet sequential : une seule carte visible a la fois, comme un
+    // vrai booster. Le joueur retourne la carte, la decouvre un instant,
+    // puis elle s'envole et la suivante arrive a sa place.
+    let idx = 0;
+    const showCard = function () {
+        if (idx >= total) { checkAllRevealed(); return; }
+        const card = cards[idx];
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
-        el.className = 'cc-reveal-card rarity-' + card.rarity;
-        el.style.animationDelay = (idx * 0.15) + 's';
+        el.className = 'cc-reveal-card pack rarity-' + card.rarity;
         el.innerHTML =
             '<div class="cc-reveal-inner">' +
                 '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
@@ -4826,20 +4831,33 @@ function renderRevealCards(cards) {
             if (el.classList.contains('flipped')) return;
             el.classList.add('flipped');
             revealed++;
-            checkAllRevealed();
+            // Temps de lecture puis la carte s'envole et la suivante arrive
+            setTimeout(function () {
+                el.classList.add('pack-out');
+                setTimeout(function () {
+                    el.remove();
+                    idx++;
+                    showCard();
+                }, 320);
+            }, 900);
         });
         container.appendChild(el);
-    });
+    };
+    showCard();
 }
 
 function revealAllCards() {
-    document.querySelectorAll('#cc-reveal-cards .cc-reveal-card:not(.flipped)').forEach(function (el) {
-        el.classList.add('flipped');
-    });
-    document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
-    document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
-    const revealAllBtn = document.getElementById('cc-reveal-all-btn');
-    if (revealAllBtn) revealAllBtn.style.display = 'none';
+    // Paquet sequential : retourner automatiquement la carte courante,
+    // la chaine showCard enchainera les suivantes jusqu'a la derniere.
+    const el = document.querySelector('#cc-reveal-cards .cc-reveal-card:not(.flipped)');
+    if (el) {
+        el.click();
+    } else {
+        document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
+        document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
+        const revealAllBtn = document.getElementById('cc-reveal-all-btn');
+        if (revealAllBtn) revealAllBtn.style.display = 'none';
+    }
 }
 
 function renderCardAlbum() {
@@ -5256,8 +5274,14 @@ scheduleBonusSpawn();
 // l'écran : chacune ne donne que du bonus instantané (jamais de flare),
 // pour éviter tout cumul de multiplicateurs.
 let cometShowerActive = false;
+let firstCometShower = true;
 function scheduleCometShower() {
-    const delay = 240000 + Math.random() * 120000;
+    // Premiere pluie rapide (~1 min) pour que le joueur la voie tot,
+    // ensuite cadence normale toutes les 4 a 6 minutes.
+    const delay = firstCometShower
+        ? 55000 + Math.random() * 25000
+        : 240000 + Math.random() * 120000;
+    firstCometShower = false;
     setTimeout(() => {
         startCometShower();
         scheduleCometShower();
@@ -5547,6 +5571,7 @@ const Debug = {
         console.log('[DEBUG] TOTAL              x' + total.toFixed(2));
         return { ...factors, total };
     },
+    shower() { startCometShower(); },
     setPlanet(index) {
         const p = PLANETS[index];
         if (!p) { console.warn('Index invalide. 0=Terre ... ' + (PLANETS.length - 1) + '=' + PLANETS[PLANETS.length - 1].name); return; }
