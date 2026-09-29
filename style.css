@@ -4387,7 +4387,7 @@ body {
     padding: 3px 12px;
 }
 .tutorial-visual {
-    height: 120px;
+    height: 160px;
     flex: 0 0 auto;
     display: flex;
     align-items: center;
@@ -4395,8 +4395,8 @@ body {
     margin-bottom: 12px;
 }
 .tutorial-visual img {
-    max-height: 110px;
-    max-width: 200px;
+    max-height: 150px;
+    max-width: 280px;
     object-fit: contain;
     filter: drop-shadow(0 6px 24px rgba(168, 85, 247, 0.45));
     animation: tutorialFloat 3.2s ease-in-out infinite;
@@ -4407,7 +4407,7 @@ body {
 }
 .tutorial-title {
     margin: 0 0 8px;
-    font-size: 1.5rem;
+    font-size: 1.85rem;
     font-weight: 800;
     color: var(--accent-light);
     text-shadow: 0 0 16px rgba(168, 85, 247, 0.6);
@@ -4479,10 +4479,10 @@ body {
 }
 @media (max-width: 480px) and (pointer: coarse) {
     .tutorial-popup { padding: calc(22px * var(--mscale, 1)) calc(16px * var(--mscale, 1)) calc(16px * var(--mscale, 1)); }
-    .tutorial-title { font-size: 1.3rem; }
-    .tutorial-text { font-size: 0.95rem; }
-    .tutorial-visual { height: calc(100px * var(--mscale, 1)); }
-    .tutorial-visual img { max-height: calc(92px * var(--mscale, 1)); }
+    .tutorial-title { font-size: 1.6rem; }
+    .tutorial-text { font-size: 1.02rem; }
+    .tutorial-visual { height: calc(130px * var(--mscale, 1)); }
+    .tutorial-visual img { max-height: calc(120px * var(--mscale, 1)); max-width: calc(230px * var(--mscale, 1)); }
     .tutorial-btn { padding: calc(9px * var(--mscale, 1)) calc(18px * var(--mscale, 1)); font-size: 0.95rem; }
 }
 
