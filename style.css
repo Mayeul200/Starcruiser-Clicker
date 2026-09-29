@@ -2342,11 +2342,12 @@ body {
     align-self: center;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
 }
+.mini-game-card .game-icon {
+    width: 52px;
+}
 .mini-game-card .game-icon img {
-    height: 100%;
-    max-height: 80px;
-    width: auto;
-    max-width: 52px;
+    height: auto;
+    width: 100%;
     object-fit: contain;
     filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
     display: block;
@@ -3803,14 +3804,14 @@ body {
     /* Fusee et decor degages vers la gauche : la colonne droite (medaille +
        case d'achat) reste libre. Le translateX(-50%) pose par applySceneScale
        s'applique toujours, l'ancrage left passe simplement de 50% a 38%. */
-    .scene-world { left: 38% !important; }
+    .scene-world { left: 30% !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(78px * var(--mscale, 1)));
         right: calc(8px * var(--mscale, 1));
         left: auto;
         top: auto;
-        width: clamp(calc(158px * var(--mscale, 1)), calc(16.8vw * var(--mscale, 1)), calc(210px * var(--mscale, 1)));
+        width: calc(170px * var(--mscale, 1));
         max-height: calc(60vh - var(--mobile-nav-height));
         overflow-y: auto;
         z-index: 58;
@@ -4086,7 +4087,7 @@ body {
 /* Petits écrans (<calc(480px * var(--mscale, 1))) : resserrage supplémentaire */
 @media (max-width: 480px) and (pointer: coarse) {
     .medal { top: 30% !important; }
-    .rocket-parts-shop { width: clamp(calc(142px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(158px * var(--mscale, 1))); }
+    .rocket-parts-shop { width: calc(150px * var(--mscale, 1)); }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
     .building-item { grid-template-columns: minmax(25%, calc(96px * var(--mscale, 1))) 1fr; grid-template-areas: "icon info" "icon buy"; }
     .building-item button { width: auto; min-height: calc(32px * var(--mscale, 1)); height: auto; font-size: 0.95rem; }

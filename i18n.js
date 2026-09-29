@@ -2842,12 +2842,23 @@ function setGameLanguage(lang) {
     applyStaticTranslations();
     updateLanguageButtons();
     if (document.getElementById('stats-modal').classList.contains('active')) renderStats();
+    if (document.getElementById('card-collection-modal').classList.contains('active')) {
+        updateCardCollectionDisplay();
+        renderCardAlbum();
+    }
+    if (document.getElementById('contracts-modal').classList.contains('active')) renderContracts();
     renderUpgrades();
     renderBuildings();
     renderGalacticShop();
     renderRocketPartsShop();
     updateSpaceProgress();
     updateAllBuildingButtons();
+    renderCollectionCardStatus();
+    renderContractsCardStatus();
+    if (typeof tutorialActive !== 'undefined' && tutorialActive) renderTutorialStep();
+    updateLaunchTimer();
+    updateStardustDisplay();
+    updateDisplay();
 }
 function updateLanguageButtons() {
     const langBtns = document.querySelectorAll('.lang-btn[data-lang]');
