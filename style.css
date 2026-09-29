@@ -632,6 +632,7 @@ body {
 .stat-value .cch,
 #travel-distance-value .cch {
     display: inline-flex;
+    align-items: flex-start;
     overflow: hidden;
     width: 0.62em;
     height: 1.25em;

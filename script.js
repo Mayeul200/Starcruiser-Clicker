@@ -3267,22 +3267,32 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     const vTotal = opts ? opts.duration : 6000;
     const vcx = opts ? (opts.endX - opts.startX) / vTotal : 0;
     const vcy = opts ? (opts.endY - opts.startY) / vTotal : 0;
-    // Depart du missile : TREJECTOIRE VERTICALE, tout droit depuis le bas
-    // de l'ecran, pile sous la comete. Le missile monte droit jusqu'au
-    // point de rendez-vous sur la trajectoire future de la comete.
-    const launchXadj = cx;
-    const launchY = window.innerHeight + 40;
+    // Depart du missile : PERPENDICULAIRE a la trajectoire de la comete.
+    // La comete vole en diagonale ; le missile arrive dans l'axe
+    // perpendiculaire, depuis hors de l'ecran, et la percute de plein
+    // fouet dans une direction orthogonale a son vol.
+    const vLen = Math.hypot(vcx, vcy) || 1;
+    let pvx = -vcy / vLen;
+    let pvy = vcx / vLen;
+    // Cote du tir : partir du BAS de la comete (le missile monte vers elle)
+    if (pvy < 0) { pvx = -pvx; pvy = -pvy; }
+    const reach = Math.hypot(window.innerWidth, window.innerHeight) * 0.6;
     // Convergence du point de rendez-vous : la comete avance pendant le vol
     // du missile, donc on reitere (temps de vol <-> position future) jusqu'a
     // ce que le missile arrive au point pile au moment ou elle y passe.
     let flightMs = 320;
     let tx = cx, ty = cy;
+    let launchXadj = cx, launchY = cy;
     for (let i = 0; i < 3; i++) {
         tx = cx + vcx * flightMs;
         ty = cy + vcy * flightMs;
+        launchXadj = tx + pvx * reach;
+        launchY = ty + pvy * reach;
         const d = Math.hypot(tx - launchXadj, ty - launchY);
         flightMs = Math.max(240, Math.min(600, d / 2.2));
     }
+    launchXadj = tx + pvx * reach;
+    launchY = ty + pvy * reach;
     const angle = Math.atan2(ty - launchY, tx - launchXadj);
     const missile = document.createElement('div');
     missile.className = 'comet-missile';
@@ -4136,7 +4146,7 @@ function renderCounterChars(el, text) {
                 const cols = [];
                 for (const ch of seg.str) {
                     const c = makeDigitCol();
-                    c.reel.style.transform = 'translateY(-' + (+ch * 10) + '0%)';
+                    c.reel.style.transform = 'translateY(-' + (ch * 10) + '%)';
                     wrap.appendChild(c.col);
                     cols.push(c.reel);
                 }
@@ -4159,18 +4169,18 @@ function renderCounterChars(el, text) {
         const newLen = seg.str.length;
         if (newLen === oldLen) {
             for (let c = 0; c < newLen; c++) {
-                const target = 'translateY(-' + (+seg.str[c] * 10) + '0%)';
+                const target = 'translateY(-' + (seg.str[c] * 10) + '%)';
                 if (cols[c].style.transform !== target) cols[c].style.transform = target;
             }
         } else {
-            const wrap = cols[0].parentElement;
+            const wrap = cols[0].closest('.cch-group');
             if (newLen === oldLen + 1) {
                 const c = makeDigitCol();
-                c.reel.style.transform = 'translateY(-' + (+seg.str[0] * 10) + '0%)';
+                c.reel.style.transform = 'translateY(-' + (seg.str[0] * 10) + '%)';
                 wrap.insertBefore(c.col, wrap.firstChild);
                 cols.unshift(c.reel);
                 for (let ci = 1; ci < newLen; ci++) {
-                    const target = 'translateY(-' + (+seg.str[ci] * 10) + '0%)';
+                    const target = 'translateY(-' + (seg.str[ci] * 10) + '%)';
                     if (cols[ci].style.transform !== target) cols[ci].style.transform = target;
                 }
             } else {
@@ -4178,7 +4188,7 @@ function renderCounterChars(el, text) {
                 const newCols = [];
                 for (const ch of seg.str) {
                     const c = makeDigitCol();
-                    c.reel.style.transform = 'translateY(-' + (+ch * 10) + '0%)';
+                    c.reel.style.transform = 'translateY(-' + (ch * 10) + '%)';
                     wrap.appendChild(c.col);
                     newCols.push(c.reel);
                 }
