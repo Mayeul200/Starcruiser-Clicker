@@ -4806,6 +4806,8 @@ function drawCard(rarities) {
 function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
+    const intro = document.getElementById('cc-reveal-intro');
+    if (intro) intro.style.display = '';
     container.style.setProperty('--card-count', cards.length);
     document.getElementById('cc-reveal-shop-btn').style.display = 'none';
     document.getElementById('cc-reveal-album-btn').style.display = 'none';
@@ -4828,6 +4830,8 @@ function renderRevealCards(cards) {
     const revealedCards = [];
     const showSummary = function () {
         container.innerHTML = '';
+        const intro = document.getElementById('cc-reveal-intro');
+        if (intro) intro.style.display = 'none';
         revealedCards.forEach(function (rc, i) {
             const el = document.createElement('div');
             el.className = 'cc-reveal-card summary rarity-' + rc.card.rarity;

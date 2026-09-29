@@ -3129,8 +3129,8 @@ body {
     gap: clamp(8px, 1.2vw, 24px);
     /* Largeur fluide bornee : le min depend du panneau central (cqw) pour
        que le compteur se comprime plutot que chevaucher la boutique. */
-    width: clamp(min(320px, 52cqw), 28vw, 460px);
-    height: clamp(46px, 5.5vh, 58px);
+    width: clamp(min(340px, 52cqw), 30vw, 500px);
+    height: clamp(50px, 6.5vh, 66px);
     flex: 0 1 auto;
     min-width: 0;
     background: rgba(0, 0, 0, 0.5);
@@ -3139,7 +3139,7 @@ body {
 }
 .counter {
     color: white;
-    font-size: 1.35rem;
+    font-size: 1.6rem;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     flex: 0 1 auto;
@@ -4230,7 +4230,7 @@ body {
     .building-name { font-size: 0.95rem; }
     .multiplier-btn { padding: calc(5px * var(--mscale, 1)) calc(10px * var(--mscale, 1)); }
     .counters { width: auto; max-width: calc(100vw - 20px); flex-wrap: nowrap; }
-    .counter { font-size: calc(1rem * var(--mscale, 1)); white-space: nowrap; }
+    .counter { font-size: calc(1.2rem * var(--mscale, 1)); white-space: nowrap; }
 }
 /* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
 
