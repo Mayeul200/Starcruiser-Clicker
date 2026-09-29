@@ -3134,11 +3134,17 @@ body {
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
     flex: 0 1 auto;
     min-width: 0;
+    display: flex;
+    align-items: baseline;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 0 8px;
+}
+#score-value {
+    flex: 1 1 auto;
+    justify-content: flex-end;
 }
 .counter span {
     color: #ffd700;

@@ -4167,15 +4167,26 @@ function renderCounterChars(el, text) {
             }
         } else {
             const wrap = cols[0].parentElement;
-            while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
-            const newCols = [];
-            for (const ch of seg.str) {
+            if (newLen === oldLen + 1) {
                 const c = makeDigitCol();
-                c.reel.style.transform = 'translateY(-' + (+ch) + '00%)';
-                wrap.appendChild(c.col);
-                newCols.push(c.reel);
+                c.reel.style.transform = 'translateY(-' + (+seg.str[0]) + '00%)';
+                wrap.insertBefore(c.col, wrap.firstChild);
+                cols.unshift(c.reel);
+                for (let ci = 1; ci < newLen; ci++) {
+                    const target = 'translateY(-' + (+seg.str[ci]) + '00%)';
+                    if (cols[ci].style.transform !== target) cols[ci].style.transform = target;
+                }
+            } else {
+                while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+                const newCols = [];
+                for (const ch of seg.str) {
+                    const c = makeDigitCol();
+                    c.reel.style.transform = 'translateY(-' + (+ch) + '00%)';
+                    wrap.appendChild(c.col);
+                    newCols.push(c.reel);
+                }
+                nodes[k] = newCols;
             }
-            nodes[k] = newCols;
             el.__segs[k].len = newLen;
         }
     });
@@ -4193,7 +4204,7 @@ function counterAnimLoop() {
         const shown = animatedScore < 1000
             ? Math.round(animatedScore * 10) / 10
             : Math.round(animatedScore);
-        renderCounterChars(el, formatNumber(shown, true));
+        const text = shown < 1000 ? shown.toFixed(1) : formatNumber(shown, true);        renderCounterChars(el, text);
     }
     requestAnimationFrame(counterAnimLoop);
 }
