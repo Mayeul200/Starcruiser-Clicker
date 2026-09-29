@@ -392,6 +392,22 @@ body {
     align-items: center;
     border-bottom: 1px solid var(--border-light);
 }
+
+/* Cartes / Contrats : titre et compteur empiles pour eviter le chevauchement */
+#card-collection-modal .modal-header,
+#contracts-modal .modal-header {
+    flex-wrap: wrap;
+    row-gap: 8px;
+}
+#card-collection-modal .modal-header h2,
+#contracts-modal .modal-header h2 {
+    flex: 1 1 100%;
+    white-space: normal;
+}
+#card-collection-modal .modal-parts-counter,
+#contracts-modal .modal-parts-counter {
+    margin: 0;
+}
 .modal-header h2 {
     font-size: 1.3rem;
 }
@@ -3359,7 +3375,7 @@ body {
     color: var(--text);
     cursor: pointer;
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     transition: background 0.2s;
 }
 .cc-action-btn:hover {

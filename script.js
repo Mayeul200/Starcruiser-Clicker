@@ -2757,7 +2757,6 @@ function updateSpaceProgress() {
     const sidebarDistanceMax = document.getElementById('sidebar-distance-max');
     const sidebarSpeed = document.getElementById('sidebar-speed');
     const sidebarBonus = document.getElementById('sidebar-bonus');
-    const sidebarPlanets = document.getElementById('sidebar-planets');
 
     if (sidebarDistance) {
         sidebarDistance.textContent = formatNumber(reachableDistance) + ' ' + t('km');
@@ -2771,10 +2770,6 @@ function updateSpaceProgress() {
     if (sidebarBonus) {
         const totalBonus = 1 + getTotalPlanetBonus();
         sidebarBonus.textContent = 'x' + totalBonus.toFixed(2);
-    }
-    if (sidebarPlanets) {
-        const unlockedCount = unlockedPlanets.size - (unlockedPlanets.has('earth') ? 1 : 0);
-        sidebarPlanets.textContent = unlockedCount + '/10';
     }
     checkNextPlanetNotification();
 }
