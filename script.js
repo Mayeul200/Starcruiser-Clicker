@@ -1880,7 +1880,7 @@ function playTravelAnimation(distance, onDone) {
     function finish() {
         if (finished) return;
         finished = true;
-        if (distanceEl) distanceEl.textContent = formatNumber(safeDistance);
+        if (distanceEl) rollCounterText(distanceEl, formatNumber(safeDistance));
         setTimeout(cleanup, 240);
     }
 
@@ -1982,7 +1982,7 @@ function playTravelAnimation(distance, onDone) {
 
         // ---- Compteur de km : distances reelles, synchronisees au
         // passage effectif de chaque planete ----
-        if (distanceEl) distanceEl.textContent = formatNumber(Math.floor(legs > 0 ? kmAt(cameraZ) : safeDistance * easeInOut(linear)));
+        if (distanceEl) rollCounterText(distanceEl, formatNumber(Math.floor(legs > 0 ? kmAt(cameraZ) : safeDistance * easeInOut(linear))));
 
         // ---- Fond en parallaxe RADIALE 3D : chaque etoile vit dans le
         // volume devant la camera. Elle s'approche a une vitesse
@@ -2155,7 +2155,7 @@ function playTravelAnimation(distance, onDone) {
         rocketEl.style.top = rocketY + 'px';
         rocketEl.style.transform = 'translate(-50%, -50%)';
     }
-    if (distanceEl) distanceEl.textContent = '0';
+    if (distanceEl) rollCounterText(distanceEl, '0');
     fillTravelStars(overlay);
     overlay.classList.add('active');
     if (skipBtn) skipBtn.addEventListener('click', skipHandler);
@@ -2761,7 +2761,7 @@ function updateSpaceProgress() {
     const sidebarBonus = document.getElementById('sidebar-bonus');
 
     if (sidebarDistance) {
-        sidebarDistance.textContent = formatNumber(reachableDistance) + ' ' + t('km');
+        rollCounterText(sidebarDistance, formatNumber(reachableDistance) + ' ' + t('km'));
     }
     if (sidebarDistanceMax) {
         rollCounterText(sidebarDistanceMax, formatNumber(traveledDistance) + ' ' + t('km'));
@@ -3263,18 +3263,15 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     // de 180px, proportionnellement plus petit pour les cometes reduites.
     const scale = Math.max(0.6, Math.min(1, cometRect.width / 180));
     const goRight = !cometEl.classList.contains('reverse');
-    const fromLeft = goRight;
     // Vecteur vitesse de la comete (px/ms) sur sa trajectoire lineaire.
     const vTotal = opts ? opts.duration : 6000;
     const vcx = opts ? (opts.endX - opts.startX) / vTotal : 0;
     const vcy = opts ? (opts.endY - opts.startY) / vTotal : 0;
-    // Depart du missile : diagonale perpendiculaire au vol de la comete,
-    // depuis le bord de l'ecran (bas ou cote oppose a son sens de vol).
-    const sBottom = window.innerHeight - cy;
-    const sSide = fromLeft ? cx : (window.innerWidth - cx);
-    const reach = Math.max(60, Math.min(sBottom, sSide)) + 40;
-    const launchY = cy + reach;
-    const launchXadj = cx + (fromLeft ? -reach : reach);
+    // Depart du missile : TREJECTOIRE VERTICALE, tout droit depuis le bas
+    // de l'ecran, pile sous la comete. Le missile monte droit jusqu'au
+    // point de rendez-vous sur la trajectoire future de la comete.
+    const launchXadj = cx;
+    const launchY = window.innerHeight + 40;
     // Convergence du point de rendez-vous : la comete avance pendant le vol
     // du missile, donc on reitere (temps de vol <-> position future) jusqu'a
     // ce que le missile arrive au point pile au moment ou elle y passe.

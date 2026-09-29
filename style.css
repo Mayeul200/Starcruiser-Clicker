@@ -629,7 +629,8 @@ body {
 /* Ruban vertical (odometre) : une colonne = un chiffre, le ruban des 10
    chiffres glisse verticalement avec une transition douce. */
 #score-value .cch,
-.stat-value .cch {
+.stat-value .cch,
+#travel-distance-value .cch {
     display: inline-flex;
     overflow: hidden;
     width: 0.62em;
@@ -2034,6 +2035,14 @@ body {
 }
 .travel-distance span {
     color: var(--accent-light, #93c5fd);
+}
+.travel-distance #travel-distance-value {
+    display: inline-flex;
+    align-items: baseline;
+}
+.travel-distance #travel-distance-value .cch,
+.travel-distance #travel-distance-value .cch-sep {
+    color: #fff;
 }
 .travel-skip {
     margin-top: 10px;
