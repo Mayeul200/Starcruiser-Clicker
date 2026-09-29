@@ -3784,12 +3784,17 @@ body {
     /* --- Scène de construction : zoom adaptatif --- */
     .center-content { height: calc(100% - calc(44px * var(--mscale, 1))) !important; }
     .construction-scene-100x100 { min-height: 0; }
+    /* Fusee et decor degages vers la gauche : la colonne droite (medaille +
+       case d'achat) reste libre. Le translateX(-50%) pose par applySceneScale
+       s'applique toujours, l'ancrage left passe simplement de 50% a 38%. */
+    .scene-world { left: 38% !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(78px * var(--mscale, 1)));
-        left: calc(8px * var(--mscale, 1));
+        right: calc(8px * var(--mscale, 1));
+        left: auto;
         top: auto;
-        width: clamp(calc(132px * var(--mscale, 1)), calc(14vw * var(--mscale, 1)), calc(175px * var(--mscale, 1)));
+        width: clamp(calc(158px * var(--mscale, 1)), calc(16.8vw * var(--mscale, 1)), calc(210px * var(--mscale, 1)));
         max-height: calc(60vh - var(--mobile-nav-height));
         overflow-y: auto;
         z-index: 58;
@@ -3800,14 +3805,14 @@ body {
     /* Médaille cliquable plus grosse et plus accessible */
     .medal {
         /* !important : la medaille porte un style inline (right/top) dans index.html */
-        left: 4% !important; right: auto !important;
-        top: 30% !important;
+        right: 6% !important; left: auto !important;
+        top: 24% !important;
         transform: translateY(-50%);
     }
     .medal:hover { transform: translateY(-50%) scale(1.05); }
     .medal:active { transform: translateY(-50%) scale(0.95); }
 
-    /* Paysage : espace vertical trop serre ; la medaille reste a gauche, sous les compteurs */
+    /* Paysage : espace vertical trop serre ; la medaille reste a droite, sous les compteurs */
     @media (max-width: 1024px) and (pointer: coarse) and (orientation: landscape) {
         .medal { top: 55% !important; }
     }
@@ -4065,7 +4070,7 @@ body {
 /* Petits écrans (<calc(480px * var(--mscale, 1))) : resserrage supplémentaire */
 @media (max-width: 480px) and (pointer: coarse) {
     .medal { top: 30% !important; }
-    .rocket-parts-shop { width: clamp(calc(118px * var(--mscale, 1)), calc(12.5vw * var(--mscale, 1)), calc(132px * var(--mscale, 1))); }
+    .rocket-parts-shop { width: clamp(calc(142px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(158px * var(--mscale, 1))); }
     .cc-album-grid { grid-template-columns: repeat(2, 1fr); }
     .building-item { grid-template-columns: minmax(25%, calc(96px * var(--mscale, 1))) 1fr; grid-template-areas: "icon info" "icon buy"; }
     .building-item button { width: auto; min-height: calc(32px * var(--mscale, 1)); height: auto; font-size: 0.95rem; }
