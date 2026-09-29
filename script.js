@@ -4207,7 +4207,7 @@ function counterAnimLoop() {
         if (Math.abs(diff) < 0.5) {
             animatedScore = score;
         } else {
-            animatedScore += diff * 0.07;
+            animatedScore += diff * 0.045;
         }
         const shown = animatedScore < 1000
             ? Math.round(animatedScore * 10) / 10

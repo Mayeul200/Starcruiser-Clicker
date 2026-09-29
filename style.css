@@ -642,7 +642,7 @@ body {
 .cch-reel {
     display: flex;
     flex-direction: column;
-    transition: transform 0.5s cubic-bezier(0.25, 0.9, 0.3, 1);
+    transition: transform 0.65s cubic-bezier(0.25, 0.9, 0.3, 1);
     will-change: transform;
 }
 .cch-reel .digit {
@@ -3153,7 +3153,6 @@ body {
     padding: 0 8px;
 }
 #score-value {
-    flex: 1 1 auto;
     justify-content: flex-end;
 }
 .counter span {
@@ -3924,7 +3923,8 @@ body {
     /* --- Compteurs --- */
     /* Mobile : la boutique est en bas, le HUD revient centre normalement. */
     .hud-top-row { top: calc(56px * var(--mscale, 1)); flex-wrap: nowrap; max-width: calc(100% - calc(24px * var(--mscale, 1))); transform: translateX(-50%); }
-    .counters { width: clamp(calc(280px * var(--mscale, 1)), calc(44vw * var(--mscale, 1)), calc(420px * var(--mscale, 1))); gap: clamp(calc(6px * var(--mscale, 1)), calc(0.8vw * var(--mscale, 1)), calc(10px * var(--mscale, 1))); padding: calc(6px * var(--mscale, 1)) clamp(calc(8px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(12px * var(--mscale, 1))); }
+    .counters { width: auto; max-width: calc(100% - 16px); flex-wrap: nowrap; gap: clamp(calc(6px * var(--mscale, 1)), calc(0.8vw * var(--mscale, 1)), calc(10px * var(--mscale, 1))); padding: calc(6px * var(--mscale, 1)) clamp(calc(8px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(12px * var(--mscale, 1))); }
+    .counters { flex-direction: row !important; }
     .counter { font-size: 0.95rem; min-width: 0; }
     .bonus-timer { max-width: 34vw; }
 
@@ -4229,8 +4229,8 @@ body {
     .building-image { max-height: calc(88px * var(--mscale, 1)); min-width: 0; }
     .building-name { font-size: 0.95rem; }
     .multiplier-btn { padding: calc(5px * var(--mscale, 1)) calc(10px * var(--mscale, 1)); }
-    .counters { width: clamp(calc(260px * var(--mscale, 1)), calc(42vw * var(--mscale, 1)), calc(340px * var(--mscale, 1))); }
-    .counter { font-size: 0.85rem; }
+    .counters { width: auto; max-width: calc(100vw - 20px); flex-wrap: nowrap; }
+    .counter { font-size: calc(1rem * var(--mscale, 1)); white-space: nowrap; }
 }
 /* Tres petits ecrans : la medaille adaptive se reduit via son clamp cqh */
 
@@ -4389,8 +4389,8 @@ body {
     margin-bottom: 14px;
 }
 .npn-planet-img img {
-    width: clamp(96px, 16vh, 140px);
-    height: clamp(96px, 16vh, 140px);
+    width: min(clamp(88px, 14vh, 128px), 22vw);
+    height: min(clamp(88px, 14vh, 128px), 22vw);
     object-fit: contain;
     animation: npnPlanetSpin 14s linear infinite;
     filter: drop-shadow(0 8px 30px rgba(59, 130, 246, 0.55));
@@ -4464,7 +4464,7 @@ body {
     .npn-title { font-size: 1.5rem; }
     .npn-subtitle { font-size: 1rem; }
     .npn-planet-name { font-size: 1.7rem; }
-    .npn-planet-img img { width: calc(110px * var(--mscale, 1)); height: calc(110px * var(--mscale, 1)); }
+    .npn-planet-img img { width: min(calc(86px * var(--mscale, 1)), 24vw); height: min(calc(86px * var(--mscale, 1)), 24vw); }
     .npn-launch-btn { padding: calc(12px * var(--mscale, 1)) calc(26px * var(--mscale, 1)); font-size: 1.05rem; }
 }
 
