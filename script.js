@@ -3815,28 +3815,29 @@ function renderTrophies() {
         } else {
             trophyElement.innerHTML = '?';
         }
-        const showTrophyTooltip = (target) => {
-            const rect = target.getBoundingClientRect();
-            const name = t(trophy.name);
-            const description = t(trophy.description);
-            const isUnlocked = unlockedTrophies.has(trophy.id);
-            const status = isUnlocked ? t('D\u00e9bloqu\u00e9') : t('Verrouill\u00e9');
-            showTooltip(`${name}\n${description}\n${status}`, rect.left + rect.width/2, rect.top, { anchorBottom: rect.bottom });
-        };
-        if (!IS_TOUCH) {
-            trophyElement.addEventListener('mouseenter', (e) => showTrophyTooltip(e.target));
-            trophyElement.addEventListener('mouseleave', hideTooltip);
-        } else {
-            trophyElement.addEventListener('click', (e) => {
-                if (touchTooltipElement === trophyElement) {
-                    touchTooltipElement = null;
-                    hideTooltip();
-                } else {
-                    touchTooltipElement = trophyElement;
-                    showTrophyTooltip(trophyElement);
-                }
-                e.stopPropagation();
-            });
+        // Trophee verrouille : aucun tooltip, le contenu reste un mystere.
+        if (unlockedTrophies.has(trophy.id)) {
+            const showTrophyTooltip = (target) => {
+                const rect = target.getBoundingClientRect();
+                const name = t(trophy.name);
+                const description = t(trophy.description);
+                showTooltip(`${name}\n${description}\n${t('D\u00e9bloqu\u00e9')}`, rect.left + rect.width/2, rect.top, { anchorBottom: rect.bottom });
+            };
+            if (!IS_TOUCH) {
+                trophyElement.addEventListener('mouseenter', (e) => showTrophyTooltip(e.target));
+                trophyElement.addEventListener('mouseleave', hideTooltip);
+            } else {
+                trophyElement.addEventListener('click', (e) => {
+                    if (touchTooltipElement === trophyElement) {
+                        touchTooltipElement = null;
+                        hideTooltip();
+                    } else {
+                        touchTooltipElement = trophyElement;
+                        showTrophyTooltip(trophyElement);
+                    }
+                    e.stopPropagation();
+                });
+            }
         }
         
         trophiesGrid.appendChild(trophyElement);
