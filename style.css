@@ -3701,7 +3701,7 @@ body {
    avec navigation par onglets en bas d'écran. */
 @media (max-width: 1024px) and (pointer: coarse) {
 
-    :root { --mobile-nav-height: calc(56px * var(--mscale, 1)); }
+    :root { --mobile-nav-height: calc(56px * var(--mscale, 1)); --top-height: calc(56px * var(--mscale, 1)); }
 
     html, body { overflow: hidden; }
 
