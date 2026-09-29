@@ -531,22 +531,19 @@ body {
     }
 }
 /* LEFT PANEL */
+/* Titres de sections : DA commune - texte simple + barre separateur dessous */
 .left-panel h3,
 .right-panel h3,
-.buildings-header h3 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 0 8px 0;
-    padding: 8px 10px;
-    color: var(--accent-light);
-    font-size: 1rem;
+.buildings-header h3,
+.space-section-title {
+    color: var(--text);
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.18), rgba(59, 130, 246, 0.05));
-    border-left: 3px solid var(--accent);
-    border-radius: var(--radius);
+    text-align: center;
+    border-bottom: 2px solid var(--primary-light);
+    padding-bottom: 10px;
+    line-height: 1.3;
 }
 .left-panel p {
     color: var(--text-dark);
@@ -613,9 +610,22 @@ body {
     text-shadow: var(--glow);
 }
 /* Chiffres du compteur : deroulement type machine a sous */
+#score-value,
+.stat-value {
+    display: inline-flex;
+    align-items: baseline;
+}
+.cch-group {
+    display: inline-flex;
+}
+.cch-sep {
+    white-space: pre;
+}
 #score-value .cch,
 .stat-value .cch {
     display: inline-block;
+    min-width: 0.62em;
+    text-align: center;
     animation: cch-roll 0.35s ease-out;
 }
 @keyframes cch-roll {
@@ -858,9 +868,7 @@ body {
     padding: 0 8px;
     border-bottom: 1px solid var(--border);
 }
-.buildings-header h3 {
-    margin: 0;
-}
+
 .multiplier-buttons {
     display: flex;
     gap: 4px;
@@ -2096,18 +2104,7 @@ body {
     height: 100%;
     color: var(--text);
 }
-.left-panel h3 {
-    color: var(--text);
-    margin-bottom: 10px;
-    font-size: 1.1rem;
-    text-align: center;
-    border-bottom: 2px solid var(--primary-light);
-    padding-bottom: 10px;
-    margin-left: -15px;
-    margin-right: -15px;
-    padding-left: 15px;
-    padding-right: 15px;
-}
+
 .galactic-shop-btn {
     flex: 1 1 calc(50% - 4px);
     min-width: 150px;

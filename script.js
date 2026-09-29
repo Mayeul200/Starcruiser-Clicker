@@ -4047,31 +4047,122 @@ function updateDisplay() {
 // Compteur fluide : la valeur affichee rattrape le score reel en douceur,
 // et chaque chiffre qui change deroule comme une machine a sous.
 let animatedScore = null;
-function rollCounterText(el, text) {
+let scoreTextCols = null;
+// Decoupe le texte formate en segments stables : groupes de chiffres d'un
+// cote, separateurs (suffixe, espaces, lettres) de l'autre. Chaque groupe de
+// chiffres garde un nombre fixe de colonnes (padding gauche) : les unites
+// restent alignees quand le nombre gagne une dizaine, et chaque colonne
+// roule comme une machine a sous.
+function splitCounterText(text) {
+    const segs = [];
+    let i = 0;
+    while (i < text.length) {
+        const isDigit = /\d/.test(text[i]);
+        let j = i;
+        while (j < text.length && /\d/.test(text[j]) === isDigit) j++;
+        segs.push({ digits: isDigit, str: text.slice(i, j) });
+        i = j;
+    }
+    return segs;
+}
+function renderCounterChars(el, text) {
     if (!el) return;
-    const prev = el.__chars;
-    if (prev && prev.length === text.length) {
-        for (let i = 0; i < text.length; i++) {
-            if (prev[i].textContent !== text[i]) {
-                prev[i].textContent = text[i];
-                prev[i].classList.remove('droll');
-                void prev[i].offsetWidth;
-                prev[i].classList.add('droll');
+    const segs = splitCounterText(text);
+    const prev = el.__segs;
+    if (!prev || prev.length !== segs.length || prev.some((p, k) => p.digits !== segs[k].digits)) {
+        while (el.firstChild) el.removeChild(el.firstChild);
+        const nodes = [];
+        segs.forEach(seg => {
+            if (!seg.digits) {
+                const tn = document.createElement('span');
+                tn.className = 'cch-sep';
+                tn.textContent = seg.str;
+                el.appendChild(tn);
+                nodes.push(null);
+            } else {
+                const wrap = document.createElement('span');
+                wrap.className = 'cch-group';
+                const cols = [];
+                for (const ch of seg.str) {
+                    const sp = document.createElement('span');
+                    sp.className = 'cch droll';
+                    sp.textContent = ch;
+                    wrap.appendChild(sp);
+                    cols.push(sp);
+                }
+                el.appendChild(wrap);
+                nodes.push({ wrap, cols });
             }
-        }
+        });
+        el.__segs = segs.map(sg => ({ digits: sg.digits, len: sg.str.length }));
+        el.__nodes = nodes;
         return;
     }
-    while (el.firstChild) el.removeChild(el.firstChild);
-    const spans = [];
-    for (const ch of text) {
-        const sp = document.createElement('span');
-        sp.className = 'cch droll';
-        sp.textContent = ch;
-        el.appendChild(sp);
-        spans.push(sp);
-    }
-    el.__chars = spans;
+    const nodes = el.__nodes;
+    segs.forEach((seg, k) => {
+        if (!seg.digits) {
+            if (nodes[k] && nodes[k].textContent !== seg.str) nodes[k].textContent = seg.str;
+            return;
+        }
+        const node = nodes[k];
+        const oldLen = el.__segs[k].len;
+        const newLen = seg.str.length;
+        if (newLen === oldLen) {
+            let changed = false;
+            for (let c = 0; c < newLen; c++) {
+                if (node.cols[c].textContent !== seg.str[c]) {
+                    node.cols[c].textContent = seg.str[c];
+                    changed = true;
+                }
+            }
+            if (changed) {
+                for (let c = 0; c < newLen; c++) {
+                    node.cols[c].classList.remove('droll');
+                    void node.cols[c].offsetWidth;
+                    node.cols[c].classList.add('droll');
+                }
+            }
+        } else {
+            // Le nombre de chiffres change (dizaine gagnee/perte) :
+            // on reconstruit le groupe avec un roll complet.
+            const wrap = node.wrap;
+            while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+            const cols = [];
+            for (const ch of seg.str) {
+                const sp = document.createElement('span');
+                sp.className = 'cch droll';
+                sp.textContent = ch;
+                wrap.appendChild(sp);
+                cols.push(sp);
+            }
+            node.cols = cols;
+            el.__segs[k].len = newLen;
+        }
+    });
 }
+function counterAnimLoop() {
+    const el = getDisplayElements().scoreValue;
+    if (el) {
+        if (animatedScore === null) animatedScore = score;
+        const diff = score - animatedScore;
+        if (Math.abs(diff) < 0.5) {
+            animatedScore = score;
+        } else {
+            animatedScore += diff * 0.16;
+        }
+        const shown = animatedScore < 1000
+            ? Math.round(animatedScore * 10) / 10
+            : Math.round(animatedScore);
+        renderCounterChars(el, formatNumber(shown, true));
+    }
+    requestAnimationFrame(counterAnimLoop);
+}
+requestAnimationFrame(counterAnimLoop);
+
+function rollCounterText(el, text) {
+    renderCounterChars(el, text);
+}
+
 function setCounterChars(el, text) {
     const prev = el.__chars;
     if (prev && prev.length === text.length) {
