@@ -600,6 +600,38 @@ body {
     font-weight: 600;
     text-shadow: var(--glow);
 }
+/* Chiffres du compteur : deroulement type machine a sous */
+#score-value .cch {
+    display: inline-block;
+    animation: cch-roll 0.35s ease-out;
+}
+@keyframes cch-roll {
+    0% { transform: translateY(0.65em); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+/* Bonus actif : le compteur devient arc-en-ciel et pulse */
+.counters.bonus-active {
+    animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
+    background: rgba(0, 0, 0, 0.5);
+}
+.counters.bonus-active .counter span {
+    color: #fff;
+    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffee00, #00e676, #00b0ff, #b388ff, #ff0080);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-slide 1.5s linear infinite;
+    text-shadow: none;
+}
+@keyframes rainbow-slide {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+@keyframes bonus-rainbow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); transform: scale(1); }
+    50% { box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.45); transform: scale(1.04); }
+}
 .bonus-timer {
     position: static;
     order: 2;

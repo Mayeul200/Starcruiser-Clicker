@@ -4037,13 +4037,55 @@ function getDisplayElements() {
 function updateDisplay() {
     getBuildingGainsSnapshot();
     const els = getDisplayElements();
-    if (els.scoreValue) els.scoreValue.textContent = formatNumber(score, true);
     if (els.gainValue) els.gainValue.textContent = formatNumber(partsPerSecond);
     updateModalPartsCounter();
     updateStardustDisplay();
     updateStardustPreview();
     updateBonusTimer();
 }
+
+// Compteur fluide : la valeur affichee rattrape le score reel en douceur,
+// et chaque chiffre qui change deroule comme une machine a sous.
+let animatedScore = null;
+function setCounterChars(el, text) {
+    const prev = el.__chars;
+    if (prev && prev.length === text.length) {
+        for (let i = 0; i < text.length; i++) {
+            if (prev[i].textContent !== text[i]) {
+                prev[i].textContent = text[i];
+                prev[i].classList.remove('droll');
+                void prev[i].offsetWidth;
+                prev[i].classList.add('droll');
+            }
+        }
+        return;
+    }
+    while (el.firstChild) el.removeChild(el.firstChild);
+    const spans = [];
+    for (const ch of text) {
+        const sp = document.createElement('span');
+        sp.className = 'cch droll';
+        sp.textContent = ch;
+        el.appendChild(sp);
+        spans.push(sp);
+    }
+    el.__chars = spans;
+}
+function counterAnimLoop() {
+    const el = getDisplayElements().scoreValue;
+    if (el) {
+        if (animatedScore === null) animatedScore = score;
+        const diff = score - animatedScore;
+        if (Math.abs(diff) < 0.5) {
+            animatedScore = score;
+        } else {
+            animatedScore += diff * 0.16;
+        }
+        setCounterChars(el, formatNumber(Math.round(animatedScore), true));
+    }
+    requestAnimationFrame(counterAnimLoop);
+}
+requestAnimationFrame(counterAnimLoop);
 
 function updateModalPartsCounter() {
     const els = getDisplayElements();
