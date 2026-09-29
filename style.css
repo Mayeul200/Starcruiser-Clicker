@@ -397,7 +397,9 @@ body {
 #card-collection-modal .modal-header,
 #contracts-modal .modal-header {
     flex-wrap: wrap;
-    row-gap: 8px;
+    row-gap: 4px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 #card-collection-modal .modal-header h2,
 #contracts-modal .modal-header h2 {
@@ -406,7 +408,8 @@ body {
 }
 #card-collection-modal .modal-parts-counter,
 #contracts-modal .modal-parts-counter {
-    margin: 0;
+    margin: 0 auto;
+    align-self: center;
 }
 .modal-header h2 {
     font-size: 1.3rem;
@@ -436,11 +439,13 @@ body {
     color: #ffd700;
 }
 .close-button {
-    font-size: 24px;
+    font-size: 20px;
+    line-height: 1;
     cursor: pointer;
     color: white;
-    min-width: 44px;
-    min-height: 44px;
+    min-width: 34px;
+    min-height: 34px;
+    align-self: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -3433,6 +3438,7 @@ body {
 }
 .cc-back-btn {
     margin-right: 14px;
+    align-self: center;
     padding: 6px 14px;
     background: rgba(59, 130, 246, 0.25);
     border: 1px solid var(--primary-light);
@@ -4059,7 +4065,7 @@ body {
     .counter { font-size: 1rem; }
     .counter-label { font-size: 0.7rem; }
     /* Boutons de fermeture de modals plus faciles a toucher */
-    .close-button { min-width: calc(44px * var(--mscale, 1)); min-height: calc(44px * var(--mscale, 1)); display: inline-flex; align-items: center; justify-content: center; border: calc(2px * var(--mscale, 1)) solid rgba(255, 255, 255, 0.45); border-radius: calc(8px * var(--mscale, 1)); padding: calc(4px * var(--mscale, 1)); flex-shrink: 0; background: rgba(0, 0, 0, 0.25); }
+    .close-button { min-width: calc(34px * var(--mscale, 1)); min-height: calc(34px * var(--mscale, 1)); display: inline-flex; align-items: center; justify-content: center; border: calc(2px * var(--mscale, 1)) solid rgba(255, 255, 255, 0.45); border-radius: calc(8px * var(--mscale, 1)); padding: calc(4px * var(--mscale, 1)); flex-shrink: 0; background: rgba(0, 0, 0, 0.25); }
     /* Boutons langue et params */
     .lang-btn {
         min-height: calc(48px * var(--mscale, 1));
