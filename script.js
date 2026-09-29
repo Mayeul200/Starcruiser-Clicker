@@ -3537,6 +3537,7 @@ function getPartsRainRate() {
 function tickPartsRain(now) {
     if (!partsRain.container) partsRain.container = document.getElementById('parts-rain');
     if (!partsRain.container) return;
+    if (partsRain.suspended) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
     const rate = getPartsRainRate();
     if (rate <= 0) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
     if (!partsRain.lastTick) partsRain.lastTick = now;
@@ -4762,6 +4763,16 @@ function setMobileView(view) {
     const grid = document.querySelector('.main-grid');
     const nav = document.getElementById('mobile-nav');
     if (!grid) return;
+    // Panneau central masque : les animations de pluie de pieces sont figees
+    // par display:none et s'accumulent. On purge et suspend la pluie.
+    if (typeof partsRain !== 'undefined' && partsRain) {
+        if (view === 'center') {
+            partsRain.suspended = false;
+        } else {
+            partsRain.suspended = true;
+            if (partsRain.container) partsRain.container.innerHTML = '';
+        }
+    }
     grid.classList.remove('mobile-view-left', 'mobile-view-center', 'mobile-view-right');
     grid.classList.add('mobile-view-' + view);
     if (nav) {
@@ -4787,8 +4798,8 @@ function applyUiScale() {
         const hScale = vh / 844;
         const mscale = Math.max(0.85, Math.min(1.35, Math.min(wScale, hScale)));
         document.documentElement.style.setProperty('--mscale', mscale.toFixed(3));
-        // 0.9 : texte mobile plus lisible (base 14.4px sur iPhone 13 au lieu de 12.8)
-        document.documentElement.style.setProperty('--ui-scale', (0.9 * mscale).toFixed(3));
+        // 0.95 : texte mobile tres lisible (base 15.2px sur iPhone 13)
+        document.documentElement.style.setProperty('--ui-scale', (0.95 * mscale).toFixed(3));
         return;
     }
     document.documentElement.style.removeProperty('--mscale');
