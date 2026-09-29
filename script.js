@@ -4136,7 +4136,7 @@ function renderCounterChars(el, text) {
                 const cols = [];
                 for (const ch of seg.str) {
                     const c = makeDigitCol();
-                    c.reel.style.transform = 'translateY(-' + (+ch) + '00%)';
+                    c.reel.style.transform = 'translateY(-' + (+ch * 10) + '0%)';
                     wrap.appendChild(c.col);
                     cols.push(c.reel);
                 }
@@ -4159,18 +4159,18 @@ function renderCounterChars(el, text) {
         const newLen = seg.str.length;
         if (newLen === oldLen) {
             for (let c = 0; c < newLen; c++) {
-                const target = 'translateY(-' + (+seg.str[c]) + '00%)';
+                const target = 'translateY(-' + (+seg.str[c] * 10) + '0%)';
                 if (cols[c].style.transform !== target) cols[c].style.transform = target;
             }
         } else {
             const wrap = cols[0].parentElement;
             if (newLen === oldLen + 1) {
                 const c = makeDigitCol();
-                c.reel.style.transform = 'translateY(-' + (+seg.str[0]) + '00%)';
+                c.reel.style.transform = 'translateY(-' + (+seg.str[0] * 10) + '0%)';
                 wrap.insertBefore(c.col, wrap.firstChild);
                 cols.unshift(c.reel);
                 for (let ci = 1; ci < newLen; ci++) {
-                    const target = 'translateY(-' + (+seg.str[ci]) + '00%)';
+                    const target = 'translateY(-' + (+seg.str[ci] * 10) + '0%)';
                     if (cols[ci].style.transform !== target) cols[ci].style.transform = target;
                 }
             } else {
@@ -4178,7 +4178,7 @@ function renderCounterChars(el, text) {
                 const newCols = [];
                 for (const ch of seg.str) {
                     const c = makeDigitCol();
-                    c.reel.style.transform = 'translateY(-' + (+ch) + '00%)';
+                    c.reel.style.transform = 'translateY(-' + (+ch * 10) + '0%)';
                     wrap.appendChild(c.col);
                     newCols.push(c.reel);
                 }
