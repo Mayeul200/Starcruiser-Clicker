@@ -3191,7 +3191,7 @@ function spawnRandomBonus(shower) {
                 score += instantProduction;
                 partsSinceLaunch += instantProduction;
                 trackPartsEarned(instantProduction);
-                showToast(`\u2705 ${t(bonus.name)}: +${formatNumber(instantProduction)} ${t("Parts")}!`);
+                showBonusPopup('+' + formatNumber(instantProduction) + ' ' + t("Parts"), 'instant');
             }
             else if (bonus.id === "flare") {
                 // Chaque flare porte un endTime unique : le timer d'expiration
@@ -3205,12 +3205,11 @@ function spawnRandomBonus(shower) {
                     endTime: flareEndTime
                 });
                 rebuildAutoMultipliers();
-                showToast(`\u2705 ${t(bonus.name)}: \u00d7${bonus.multiplier} ${t("Parts")}/s ${t("for")} ${bonus.duration / 1000}s`);
+                showBonusPopup(t('Production') + ' \u00d7' + bonus.multiplier, 'multiplier');
                 setTimeout(() => {
                     activeRandomBonuses = activeRandomBonuses.filter(b => b.endTime !== flareEndTime);
                     rebuildAutoMultipliers();
                     updateDisplay();
-                    showToast(`\u23f0 ${t(bonus.name)} ${t("expir\u00e9")}`);
                 }, bonus.duration);
             }
             setTimeout(() => bonusElement.remove(), 500);
@@ -3224,6 +3223,28 @@ function spawnRandomBonus(shower) {
 // Interception en vol : la comete NE S'ARRETE PAS. Le missile calcule
 // un point de rendez-vous sur la trajectoire future de la comete et
 // s'y crash pile au moment ou elle y passe.
+// Gros popup de bonus au centre de l'ecran : "+X Parts" ou "Production x5",
+// position et angle aleatoires, comme un gain dans un jeu video. Vit dans
+// .click-effects (calque fixe au-dessus du jeu, sous les cometes).
+function showBonusPopup(text, kind) {
+    const container = document.getElementById('click-effects');
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+    const cx = cRect.width / 2;
+    const cy = cRect.height / 2;
+    const rx = (Math.random() - 0.5) * Math.min(240, cRect.width * 0.3);
+    const ry = (Math.random() - 0.5) * Math.min(160, cRect.height * 0.3);
+    const angle = (Math.random() - 0.5) * 24;
+    const el = document.createElement('div');
+    el.className = 'bonus-pop ' + (kind === 'multiplier' ? 'bonus-pop-mult' : 'bonus-pop-instant');
+    el.textContent = text;
+    el.style.left = (cx + rx) + 'px';
+    el.style.top = (cy + ry) + 'px';
+    el.style.setProperty('--bpop-rot', angle.toFixed(1) + 'deg');
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 1900);
+}
+
 function interceptCometWithMissile(cometEl, onDestroy, opts) {
     const cometRect = cometEl.getBoundingClientRect();
     // Nucleau reel de la comete via les variables CSS --nx/--ny (le sprite est
