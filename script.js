@@ -28,7 +28,8 @@ function showTooltip(text, x, y, options) {
     // Clamp vertical : si le tooltip ne tient pas au-dessus (trophees proches
     // du haut d'ecran), il bascule sous l'element via options.anchorBottom.
     const anchorBottom = options && options.anchorBottom ? options.anchorBottom : y;
-    if (y - rect.height - margin >= 0) {
+    const forceBelow = !!(options && options.below);
+    if (!forceBelow && y - rect.height - margin >= 0) {
         tooltip.style.transform = 'translate(0, -120%)';
         tooltip.style.top = y + 'px';
     } else {
@@ -3029,7 +3030,7 @@ function attachTooltip(element, text) {
 let touchTooltipElement = null;
 function showTouchTooltip(element, text) {
     const rect = element.getBoundingClientRect();
-    showTooltip(text, rect.left + rect.width / 2, rect.top);
+    showTooltip(text, rect.left + rect.width / 2, rect.top, { anchorBottom: rect.bottom, below: true });
     touchTooltipElement = element;
 }
 document.addEventListener('touchstart', (e) => {
@@ -4206,7 +4207,7 @@ function counterAnimLoop() {
         if (Math.abs(diff) < 0.5) {
             animatedScore = score;
         } else {
-            animatedScore += diff * 0.16;
+            animatedScore += diff * 0.07;
         }
         const shown = animatedScore < 1000
             ? Math.round(animatedScore * 10) / 10
@@ -5086,9 +5087,11 @@ function initMobileNav() {
 function formatDurationHMS(ms) {
     if (ms < 0) ms = 0;
     const totalSec = Math.floor(ms / 1000);
-    const h = Math.floor(totalSec / 3600);
+    const d = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
     const s = totalSec % 60;
+    if (d > 0) return d + 'j' + String(h).padStart(2, '0') + 'h' + String(m).padStart(2, '0') + 'm';
     if (h > 0) return h + 'h' + String(m).padStart(2, '0') + 'm' + String(s).padStart(2, '0') + 's';
     if (m > 0) return m + 'm' + String(s).padStart(2, '0') + 's';
     return s + 's';
