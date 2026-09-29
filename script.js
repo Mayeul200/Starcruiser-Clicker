@@ -4805,6 +4805,7 @@ function drawCard(rarities) {
 function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
+    container.style.setProperty('--card-count', cards.length);
     document.getElementById('cc-reveal-shop-btn').style.display = 'none';
     document.getElementById('cc-reveal-album-btn').style.display = 'none';
     const revealAllBtn = document.getElementById('cc-reveal-all-btn');
@@ -4823,8 +4824,27 @@ function renderRevealCards(cards) {
     // vrai booster. Le joueur retourne la carte, la decouvre un instant,
     // puis elle s'envole et la suivante arrive a sa place.
     let idx = 0;
+    const revealedCards = [];
+    const showSummary = function () {
+        container.innerHTML = '';
+        revealedCards.forEach(function (rc, i) {
+            const el = document.createElement('div');
+            el.className = 'cc-reveal-card summary rarity-' + rc.card.rarity;
+            el.style.animationDelay = (i * 0.08) + 's';
+            el.innerHTML =
+                '<div class="cc-reveal-inner flipped">' +
+                    '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
+                    '<div class="cc-reveal-back">' +
+                        '<img src="' + rc.card.imgPath + '" class="cc-card-img" alt="' + rc.card.name + '">' +
+                        (rc.isNew ? '<div class="cc-card-new">' + t('NOUVELLE !') + '</div>' : '') +
+                    '</div>' +
+                '</div>';
+            container.appendChild(el);
+        });
+        checkAllRevealed();
+    };
     const showCard = function () {
-        if (idx >= total) { checkAllRevealed(); return; }
+        if (idx >= total) { showSummary(); return; }
         const card = cards[idx];
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
@@ -4838,18 +4858,20 @@ function renderRevealCards(cards) {
                 '</div>' +
             '</div>';
         el.addEventListener('click', function () {
-            if (el.classList.contains('flipped')) return;
-            el.classList.add('flipped');
-            revealed++;
-            // Temps de lecture puis la carte s'envole et la suivante arrive
+            if (!el.classList.contains('flipped')) {
+                // Premier clic : retourner la carte, elle reste affichee
+                el.classList.add('flipped');
+                revealed++;
+                revealedCards.push({ card, isNew });
+                return;
+            }
+            // Second clic : elle s'envole et la suivante arrive (ou le recap)
+            el.classList.add('pack-out');
             setTimeout(function () {
-                el.classList.add('pack-out');
-                setTimeout(function () {
-                    el.remove();
-                    idx++;
-                    showCard();
-                }, 320);
-            }, 900);
+                el.remove();
+                idx++;
+                showCard();
+            }, 320);
         });
         container.appendChild(el);
     };
@@ -4857,11 +4879,16 @@ function renderRevealCards(cards) {
 }
 
 function revealAllCards() {
-    // Paquet sequential : retourner automatiquement la carte courante,
-    // la chaine showCard enchainera les suivantes jusqu'a la derniere.
-    const el = document.querySelector('#cc-reveal-cards .cc-reveal-card:not(.flipped)');
+    // Paquet sequential : retourner la carte courante puis l'envoler,
+    // en chaine, jusqu'au recap final.
+    const el = document.querySelector('#cc-reveal-cards .cc-reveal-card.pack');
     if (el) {
         el.click();
+        if (el.classList.contains('flipped')) {
+            setTimeout(function () {
+                if (el.isConnected) el.click();
+            }, 750);
+        }
     } else {
         document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
         document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';

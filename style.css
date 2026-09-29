@@ -3397,9 +3397,18 @@ body {
     animation: cc-reveal 0.5s ease forwards;
     transition: transform 0.2s;
 }
-/* Paquet sequential : une seule carte a la fois, plus grande */
+/* Paquet sequential : une seule carte a la fois, bien plus grande */
 .cc-reveal-card.pack {
-    width: min(60cqw, 300px, 62cqh);
+    width: min(78cqw, 380px, 72cqh);
+}
+/* Recap final : toutes les cartes retournees cote a cote */
+.cc-reveal-card.summary {
+    width: min(
+        calc((100cqw - (var(--card-count, 3) - 1) * 14px) / var(--card-count, 3)),
+        240px,
+        calc(50cqh)
+    );
+    cursor: default;
 }
 /* Sortie de carte : envol vers le haut avec fondu */
 .cc-reveal-card.pack-out {
@@ -4132,7 +4141,7 @@ body {
     /* Carte seule : largeur limitee pour rester lisible, pas plein ecran */
     .cc-reveal-cards:has(> .cc-reveal-card:only-child) { max-width: 40vw; margin: 0 auto; }
     .cc-reveal-card:only-child { max-width: 40vw; }
-    .cc-reveal-card.pack { width: min(70cqw, 42vh); max-width: 70vw; }
+    .cc-reveal-card.pack { width: min(80cqw, 52vh); max-width: 80vw; }
     /* 3 cartes : grille 2 colonnes (2 en haut, 1 centree en bas) */
 
     /* Toast au-dessus de la nav */
