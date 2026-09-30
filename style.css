@@ -872,19 +872,15 @@ body {
 }
 
 .building-ownership {
-    font-size: 3.58cqw;
+    /* Police reduite pour toutes les langues : le label "Possédés:" suivi
+       de 4 chiffres ne doit jamais etre masque par l'image du batiment. */
+    font-size: 2.7cqw;
     color: var(--text-dark);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-}
-/* Langues ou le label "Possédés:" est long (es, it) : police legerement
-   reduite pour que le compteur ne soit jamais masque par l'image du batiment. */
-html[lang="es"] .building-ownership,
-html[lang="it"] .building-ownership {
-    font-size: 3.1cqw;
 }
 /* Enfants de la grille : min-width 0 pour que les colonnes puissent
    resserer sous la taille de leur contenu sans deborder de la case. */
@@ -3337,8 +3333,66 @@ html[lang="it"] .building-ownership {
     display: flex;
     gap: 18px;
     justify-content: center;
+    align-items: stretch;
     flex-wrap: wrap;
     margin-bottom: 18px;
+}
+/* Badge informatif collection : cartes obtenues / 20 + bonus actuel,
+   affiche a droite sur la ligne des boosters payants. */
+.cc-collection-badge {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-width: 120px;
+    padding: 10px 16px;
+    margin-left: auto;
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    border-radius: var(--radius);
+    font-weight: 700;
+}
+.ccb-cards {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ccb-icon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+.ccb-count {
+    font-size: 1.15rem;
+    color: var(--accent-light);
+    font-variant-numeric: tabular-nums;
+}
+.ccb-sep {
+    color: var(--text-light);
+    margin: 0 2px;
+}
+.ccb-divider {
+    width: 80%;
+    height: 1px;
+    background: rgba(59, 130, 246, 0.3);
+}
+.ccb-bonus {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+.ccb-mult {
+    font-size: 1.05rem;
+    color: #ffd700;
+    font-variant-numeric: tabular-nums;
+}
+.ccb-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
 }
 .cc-booster-btn {
     flex: 1;

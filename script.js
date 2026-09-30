@@ -3457,6 +3457,11 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     missile.style.left = (launchXadj - mW / 2) + 'px';
     missile.style.top = (launchY - mH / 2) + 'px';
     missile.style.transform = `translate(0px, 0px) rotate(${angle}rad) scale(${scale})`;
+    // Forcer le commit de l'orientation initiale AVANT de poser la
+    // transition : sinon le navigateur n'a jamais calcule le style de depart
+    // et interpole la rotation depuis 0 rad, le missile tourne sur lui-meme
+    // pendant tout le vol.
+    void missile.getBoundingClientRect();
     // Vol rapide mais lisible : borné entre 240 et 600 ms selon la distance.
     // Animation en transform (compositee GPU) : left/top forcerait le layout
     // a chaque frame et ferait saccader le vol.
@@ -4904,6 +4909,13 @@ function updateCardCollectionDisplay() {
     document.getElementById('cc-collected-count').textContent = collected.length;
     document.getElementById('cc-total-count').textContent = COLLECTIBLE_CARDS.length;
     document.getElementById('cc-bonus-display').textContent = '×' + getCollectionMultiplier().toFixed(2);
+    // Badge informatif sur la ligne des boosters : cartes / total et bonus.
+    const ccbOwned = document.getElementById('ccb-owned');
+    if (ccbOwned) {
+        ccbOwned.textContent = collected.length;
+        document.getElementById('ccb-total').textContent = COLLECTIBLE_CARDS.length;
+        document.getElementById('ccb-bonus').textContent = '×' + getCollectionMultiplier().toFixed(2);
+    }
 }
 
 function isCollectionComplete() {
