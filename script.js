@@ -3309,7 +3309,11 @@ function spawnRandomBonus(shower) {
         startX = minStartX + Math.random() * Math.max(0, window.innerWidth - minStartX - 100);
         endX = startX - horizontalTravel;
     }
-    const duration = 6000;
+    // Cometes de contrat : plus rapides (4 s au lieu de 6 s), plus dures
+    // a intercepter — le contrat doit se mEriter.
+    const isContractComet = shower && contractState.active
+        && (contractState.active.typeId === 'comets' || contractState.active.typeId === 'shower');
+    const duration = isContractComet ? 4000 : 6000;
 
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus comet ${bonus.colorClass}` + (shower ? ' shower' : '');
@@ -3902,11 +3906,13 @@ const Sounds = {
     },
     // Comète : whoosh du missile puis explosion
     missile() {
-        // Missile qui arrive : sifflement montant vers l'impact (le missile
-        // approche, la tension grimpe) + sillon aerodynamique discret —
-        // prepare un combo ultra satisfaisant avec l'explosion qui suit.
-        soundTone(400, 2200, 0.35, 'sine', 0.3);
-        soundNoise(0.3, 0.1, 600, 2400, 0.04);
+        // Sifflement de missile realiste : comme avant, le sifflement aigu
+        // descendant (l'arme qui tombe, Doppler), mais avec plus de corps —
+        // une couche grave ronde qui glisse avec et un souffle d'air autour,
+        // plus vivant qu'un sinus pur. Realiste et reconnaissable.
+        soundTone(2400, 400, 0.5, 'sine', 0.3);
+        soundTone(480, 120, 0.5, 'sine', 0.12);
+        soundNoise(0.45, 0.08, 1800, 500, 0.03);
     },
     explosion() {
         // Combo ultra satisfaisant : impact qui claque SEC (claquement +
@@ -4974,9 +4980,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(30, clickParts * 8),   price: Math.max(50, pps * 6),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
-                { target: Math.max(80, clickParts * 18),  price: Math.max(200, pps * 15), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: Math.max(200, clickParts * 40), price: Math.max(800, pps * 35), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
+                { target: Math.max(30, clickParts * 8),   price: Math.max(50, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(80, clickParts * 18),  price: Math.max(200, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(200, clickParts * 40), price: Math.max(800, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
             ]
         },
         {
@@ -4998,9 +5004,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
             diffs: [
-                { target: Math.max(100, pps * 20),  price: Math.max(50, pps * 5),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(400, pps * 50), price: Math.max(200, pps * 12), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(1200, pps * 110), price: Math.max(800, pps * 28), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(100, pps * 20),  price: Math.max(50, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
+                { target: Math.max(400, pps * 50), price: Math.max(200, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
+                { target: Math.max(1200, pps * 110), price: Math.max(800, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
             ]
         },
         {
