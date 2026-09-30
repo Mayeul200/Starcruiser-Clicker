@@ -6051,6 +6051,10 @@ function renderRocketPartsShop() {
     if (!container) return;
     const nextPart = ROCKET_PARTS.find(p => !p.purchased);
     if (!nextPart) {
+        // Toutes les pieces sont achetees : eteindre tout pulse residuel
+        // (carte courante ou conteneur) pour ne pas briller une fois complet.
+        clearPulseHint(container);
+        clearPulseHint(container.querySelector('.rocket-part-frame'));
         if (container.dataset.partId !== '__complete__') {
             container.dataset.partId = '__complete__';
             container.innerHTML =
