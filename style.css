@@ -26,6 +26,8 @@
     --glow: 0 0 10px rgba(30, 58, 138, 0.5);
     --radius: 8px;
     --top-height: 10vh;
+    --font-body: 'Space Grotesk', 'Inter', sans-serif;
+    --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
 }
 *, *::before, *::after {
     margin: 0; padding: 0; box-sizing: border-box;
@@ -61,7 +63,7 @@ img {
     pointer-events: auto;
 }
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -112,6 +114,7 @@ body {
 }
 .top-bar-title {
     color: var(--accent-light);
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 1.3rem;
     letter-spacing: 0.5px;
@@ -431,6 +434,7 @@ body {
     }
 }
 .modal-header h2 {
+    font-family: var(--font-display);
     font-size: 1.3rem;
 }
 .modal-header h2 .modal-title-icon {
@@ -554,6 +558,7 @@ body {
 .left-panel h3,
 .right-panel h3,
 .space-section-title {
+    font-family: var(--font-display);
     color: var(--text);
     margin: 0 0 10px 0;
     font-size: 1.1rem;
@@ -2441,6 +2446,7 @@ body {
 }
 .mini-games-section h4 {
     color: var(--text-light);
+    font-family: var(--font-display);
     font-size: 1rem;
     margin-bottom: 10px;
     text-align: center;
@@ -3253,6 +3259,7 @@ body {
 }
 .upgrades-title {
     color: white;
+    font-family: var(--font-display);
     font-size: 1.1rem;
     font-weight: 700;
     margin-right: 12px;
@@ -3973,7 +3980,7 @@ body {
         background: none;
         border: none;
         color: var(--text-light);
-        font-family: 'Inter', sans-serif;
+        font-family: 'Space Grotesk', 'Inter', sans-serif;
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
