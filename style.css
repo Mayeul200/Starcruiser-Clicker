@@ -714,12 +714,18 @@ body {
     border-color: rgba(255, 255, 255, 0.35);
 }
 .stat-tile.bonus-active .stat-value {
-    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffee00, #00e676, #00b0ff, #b388ff, #ff0080);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rainbow-slide 1.5s linear infinite;
+    /* Pas de gradient clipE sur le texte : la valeur de vitesse est un
+       odomEtre (.cch) imbriquE et le background-clip:text rend les
+       chiffres noirs. On anime la couleur directement. */
+    animation: bonus-color-cycle 1.5s linear infinite;
+}
+@keyframes bonus-color-cycle {
+    0% { color: #ff0080; }
+    20% { color: #ff8c00; }
+    40% { color: #ffee00; }
+    60% { color: #00e676; }
+    80% { color: #00b0ff; }
+    100% { color: #b388ff; }
 }
 @keyframes bonus-rainbow-pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); transform: scale(1); }
@@ -3413,10 +3419,15 @@ body {
     border-radius: 999px;
     font-weight: 700;
     white-space: nowrap;
-    flex-shrink: 0;
+    /* Adaptable : le badge peut retrer quand la case rapetisse, sa police
+       suit la largeur disponible (clamp) au lieu de deborder. */
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    font-size: clamp(0.62rem, 1.6vw, 0.78rem);
 }
 .ccb-count {
-    font-size: 0.78rem;
+    font-size: 1em;
     color: var(--accent-light);
     font-variant-numeric: tabular-nums;
 }
@@ -3430,7 +3441,7 @@ body {
     background: rgba(59, 130, 246, 0.4);
 }
 .ccb-mult {
-    font-size: 0.78rem;
+    font-size: 1em;
     color: #ffd700;
     font-variant-numeric: tabular-nums;
 }
