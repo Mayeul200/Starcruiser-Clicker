@@ -4574,7 +4574,7 @@ function buildContractsHtml() {
             html += '<div class="contract-card">'
                 + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div>'
                 + '<div class="contract-title">' + t(building.name) + '</div>'
-                + '<div class="contract-sub">' + tf('Produis {quota} Parts avec ce batiment en 3 min', { quota: formatNumber(offer.quota) }) + ' · ' + tf('soit {rate} {unit}/s', { rate: formatNumber(Math.ceil(offer.quota / (CONTRACT_DURATION_MS / 1000))), unit: t('Parts') }) + '</div></div></div>'
+                + '<div class="contract-sub">' + tf('Produis {quota} Parts avec ce batiment en 3 min', { quota: formatNumber(offer.quota) }) + ' · ' + tf('soit {rate} {unit}/s', { rate: formatNumber(offer.quota / (CONTRACT_DURATION_MS / 1000)), unit: t('Parts') }) + '</div></div></div>'
                 + '<div class="contract-reward">+' + Math.round(CONTRACT_REWARD_MULT * 100) + '% ' + t('production permanente') + ' (x' + rewardMult.toFixed(2) + ')'
                 + (stacks > 0 ? ' \u00b7 ' + t('deja') + ' x' + getContractBuildingMultiplier(offer.buildingId).toFixed(2) : '')
                 + (stacks >= CONTRACT_REWARD_MAX_STACKS ? ' \u00b7 ' + t('palier max') : '')
@@ -4598,7 +4598,7 @@ function updateContractsDynamicValues(listEl, now) {
         const text = listEl.querySelector('.contract-progress-text');
         if (text) text.textContent = formatNumber(Math.floor(c.progress)) + ' / ' + formatNumber(c.quota) + ' ' + t('Parts');
         const rateEl = listEl.querySelector('.contract-required-rate');
-        if (rateEl) rateEl.textContent = '(' + tf('requis : {rate} {unit}/s', { rate: formatNumber(Math.ceil(c.quota / (CONTRACT_DURATION_MS / 1000))), unit: t('Parts') }) + ')';
+        if (rateEl) rateEl.textContent = '(' + tf('requis : {rate} {unit}/s', { rate: formatNumber(c.quota / (CONTRACT_DURATION_MS / 1000)), unit: t('Parts') }) + ')';
         const timer = listEl.querySelector('.contract-timer');
         if (timer) timer.textContent = formatContractTime(remaining);
     } else {
