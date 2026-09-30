@@ -1153,13 +1153,22 @@ function updateBuildingButton(buildingId) {
     const ownershipDiv = element.querySelector('.building-ownership');
 
     if (button) {
-        button.disabled = !isAffordable || buildingsToShow === 0;
-        button.textContent = `${displayCost} ${t("Parts")}`;
+        const btnText = `${displayCost} ${t("Parts")}`;
+        const btnDisabled = !isAffordable || buildingsToShow === 0;
+        if (button.textContent !== btnText) button.textContent = btnText;
+        if (button.disabled !== btnDisabled) button.disabled = btnDisabled;
     }
-    if (productionSpan) productionSpan.textContent = `${formatNumber(totalGain)}/s`;
-    if (ownershipDiv) ownershipDiv.textContent = `${t("Owned:")} ${building.count}`;
+    if (productionSpan) {
+        const prodText = `${formatNumber(totalGain)}/s`;
+        if (productionSpan.textContent !== prodText) productionSpan.textContent = prodText;
+    }
+    if (ownershipDiv) {
+        const ownText = `${t("Owned:")} ${building.count}`;
+        if (ownershipDiv.textContent !== ownText) ownershipDiv.textContent = ownText;
+    }
 
-    element.setAttribute('data-tooltip', getBuildingTooltip(building));
+    const newTooltip = getBuildingTooltip(building);
+    if (element.getAttribute('data-tooltip') !== newTooltip) element.setAttribute('data-tooltip', newTooltip);
 }
 
 function updateAllBuildingButtons() {
