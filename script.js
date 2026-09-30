@@ -3041,14 +3041,11 @@ function renderUpgrades() {
                 render: () => {
                     const newNb = CLICK_UPGRADES.indexOf(upgrade) + 1;
                     const el = createUpgradeElement(color, 'images/cursor.svg', upgrade.name, newNb);
-                    const newFingerMult = newNb >= 2 ? (1 + (newNb - 1) * 0.5) : 0;
                     const lines = [
                         t(upgrade.name) + ' — ' + t('niveau') + ' ' + newNb,
-                        t('Base du clic ×2') + ' → ' + formatNumber(Math.pow(2, newNb)) + ' ' + t('Parts') + ' ' + t('par clic'),
-                        t('Par bâtiment possédé') + ' : ' + (newFingerMult > 0 ? '+' + (newFingerMult * 0.1).toFixed(1) + ' ' + t('Parts') + ' (×' + newFingerMult.toFixed(1) + ')' : '—'),
-                        t('Bonus production') + ' : +' + newNb + '% ' + t('Parts par seconde')
+                        t('+1% de production par clic') + '\n' + formatNumber(upgrade.cost) + ' ' + t('Parts')
                     ];
-                    attachTooltip(el, lines.join('\n') + '\n' + formatNumber(upgrade.cost) + ' ' + t('Parts'));
+                    attachTooltip(el, lines.join('\n'));
                     el.onclick = () => buyClickUpgrade(upgrade.threshold);
                     return el;
                 }
@@ -3181,7 +3178,9 @@ function attachTooltip(element, text) {
     if (!IS_TOUCH) {
         element.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
-            showTooltip(text, rect.left + rect.width / 2, rect.top);
+            // Tooltip des upgrades ancre sous la case : la barre d'ameliorations
+            // est en haut d'ecran, au-dessus il serait colle a la top bar.
+            showTooltip(text, rect.left + rect.width / 2, rect.top, { below: true, anchorBottom: rect.bottom });
         });
         element.addEventListener('mouseleave', hideTooltip);
     }
