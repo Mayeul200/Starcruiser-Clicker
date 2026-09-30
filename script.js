@@ -1376,7 +1376,8 @@ function calculateTravelSpeedKmS() {
 function formatTravelSpeed(kmS) {
     if (kmS <= 0) return '0 km/s';
     if (kmS >= 1000) return formatNumber(kmS) + ' km/s';
-    return (Math.round(kmS * 10) / 10).toLocaleString('fr-FR') + ' km/s';
+    const v = Math.round(kmS * 10) / 10;
+    return (v % 1 === 0 ? v.toString() : v.toFixed(1)) + ' km/s';
 }
 
 function launchRocket() {
@@ -4301,12 +4302,12 @@ function updateBonusTimer() {
 // de Parts avec CE batiment dans le temps imparti, il gagne un bonus de
 // production permanent (+50% cumulable). Rotation des contrats toutes les
 // 2 minutes. Les contrats ciblent en priorite les batiments negliges.
-// Quota volontaire Faisable : 95% de la production normale du batiment sur
-// la duree du contrat -- reussissable sans boost ni achat, avec une marge.
+// Quota base sur la production HORS boost temporaire (autoMultiplier
+// exclu) + 5% : reussissable en jouant normalement, un boost facilite.
 // ============================================
 const CONTRACT_ROTATION_MS = 2 * 60 * 1000;
 const CONTRACT_DURATION_MS = 3 * 60 * 1000;
-const CONTRACT_QUOTA_RATIO = 0.95;
+const CONTRACT_QUOTA_RATIO = 1.05;
 const CONTRACT_REWARD_MULT = 0.50;
 const CONTRACT_REWARD_MAX_STACKS = 10;
 const CONTRACT_PRICE_PPS_SECONDS = 20;
