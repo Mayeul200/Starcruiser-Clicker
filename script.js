@@ -3867,30 +3867,25 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
-        // "Money" de Pink Floyd : la monnaie qu'on VERSE — une cascade de
-        // pieces qui tombent et s'entrechoquent (le fameux riff de debut,
-        // enregistre avec de vraies pieces versees sur une plaque). Ici :
-        // 5 a 7 micro-clics metalliques PERCUTANTS en cascade sur ~180 ms,
-        // pitches decroissants (les pieces tombent), chaque clic = attaque
-        // carree tres breve + partiels metalliques inharmoniques qui
-        // resonnent, aleatoire a chaque clic pour un son vivant.
+        // Vrai son de piece de monnaie, bien audible : le classique "coin
+        // collect" (piece Zelda / rupee) — deux notes metalliques cristallines
+        // en intervalle de quarte ascendante (Si grave puis Mi aigu), chaque
+        // note = fondamentale forte + partiel metallique inharmonique +
+        // petite attaque carree. Pitch legerement improvise a chaque clic.
         const now = performance.now();
         if (now - Sound._lastClick < 40) return;
         Sound._lastClick = now;
-        const n = 5 + Math.floor(Math.random() * 3);
-        for (let i = 0; i < n; i++) {
-            // Pitch decroissant : les premieres pieces tombent de plus haut
-            const base = (2100 - i * 180) + Math.random() * 260;
-            const at = (i / n) * 0.16 + Math.random() * 0.02;
-            // Clic metallique : attaque breve (square 15 ms) + resonance
-            soundTone(base, base * 0.7, 0.015, 'square', 0.05, at);
-            // Resonance metallique inharmonique de la piece qui sonne
-            soundTone(base * 1.34, base * 1.3, 0.09, 'sine', 0.06, at + 0.002);
-            // Partiel aigu de percussion sur metal (le "ching")
-            if (i < 3) soundTone(base * 2.7, base * 2.5, 0.05, 'sine', 0.025, at + 0.001);
-        }
-        // Souffle global de la mane verse, discret
-        soundNoise(0.12, 0.05, 5000, 1800);
+        const detune = 1 + (Math.random() - 0.5) * 0.04;
+        const f1 = 988 * detune;   // Si5 : premiere note, nette et medium
+        const f2 = 1319 * detune;  // Mi6 : seconde note, brillante et conclusive
+        // Note 1 : attaque breve + fondamentale cristalline + partiel metal
+        soundTone(f1, f1, 0.012, 'square', 0.1);
+        soundTone(f1, f1 * 0.998, 0.11, 'sine', 0.3);
+        soundTone(f1 * 2.76, f1 * 2.7, 0.07, 'sine', 0.07, 0.002);
+        // Note 2 : la reponse, plus aigue, qui conclut le geste
+        soundTone(f2, f2, 0.012, 'square', 0.1, 0.075);
+        soundTone(f2, f2 * 0.998, 0.16, 'sine', 0.32, 0.075);
+        soundTone(f2 * 2.76, f2 * 2.7, 0.08, 'sine', 0.06, 0.077);
     },
     // Achat : pop satisfaisant, deux notes montantes
     buy() {
