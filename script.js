@@ -5678,6 +5678,10 @@ function scheduleBonusSpawn() {
     }, delay);
 }
 scheduleBonusSpawn();
+// Prechargement du sprite du missile : il n'est insere dans le DOM qu'au
+// premier tir, sans ce prechargement le premier missile vole sans image
+// le temps du premier telechargement.
+(() => { const preload = new Image(); preload.src = 'images/effects/missile.png'; })();
 
 // ============================================
 // PLUIE DE COMÈTES (événement régulier)
