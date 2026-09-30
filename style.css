@@ -614,11 +614,17 @@ body {
     font-weight: 600;
     text-shadow: var(--glow);
 }
-/* Chiffres du compteur : deroulement type machine a sous */
+/* Chiffres du compteur : deroulement type machine a sous.
+   Les colonnes .cch n'ont pas de texte inline : leur baseline flex est
+   synthetisee au bord BAS, align-items: baseline les poussait donc vers
+   le bas et les chiffres descendaient sous la ligne du texte "Parts".
+   Centrage vertical : les chiffres remontent exactement sur la baseline
+   du texte adjacent (meme police, meme font-size). */
 #score-value,
 .stat-value {
     display: inline-flex;
-    align-items: baseline;
+    align-items: center;
+    align-self: center;
 }
 .cch-group {
     display: inline-flex;
@@ -635,8 +641,8 @@ body {
     align-items: flex-start;
     overflow: hidden;
     width: 0.62em;
-    height: 1.25em;
-    line-height: 1.25;
+    height: 1.5em;
+    line-height: 1.5;
     vertical-align: bottom;
 }
 .cch-reel {
@@ -647,8 +653,8 @@ body {
 }
 .cch-reel .digit {
     display: block;
-    height: 1.25em;
-    line-height: 1.25;
+    height: 1.5em;
+    line-height: 1.5;
     text-align: center;
 }
 
