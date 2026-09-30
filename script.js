@@ -4980,7 +4980,7 @@ function getContractTypes() {
     return [
         {
             id: 'clicks',
-            icon: '\uD83D\uDD1E',
+            icon: 'images/parts.png',
             // Objectif : nombre de clics sur la piece pendant 30 s
             objective: 'Cliquez {target} fois sur la piece',
             track: 'clicks',
@@ -4992,7 +4992,7 @@ function getContractTypes() {
         },
         {
             id: 'clickParts',
-            icon: '\uD83E\uDD29',
+            icon: 'images/cursor.svg',
             // Objectif : Parts produites en cliquant pendant 30 s
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
@@ -5004,7 +5004,7 @@ function getContractTypes() {
         },
         {
             id: 'comets',
-            icon: '\u2604\uFE0F',
+            icon: 'images/effects/missile.png',
             // Objectif : intercepter des cometes pour proteger la fusee
             objective: 'Protegez la fusee : interceptez {target} cometes',
             track: 'comets',
@@ -5016,7 +5016,7 @@ function getContractTypes() {
         },
         {
             id: 'production',
-            icon: '\u2699\uFE0F',
+            icon: 'images/buildings/factory.png',
             // Objectif : produire un quota de Parts (toute production confondue)
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
@@ -5028,7 +5028,7 @@ function getContractTypes() {
         },
         {
             id: 'shower',
-            icon: '\uD83C\uDF20',
+            icon: 'images/effects/comete.png',
             // Objectif : attraper les cometes d'une pluie provoquee pour le contrat
             objective: 'Survivez a la pluie : attrapez {target} cometes',
             track: 'comets',
@@ -5094,6 +5094,11 @@ function generateContractOffers() {
 
 function findContractType(typeId) {
     return getContractTypes().find(tp => tp.id === typeId) || null;
+}
+// Icone de contrat : image du jeu (piece, curseur, missile, usine, comete).
+function contractIconHtml(type, cls) {
+    if (!type) return '';
+    return '<img src="' + type.icon + '" class="' + (cls || 'contract-icon') + '" alt="">';
 }
 
 function getContractPrice() {
@@ -5165,7 +5170,7 @@ function acceptContract(offerId) {
     };
     contractState.offers = contractState.offers.filter(o => o.id !== offer.id);
     const type = findContractType(offer.typeId);
-    showToast('\u2705 ' + t('Contrat accepte !') + ' ' + (type ? type.icon : ''), null);
+    showToast('\u2705 ' + t('Contrat accepte !'), type ? type.icon : null);
     // Contrat "pluie" : on declenche SA pluie immediatement, les cometes
     // a attraper sont celles du contrat.
     if (offer.shower) {
@@ -5367,7 +5372,7 @@ function renderContractsCardStatus() {
         const remaining = Math.max(0, c.expiresAt - now);
         const pct = Math.min(100, (c.progress / c.target) * 100);
         statusEl.className = 'game-status visible';
-        statusEl.innerHTML = (type ? type.icon + ' ' : '')
+        statusEl.innerHTML = (type ? contractIconHtml(type, 'status-contract-icon') + ' ' : '')
             + '<span class="status-timer">' + formatContractTime(remaining) + '</span>'
             + '<span class="status-bar"><div style="width:' + pct + '%"></div></span>';
     } else if (contractState.offers.length > 0) {
@@ -5416,7 +5421,7 @@ function buildContractsHtml() {
         const c = contractState.active;
         const type = findContractType(c.typeId);
         html += '<div class="contract-card active">'
-            + '<div class="contract-head"><div class="contract-icon">' + (type ? type.icon : '') + '</div><div><div class="contract-title">' + tf(type ? type.objective : '', { target: formatNumber(c.target) }) + '</div>'
+            + '<div class="contract-head">' + contractIconHtml(type) + '<div><div class="contract-title">' + tf(type ? type.objective : '', { target: formatNumber(c.target) }) + '</div>'
             + '<div class="contract-sub">' + t('Contrat en cours') + '</div></div></div>'
             + '<div class="contract-progress"><div class="contract-progress-fill" style="width:0%"></div></div>'
             + '<div class="contract-meta"><span class="contract-progress-text"></span>'
@@ -5433,7 +5438,7 @@ function buildContractsHtml() {
                     ? 'x' + offer.mult + ' ' + t('production') + ' (' + offer.duration + ' s)'
                     : 'x' + offer.clickMult + ' ' + t('clic') + ' (' + offer.duration + ' s)');
             html += '<div class="contract-card">'
-                + '<div class="contract-head"><div class="contract-icon">' + (type ? type.icon : '') + '</div><div>'
+                + '<div class="contract-head">' + contractIconHtml(type) + '<div>'
                 + '<div class="contract-title">' + contractObjectiveText(offer) + '</div>'
                 + '<div class="contract-sub">' + t('30 secondes') + ' \u00b7 ' + contractDifficultyLabel(offer.diffIdx) + '</div></div></div>'
                 + '<div class="contract-reward">' + contractRewardText(offer) + '</div>'
