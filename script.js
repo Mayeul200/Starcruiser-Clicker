@@ -224,8 +224,9 @@ const TROPHIES = [
     { id: "speed-1000", name: "Propulsion Ionique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000, type: "speed" },
     { id: "speed-10000", name: "Vitesse Stellaire", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000, type: "speed" },
     { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100000, type: "speed" },
-    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000000, type: "speed" },
     { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.png", threshold: 299792, type: "speed" },
+    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000000, type: "speed" },
+    { id: "speed-10000000", name: "Sillage Cosmique", description: "Atteindre 10 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000000, type: "speed" },
 
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
@@ -1437,6 +1438,17 @@ function calculateTravelSpeedKmS() {
     // On derive exactement la meme formule que calculateDistance().
     const parts = Math.max(partsSinceLaunch, 0);
     if (parts <= 0 || partsPerSecond <= 0) return 0;
+    return travelSpeedFromPps(parts, partsPerSecond);
+}
+// Vitesse hors boost temporaire de production (x5 etc.) : base des trophees
+// de vitesse, pour qu'un multiplicateur ephemere ne debloque pas un trophee.
+function calculateTravelSpeedKmSBase() {
+    const parts = Math.max(partsSinceLaunch, 0);
+    const basePps = getBasePartsPerSecond();
+    if (parts <= 0 || basePps <= 0) return 0;
+    return travelSpeedFromPps(parts, basePps);
+}
+function travelSpeedFromPps(parts, pps) {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
     const partsMult = Math.pow(PIECE_DISTANCE_MULT, partsUnlocked);
     let dFactor;
@@ -1449,7 +1461,7 @@ function calculateTravelSpeedKmS() {
     }
     const prestige = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
     const prestigeDistanceBoost = 1 + (prestige - 1) / 2;
-    return partsPerSecond * partsMult * dFactor * prestigeDistanceBoost * getDistanceBonus();
+    return pps * partsMult * dFactor * prestigeDistanceBoost * getDistanceBonus();
 }
 function formatTravelSpeed(kmS) {
     if (kmS <= 0) return '0 km/s';
@@ -4065,7 +4077,7 @@ function checkTrophies() {
                     unlocked = Object.keys(cardCollection).filter(id => cardCollection[id] > 0).length >= trophy.threshold;
                     break;
                 case 'speed':
-                    unlocked = calculateTravelSpeedKmS() >= trophy.threshold;
+                    unlocked = calculateTravelSpeedKmSBase() >= trophy.threshold;
                     break;
             }
             
