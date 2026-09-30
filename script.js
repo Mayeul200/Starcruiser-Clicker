@@ -3772,16 +3772,77 @@ function spawnFallingCoin(event) {
 // 100 pieces / s a 1 000 000 Parts/s (progression racine, sans plafond).
 const partsRain = {
     container: null,
+    canvas: null,
+    ctx: null,
+    coinImg: null,
+    parts: [],
+    dpr: 1,
     spawnDebt: 0,
-    lastTick: 0
+    lastTick: 0,
+    lastFrame: 0
 };
 function getPartsRainRate() {
     if (partsPerSecond <= 0) return 0;
     return 0.1 * Math.sqrt(partsPerSecond);
 }
+function resizeRainCanvas() {
+    const canvas = partsRain.canvas;
+    if (!canvas || !canvas.parentElement) return;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    partsRain.dpr = dpr;
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+}
+function ensureRainCanvas() {
+    if (partsRain.canvas) return true;
+    const container = partsRain.container || document.getElementById('parts-rain');
+    if (!container) return false;
+    partsRain.container = container;
+    const canvas = document.createElement('canvas');
+    canvas.className = 'rain-canvas';
+    container.appendChild(canvas);
+    partsRain.canvas = canvas;
+    partsRain.ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = 'images/parts.png';
+    partsRain.coinImg = img;
+    window.addEventListener('resize', resizeRainCanvas);
+    resizeRainCanvas();
+    partsRain.lastFrame = 0;
+    requestAnimationFrame(rainFrame);
+    return true;
+}
+function rainFrame(now) {
+    requestAnimationFrame(rainFrame);
+    const canvas = partsRain.canvas;
+    const ctx = partsRain.ctx;
+    if (!canvas || !ctx) return;
+    const dt = Math.min((now - (partsRain.lastFrame || now)) / 1000, 0.1);
+    partsRain.lastFrame = now;
+    if (canvas.width <= 1) { resizeRainCanvas(); return; }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (partsRain.suspended || partsRain.parts.length === 0) return;
+    const img = partsRain.coinImg;
+    if (!img || !img.complete || !img.naturalWidth) return;
+    const parts = partsRain.parts;
+    for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i];
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.angle += p.spinSpeed * dt;
+        if (p.y - p.size > canvas.height) { parts.splice(i, 1); continue; }
+        const flip = Math.cos(p.angle);
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.scale(flip, 1);
+        ctx.drawImage(img, -p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+    }
+}
 function tickPartsRain(now) {
-    if (!partsRain.container) partsRain.container = document.getElementById('parts-rain');
-    if (!partsRain.container) return;
+    if (!ensureRainCanvas()) return;
     if (partsRain.suspended) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
     const rate = getPartsRainRate();
     if (rate <= 0) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
@@ -3794,7 +3855,7 @@ function tickPartsRain(now) {
     partsRain.lastTick = now;
     while (partsRain.spawnDebt >= 1) {
         partsRain.spawnDebt -= 1;
-        spawnRainPart(partsRain.container);
+        spawnRainPart();
     }
 }
 // Purge de la pluie quand la page est masquee : au rechargement ou au retour
@@ -3802,32 +3863,37 @@ function tickPartsRain(now) {
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         partsRain.suspended = true;
-        if (partsRain.container) partsRain.container.innerHTML = '';
+        partsRain.parts.length = 0;
         partsRain.spawnDebt = 0;
     } else {
         // Ne reactiver que si la vue affiche bien le panneau central :
         // sur mobile la navigation gere sa propre suspension.
         partsRain.suspended = (typeof isMobileLayout === 'function' && isMobileLayout() && mobileActiveView !== 'center');
         partsRain.lastTick = Date.now();
+        resizeRainCanvas();
     }
 });
-function spawnRainPart(container) {
-    const part = document.createElement('div');
-    part.className = 'rain-part';
-    part.style.left = (Math.random() * 94) + '%';
+function spawnRainPart() {
+    const canvas = partsRain.canvas;
+    if (!canvas || canvas.width <= 1) return;
+    const dpr = partsRain.dpr;
     // Tailles variees : de minuscule (5px) a petite (22px), petit plus frequent.
-    const size = 5 + Math.random() * Math.random() * 17;
-    part.style.setProperty('--rain-size', size.toFixed(1) + 'px');
-    // Deviation laterale : trajectoire en diagonale, jamais parfaitement droite.
-    const drift = (Math.random() - 0.5) * 160;
-    part.style.setProperty('--rain-drift', drift.toFixed(0) + 'px');
-    // Rotation sur elle-meme : vitesse et sens aleatoires.
-    const spin = (Math.random() < 0.5 ? -1 : 1) * (180 + Math.random() * 540);
-    part.style.setProperty('--rain-spin', spin.toFixed(0) + 'deg');
+    const size = (5 + Math.random() * Math.random() * 17) * dpr;
     const duration = 5 + Math.random() * 4;
-    part.style.animationDuration = duration + 's';
-    part.addEventListener('animationend', () => part.remove());
-    container.appendChild(part);
+    // Deviation laterale : trajectoire en diagonale, jamais parfaitement droite.
+    const drift = (Math.random() - 0.5) * 160 * dpr;
+    // Rotation sur elle-meme : vitesse et sens aleatoires, restituee en canvas
+    // par un retournement horizontal (cos de l'angle), meme effet piece qui virevolte.
+    const spin = (Math.random() < 0.5 ? -1 : 1) * (180 + Math.random() * 540);
+    partsRain.parts.push({
+        x: Math.random() * canvas.width,
+        y: -40 * dpr,
+        size,
+        vx: drift / duration,
+        vy: (canvas.height + 80 * dpr) / duration,
+        angle: Math.random() * Math.PI * 2,
+        spinSpeed: (spin * Math.PI / 180) / duration
+    });
 }
 
 let buildingGainsCache = null;
@@ -5252,9 +5318,10 @@ function setMobileView(view) {
     if (typeof partsRain !== 'undefined' && partsRain) {
         if (view === 'center') {
             partsRain.suspended = false;
+            resizeRainCanvas();
         } else {
             partsRain.suspended = true;
-            if (partsRain.container) partsRain.container.innerHTML = '';
+            partsRain.parts.length = 0;
         }
     }
     const viewClass = 'mobile-view-' + view;

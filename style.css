@@ -606,28 +606,11 @@ body {
     overflow: hidden;
     pointer-events: none;
     z-index: 4;
-    perspective: 900px;
 }
-.parts-rain .rain-part {
-    position: absolute;
-    top: -40px;
-    width: var(--rain-size, 18px);
-    height: var(--rain-size, 18px);
-    background-image: url('images/parts.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 1;
-    animation: rain-fall linear forwards;
-    will-change: transform;
-}
-@keyframes rain-fall {
-    from {
-        transform: translate(0, 0) rotateX(0deg);
-    }
-    to {
-        transform: translate(var(--rain-drift, 0px), 110vh) rotateX(var(--rain-spin, 360deg));
-    }
+.parts-rain .rain-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 @keyframes pulse {
     0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
