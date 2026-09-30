@@ -3846,11 +3846,19 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
+        // Percussion "mallet douce" : brique courte d'attaque + resonance
+        // grave et ronde (comme frapper une piece de metal posee), en improvise
+        // legerement le pitch pour que 50 clics d'affilee ne sonnent pas pareil.
         const now = performance.now();
-        if (now - Sound._lastClick < 30) return;
+        if (now - Sound._lastClick < 40) return;
         Sound._lastClick = now;
-        const base = 620 + Math.random() * 140;
-        soundTone(base, base * 0.92, 0.07, 'triangle', 0.25);
+        const base = 180 + Math.random() * 50;
+        // Attac : claquement sec et discret
+        soundTone(base * 4, base * 2.4, 0.03, 'square', 0.06);
+        // Resonance : la note elle-meme, ronde et courte
+        soundTone(base, base * 0.98, 0.14, 'sine', 0.3);
+        // Harmonique leger au-dessus pour la texture
+        soundTone(base * 2.01, base * 1.9, 0.09, 'sine', 0.07, 0.004);
     },
     // Achat : pop satisfaisant, deux notes montantes
     buy() {
