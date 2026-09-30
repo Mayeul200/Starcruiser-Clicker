@@ -3126,11 +3126,15 @@ function spawnRandomBonus(shower) {
 
     document.getElementById('random-bonuses').appendChild(bonusElement);
 
-    // Animation de traversée en diagonale
+    // Animation de traversée en diagonale en transform (compositee GPU,
+    // comme le missile) : animer left/top forcerait le layout a chaque
+    // frame, la comete saccaderait et le point de rendez-vous du missile
+    // serait rate des que le thread principal charge (pluie, trainee).
+    const travelX = endX - startX;
+    const travelY = endY - startY;
     requestAnimationFrame(() => {
-        bonusElement.style.transition = `left ${duration}ms linear, top ${duration}ms linear`;
-        bonusElement.style.left = `${endX}px`;
-        bonusElement.style.top = `${endY}px`;
+        bonusElement.style.transition = `transform ${duration}ms linear`;
+        bonusElement.style.transform = `translate(${travelX}px, ${travelY}px)`;
     });
 
     // Queue de poussiere : particules frequentes a vie longue, qui
@@ -3195,9 +3199,11 @@ function spawnRandomBonus(shower) {
             clearInterval(trailInterval);
             const impactRect = bonusElement.getBoundingClientRect();
             const contRect = document.getElementById('random-bonuses').getBoundingClientRect();
+            // Le vol est porte par transform : on fige la comete a sa
+            // position ACQUISE en convertissant la position viewport en
+            // translation (left/top restent le point de depart).
             bonusElement.style.transition = 'none';
-            bonusElement.style.left = (impactRect.left - contRect.left) + 'px';
-            bonusElement.style.top = (impactRect.top - contRect.top) + 'px';
+            bonusElement.style.transform = `translate(${impactRect.left - contRect.left - parseFloat(bonusElement.style.left)}px, ${impactRect.top - contRect.top - parseFloat(bonusElement.style.top)}px) scale(0.5)`;
             bonusElement.classList.add('clicked');
             clickedBonusesCount++;
             if (bonus.id === "meteor") {
