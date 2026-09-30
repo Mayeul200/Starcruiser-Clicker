@@ -4954,8 +4954,20 @@ function updateStardustPreview() {
 function updateBonusTimer() {
     const els = getDisplayElements();
     if (els.bonusTimer) {
-        els.bonusTimer.textContent = '';
-        els.bonusTimer.style.display = 'none';
+        // Affiche le multiplicateur temporaire actif et le temps restant
+        // (ex: "×5 · 12 s") a cote du compteur tant que le bonus dure.
+        const active = activeRandomBonuses.find(b => (b.effect === 'multiplier' || b.effect === 'click' || b.id === 'flare') && b.endTime > Date.now());
+        if (active && active.multiplier) {
+            const secLeft = Math.ceil((active.endTime - Date.now()) / 1000);
+            const label = active.effect === 'click'
+                ? t('Clic') + ' ×' + active.multiplier
+                : '×' + active.multiplier;
+            els.bonusTimer.textContent = label + ' · ' + secLeft + ' s';
+            els.bonusTimer.style.display = '';
+        } else {
+            els.bonusTimer.textContent = '';
+            els.bonusTimer.style.display = 'none';
+        }
     }
     const countersEl = document.querySelector('.counters');
     if (!countersEl) return;
