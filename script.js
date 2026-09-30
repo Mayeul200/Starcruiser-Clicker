@@ -1072,7 +1072,8 @@ function buyBuilding(buildingId) {
         building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
         invalidateBuildingGainsCache();
-        if (isNewType) showNewBuildingModal(building);
+        Sounds.buy();
+        if (isNewType) { showNewBuildingModal(building); Sounds.unlock(); }
         updateDisplay();
         updateConstructionScene();
         saveGame();
@@ -1158,6 +1159,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     }
     
     buildingUpgrades[buildingId].push(threshold);
+    Sounds.upgrade();
     invalidateBuildingGainsCache();
     updateDisplay();
     saveGame();
@@ -1471,6 +1473,7 @@ function formatTravelSpeed(kmS) {
 }
 
 function launchRocket() {
+    Sounds.launch();
     if (!checkRocketReady()) {
         showToast("❌ " + t("Fusée pas encore prête ! Il manque des pièces."));
         return;
@@ -3469,6 +3472,7 @@ function showBonusPopup(text, kind) {
 }
 
 function interceptCometWithMissile(cometEl, onDestroy, opts) {
+    Sounds.missile();
     const cometRect = cometEl.getBoundingClientRect();
     // Nucleau reel de la comete via les variables CSS --nx/--ny (le sprite est
     // horizontal avec queue integree, le noyau n'est PAS au centre du canvas).
@@ -3552,6 +3556,7 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
 // ondes de choc, gerbe d'étincelles et fumée. Chaque couche est un div
 // positionné au point d'impact, animée en CSS puis nettoyée.
 function spawnCometExplosion(cx, cy, scale) {
+    Sounds.explosion();
     // Echelle des effets : proportionnelle a la taille de la comete detruite
     const sc = Math.max(0.5, Math.min(1, scale || 1));
     const explosion = document.createElement('div');
@@ -3625,6 +3630,7 @@ function getClickComponents() {
 }
 
 function addScore(points, event) {
+    Sounds.click();
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const critMult = (Math.random() < getCritChance()) ? 3 : 1;
@@ -3772,6 +3778,146 @@ function spawnFallingCoin(event) {
         setTimeout(() => coin.remove(), (startDelay + total) * 1000);
     }
 }
+
+// ============================================
+// SOUND DESIGN — moteur Web Audio 100% synthétisé
+// Aucun fichier audio : chaque son est généré par oscillateurs.
+// Muert par défaut jusqu'à la première interaction (politique navigateurs),
+// réglage sauvegardé, coupé quand l'onglet est masqué.
+// ============================================
+const Sound = {
+    ctx: null,
+    master: null,
+    enabled: (localStorage.getItem('starcruiserSound') !== '0'),
+    _lastClick: 0
+};
+function soundInit() {
+    if (Sound.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    Sound.ctx = new AC();
+    Sound.master = Sound.ctx.createGain();
+    Sound.master.gain.value = 0.22;
+    Sound.master.connect(Sound.ctx.destination);
+}
+function soundResume() {
+    if (!Sound.ctx) soundInit();
+    if (Sound.ctx && Sound.ctx.state === 'suspended') Sound.ctx.resume();
+}
+// Bip générique : fréquence de départ, fréquence de fin, durée, type d'onde, volume
+function soundTone(freq, freqEnd, dur, type, vol, delay) {
+    if (!Sound.enabled) return;
+    soundResume();
+    if (!Sound.ctx) return;
+    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const osc = Sound.ctx.createOscillator();
+    const g = Sound.ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, t0);
+    if (freqEnd && freqEnd !== freq) osc.frequency.exponentialRampToValueAtTime(Math.max(1, freqEnd), t0 + dur);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol || 0.5, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(g); g.connect(Sound.master);
+    osc.start(t0); osc.stop(t0 + dur + 0.02);
+}
+// Bruit filtré (explosions, whoosh)
+function soundNoise(dur, vol, freqStart, freqEnd) {
+    if (!Sound.enabled) return;
+    soundResume();
+    if (!Sound.ctx) return;
+    const t0 = Sound.ctx.currentTime;
+    const len = Math.max(1, Math.floor(Sound.ctx.sampleRate * dur));
+    const buf = Sound.ctx.createBuffer(1, len, Sound.ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    const src = Sound.ctx.createBufferSource();
+    src.buffer = buf;
+    const filt = Sound.ctx.createBiquadFilter();
+    filt.type = 'lowpass';
+    filt.frequency.setValueAtTime(freqStart || 1800, t0);
+    filt.frequency.exponentialRampToValueAtTime(Math.max(40, freqEnd || 120), t0 + dur);
+    const g = Sound.ctx.createGain();
+    g.gain.setValueAtTime(vol || 0.4, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    src.connect(filt); filt.connect(g); g.connect(Sound.master);
+    src.start(t0); src.stop(t0 + dur);
+}
+const Sounds = {
+    // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
+    click() {
+        const now = performance.now();
+        if (now - Sound._lastClick < 30) return;
+        Sound._lastClick = now;
+        const base = 620 + Math.random() * 140;
+        soundTone(base, base * 0.92, 0.07, 'triangle', 0.25);
+    },
+    // Achat : pop satisfaisant, deux notes montantes
+    buy() {
+        soundTone(360, 520, 0.09, 'sine', 0.4);
+        soundTone(540, 720, 0.12, 'sine', 0.3, 0.06);
+    },
+    // Nouveau bâtiment débloqué : jingle 3 notes ascendantes
+    unlock() {
+        soundTone(523, 523, 0.14, 'triangle', 0.35);
+        soundTone(659, 659, 0.14, 'triangle', 0.35, 0.12);
+        soundTone(784, 784, 0.22, 'triangle', 0.4, 0.24);
+    },
+    // Amélioration (upgrade) : bip cristallin
+    upgrade() {
+        soundTone(880, 1320, 0.1, 'sine', 0.35);
+    },
+    // Comète : whoosh du missile puis explosion
+    missile() {
+        soundNoise(0.18, 0.3, 2400, 400);
+    },
+    explosion() {
+        soundNoise(0.4, 0.5, 1200, 60);
+        soundTone(160, 40, 0.35, 'sawtooth', 0.25);
+    },
+    // Contrat : accepté / rempli / échoué
+    contractAccept() {
+        soundTone(440, 440, 0.1, 'sine', 0.3);
+        soundTone(587, 587, 0.14, 'sine', 0.3, 0.09);
+    },
+    contractDone() {
+        soundTone(587, 587, 0.1, 'triangle', 0.35);
+        soundTone(784, 784, 0.1, 'triangle', 0.35, 0.09);
+        soundTone(988, 988, 0.2, 'triangle', 0.4, 0.18);
+    },
+    contractFail() {
+        soundTone(330, 220, 0.3, 'sawtooth', 0.25);
+        soundTone(196, 130, 0.4, 'sine', 0.25, 0.1);
+    },
+    // Booster de cartes : froissement + pop
+    booster() {
+        soundNoise(0.12, 0.18, 3200, 900);
+        soundTone(660, 990, 0.08, 'sine', 0.3, 0.1);
+    },
+    // Trophée : fanfare discrète
+    trophy() {
+        soundTone(659, 659, 0.1, 'triangle', 0.3);
+        soundTone(784, 784, 0.1, 'triangle', 0.3, 0.1);
+        soundTone(1047, 1047, 0.26, 'triangle', 0.38, 0.2);
+    },
+    // Lancement de fusée : montée moteur + boom
+    launch() {
+        soundNoise(2.2, 0.35, 300, 2600);
+        soundTone(70, 240, 2.0, 'sawtooth', 0.18);
+        soundNoise(0.6, 0.5, 900, 60);
+    }
+};
+function toggleSound() {
+    Sound.enabled = !Sound.enabled;
+    localStorage.setItem('starcruiserSound', Sound.enabled ? '1' : '0');
+    const btn = document.getElementById('sound-toggle-btn');
+    if (btn) btn.textContent = Sound.enabled ? '🔊' : '🔇';
+    if (Sound.enabled) Sounds.click();
+}
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && Sound.ctx && Sound.ctx.state === 'running') Sound.ctx.suspend();
+    else if (!document.hidden && Sound.ctx && Sound.ctx.state === 'suspended' && Sound.enabled) Sound.ctx.resume();
+});
 
 // ============================================
 // MAIN GAME LOOP
@@ -4086,6 +4232,7 @@ function checkTrophies() {
             
             if (unlocked) {
                 unlockedTrophies.add(trophy.id);
+                Sounds.trophy();
                 changed = true;
                 showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`, trophy.icon, 5000);
             }
@@ -4687,6 +4834,7 @@ function closeContracts() {
 }
 
 function acceptContract(offerId) {
+    Sounds.contractAccept();
     const offer = contractState.offers.find(o => o.id === offerId);
     if (!offer) return;
     // Contrat accepte : rotation en pause tant qu'il n'est pas termine.
@@ -4728,6 +4876,7 @@ function updateContractProgress() {
 }
 
 function completeContract() {
+    Sounds.contractDone();
     const c = contractState.active;
     if (!c) return;
     const building = findBuildingById(c.buildingId);
@@ -4748,6 +4897,7 @@ function completeContract() {
 }
 
 function failContract() {
+    Sounds.contractFail();
     const c = contractState.active;
     if (!c) return;
     const building = findBuildingById(c.buildingId);
@@ -5107,6 +5257,7 @@ function buyBooster(type) {
         return;
     }
     score -= cost;
+    Sounds.booster();
     updateDisplay();
 
     const drawn = [];
@@ -5678,6 +5829,8 @@ function scheduleBonusSpawn() {
     }, delay);
 }
 scheduleBonusSpawn();
+// Etat du bouton son au chargement (icône cohérente avec le réglage sauvegardé)
+(() => { const b = document.getElementById('sound-toggle-btn'); if (b && !Sound.enabled) b.textContent = '🔇'; })();
 // Prechargement du sprite du missile : il n'est insere dans le DOM qu'au
 // premier tir, sans ce prechargement le premier missile vole sans image
 // le temps du premier telechargement.
@@ -6055,6 +6208,7 @@ function buyRocketPart(partId) {
         return;
     }
     score -= cost;
+    Sounds.buy();
     part.purchased = true;
     updateDisplay();
     updateConstructionScene();
