@@ -6370,6 +6370,9 @@ function initDebugMode() {
         b.style.cssText = 'background:#111;color:#0f0;border:1px solid #0f0;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:11px;';
         return b;
     };
+    panel.appendChild(btn('☄ Comète', () => Debug.comet(1)));
+    panel.appendChild(btn('☄ x10 Comètes', () => Debug.comet(10)));
+    panel.appendChild(btn('🌧 Pluie de comètes', () => Debug.shower()));
     panel.appendChild(btn('+100k Parts', () => Debug.addScore(1e5)));
     panel.appendChild(btn('+1M Parts', () => Debug.addScore(1e6)));
     panel.appendChild(btn('+100 PE', () => Debug.addStardust(100)));
