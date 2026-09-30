@@ -1142,10 +1142,9 @@ function updateBuildingButton(buildingId) {
         ? formatNumber(totalCost) + "+"
         : formatNumber(totalCost);
 
-    if (building.count > 0) {
-        element.classList.remove('not-purchased');
-    } else {
-        element.classList.add('not-purchased');
+    const notPurchased = building.count === 0;
+    if (element.classList.contains('not-purchased') !== notPurchased) {
+        element.classList.toggle('not-purchased', notPurchased);
     }
 
     const button = element.querySelector('button');
@@ -4999,46 +4998,80 @@ function closeAllModalsForMobileNav() {
 // certains navigateurs reclampent brutalement le scrollTop apres un
 // re-layout pendant le scroll. On memorise la position et on la restaure
 // si elle chute d'un coup sans interaction tactile en cours.
+// ---- Instrumentation diagnostic scroll batiments (mode debug) ----
+// Journalise chaque event scroll du panneau avec son contexte (position,
+// hauteurs, touch, mutations DOM des 500 dernieres ms) pour identifier la
+// cause reelle des reclaims. Inerte en dehors du mode debug.
+const scrollDiag = { enabled: false, log: [], mutLog: [], observer: null };
+function enableScrollDiag() {
+    scrollDiag.enabled = true;
+    scrollDiag.log = [];
+    scrollDiag.mutLog = [];
+    if (scrollDiag.observer) scrollDiag.observer.disconnect();
+    const list = document.getElementById('buildings-list');
+    scrollDiag.observer = new MutationObserver(muts => {
+        const t = performance.now();
+        muts.forEach(m => {
+            let desc = m.type;
+            if (m.type === 'attributes') desc += ':' + m.attributeName;
+            else if (m.type === 'childList' && m.addedNodes.length) desc += ':' + (m.addedNodes[0].className || m.addedNodes[0].tagName || '?');
+            scrollDiag.mutLog.push({ t: Math.round(t), d: desc.slice(0, 40) });
+        });
+        if (scrollDiag.mutLog.length > 600) scrollDiag.mutLog.splice(0, 300);
+    });
+    if (list) scrollDiag.observer.observe(list, { subtree: true, childList: true, attributes: true, characterData: true });
+}
+function logScrollDiag(kind, panel, extra) {
+    if (!scrollDiag.enabled) return;
+    scrollDiag.log.push(Object.assign({
+        t: Math.round(performance.now()),
+        kind,
+        top: Math.round(panel.scrollTop),
+        sh: panel.scrollHeight,
+        ch: panel.clientHeight,
+        max: panel.scrollHeight - panel.clientHeight
+    }, extra || {}));
+    if (scrollDiag.log.length > 600) scrollDiag.log.splice(0, 300);
+}
+function getScrollDiagReport() {
+    return scrollDiag.log.map(e => {
+        const near = scrollDiag.mutLog.filter(m => m.t >= e.t - 500 && m.t <= e.t + 20)
+            .reduce((acc, m) => { acc[m.d] = (acc[m.d] || 0) + 1; return acc; }, {});
+        return e.t + 'ms ' + e.kind + ' top=' + e.top + '/' + e.max + ' sh=' + e.sh + ' ch=' + e.ch
+            + (e.delta !== undefined ? ' delta=' + e.delta : '')
+            + (Object.keys(near).length ? ' mut=[' + Object.entries(near).map(([k, v]) => v + 'x' + k).join(', ') + ']' : '');
+    }).join('\n');
+}
+
 let buildingScrollWatchdog = null;
 function startBuildingScrollWatchdog() {
     if (buildingScrollWatchdog) return;
     let lastTop = 0;
     let touching = false;
-    let settling = 0;
+    let momentumUntil = 0;
     const panel = document.querySelector('.main-grid.mobile-view-right > .right-panel');
     if (!panel) return;
-    const onTouchStart = () => { touching = true; settling = 0; };
-    const onTouchEnd = () => { touching = false; settling = 6; lastTop = panel.scrollTop; };
+    const onTouchStart = () => { touching = true; };
+    const onTouchEnd = () => { touching = false; momentumUntil = Date.now() + 500; };
     panel.addEventListener('touchstart', onTouchStart, { passive: true });
     panel.addEventListener('touchend', onTouchEnd, { passive: true });
     panel.addEventListener('touchcancel', onTouchEnd, { passive: true });
-    buildingScrollWatchdog = setInterval(() => {
-        if (!panel.isConnected) {
-            clearInterval(buildingScrollWatchdog);
-            buildingScrollWatchdog = null;
-            return;
-        }
+    // Restauration synchrone dans l'event scroll : le reclamp du navigateur
+    // est annule avant le paint, donc invisible (aucun micro-saut).
+    panel.addEventListener('scroll', () => {
         const top = panel.scrollTop;
-        if (touching) {
-            lastTop = top;
-            settling = 0;
-            return;
-        }
-        // Apres le lever du doigt, laisser le momentum iOS se terminer
-        // (le scrollTop bouge encore tout seul pendant la deceleration).
-        if (settling > 0) {
-            settling--;
+        logScrollDiag(touching ? 'touch' : 'free', panel, { delta: Math.round(top - lastTop) });
+        if (touching || Date.now() < momentumUntil) {
             lastTop = top;
             return;
         }
-        // Remontee anormale a froid : le scrollTop baisse tout seul (reclamp
-        // du navigateur apres re-layout). Seuil bas : capte les petits sauts.
-        if (lastTop - top > 8) {
+        if (lastTop - top > 4) {
+            logScrollDiag('RESTORE', panel, { delta: Math.round(lastTop - top) });
             panel.scrollTop = lastTop;
         } else {
             lastTop = top;
         }
-    }, 80);
+    }, { passive: true });
 }
 function setMobileView(view) {
     mobileActiveView = view;
@@ -5067,6 +5100,7 @@ function setMobileView(view) {
     }
     if (view === 'center') applySceneScale();
     if (view === 'right') startBuildingScrollWatchdog();
+    if (view === 'right' && DEBUG_MODE) enableScrollDiag();
 }
 
 // Mise à l'échelle de la scène de construction : la fusée fait ~700px
@@ -5740,6 +5774,18 @@ function initDebugMode() {
     panel.appendChild(btn('+1 h de jeu', () => Debug.fast(3600)));
     panel.appendChild(btn('⏱ Temps réel estimé', () => Debug.estimate()));
     panel.appendChild(btn('Reset complet', () => Debug.reset()));
+    panel.appendChild(btn('\ud83d\udccc Diag scroll ON', () => {
+        enableScrollDiag();
+        setMobileView('right');
+        alert('Diagnostic actif : scrollez dans les Batiments ~10 s, puis Copier rapport scroll.');
+    }));
+    panel.appendChild(btn('\ud83d\udccb Copier rapport scroll', () => {
+        const rep = getScrollDiagReport() || 'Aucun event scroll logge.';
+        window.__scrollRep = rep;
+        console.log('=== RAPPORT SCROLL ===');
+        console.log(rep);
+        alert('Rapport dans la console et window.__scrollRep (' + rep.length + ' caracteres).');
+    }));
     const close = document.createElement('button');
     close.textContent = '×';
     close.onclick = () => panel.remove();
