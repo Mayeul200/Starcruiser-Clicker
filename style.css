@@ -3331,11 +3331,17 @@ body {
 }
 .cc-booster-options {
     display: flex;
-    gap: 18px;
+    gap: 12px;
     justify-content: center;
     align-items: stretch;
     flex-wrap: wrap;
     margin-bottom: 18px;
+}
+/* Le badge collection reste sur la meme ligne que les boosters :
+   il ne passe jamais a la ligne, il se resserre si la place manque. */
+.cc-collection-badge {
+    flex-shrink: 0;
+    flex-wrap: nowrap;
 }
 /* Badge informatif collection : cartes obtenues / 20 + bonus actuel,
    affiche a droite sur la ligne des boosters payants. */
@@ -3345,9 +3351,10 @@ body {
     justify-content: center;
     align-items: center;
     gap: 6px;
-    min-width: 120px;
-    padding: 10px 16px;
+    min-width: 84px;
+    padding: 10px 10px;
     margin-left: auto;
+    flex-shrink: 0;
     background: rgba(59, 130, 246, 0.12);
     border: 1px solid rgba(59, 130, 246, 0.35);
     border-radius: var(--radius);
@@ -3396,7 +3403,7 @@ body {
 }
 .cc-booster-btn {
     flex: 1;
-    min-width: 200px;
+    min-width: 0;
     max-width: 260px;
     display: flex;
     flex-direction: column;
