@@ -531,6 +531,7 @@ const TRANSLATIONS = {
         'Facile': 'Easy',
         'Normal': 'Normal',
         'Difficile': 'Hard',
+        'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Perfect defense: no comet may hit the rocket ({target} comets)',
 },
     es: {
         'Statistics': 'Estadísticas',
@@ -1032,6 +1033,7 @@ const TRANSLATIONS = {
         'Facile': 'Facil',
         'Normal': 'Normal',
         'Difficile': 'Dificil',
+        'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Defensa perfecta: ningun cometa debe tocar el cohete ({target} cometas)',
 },
     de: {
         'Statistics': 'Statistiken',
@@ -1533,6 +1535,7 @@ const TRANSLATIONS = {
         'Facile': 'Leicht',
         'Normal': 'Normal',
         'Difficile': 'Schwer',
+        'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Perfekte Verteidigung: kein Komet darf die Rakete treffen ({target} Kometen)',
 },
     it: {
         'Statistics': 'Statistiche',
@@ -2034,6 +2037,7 @@ const TRANSLATIONS = {
         'Facile': 'Facile',
         'Normal': 'Normale',
         'Difficile': 'Difficile',
+        'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Difesa perfetta: nessuna cometa deve colpire il razzo ({target} comete)',
 },
     pt: {
         'Statistics': 'Estatísticas',
@@ -3017,6 +3021,7 @@ const TRANSLATIONS = {
         'Facile': 'Facil',
         'Normal': 'Normal',
         'Difficile': 'Dificil',
+        'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Defesa perfeita: nenhum cometa pode atingir o foguete ({target} cometas)',
 },
 };
 if (localStorage.getItem('starcruiser-language') === null && localStorage.getItem('starship-language') !== null) {

@@ -3423,6 +3423,16 @@ function spawnRandomBonus(shower) {
         bonusElement.remove();
         trailInUse.forEach(t => { t.remove(); });
         trailInUse.length = 0;
+        // Contrat "Protection de la fusee" : une comete qui traverse sans
+        // etre interceptee frappe la fusee — defaut PARFAIT, le contrat echoue
+        // immediatement. C'est ce qui le distingue de la "Survie a la pluie"
+        // ou rater des cometes ne fait perdre que la recolte.
+        const c = contractState.active;
+        if (shower && c && c.typeId === 'comets' && bonusElement.dataset.collected !== '1') {
+            c.progress = -Infinity; // marque l'echec pour updateContractProgress
+            c.failed = true;
+            failContract();
+        }
     }, duration);
 
     bonusElement.onclick = () => {
@@ -5006,7 +5016,7 @@ function getContractTypes() {
             id: 'comets',
             icon: 'images/effects/missile.png',
             // Objectif : intercepter des cometes pour proteger la fusee
-            objective: 'Protegez la fusee : interceptez {target} cometes',
+            objective: 'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)',
             track: 'comets',
             diffs: [
                 { target: 4, price: Math.max(100, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
@@ -5178,7 +5188,9 @@ function acceptContract(offerId) {
     }
     // Contrat "cometes" : on fait tomber les cometes a intercepter.
     if (offer.typeId === 'comets' && !offer.shower) {
-        triggerContractShower(Math.min(offer.target + 2, 12));
+        // Defense parfaite : on lance exactement la cible — le joueur doit
+        // toutes les intercepter, rater UNE seule fait echouer le contrat.
+        triggerContractShower(offer.target);
     }
     if (offer.typeId === 'comets' || offer.shower) {
         showToast('\u2604\uFE0F ' + t('Des cometes arrivent ! Interception !'), null);
