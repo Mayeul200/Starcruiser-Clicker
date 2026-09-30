@@ -4235,11 +4235,22 @@ function tickPartsRain(now) {
     const rate = getPartsRainRate();
     if (rate <= 0) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
     if (!partsRain.lastTick) partsRain.lastTick = now;
+    // Garde anti-empilement : si requestAnimationFrame n'a pas rendu de frame
+    // depuis longtemps (fenetre masquee sans visibilitychange, ecran veille,
+    // throttling RAF du navigateur), le timer continuait a spawn des pieces
+    // qui n'etaient ni animees ni supprimees — d'ou la pile qui tourne d'un
+    // coup au retour. On purge tout tant que le rendu est fige.
+    if (partsRain.lastFrame && now - partsRain.lastFrame > 1000) {
+        partsRain.parts.length = 0;
+        partsRain.spawnDebt = 0;
+        partsRain.lastTick = now;
+        return;
+    }
     // Accumulateur : autorise plusieurs spawns par tick aux debits eleves,
-    // tout en gardant le rythme exact aux faibles debits. Plafonne a 1 s de
-    // dette : une absence prolongee (onglet masque, timers throttlEs) ne
-    // doit jamais vider un stock de pieces d'un seul coup au retour.
-    partsRain.spawnDebt = Math.min(partsRain.spawnDebt + (rate * (now - partsRain.lastTick)) / 1000, rate);
+    // tout en gardant le rythme exact aux faibles debits. Plafonne a 0.5 s de
+    // dette (au lieu de 1 x rate) : meme aux tres hauts debits, aucune rafale
+    // ne peut vider un stock de pieces d'un seul coup au retour.
+    partsRain.spawnDebt = Math.min(partsRain.spawnDebt + (rate * (now - partsRain.lastTick)) / 1000, rate * 0.5);
     partsRain.lastTick = now;
     while (partsRain.spawnDebt >= 1) {
         partsRain.spawnDebt -= 1;
