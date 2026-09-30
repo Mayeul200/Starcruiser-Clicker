@@ -4146,6 +4146,20 @@ function splitCounterText(text) {
     }
     return segs;
 }
+// Hauteur de colonne en pixels entiers : une hauteur fractionnaire fait
+// reposer le ruban sur un sous-pixel different selon le chiffre affiche
+// (rendu de police legerement variable d'une ligne a l'autre). On snappe
+// donc la hauteur sur un entier et on deplace le ruban en px entiers.
+function syncCchHeight(el) {
+    if (!el) return;
+    let h = Math.round(parseFloat(getComputedStyle(el).fontSize) * 1.5);
+    if (!Number.isFinite(h) || h <= 0) h = 20;
+    if (el.__cchH !== h) {
+        el.__cchH = h;
+        el.style.setProperty('--cch-h', h + 'px');
+        el.__segs = null;
+    }
+}
 function makeDigitCol() {
     const col = document.createElement('span');
     col.className = 'cch';
@@ -4162,6 +4176,7 @@ function makeDigitCol() {
 }
 function renderCounterChars(el, text) {
     if (!el) return;
+    syncCchHeight(el);
     const segs = splitCounterText(text);
     const prev = el.__segs;
     const sameShape = prev
@@ -4183,7 +4198,7 @@ function renderCounterChars(el, text) {
                 const cols = [];
                 for (const ch of seg.str) {
                     const c = makeDigitCol();
-                    c.reel.style.transform = 'translateY(-' + (ch * 10) + '%)';
+                    c.reel.style.transform = 'translateY(-' + (ch * el.__cchH) + 'px)';
                     wrap.appendChild(c.col);
                     cols.push(c.reel);
                 }
@@ -4206,18 +4221,18 @@ function renderCounterChars(el, text) {
         const newLen = seg.str.length;
         if (newLen === oldLen) {
             for (let c = 0; c < newLen; c++) {
-                const target = 'translateY(-' + (seg.str[c] * 10) + '%)';
+                const target = 'translateY(-' + (seg.str[c] * el.__cchH) + 'px)';
                 if (cols[c].style.transform !== target) cols[c].style.transform = target;
             }
         } else {
             const wrap = cols[0].closest('.cch-group');
             if (newLen === oldLen + 1) {
                 const c = makeDigitCol();
-                c.reel.style.transform = 'translateY(-' + (seg.str[0] * 10) + '%)';
+                c.reel.style.transform = 'translateY(-' + (seg.str[0] * el.__cchH) + 'px)';
                 wrap.insertBefore(c.col, wrap.firstChild);
                 cols.unshift(c.reel);
                 for (let ci = 1; ci < newLen; ci++) {
-                    const target = 'translateY(-' + (seg.str[ci] * 10) + '%)';
+                    const target = 'translateY(-' + (seg.str[ci] * el.__cchH) + 'px)';
                     if (cols[ci].style.transform !== target) cols[ci].style.transform = target;
                 }
             } else {
@@ -4225,7 +4240,7 @@ function renderCounterChars(el, text) {
                 const newCols = [];
                 for (const ch of seg.str) {
                     const c = makeDigitCol();
-                    c.reel.style.transform = 'translateY(-' + (ch * 10) + '%)';
+                    c.reel.style.transform = 'translateY(-' + (ch * el.__cchH) + 'px)';
                     wrap.appendChild(c.col);
                     newCols.push(c.reel);
                 }

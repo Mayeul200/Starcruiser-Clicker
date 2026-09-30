@@ -653,6 +653,11 @@ body {
 }
 /* Ruban vertical (odometre) : une colonne = un chiffre, le ruban des 10
    chiffres glisse verticalement avec une transition douce. */
+/* Hauteur de colonne snappee sur un nombre entier de px via --cch-h :
+   une hauteur fractionnaire (19.91px) fait reposer chaque ruban sur un
+   sous-pixel different selon le chiffre affiche, si bien que le rendu de
+   la police (antialiasing) varie d'une ligne a l'autre et donne
+   l'impression que les chiffres ne sont pas tout a fait au meme niveau. */
 #score-value .cch,
 .stat-value .cch,
 #travel-distance-value .cch {
@@ -660,8 +665,8 @@ body {
     align-items: flex-start;
     overflow: hidden;
     width: 0.62em;
-    height: 1.5em;
-    line-height: 1.5;
+    height: var(--cch-h, 1.5em);
+    line-height: var(--cch-h, 1.5em);
     vertical-align: bottom;
 }
 .cch-reel {
@@ -672,8 +677,8 @@ body {
 }
 .cch-reel .digit {
     display: block;
-    height: 1.5em;
-    line-height: 1.5;
+    height: var(--cch-h, 1.5em);
+    line-height: var(--cch-h, 1.5em);
     text-align: center;
 }
 
