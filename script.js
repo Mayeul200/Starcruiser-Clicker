@@ -1215,6 +1215,17 @@ function updateBuildingButton(buildingId) {
 
     const newTooltip = getBuildingTooltip(building);
     if (element.getAttribute('data-tooltip') !== newTooltip) element.setAttribute('data-tooltip', newTooltip);
+    // Pulse d'attention : le dernier batiment debloque non possede dont le
+    // prix est abordable (les batiments suivants ne sont pas encore rendus,
+    // leur deblocage passe par la et declenche le meme pulse).
+    if (notPurchased && isAffordable) {
+        const anyUnpurchasedBefore = BUILDINGS.some(b =>
+            b.id !== building.id && b.count === 0 && isBuildingUnlocked(b)
+            && BUILDINGS.indexOf(b) < BUILDINGS.indexOf(building));
+        if (!anyUnpurchasedBefore) pulseHint(element);
+    } else if (!notPurchased) {
+        clearPulseHint(element);
+    }
 }
 
 function updateAllBuildingButtons() {
@@ -1222,6 +1233,26 @@ function updateAllBuildingButtons() {
         const buildingId = element.id.replace('building-', '');
         updateBuildingButton(buildingId);
     });
+}
+
+// Pulse d'attention : allume un element pendant 10 s maxi, puis s'eteint
+// tout seul si le joueur n'a pas agi. Reallumer un element deja allume
+// ne reinitialise PAS son chrono (pas de pulse infini sur un element).
+const pulseHintTimers = new WeakMap();
+function pulseHint(el) {
+    if (!el || pulseHintTimers.has(el)) return;
+    el.classList.add('pulse-hint');
+    const timer = setTimeout(() => {
+        el.classList.remove('pulse-hint');
+        pulseHintTimers.delete(el);
+    }, 10000);
+    pulseHintTimers.set(el, timer);
+}
+function clearPulseHint(el) {
+    if (!el || !pulseHintTimers.has(el)) return;
+    clearTimeout(pulseHintTimers.get(el));
+    pulseHintTimers.delete(el);
+    el.classList.remove('pulse-hint');
 }
 
 function isBuildingUnlocked(building) {
@@ -4503,7 +4534,10 @@ let contractState = {
     nextRotationAt: 0,
     active: null,
     buildingBonuses: {},
-    unlockedSeen: false
+    unlockedSeen: false,
+    // Offres deja annoncees par le pulse : le pulse ne se redeclenche
+    // que pour de NOUVELLES offres, pas a chaque tick sur les memes.
+    offersSeenIds: []
 };
 
 const CONTRACT_UNLOCK_BUILDING_TYPES = 4;
@@ -4562,6 +4596,8 @@ function openContracts() {
         showToast('\uD83D\uDD12 ' + tf('Debloque {count} types de batiments pour les contrats', { count: CONTRACT_UNLOCK_BUILDING_TYPES }));
         return;
     }
+    // Le joueur a vu les contrats : le pulse d'attention s'eteint.
+    clearPulseHint(document.getElementById('contracts-card-status')?.closest('.mini-game-card'));
     showExclusiveModal('contracts-modal', renderContracts);
 }
 
@@ -4596,6 +4632,7 @@ function acceptContract(offerId) {
     contractState.offers = contractState.offers.filter(o => o.id !== offer.id);
     showToast('\u2705 ' + tf('Contrat accepte : {building} !', { building: t(building.name) }), building.imgPath);
     renderContracts();
+    clearPulseHint(document.getElementById('contracts-card-status')?.closest('.mini-game-card'));
     saveGame();
 }
 
@@ -4722,6 +4759,14 @@ function renderContractsCardStatus() {
         statusEl.className = 'game-status visible';
         statusEl.innerHTML = '<span class="status-offers">' + contractState.offers.length + ' ' + t('contrat(s) propose(s)') + '</span>'
             + ' \u00b7 ' + tf('nouveaux contrats dans {time}', { time: formatContractTime(nextIn) });
+        // Nouveaux contrats disponibles : pulse sur la case pour attirer l'oeil,
+        // uniquement pour des offres jamais annoncees.
+        const seen = contractState.offersSeenIds || [];
+        const hasNew = contractState.offers.some(o => !seen.includes(o.id));
+        if (hasNew) {
+            contractState.offersSeenIds = contractState.offers.map(o => o.id);
+            pulseHint(statusEl.closest('.mini-game-card'));
+        }
     } else {
         statusEl.className = 'game-status';
         statusEl.textContent = '';
@@ -5983,6 +6028,9 @@ function renderRocketPartsShop() {
             else frame.classList.add('locked');
         }
     }
+    // Piece de fusee abordable : pulse pour attirer l'oeil (10 s max).
+    if (isAffordable) pulseHint(container);
+    else clearPulseHint(container);
 }
 
 // ============================================

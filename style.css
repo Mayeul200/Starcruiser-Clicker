@@ -695,6 +695,17 @@ body {
     text-align: center;
 }
 
+/* Pulse d'attention : attire l'oeil quand une action devient disponible
+   (batiment abordable, nouveaux contrats, piece de fusee achetable).
+   Le JS retire la classe apres 10 s si le joueur n'a pas agi. */
+.pulse-hint {
+    animation: pulse-hint-glow 1.6s ease-in-out infinite;
+}
+@keyframes pulse-hint-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+    50% { box-shadow: 0 0 14px 2px rgba(251, 191, 36, 0.55); }
+}
+
 /* Bonus actif : le compteur devient arc-en-ciel et pulse */
 .counters.bonus-active {
     animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
