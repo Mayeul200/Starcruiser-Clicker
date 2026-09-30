@@ -3942,19 +3942,21 @@ const Sounds = {
         soundTone(330, 220, 0.3, 'sawtooth', 0.25);
         soundTone(196, 130, 0.4, 'sine', 0.25, 0.1);
     },
-    // Booster de cartes : dechirure de paquet + revelation
+    // Booster de cartes : ouverture mystique
     booster() {
-        // Ouverture de paquet de cartes : vraie dechirure (bruit long ~400 ms
-        // qui s'etiole, plus un crepitement secondaire qui gresille pendant la
-        // dechirure), puis un accord majeur SIMULTANE facon rideau qui s'ouvre
-        // sur les cartes obtenues — theatrical, pas d'arpEge.
-        soundNoise(0.4, 0.32, 5200, 600);
-        soundNoise(0.32, 0.16, 4200, 900, 0.06);
-        soundTone(784, 784, 0.5, 'sine', 0.2, 0.42);
-        soundTone(988, 988, 0.5, 'sine', 0.2, 0.42);
-        soundTone(1175, 1175, 0.55, 'sine', 0.24, 0.42);
-        // Petite brillance en bout d'accord pour la sensation de decouverte
-        soundTone(1568, 1568, 0.3, 'sine', 0.08, 0.5);
+        // Ouverture de booster refaite : un swell mystErieux qui monte depuis
+        // le grave (deux sinus glissants qui s'elevent ensemble), un voile de
+        // bruit EthErE au sommet facon interstice magique, puis un accord
+        // cristallin qui s'illumine et s'Eteint doucement — la sensation
+        // d'ouvrir un coffre spatial, pas d'un paquet terrestre.
+        soundTone(110, 440, 0.35, 'sine', 0.26);
+        soundTone(165, 660, 0.35, 'sine', 0.14);
+        soundNoise(0.25, 0.18, 3000, 7000, 0.3);
+        soundTone(880, 880, 0.4, 'sine', 0.3, 0.38);
+        soundTone(1109, 1109, 0.4, 'sine', 0.24, 0.38);
+        soundTone(1319, 1319, 0.45, 'sine', 0.28, 0.38);
+        soundTone(1760, 1760, 0.35, 'sine', 0.1, 0.5);
+        soundTone(440, 440, 0.3, 'sine', 0.12, 0.55);
     },
     // Trophée : fanfare discrète
     trophy() {
@@ -6380,7 +6382,7 @@ function initDebugMode() {
     close.style.cssText = 'background:#111;color:#f00;border:1px solid #f00;padding:2px 6px;border-radius:4px;cursor:pointer;position:absolute;top:4px;right:4px;';
     panel.appendChild(close);
     document.body.appendChild(panel);
-    console.log('%c[DEBUG] mode test actif. Console: Debug.addScore(n), Debug.addStardust(n), Debug.buyAllParts(), Debug.launch(), Debug.fast(sec), Debug.giveBuildings(id, n), Debug.setPlanet(i), Debug.reset()', 'color:#0f0');
+    console.log('%c[DEBUG] mode test actif. Console: Debug.comet(n), Debug.shower(), Debug.addScore(n), Debug.addStardust(n), Debug.buyAllParts(), Debug.launch(), Debug.fast(sec), Debug.giveBuildings(id, n), Debug.setPlanet(i), Debug.reset()', 'color:#0f0');
 }
 
 
