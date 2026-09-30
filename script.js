@@ -973,6 +973,26 @@ function importSave() {
     }
 }
 
+// Import direct d'un fichier texte de sauvegarde (exporte via exportSave) :
+// le fichier est lu et importe sans passer par le copier-coller.
+document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('import-file-input');
+    if (!fileInput) return;
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const text = String(e.target.result || '').trim();
+            const textarea = document.getElementById('import-textarea');
+            if (textarea) textarea.value = text;
+            importSave();
+        };
+        reader.onerror = () => showToast("\u274c " + t("Échec de la lecture du fichier."));
+        reader.readAsText(file);
+        fileInput.value = '';
+    });
+});
 function confirmDeleteSave() {
     if (confirm("\u26a0\ufe0f " + t("Supprimer la sauvegarde ? Tous vos progrès seront PERDUS !"))) {
         deleteSave();
