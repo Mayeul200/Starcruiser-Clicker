@@ -1007,6 +1007,11 @@ body {
 .bonuses-container {
     z-index: 10000;
 }
+/* Les pop-ups de bonus ("+X Parts", "x5") passent devant les comètes elles-mêmes
+   pour rester lisibles au moment de la récompense. */
+#click-effects {
+    z-index: 10001;
+}
 
 /* Pieces qui tombent depuis le point clique
    - wrapper .falling-coin : positionne ; la trajectoire balistique
@@ -2935,7 +2940,7 @@ body {
 .medal {
     position: absolute;
     right: 10%;
-    top: 25%;
+    top: calc(25% + 50px);
     width: 204px;
     height: 204px;
     border-radius: 50%;

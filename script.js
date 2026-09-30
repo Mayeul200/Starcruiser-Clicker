@@ -3350,45 +3350,64 @@ function spawnRandomBonus(shower) {
     // vol) et s'ecartent legerement sur les cotes -- comme la queue
     // reelle d'une comete, courbee et diffuse, pas un chapelet de
     // cercles fixes.
-    // Performance : sur mobile/tablette la pluie genere trop d'elements DOM
-    // (12 cometes x 2 particules / 16 ms ~ 1500 nodes/s). Interval x3 et
-    // une seule particule par tick -> ~8x moins de travail, meme look.
-    const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
-    const TRAIL_INTERVAL_MS = isMobileLike ? 48 : 16;
+    // Performance : la traIne etait LE goulot d'etranglement de la pluie
+    // (12 cometes x 2 particules / 16 ms ~ 1500 nodes DOM/s, chacune avec son
+    // rAF + setTimeout). Nouvelle approche : un intervalle serre en absolute
+    // (60 ms), UNE particule par tick, et un POOL de particules recyclees —
+    // zero allocation en regime etabli, le navigateur ne gere plus que
+    // ~20 elements persistants au lieu de creer/detruire 1500 par seconde.
+    const TRAIL_INTERVAL_MS = 60;
     const TRAIL_LIFE_MS = 900;
-    const PARTICLES_PER_TICK = isMobileLike ? 1 : 2;
     const dirX = goRight ? 1 : -1;
     // Fraction du noyau dans le conteneur (identique aux variables CSS --nx/--ny)
     const nucX = goRight ? 0.6716 : 0.3216;
     const nucY = goRight ? 0.8051 : 0.8012;
+    const trailPool = [];
+    const trailInUse = [];
     const trailInterval = setInterval(() => {
         const rect = bonusElement.getBoundingClientRect();
         // Emettre au NOYAU reel, et scaler la derive a la taille de la comete
         const cx = rect.left + rect.width * nucX;
         const cy = rect.top + rect.height * nucY;
         const tsc = Math.max(0.6, Math.min(1, rect.width / 180));
-        // 2 particules par tick : une coeur brillant, une poussiere
-        for (let i = 0; i < PARTICLES_PER_TICK; i++) {
-            const trail = document.createElement('div');
-            trail.className = 'comet-trail' + (i === 0 ? ' core' : ' dust');
-            trail.style.width = ((i === 0 ? 20 : 11) * tsc).toFixed(1) + 'px';
-            trail.style.height = ((i === 0 ? 20 : 11) * tsc).toFixed(1) + 'px';
-            trail.style.left = `${cx}px`;
-            trail.style.top = `${cy}px`;
+        // UNE particule par tick, alternee coeur/poussiere pour garder le
+        // melange des deux textures sans doubler le travail.
+        const isCore = (trailInUse.length % 2) === 0;
+        let trail = trailPool.pop();
+        if (!trail) {
+            trail = document.createElement('div');
             document.body.appendChild(trail);
-            const drift = (40 + Math.random() * 70) * tsc;   // poussee vers l'arriere
-            const spread = ((Math.random() * 2 - 1) * 26) * tsc; // ecart lateral
-            requestAnimationFrame(() => {
-                trail.style.opacity = '0';
-                trail.style.transform = `translate(-50%, -50%) translate(${-dirX * drift * 0.5 + spread * 0.4}px, ${-drift * 0.866 + spread * 0.6}px) scale(0.2)`;
-            });
-            setTimeout(() => trail.remove(), TRAIL_LIFE_MS);
+        }
+        trail.className = 'comet-trail' + (isCore ? ' core' : ' dust');
+        trail.style.width = ((isCore ? 20 : 11) * tsc).toFixed(1) + 'px';
+        trail.style.height = ((isCore ? 20 : 11) * tsc).toFixed(1) + 'px';
+        const drift = (40 + Math.random() * 70) * tsc;
+        const spread = ((Math.random() * 2 - 1) * 26) * tsc;
+        // Reset de l'etat ANIM du pool : repositionner puis reactiver la
+        // transition dans le frame suivant (forcage du reflow via offsetWidth).
+        trail.style.transition = 'none';
+        trail.style.opacity = '1';
+        trail.style.left = `${cx}px`;
+        trail.style.top = `${cy}px`;
+        trail.style.transform = 'translate(-50%, -50%)';
+        void trail.offsetWidth;
+        trail.style.transition = '';
+        requestAnimationFrame(() => {
+            trail.style.opacity = '0';
+            trail.style.transform = `translate(-50%, -50%) translate(${-dirX * drift * 0.5 + spread * 0.4}px, ${-drift * 0.866 + spread * 0.6}px) scale(0.2)`;
+        });
+        trailInUse.push(trail);
+        // Recyclage : les particules expirees retournent au pool (cache)
+        while (trailInUse.length > 0 && trailInUse[0].style.opacity === '0') {
+            trailPool.push(trailInUse.shift());
         }
     }, TRAIL_INTERVAL_MS);
 
     const timeout = setTimeout(() => {
         clearInterval(trailInterval);
         bonusElement.remove();
+        trailInUse.forEach(t => { t.remove(); });
+        trailInUse.length = 0;
     }, duration);
 
     bonusElement.onclick = () => {
