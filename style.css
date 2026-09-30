@@ -2866,6 +2866,30 @@ body {
     cursor: pointer;
 }
 
+/* Effet de poussiere de construction : particules jaillissant au point
+   de contact quand une piece atterrit sur une autre. */
+.build-dust {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #d8c7a0 0%, #b8a37a 60%, transparent 70%);
+    pointer-events: none;
+    z-index: 8;
+    transform: translate(-50%, -50%);
+    animation: buildDust 0.8s ease-out forwards;
+}
+@keyframes buildDust {
+    0% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -30px))) scale(0.2);
+    }
+}
+
 /* Label de l'atelier */
 .workshop-label {
     position: absolute;

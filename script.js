@@ -6048,6 +6048,7 @@ function updateConstructionScene() {
             if (!constructedParts.has(part.id)) {
                 constructedParts.add(part.id);
                 piece.classList.add('new', 'unlocked');
+                spawnBuildDust(container, part);
                 setTimeout(() => {
                     piece.classList.remove('new');
                 }, 600);
@@ -6061,6 +6062,67 @@ function updateConstructionScene() {
     
     // Check if rocket is complete
     checkRocketComplete();
+}
+
+// Effet de poussiere de construction : quand une piece atterrit, des particules
+// jaillissent aux points ou elle touche les pieces deja en place (ou le sol
+// pour la premiere piece posee). Les coordonnees des pieces sont en px dans le
+// repere 100x100 du conteneur (part.x %, part.y px, ancrage haut-centre).
+function spawnBuildDust(container, newPart) {
+    const contacts = [];
+    const newLeft = (newPart.x || 50) / 100 * 100;
+    const newWidth = newPart.width || 150;
+    const newTop = newPart.y || 0;
+    const newBottom = newTop + (newPart.height || 150);
+    ROCKET_PARTS.forEach(other => {
+        if (other.id === newPart.id || !other.purchased) return;
+        const oTop = other.y || 0;
+        const oBottom = oTop + (other.height || 150);
+        const oLeftPct = other.x || 50;
+        const oWidth = other.width || 150;
+        // Piece posee sur le dessus d'une autre : le bas de la nouvelle
+        // touche le haut de l'existante.
+        if (Math.abs(newBottom - oTop) <= 6) {
+            contacts.push({ x: oLeftPct, y: oTop });
+        } else if (Math.abs(newTop - oBottom) <= 6) {
+            // Piece glissee sous une autre (ex. tuyeres sous moteurs).
+            contacts.push({ x: oLeftPct, y: newTop });
+        } else if (newTop < oBottom && newBottom > oTop && Math.abs(oLeftPct - (newPart.x || 50)) < 12) {
+            // Pieces collees lateralement (ex. boosters) : poussiere sur
+            // toute la zone de contact vertical commun.
+            const overlapTop = Math.max(newTop, oTop);
+            const overlapBottom = Math.min(newBottom, oBottom);
+            const steps = Math.max(2, Math.min(5, Math.floor((overlapBottom - overlapTop) / 80)));
+            for (let i = 0; i <= steps; i++) {
+                contacts.push({ x: (newPart.x || 50 + oLeftPct) / 2, y: overlapTop + (overlapBottom - overlapTop) * i / steps });
+            }
+        }
+    });
+    if (!contacts.length) return;
+    // Maximum 3 points de contact par piece : au-dela la poussiere fait un nuage opaque.
+    while (contacts.length > 3) {
+        contacts.splice(Math.floor(Math.random() * contacts.length), 1);
+    }
+    // Delai = duree de l'animation de chute : la poussiere jaillit a l'impact.
+    setTimeout(() => {
+        if (!container.isConnected) return;
+        contacts.forEach(c => {
+            const count = 7;
+            for (let i = 0; i < count; i++) {
+                const dust = document.createElement('div');
+                dust.className = 'build-dust';
+                const angle = (Math.PI * (0.15 + Math.random() * 0.7)) * (Math.random() < 0.5 ? 1 : -1);
+                const dist = 18 + Math.random() * 34;
+                dust.style.left = c.x + '%';
+                dust.style.top = c.y + 'px';
+                dust.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+                dust.style.setProperty('--dy', (-Math.abs(Math.sin(angle)) * dist - 12).toFixed(1) + 'px');
+                dust.style.animationDelay = (Math.random() * 0.12).toFixed(2) + 's';
+                container.appendChild(dust);
+                dust.addEventListener('animationend', () => dust.remove());
+            }
+        });
+    }, 600);
 }
 
 function checkRocketComplete() {
