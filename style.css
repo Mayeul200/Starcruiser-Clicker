@@ -880,6 +880,12 @@ body {
     text-overflow: ellipsis;
     max-width: 100%;
 }
+/* Langues ou le label "Possédés:" est long (es, it) : police legerement
+   reduite pour que le compteur ne soit jamais masque par l'image du batiment. */
+html[lang="es"] .building-ownership,
+html[lang="it"] .building-ownership {
+    font-size: 3.1cqw;
+}
 /* Enfants de la grille : min-width 0 pour que les colonnes puissent
    resserer sous la taille de leur contenu sans deborder de la case. */
 .building-item > .building-left,
@@ -3218,7 +3224,7 @@ body {
     left: 0;
     right: 0;
     height: 48px;
-    background: #000;
+    background: var(--bg-panel);
     z-index: 1000;
     display: flex;
     align-items: center;

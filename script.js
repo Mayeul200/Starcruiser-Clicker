@@ -218,6 +218,15 @@ const TROPHIES = [
     { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000000, type: "pps" },
     { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 10000000000, type: "pps" },
 
+    // Vitesse de voyage (icône: missile) — vitesse REELLE de la stat
+    // "Vitesse", c'est-a-dire les km/s gagnes par la distance atteignable.
+    { id: "speed-100", name: "Première Accélération", description: "Atteindre 100 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100, type: "speed" },
+    { id: "speed-1000", name: "Supersonique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000, type: "speed" },
+    { id: "speed-10000", name: "Vitesse de la Lumière", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000, type: "speed" },
+    { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100000, type: "speed" },
+    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000000, type: "speed" },
+    { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.png", threshold: 299792, type: "speed" },
+
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
     { id: "planet-mars", name: "Explorateur Martien", description: "Atteindre Mars", icon: "images/planets/mars.png", threshold: 2, type: "planets" },
@@ -916,12 +925,30 @@ function loadGame() {
 
 function exportSave() {
     const saveData = localStorage.getItem('starcruiserClickerSave');
-    if (saveData) {
+    if (!saveData) {
+        showToast("\u274c " + t("Aucune sauvegarde."));
+        return;
+    }
+    // Generer un fichier texte contenant la sauvegarde et le telecharger
+    // directement (Blob + lien de telechargement), plus fiable que le
+    // presse-papier sur mobile.
+    try {
+        const blob = new Blob([saveData], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'starcruiser-sauvegarde.txt';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+        showToast("\u2705 " + t("Fichier de sauvegarde téléchargé !"));
+    } catch (e) {
         navigator.clipboard.writeText(saveData)
             .then(() => showToast("\u2705 " + t("Sauvegarde copiée !")))
             .catch(() => showToast("\u274c " + t("Échec de la copie.")));
-    } else {
-        showToast("\u274c " + t("Aucune sauvegarde."));
     }
 }
 
@@ -1162,7 +1189,7 @@ function updateBuildingButton(buildingId) {
         if (productionSpan.textContent !== prodText) productionSpan.textContent = prodText;
     }
     if (ownershipDiv) {
-        const ownText = `${t("Owned:")} ${building.count}`;
+        const ownText = `${t("Possédés:")} ${building.count}`;
         if (ownershipDiv.textContent !== ownText) ownershipDiv.textContent = ownText;
     }
 
@@ -1235,7 +1262,7 @@ function renderBuilding(building) {
                 <span class="building-name">${t(building.name)}</span>
             </div>
             <div class="building-ownership">
-                ${t("Owned:")} ${building.count}
+                ${t("Possédés:")} ${building.count}
             </div>
             <div class="building-production">${formatNumber(totalGain)}/s</div>
         </div>
@@ -3908,6 +3935,9 @@ function checkTrophies() {
                 case 'cards':
                     unlocked = Object.keys(cardCollection).filter(id => cardCollection[id] > 0).length >= trophy.threshold;
                     break;
+                case 'speed':
+                    unlocked = calculateTravelSpeedKmS() >= trophy.threshold;
+                    break;
             }
             
             if (unlocked) {
@@ -3931,7 +3961,7 @@ function renderTrophies() {
     trophiesGrid.style.gap = '8px';
     trophiesGrid.style.marginTop = '8px';
     
-    const familyOrder = ['pps', 'planets', 'launches', 'stardust', 'building-upgrade', 'click-upgrade', 'building', 'score', 'bonus', 'building-types', 'cards'];
+    const familyOrder = ['pps', 'speed', 'planets', 'launches', 'stardust', 'building-upgrade', 'click-upgrade', 'building', 'score', 'bonus', 'building-types', 'cards'];
     const trophiesByFamily = {};
     TROPHIES.forEach(trophy => {
         (trophiesByFamily[trophy.type] = trophiesByFamily[trophy.type] || []).push(trophy);
