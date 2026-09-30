@@ -3876,8 +3876,8 @@ const Sounds = {
         if (now - Sound._lastClick < 40) return;
         Sound._lastClick = now;
         const detune = 1 + (Math.random() - 0.5) * 0.04;
-        const f1 = 988 * detune;   // Si5 : premiere note, nette et medium
-        const f2 = 1319 * detune;  // Mi6 : seconde note, brillante et conclusive
+        const f1 = 660 * detune;   // Mi5 : premiere note, ronde et medium
+        const f2 = 880 * detune;   // La5 : seconde note, claire et conclusive
         // Note 1 : attaque breve + fondamentale cristalline + partiel metal
         soundTone(f1, f1, 0.012, 'square', 0.1);
         soundTone(f1, f1 * 0.998, 0.11, 'sine', 0.3);
