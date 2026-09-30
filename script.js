@@ -4676,6 +4676,28 @@ function renderCounterChars(el, text) {
         }
     });
 }
+// Auto-ajustement de la police du compteur : si les chiffres debordent de
+// leur boite (petits ecrans PC / tablette paysage avec grands nombres),
+// on reduit la font-size du .counter conteneur jusqu'a ce que tout rentre.
+// Reaugmente progressivement quand l'espace redevient suffisant.
+function fitCounterFontSize() {
+    document.querySelectorAll('.hud-top-row .counter').forEach(box => {
+        const base = 1.6;
+        if (box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) {
+            let fs = parseFloat(getComputedStyle(box).fontSize) || base;
+            fs = Math.max(0.72, fs - 0.08);
+            box.style.fontSize = fs.toFixed(2) + 'rem';
+        } else if (box.style.fontSize) {
+            const cur = parseFloat(box.style.fontSize);
+            const probe = Math.min(base, cur + 0.04);
+            box.style.fontSize = probe.toFixed(2) + 'rem';
+            if (box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) {
+                box.style.fontSize = cur.toFixed(2) + 'rem';
+            }
+        }
+    });
+}
+setInterval(fitCounterFontSize, 1000);
 function counterAnimLoop() {
     const el = getDisplayElements().scoreValue;
     if (el) {

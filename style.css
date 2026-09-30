@@ -3259,7 +3259,7 @@ body {
         gap: 2px;
         height: auto;
         padding: 4px 10px;
-        width: min(clamp(min(280px, 52cqw), 25vw, 380px), calc(100cqw - 270px));
+        width: min(clamp(min(280px, 60cqw), 42vw, 440px), calc(100cqw - 270px));
     }
     .counter {
         padding: 0 2px;
