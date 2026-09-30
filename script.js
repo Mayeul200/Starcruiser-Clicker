@@ -3846,19 +3846,21 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
-        // Percussion "mallet douce" : brique courte d'attaque + resonance
-        // grave et ronde (comme frapper une piece de metal posee), en improvise
-        // legerement le pitch pour que 50 clics d'affilee ne sonnent pas pareil.
+        // "Ding" de piece de metal, doux : une piece qu'on pose sur une pile.
+        // Deux partiels inharmoniques typiques du metal (fondamentale +
+        // quinte un peu detendue) avec longue resonance qui s'evanouit,
+        // pitch improvise a chaque clic pour eviter la repetition mecanique.
         const now = performance.now();
         if (now - Sound._lastClick < 40) return;
         Sound._lastClick = now;
-        const base = 180 + Math.random() * 50;
-        // Attac : claquement sec et discret
-        soundTone(base * 4, base * 2.4, 0.03, 'square', 0.06);
-        // Resonance : la note elle-meme, ronde et courte
-        soundTone(base, base * 0.98, 0.14, 'sine', 0.3);
-        // Harmonique leger au-dessus pour la texture
-        soundTone(base * 2.01, base * 1.9, 0.09, 'sine', 0.07, 0.004);
+        const base = 520 + Math.random() * 120;
+        // Fondamentale : le ding, resonnance douce et naturelle (decay expo)
+        soundTone(base, base * 0.995, 0.35, 'sine', 0.22);
+        // Partiel metallique : legerement au-dessus de la quinte (inharmonie
+        // caracteristique des pieces), plus court et discret
+        soundTone(base * 1.51, base * 1.5, 0.18, 'sine', 0.08, 0.003);
+        // Tres leger souffle d'attaque pour le contact
+        soundNoise(0.02, 0.05, 6000, 2500);
     },
     // Achat : pop satisfaisant, deux notes montantes
     buy() {
