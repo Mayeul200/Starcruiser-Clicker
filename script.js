@@ -1095,6 +1095,7 @@ function buyBuilding(buildingId) {
         checkTrophies();
     } else {
         hideTooltip();
+        Sounds.lose();
         showToast("\u274c " + t("Pas assez de Parts"));
     }
 }
@@ -1138,6 +1139,7 @@ function buyClickUpgrade(threshold) {
     }
     
     if (score < upgrade.cost) {
+        Sounds.lose();
         showToast("\u274c " + t("Pas assez de Parts"));
         return;
     }
@@ -1159,6 +1161,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     const cost = getBuildingUpgradeFixedCost(buildingId, threshold);
     
     if (score < cost) {
+        Sounds.lose();
         showToast("\u274c " + t("Pas assez de Parts"));
         return;
     }
@@ -3200,6 +3203,7 @@ function buyAllUpgrades() {
         }
     }
     if (bought === 0) {
+        Sounds.lose();
         showToast("\u274c " + t("Pas assez de Parts"));
         return;
     }
@@ -3428,6 +3432,11 @@ function spawnRandomBonus(shower) {
         // immediatement. C'est ce qui le distingue de la "Survie a la pluie"
         // ou rater des cometes ne fait perdre que la recolte.
         const c = contractState.active;
+        if (shower && bonusElement.dataset.collected !== '1') {
+            // Cometes ratees HORS defense parfaite (pluie naturelle, contrat
+            // shower) : petit son de perte pour signaler le manque a gagner.
+            if (!c || c.typeId !== 'comets') Sounds.lose();
+        }
         if (shower && c && c.typeId === 'comets' && bonusElement.dataset.collected !== '1') {
             c.progress = -Infinity; // marque l'echec pour updateContractProgress
             c.failed = true;
@@ -3969,6 +3978,20 @@ const Sounds = {
     contractFail() {
         soundTone(330, 220, 0.3, 'sawtooth', 0.25);
         soundTone(196, 130, 0.4, 'sine', 0.25, 0.1);
+    },
+    // Perte generique (achat impossible, comete ratee, bonus expire) :
+    // petit duo descendant bref, discret mais clairement negatif
+    lose() {
+        soundTone(311, 233, 0.14, 'sine', 0.22);
+        soundTone(233, 165, 0.2, 'sine', 0.2, 0.09);
+    },
+    // Alerte pluie de cometes naturelle : trois notes montantes cristallines
+    // suivies d'un souffle — previent l'oreille avant que l'oeil ne voie la pluie
+    showerAlert() {
+        soundTone(392, 392, 0.16, 'triangle', 0.3);
+        soundTone(523, 523, 0.16, 'triangle', 0.3, 0.16);
+        soundTone(659, 659, 0.22, 'triangle', 0.26, 0.32);
+        soundNoise(0.5, 0.12, 2000, 6000, 0.34);
     },
     // Booster de cartes : ouverture mystique
     booster() {
@@ -5169,6 +5192,7 @@ function acceptContract(offerId) {
         return;
     }
     if (score < offer.price) {
+        Sounds.lose();
         showToast('\u274C ' + t('Pas assez de Parts'));
         return;
     }
@@ -5339,7 +5363,12 @@ function failContract() {
     Sounds.contractFail();
     const c = contractState.active;
     if (!c) return;
-    showToast('\u23F3 ' + t('Contrat echoue... Le temps est ecoule.'), null);
+    // Defense parfaite : echec cause par UNE comete ratee, pas par le temps.
+    // Message distinct pour que le joueur comprenne pourquoi il a perdu.
+    const missedComet = c.failed && c.typeId === 'comets';
+    showToast((missedComet ? '\uD83D\uDD25 ' : '\u23F3 ') + t(missedComet
+        ? 'Defense parfaite echouee : une comete a frappe la fusee !'
+        : 'Contrat echoue... Le temps est ecoule.'), null);
     contractState.active = null;
     contractState.offers = [];
     contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
@@ -6290,6 +6319,7 @@ function scheduleCometShower() {
 function startCometShower() {
     if (cometShowerActive) return;
     cometShowerActive = true;
+    Sounds.showerAlert();
     showToast('\ud83c\udf20 ' + t('Pluie de com\u00e8tes ! Attrapez-les !'));
     // Mobile/tablette : moitie moins de cometes, la pluie y coute tres cher
     const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
