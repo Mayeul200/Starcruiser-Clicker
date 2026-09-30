@@ -5183,7 +5183,9 @@ function acceptContract(offerId) {
     if (offer.typeId === 'comets' || offer.shower) {
         showToast('\u2604\uFE0F ' + t('Des cometes arrivent ! Interception !'), null);
     }
-    renderContracts();
+    // La modale se ferme : le contrat se joue en direct sur la scene,
+    // le joueur doit voir la fusee, la piece, les cometes.
+    closeContracts();
     clearPulseHint(document.getElementById('contracts-card-status')?.closest('.mini-game-card'));
     saveGame();
 }
