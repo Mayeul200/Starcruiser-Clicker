@@ -3899,8 +3899,14 @@ const Sounds = {
     },
     // Booster de cartes : froissement + pop
     booster() {
-        soundNoise(0.12, 0.18, 3200, 900);
-        soundTone(660, 990, 0.08, 'sine', 0.3, 0.1);
+        // Ouverture de paquet de cartes : froissement de plastique (bruit
+        // court et vivace), puis petit arpange de 3 notes cristallines qui
+        // donne l'attente de decouverte.
+        soundNoise(0.15, 0.3, 5200, 700);
+        soundNoise(0.1, 0.2, 3800, 500);
+        soundTone(784, 784, 0.1, 'sine', 0.28, 0.12);
+        soundTone(988, 988, 0.1, 'sine', 0.28, 0.22);
+        soundTone(1175, 1175, 0.16, 'sine', 0.32, 0.32);
     },
     // Trophée : fanfare discrète
     trophy() {
