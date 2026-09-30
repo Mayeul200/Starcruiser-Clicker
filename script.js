@@ -3942,16 +3942,19 @@ const Sounds = {
         soundTone(330, 220, 0.3, 'sawtooth', 0.25);
         soundTone(196, 130, 0.4, 'sine', 0.25, 0.1);
     },
-    // Booster de cartes : froissement + pop
+    // Booster de cartes : dechirure de paquet + revelation
     booster() {
-        // Ouverture de paquet de cartes : froissement de plastique (bruit
-        // court et vivace), puis petit arpange de 3 notes cristallines qui
-        // donne l'attente de decouverte.
-        soundNoise(0.15, 0.3, 5200, 700);
-        soundNoise(0.1, 0.2, 3800, 500);
-        soundTone(784, 784, 0.1, 'sine', 0.28, 0.12);
-        soundTone(988, 988, 0.1, 'sine', 0.28, 0.22);
-        soundTone(1175, 1175, 0.16, 'sine', 0.32, 0.32);
+        // Ouverture de paquet de cartes : vraie dechirure (bruit long ~400 ms
+        // qui s'etiole, plus un crepitement secondaire qui gresille pendant la
+        // dechirure), puis un accord majeur SIMULTANE facon rideau qui s'ouvre
+        // sur les cartes obtenues — theatrical, pas d'arpEge.
+        soundNoise(0.4, 0.32, 5200, 600);
+        soundNoise(0.32, 0.16, 4200, 900, 0.06);
+        soundTone(784, 784, 0.5, 'sine', 0.2, 0.42);
+        soundTone(988, 988, 0.5, 'sine', 0.2, 0.42);
+        soundTone(1175, 1175, 0.55, 'sine', 0.24, 0.42);
+        // Petite brillance en bout d'accord pour la sensation de decouverte
+        soundTone(1568, 1568, 0.3, 'sine', 0.08, 0.5);
     },
     // Trophée : fanfare discrète
     trophy() {
@@ -6076,7 +6079,7 @@ window.onload = function() {
 // ============================================
 // MODE DEBUG (test de progression rapide)
 // Activer via ?debug=1 dans l'URL.
-// Commandes globales: Debug.addScore(n), Debug.addStardust(n),
+// Commandes globales: Debug.comet(n), Debug.shower(), Debug.addScore(n), Debug.addStardust(n),
 // Debug.buyAllParts(), Debug.launch(), Debug.fast(n),
 // Debug.giveBuildings(id, n), Debug.reset(), Debug.setPlanet(index)
 // ============================================
@@ -6282,6 +6285,16 @@ const Debug = {
     launch() {
         if (!checkRocketReady()) { this.buyAllParts(); }
         launchRocket();
+    },
+    comet(n) {
+        // Fait apparaitre n cometes immediatement (1 par defaut)
+        const count = Math.max(1, Math.min(20, parseInt(n, 10) || 1));
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => spawnRandomBonus(false), i * 350);
+        }
+    },
+    shower() {
+        startCometShower();
     },
     fast(seconds) {
         debugSimulateTime(seconds);
