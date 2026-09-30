@@ -4301,12 +4301,12 @@ function updateBonusTimer() {
 // de Parts avec CE batiment dans le temps imparti, il gagne un bonus de
 // production permanent (+50% cumulable). Rotation des contrats toutes les
 // 2 minutes. Les contrats ciblent en priorite les batiments negliges.
-// Quota volontaire Faisable : production normale du batiment sur la duree
-// +5% seulement -- pas besoin de boost ni d'achat pour reussir.
+// Quota volontaire Faisable : 95% de la production normale du batiment sur
+// la duree du contrat -- reussissable sans boost ni achat, avec une marge.
 // ============================================
 const CONTRACT_ROTATION_MS = 2 * 60 * 1000;
 const CONTRACT_DURATION_MS = 3 * 60 * 1000;
-const CONTRACT_QUOTA_RATIO = 1.05;
+const CONTRACT_QUOTA_RATIO = 0.95;
 const CONTRACT_REWARD_MULT = 0.50;
 const CONTRACT_REWARD_MAX_STACKS = 10;
 const CONTRACT_PRICE_PPS_SECONDS = 20;
