@@ -4991,6 +4991,40 @@ function closeAllModalsForMobileNav() {
         m.classList.remove('active');
     });
 }
+// Garde-fou anti-remontee du scroll du panneau batiments (mobile) :
+// certains navigateurs reclampent brutalement le scrollTop apres un
+// re-layout pendant le scroll. On memorise la position et on la restaure
+// si elle chute d'un coup sans interaction tactile en cours.
+let buildingScrollWatchdog = null;
+function startBuildingScrollWatchdog() {
+    if (buildingScrollWatchdog) return;
+    let lastTop = 0;
+    let touching = false;
+    const panel = document.querySelector('.main-grid.mobile-view-right > .right-panel');
+    if (!panel) return;
+    const onTouchStart = () => { touching = true; };
+    const onTouchEnd = () => { touching = false; lastTop = panel.scrollTop; };
+    panel.addEventListener('touchstart', onTouchStart, { passive: true });
+    panel.addEventListener('touchend', onTouchEnd, { passive: true });
+    panel.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    buildingScrollWatchdog = setInterval(() => {
+        if (!panel.isConnected) {
+            clearInterval(buildingScrollWatchdog);
+            buildingScrollWatchdog = null;
+            return;
+        }
+        const top = panel.scrollTop;
+        if (touching) {
+            lastTop = top;
+            return;
+        }
+        if (lastTop - top > 120 && top < lastTop - 120) {
+            panel.scrollTop = lastTop;
+        } else {
+            lastTop = top;
+        }
+    }, 120);
+}
 function setMobileView(view) {
     mobileActiveView = view;
     const grid = document.querySelector('.main-grid');
@@ -5017,6 +5051,7 @@ function setMobileView(view) {
         });
     }
     if (view === 'center') applySceneScale();
+    if (view === 'right') startBuildingScrollWatchdog();
 }
 
 // Mise à l'échelle de la scène de construction : la fusée fait ~700px
