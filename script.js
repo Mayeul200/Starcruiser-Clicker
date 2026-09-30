@@ -3058,8 +3058,8 @@ function renderUpgrades() {
                 available.push({
                     cost,
                     render: () => {
-                        const el = createUpgradeElement(color, building.imgPath || '', building.name, threshold);
-                        attachTooltip(el, `${t(building.name)} — ${t('Palier')} ${threshold} — ×2 ${t('production')} — ${formatNumber(cost)} ${t('Parts')}`);
+                        const el = createUpgradeElement(color, building.imgPath || '', building.name, thresholdIndex + 1);
+                        attachTooltip(el, `${t(building.name)} — ${t('niveau')} ${thresholdIndex + 1} — ×2 ${t('production')} — ${formatNumber(cost)} ${t('Parts')}`);
                         el.onclick = () => buyBuildingUpgrade(building.id, threshold);
                         return el;
                     }
