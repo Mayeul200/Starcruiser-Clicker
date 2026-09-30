@@ -393,23 +393,42 @@ body {
     border-bottom: 1px solid var(--border-light);
 }
 
-/* Cartes / Contrats : titre et compteur empiles pour eviter le chevauchement */
+/* Cartes / Contrats (PC) : titre et compteur sur une seule ligne, en-tete compact */
 #card-collection-modal .modal-header,
 #contracts-modal .modal-header {
-    flex-wrap: wrap;
-    row-gap: 4px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    flex-wrap: nowrap;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 #card-collection-modal .modal-header h2,
 #contracts-modal .modal-header h2 {
-    flex: 1 1 100%;
-    white-space: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #card-collection-modal .modal-parts-counter,
 #contracts-modal .modal-parts-counter {
-    margin: 0 auto;
+    margin: 0;
     align-self: center;
+    white-space: nowrap;
+}
+/* Empilement titre/compteur : UNIQUEMENT mobile */
+@media (max-width: 1024px) and (pointer: coarse) {
+    #card-collection-modal .modal-header,
+    #contracts-modal .modal-header {
+        flex-wrap: wrap;
+        row-gap: 4px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    #card-collection-modal .modal-header h2,
+    #contracts-modal .modal-header h2 {
+        white-space: normal;
+    }
+    #card-collection-modal .modal-parts-counter,
+    #contracts-modal .modal-parts-counter {
+        margin: 0 auto;
+    }
 }
 .modal-header h2 {
     font-size: 1.3rem;
