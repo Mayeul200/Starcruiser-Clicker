@@ -3915,18 +3915,16 @@ const Sounds = {
         soundNoise(0.6, 0.12, 1200, 300, 0.05);
     },
     explosion() {
-        // Eclatement cristallin : la comete est de glace, elle eclate en
-        // cristaux. Craquement initial (bruit tres aigu, bref) puis pluie de
-        // tintements descendants et aleatoires — les eclats qui tombent.
-        // Craquement : bruit blanc coupe court, tres present
-        soundNoise(0.12, 0.4, 7000, 2500);
-        // Coeur grave bref pour l'assise de l'impact (petite, pas un boom)
-        soundTone(220, 70, 0.18, 'sine', 0.22);
-        // Pluie de cristaux : arpege retire — l'utilisateur voulait un
-        // eclat franc, sans la cascade de tintements qui suivait.
-        // Chaleureux discret de glace qui se disperse — retirE : le bruit
-        // de fin donnait l'impression que la comete se disloquait en
-        // trainant, alors qu'elle eclate net.
+        // BOOM sec et rapide : la comete pete net, sans tra~ne. Un claquement
+        // initial tres present (bruit aigu coupe court) pile sur un punch
+        // grave bref et profond (le BOOM, 100 > 40 Hz en 150 ms), plus un
+        // souffle court de frappe pour l'assise. Tout est termine en ~250 ms.
+        // Claquement initial : bruit blanc coupe tres court, tres present
+        soundNoise(0.05, 0.45, 9000, 3000);
+        // Le BOOM : punch grave profond et bref, coeur de l'explosion
+        soundTone(100, 40, 0.15, 'sine', 0.5);
+        // Souffle de frappe court pour l'assise (le derapage de l'air)
+        soundNoise(0.22, 0.3, 900, 150);
     },
     // Contrat : accepté / rempli / échoué
     contractAccept() {
