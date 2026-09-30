@@ -640,7 +640,11 @@ body {
    Centrage vertical : les chiffres remontent exactement sur la baseline
    du texte adjacent (meme police, meme font-size). */
 #score-value,
-.stat-value {
+.stat-value,
+.modal-parts-value,
+.modal-parts-gain,
+#stardust-value,
+#stardust-value-2 {
     display: inline-flex;
     align-items: center;
     align-self: center;
@@ -660,7 +664,11 @@ body {
    l'impression que les chiffres ne sont pas tout a fait au meme niveau. */
 #score-value .cch,
 .stat-value .cch,
-#travel-distance-value .cch {
+#travel-distance-value .cch,
+.modal-parts-value .cch,
+.modal-parts-gain .cch,
+#stardust-value .cch,
+#stardust-value-2 .cch {
     display: inline-flex;
     align-items: flex-start;
     overflow: hidden;
@@ -3219,6 +3227,28 @@ body {
     box-shadow: var(--shadow);
     overflow: visible;
 }
+.buy-all-upgrades-btn {
+    margin-left: 10px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    border: 1px solid #60a5fa;
+    border-radius: var(--radius);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+.buy-all-upgrades-btn:hover:not(:disabled) {
+    filter: brightness(1.2);
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.6);
+}
+.buy-all-upgrades-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
 .upgrades-title {
     color: white;
     font-size: 1.1rem;
@@ -3250,8 +3280,8 @@ body {
     height: 85vh;
 }
 #card-collection-modal.modal {
-    width: calc(55% + 20px);
-    max-width: calc(55% + 20px);
+    width: 50%;
+    max-width: 50%;
     top: var(--top-height);
     left: 50%;
     transform: translateX(-50%);
@@ -3614,8 +3644,8 @@ body {
 
 /* ATELIER GALACTIQUE - Arbre d'améliorations */
 #galactic-shop-modal.modal {
-    width: calc(55% + 20px);
-    max-width: calc(55% + 20px);
+    width: 50%;
+    max-width: 50%;
     top: var(--top-height);
     left: 50%;
     transform: translateX(-50%);

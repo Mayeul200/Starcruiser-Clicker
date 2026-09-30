@@ -507,7 +507,7 @@ function formatNumber(num, isTotalScore) {
         if (num % 1 === 0) return groupThousands(num);
         const intPart = Math.floor(num);
         const decPart = (num - intPart).toFixed(1).slice(2);
-        return groupThousands(intPart) + '.' + decPart;
+        return groupThousands(intPart) + ',' + decPart;
     }
     
     // Nombres >= 1M avec suffixes
@@ -521,7 +521,7 @@ function formatNumber(num, isTotalScore) {
     const scaledAbs = Math.abs(scaled);
     const decimals = scaledAbs >= 100 ? (isTotalScore ? 3 : 2) : (scaledAbs >= 10 ? 3 : 3);
     
-    return scaled.toFixed(decimals) + " " + suffix;
+    return scaled.toFixed(decimals).replace('.', ',') + " " + suffix;
 }
 
 function updateAutoMultiplier() {
@@ -1551,7 +1551,8 @@ function showLaunchResults(distance) {
     const safeRockets = rocketsLaunched === undefined ? 0 : rocketsLaunched;
     
     distanceElement.textContent = formatNumber(safeDistance) + ' km';
-    multiplierElement.textContent = 'x' + safeMultiplier.toFixed(2);
+    // Vrai bonus total de production, identique a la ligne "Multiplicateur de production" des statistiques.
+    multiplierElement.textContent = 'x' + getTotalProductionMultiplier().toFixed(2);
     rocketsElement.textContent = safeRockets;
     const stardustEl = document.getElementById('launch-results-stardust');
     if (stardustEl) {
@@ -2945,6 +2946,34 @@ function checkNewUpgrades() {
     if (container.childElementCount !== newClickUps + newBuildingUps) {
         renderUpgrades();
     }
+    // Rafraichir l'etat actif/grise du bouton "Tout acheter" selon le score
+    const btn = document.getElementById('buy-all-upgrades');
+    if (btn) {
+        const affordable = [score].length && (newClickUps + newBuildingUps) > 0;
+        btn.disabled = !canBuyAllUpgrades() || !affordable || !isAnyUpgradeAffordable();
+        btn.classList.toggle('affordable', !btn.disabled);
+    }
+}
+function isAnyUpgradeAffordable() {
+    const cheapest = getCheapestAvailableUpgradeCost();
+    return cheapest !== null && cheapest <= score;
+}
+function getCheapestAvailableUpgradeCost() {
+    let cheapest = null;
+    CLICK_UPGRADES.forEach(upgrade => {
+        if (totalPartsFromClicks >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+            if (cheapest === null || upgrade.cost < cheapest) cheapest = upgrade.cost;
+        }
+    });
+    BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
+        BUILDINGS.forEach(building => {
+            if (isBuildingUpgradeAvailable(building.id, threshold)) {
+                const cost = getBuildingUpgradeFixedCost(building.id, threshold);
+                if (cheapest === null || cost < cheapest) cheapest = cost;
+            }
+        });
+    });
+    return cheapest;
 }
 
 function renderUpgrades() {
@@ -2995,6 +3024,82 @@ function renderUpgrades() {
     // Tri du moins chere au plus chere
     available.sort((a, b) => a.cost - b.cost);
     available.forEach(item => container.appendChild(item.render()));
+    renderBuyAllUpgradesButton(container, available);
+}
+
+// Bouton "Tout acheter" : achete en un clic toutes les ameliorations
+// abordables, de la moins chere a la plus chere (le score baisse au fur
+// et a mesure, donc l'ordre est important). Debloque au 3e lancement.
+const BUY_ALL_UNLOCK_LAUNCHES = 3;
+function canBuyAllUpgrades() {
+    return rocketsLaunched >= BUY_ALL_UNLOCK_LAUNCHES;
+}
+function renderBuyAllUpgradesButton(container, available) {
+    let btn = document.getElementById('buy-all-upgrades');
+    if (!canBuyAllUpgrades()) {
+        if (btn) btn.remove();
+        return;
+    }
+    const affordable = available.filter(item => item.cost <= score).length;
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'buy-all-upgrades';
+        btn.className = 'buy-all-upgrades-btn';
+        btn.textContent = t('Tout acheter');
+        btn.onclick = buyAllUpgrades;
+        container.parentNode.insertBefore(btn, container.nextSibling);
+    }
+    btn.disabled = affordable === 0;
+    btn.classList.toggle('affordable', affordable > 0);
+}
+function buyAllUpgrades() {
+    if (!canBuyAllUpgrades()) return;
+    // Reconstituer la liste complete des ameliorations disponibles
+    const available = [];
+    CLICK_UPGRADES.forEach(upgrade => {
+        if (totalPartsFromClicks >= upgrade.threshold && !activatedClickUpgrades.includes(upgrade.threshold)) {
+            available.push({ kind: 'click', threshold: upgrade.threshold, cost: upgrade.cost });
+        }
+    });
+    BUILDING_UPGRADE_THRESHOLDS.forEach(threshold => {
+        BUILDINGS.forEach(building => {
+            if (isBuildingUpgradeAvailable(building.id, threshold)) {
+                available.push({ kind: 'building', buildingId: building.id, threshold, cost: getBuildingUpgradeFixedCost(building.id, threshold) });
+            }
+        });
+    });
+    available.sort((a, b) => a.cost - b.cost);
+    let bought = 0;
+    // Achat successif du moins cher : a chaque achat le score baisse, ce
+    // qui peut rendre les suivantes inabordables. On s'arrete des que le
+    // prochain n'est plus payable.
+    while (available.length && available[0].cost <= score) {
+        const item = available.shift();
+        if (item.kind === 'click') {
+            if (!activatedClickUpgrades.includes(item.threshold) && score >= item.cost) {
+                score -= item.cost;
+                activatedClickUpgrades.push(item.threshold);
+                bought++;
+            }
+        } else if (isBuildingUpgradeAvailable(item.buildingId, item.threshold) && score >= item.cost) {
+            score -= item.cost;
+            if (!buildingUpgrades[item.buildingId]) buildingUpgrades[item.buildingId] = [];
+            buildingUpgrades[item.buildingId].push(item.threshold);
+            bought++;
+        }
+    }
+    if (bought === 0) {
+        showToast("\u274c " + t("Pas assez de Parts"));
+        return;
+    }
+    invalidateBuildingGainsCache();
+    updateDisplay();
+    saveGame();
+    hideTooltip();
+    renderUpgrades();
+    updateAllBuildingButtons();
+    checkTrophies();
+    showToast("\u2705 " + bought + " " + t("ameliorations achetees"));
 }
 
 function createUpgradeElement(color, imgSrc, altText, levelBadgeText) {
@@ -4272,16 +4377,16 @@ function updateModalPartsCounter() {
     const els = getDisplayElements();
     const hasOpenModal = document.querySelector('.modal.active') !== null;
     if (!hasOpenModal) return;
-    const scoreText = formatNumber(score, true);
-    const gainText = formatNumber(partsPerSecond);
-    els.modalPartsValues.forEach(el => { el.textContent = scoreText; });
-    els.modalPartsGains.forEach(el => { el.textContent = gainText; });
+    // Meme odometer que le compteur principal : le rendu anime est conserve
+    // dans les modales atelier et collection.
+    els.modalPartsValues.forEach(el => { rollCounterText(el, formatNumber(score, true)); });
+    els.modalPartsGains.forEach(el => { rollCounterText(el, formatNumber(partsPerSecond)); });
 }
 
 function updateStardustDisplay() {
     const els = getDisplayElements();
     const text = formatNumber(starDust);
-    els.stardustValues.forEach(el => { el.textContent = text; });
+    els.stardustValues.forEach(el => { rollCounterText(el, text); });
 }
 
 function updateStardustPreview() {
