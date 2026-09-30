@@ -3904,27 +3904,26 @@ const Sounds = {
     },
     // Comète : whoosh du missile puis explosion
     missile() {
-        // Pique d'avion de chasse : sirEne descendante realistic (le jet-broom
-        // des bombardements en piquE, 3000 > 400 Hz sur ~700 ms), plus le
-        // hurlement de moteur qui l'accompagne (couche grave dentEe qui
-        // glisse vers le bas) — stressant, comme un avion qui pique sur vous.
-        soundTone(3000, 400, 0.7, 'sine', 0.34);
-        // Hurlement de moteur : couche dentEe grave qui descend aussi
-        soundTone(320, 90, 0.7, 'sawtooth', 0.1);
-        // Chuintement aerodynamique du fuselage pendant la descente
-        soundNoise(0.6, 0.12, 1200, 300, 0.05);
+        // Missile qui arrive : sifflement montant vers l'impact (le missile
+        // approche, la tension grimpe) + sillon aerodynamique discret —
+        // prepare un combo ultra satisfaisant avec l'explosion qui suit.
+        soundTone(400, 2200, 0.35, 'sine', 0.3);
+        soundNoise(0.3, 0.1, 600, 2400, 0.04);
     },
     explosion() {
-        // BOOM sec et rapide : la comete pete net, sans tra~ne. Un claquement
-        // initial tres present (bruit aigu coupe court) pile sur un punch
-        // grave bref et profond (le BOOM, 100 > 40 Hz en 150 ms), plus un
-        // souffle court de frappe pour l'assise. Tout est termine en ~250 ms.
-        // Claquement initial : bruit blanc coupe tres court, tres present
+        // Combo ultra satisfaisant : impact qui claque SEC (claquement +
+        // punch grave profond), puis une recompense cristalline qui monte
+        // (deux notes do->sol aiguEs, la pieces gagnee) — le "payoff" du
+        // missile. Tout reste bref et rond, dans le style du jeu.
+        // Claquement initial tres present
         soundNoise(0.05, 0.45, 9000, 3000);
-        // Le BOOM : punch grave profond et bref, coeur de l'explosion
+        // Le punch grave du BOOM, profond et bref
         soundTone(100, 40, 0.15, 'sine', 0.5);
-        // Souffle de frappe court pour l'assise (le derapage de l'air)
-        soundNoise(0.22, 0.3, 900, 150);
+        // Souffle de frappe court pour l'assise
+        soundNoise(0.2, 0.25, 900, 150);
+        // Payoff : notes cristallines montantes qui recompensent le hit
+        soundTone(1047, 1047, 0.12, 'sine', 0.2, 0.1);
+        soundTone(1568, 1568, 0.2, 'sine', 0.24, 0.2);
     },
     // Contrat : accepté / rempli / échoué
     contractAccept() {
@@ -6607,7 +6606,7 @@ function spawnBuildDust(container, newPart) {
             const overlapBottom = Math.min(newBottom, oBottom);
             const steps = Math.max(2, Math.min(5, Math.floor((overlapBottom - overlapTop) / 80)));
             for (let i = 0; i <= steps; i++) {
-                contacts.push({ x: (newPart.x || 50 + oLeftPct) / 2, y: overlapTop + (overlapBottom - overlapTop) * i / steps });
+                contacts.push({ x: ((newPart.x || 50) + oLeftPct) / 2, y: overlapTop + (overlapBottom - overlapTop) * i / steps });
             }
         }
     });
