@@ -212,7 +212,7 @@ const TROPHIES = [
     { id: "pps-1000", name: "Space Speed", description: "Atteindre 1 000 Parts par seconde", icon: "images/parts.png", threshold: 1000, type: "pps" },
     { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.png", threshold: 10000, type: "pps" },
     { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.png", threshold: 100000, type: "pps" },
-    { id: "pps-1000000", name: "Light Speed", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000, type: "pps" },
+    { id: "pps-1000000", name: "Vitesse Nébulaire", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000, type: "pps" },
     { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 000 000 Parts par seconde", icon: "images/parts.png", threshold: 10000000, type: "pps" },
     { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 000 000 Parts par seconde", icon: "images/parts.png", threshold: 100000000, type: "pps" },
     { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000000, type: "pps" },
@@ -221,8 +221,8 @@ const TROPHIES = [
     // Vitesse de voyage (icône: missile) — vitesse REELLE de la stat
     // "Vitesse", c'est-a-dire les km/s gagnes par la distance atteignable.
     { id: "speed-100", name: "Première Accélération", description: "Atteindre 100 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100, type: "speed" },
-    { id: "speed-1000", name: "Supersonique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000, type: "speed" },
-    { id: "speed-10000", name: "Vitesse de la Lumière", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000, type: "speed" },
+    { id: "speed-1000", name: "Propulsion Ionique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000, type: "speed" },
+    { id: "speed-10000", name: "Vitesse Stellaire", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000, type: "speed" },
     { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100000, type: "speed" },
     { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000000, type: "speed" },
     { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.png", threshold: 299792, type: "speed" },
