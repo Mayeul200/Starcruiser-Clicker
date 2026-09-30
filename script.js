@@ -3039,8 +3039,16 @@ function renderUpgrades() {
             available.push({
                 cost: upgrade.cost,
                 render: () => {
-                    const el = createUpgradeElement(color, 'images/cursor.svg', upgrade.name, upgrade.threshold);
-                    attachTooltip(el, `${t(upgrade.name)} — ×2 ${t('clic')} — ${formatNumber(upgrade.cost)} ${t('Parts')}`);
+                    const newNb = CLICK_UPGRADES.indexOf(upgrade) + 1;
+                    const el = createUpgradeElement(color, 'images/cursor.svg', upgrade.name, newNb);
+                    const newFingerMult = newNb >= 2 ? (1 + (newNb - 1) * 0.5) : 0;
+                    const lines = [
+                        t(upgrade.name) + ' — ' + t('niveau') + ' ' + newNb,
+                        t('Base du clic ×2') + ' → ' + formatNumber(Math.pow(2, newNb)) + ' ' + t('Parts') + ' ' + t('par clic'),
+                        t('Par bâtiment possédé') + ' : ' + (newFingerMult > 0 ? '+' + (newFingerMult * 0.1).toFixed(1) + ' ' + t('Parts') + ' (×' + newFingerMult.toFixed(1) + ')' : '—'),
+                        t('Bonus production') + ' : +' + newNb + '% ' + t('Parts par seconde')
+                    ];
+                    attachTooltip(el, lines.join('\n') + '\n' + formatNumber(upgrade.cost) + ' ' + t('Parts'));
                     el.onclick = () => buyClickUpgrade(upgrade.threshold);
                     return el;
                 }
