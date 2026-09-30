@@ -3912,7 +3912,7 @@ body {
     }
     .main-grid.mobile-view-left  > .left-panel  { display: flex; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .main-grid.mobile-view-center > .center-panel { display: flex; }
-    .main-grid.mobile-view-right > .right-panel { display: block; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+    .main-grid.mobile-view-right > .right-panel { display: block; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; overflow-anchor: none; }
 
     /* --- Barre du haut compacte --- */
     .top-bar { height: calc(54px * var(--mscale, 1)) !important; min-height: calc(54px * var(--mscale, 1)); max-height: calc(54px * var(--mscale, 1)); padding: 0 calc(10px * var(--mscale, 1)); }
