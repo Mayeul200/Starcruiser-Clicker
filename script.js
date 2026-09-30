@@ -4985,9 +4985,9 @@ function getContractTypes() {
             objective: 'Cliquez {target} fois sur la piece',
             track: 'clicks',
             diffs: [
-                { target: 25,  price: Math.max(50, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
-                { target: 50,  price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
-                { target: 100, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
+                { target: 40,  price: Math.max(50, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
+                { target: 80,  price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
+                { target: 160, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
             ]
         },
         {
@@ -4997,9 +4997,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(30, clickParts * 8),   price: Math.max(50, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(80, clickParts * 18),  price: Math.max(200, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(200, clickParts * 40), price: Math.max(800, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(50, clickParts * 14),  price: Math.max(50, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(120, clickParts * 30), price: Math.max(200, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(280, clickParts * 65), price: Math.max(800, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
             ]
         },
         {
@@ -5009,9 +5009,9 @@ function getContractTypes() {
             objective: 'Protegez la fusee : interceptez {target} cometes',
             track: 'comets',
             diffs: [
-                { target: 3, price: Math.max(100, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
-                { target: 5, price: Math.max(400, pps * 20), rewardMult: 3, rewardType: 'instant', instantSec: 90 },
-                { target: 8, price: Math.max(1500, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 180 }
+                { target: 4, price: Math.max(100, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
+                { target: 7, price: Math.max(400, pps * 20), rewardMult: 3, rewardType: 'instant', instantSec: 90 },
+                { target: 11, price: Math.max(1500, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 180 }
             ]
         },
         {
@@ -5021,9 +5021,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
             diffs: [
-                { target: Math.max(100, pps * 20),  price: Math.max(50, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
-                { target: Math.max(400, pps * 50), price: Math.max(200, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: Math.max(1200, pps * 110), price: Math.max(800, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
+                { target: Math.max(100, pps * 28),  price: Math.max(50, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
+                { target: Math.max(400, pps * 65), price: Math.max(200, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
+                { target: Math.max(1200, pps * 140), price: Math.max(800, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
             ]
         },
         {
@@ -5033,9 +5033,9 @@ function getContractTypes() {
             objective: 'Survivez a la pluie : attrapez {target} cometes',
             track: 'comets',
             diffs: [
-                { target: 4, price: Math.max(150, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 60, shower: 6 },
-                { target: 6, price: Math.max(600, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 120, shower: 9 },
-                { target: 9, price: Math.max(2000, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 240, shower: 14 }
+                { target: 5, price: Math.max(150, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 60, shower: 6 },
+                { target: 8, price: Math.max(600, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 120, shower: 9 },
+                { target: 12, price: Math.max(2000, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 240, shower: 14 }
             ]
         }
     ];
@@ -5415,6 +5415,10 @@ function renderContracts() {
 function contractDifficultyLabel(diffIdx) {
     return diffIdx === 0 ? t('Facile') : (diffIdx === 1 ? t('Normal') : t('Difficile'));
 }
+// Couleur du label de difficulte : vert = facile, gris-bleu = normal, rouge = difficile.
+function contractDifficultyClass(diffIdx) {
+    return diffIdx === 0 ? 'diff-easy' : (diffIdx === 1 ? 'diff-normal' : 'diff-hard');
+}
 function buildContractsHtml() {
     let html = '<div class="contract-rotation">\u23f3 ' + tf('nouveaux contrats dans {time}', { time: '<span class="contract-rotation-timer">' + formatContractTime(Math.max(0, contractState.nextRotationAt - Date.now())) + '</span>' }) + '</div>';
     if (contractState.active) {
@@ -5440,7 +5444,7 @@ function buildContractsHtml() {
             html += '<div class="contract-card">'
                 + '<div class="contract-head">' + contractIconHtml(type) + '<div>'
                 + '<div class="contract-title">' + contractObjectiveText(offer) + '</div>'
-                + '<div class="contract-sub">' + t('30 secondes') + ' \u00b7 ' + contractDifficultyLabel(offer.diffIdx) + '</div></div></div>'
+                + '<div class="contract-sub">' + t('30 secondes') + ' \u00b7 <span class="' + contractDifficultyClass(offer.diffIdx) + '">' + contractDifficultyLabel(offer.diffIdx) + '</span></div></div></div>'
                 + '<div class="contract-reward">' + contractRewardText(offer) + '</div>'
                 + '<button class="contract-buy-btn" data-offer-id="' + offer.id + '" onclick="acceptContract(\'' + offer.id + '\')">'
                 + '<img src="images/parts.png" class="coin-icon" alt=""> ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'

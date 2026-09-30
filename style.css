@@ -2697,6 +2697,10 @@ body {
     font-size: 0.95rem;
 }
 
+/* Labels de difficulte des contrats */
+.diff-easy { color: #4ade80; font-weight: 700; }
+.diff-normal { color: #93c5fd; font-weight: 700; }
+.diff-hard { color: #f87171; font-weight: 700; }
 .contract-sub {
     font-size: 0.78rem;
     color: #94a3b8;
