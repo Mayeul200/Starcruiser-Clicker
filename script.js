@@ -413,6 +413,11 @@ function getTotalProductionMultiplier() {
         * getPlanetProductionBonus();
 }
 
+// Multiplicateur propre du batiment : upgrades (x2 par palier).
+// Exclut les bonus globaux (planets, trophees, prestige, collection, boost temporaire).
+function getBuildingOwnMultiplier(building) {
+    return getBuildingUpgradeMultiplier(building.id);
+}
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
     return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
@@ -751,8 +756,20 @@ function loadGame() {
             tutorialSeen = hasProgress;
         }
         if (parsed.contractState) {
-            contractState.offers = parsed.contractState.offers || [];
-            contractState.active = parsed.contractState.active || null;
+            // Migration contrats interactifs : les offres/contrats de l'ancien
+            // format (buildingId/quota, pas de typeId) ne sont plus valides —
+            // on les jette pour regenerer des offres au nouveau format.
+            const oldOffers = (parsed.contractState.offers || []).filter(o => o && o.typeId);
+            contractState.offers = oldOffers.map(o => ({
+                id: o.id, typeId: o.typeId, diffIdx: o.diffIdx || 1,
+                target: o.target || 1, price: o.price || 0,
+                rewardType: o.rewardType || 'instant', instantSec: o.instantSec || 0,
+                clickMult: o.clickMult || 0, mult: o.mult || 0,
+                duration: o.duration || 0, shower: o.shower || 0,
+                expiresAt: o.expiresAt || 0
+            }));
+            const oa = parsed.contractState.active;
+            contractState.active = (oa && oa.typeId && oa.target) ? oa : null;
             contractState.nextRotationAt = parsed.contractState.nextRotationAt || 0;
             contractState.unlockedSeen = !!parsed.contractState.unlockedSeen;
         }
