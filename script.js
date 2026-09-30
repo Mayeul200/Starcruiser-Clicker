@@ -3795,7 +3795,8 @@ const partsRain = {
 };
 function getPartsRainRate() {
     if (partsPerSecond <= 0) return 0;
-    return 0.1 * Math.sqrt(partsPerSecond);
+    // 0.08 = 0.1 reduit de 20 % : moins de pieces visibles a debit egal.
+    return 0.08 * Math.sqrt(partsPerSecond);
 }
 function resizeRainCanvas() {
     const canvas = partsRain.canvas;
