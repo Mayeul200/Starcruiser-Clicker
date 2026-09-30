@@ -5779,12 +5779,28 @@ function initDebugMode() {
         setMobileView('right');
         alert('Diagnostic actif : scrollez dans les Batiments ~10 s, puis Copier rapport scroll.');
     }));
-    panel.appendChild(btn('\ud83d\udccb Copier rapport scroll', () => {
-        const rep = getScrollDiagReport() || 'Aucun event scroll logge.';
+    panel.appendChild(btn('Copier rapport scroll', () => {
+        const rep = getScrollDiagReport() || 'Aucun event scroll logge. Activez Diag scroll ON puis scrollez dans Batiments.';
         window.__scrollRep = rep;
-        console.log('=== RAPPORT SCROLL ===');
-        console.log(rep);
-        alert('Rapport dans la console et window.__scrollRep (' + rep.length + ' caracteres).');
+        // Overlay avec textarea selectionnable : appui long -> Tout selectionner -> Copier
+        const ov = document.createElement('div');
+        ov.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.92);display:flex;flex-direction:column;padding:12px;gap:8px;';
+        const ta = document.createElement('textarea');
+        ta.value = rep;
+        ta.style.cssText = 'flex:1;width:100%;background:#111;color:#0f0;font-family:monospace;font-size:11px;border:1px solid #0f0;border-radius:6px;padding:8px;box-sizing:border-box;';
+        ta.readOnly = true;
+        ta.onclick = () => ta.select();
+        const close = document.createElement('button');
+        close.textContent = 'Fermer';
+        close.style.cssText = 'background:#111;color:#f00;border:1px solid #f00;padding:8px;border-radius:6px;cursor:pointer;';
+        close.onclick = () => ov.remove();
+        ov.appendChild(ta);
+        ov.appendChild(close);
+        document.body.appendChild(ov);
+        ta.focus();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(rep).catch(() => {});
+        }
     }));
     const close = document.createElement('button');
     close.textContent = '×';
