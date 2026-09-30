@@ -3904,11 +3904,29 @@ const Sounds = {
     },
     // Comète : whoosh du missile puis explosion
     missile() {
-        soundNoise(0.18, 0.3, 2400, 400);
+        // Sifflement laser : sweep sinusoidal pur et descendant, tres rapide
+        // (2400 > 200 Hz en 300 ms) — chirurgical, facon rayon photonique.
+        soundTone(2400, 200, 0.3, 'sine', 0.3);
+        // Legere traIne ionique au-dessus du sweep, discrete
+        soundTone(3400, 900, 0.22, 'sine', 0.06, 0.02);
     },
     explosion() {
-        soundNoise(0.4, 0.5, 1200, 60);
-        soundTone(160, 40, 0.35, 'sawtooth', 0.25);
+        // Eclatement cristallin : la comete est de glace, elle eclate en
+        // cristaux. Craquement initial (bruit tres aigu, bref) puis pluie de
+        // tintements descendants et aleatoires — les eclats qui tombent.
+        // Craquement : bruit blanc coupe court, tres present
+        soundNoise(0.12, 0.4, 7000, 2500);
+        // Coeur grave bref pour l'assise de l'impact (petite, pas un boom)
+        soundTone(220, 70, 0.18, 'sine', 0.22);
+        // Pluie de cristaux : 6 tintements metalliques decroissants,
+        // pitches et decalages aleatoires, sur ~450 ms
+        for (let i = 0; i < 6; i++) {
+            const base = 2600 - i * 220 + Math.random() * 500;
+            const at = 0.05 + (i / 6) * 0.4 + Math.random() * 0.06;
+            soundTone(base, base * 0.9, 0.1 + Math.random() * 0.08, 'sine', 0.09, at);
+        }
+        // Chaleureux discret de glace qui se disperse
+        soundNoise(0.35, 0.08, 5000, 1200);
     },
     // Contrat : accepté / rempli / échoué
     contractAccept() {
