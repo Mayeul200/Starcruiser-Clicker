@@ -1155,9 +1155,6 @@ body {
     height: 11px;
     background: radial-gradient(circle, rgba(255,225,180,0.7) 0%, rgba(240,190,130,0.28) 55%, transparent 80%);
 }
-.random-bonus:hover {
-    transform: none !important;
-}
 /* Missile d'interception : sprite PNG du joueur, bande centrale horizontale
    (nez a gauche, flamme a droite). Le conteneur est oriente par le JS selon
    l'angle de vol ; l'image est retournee de 180° pour aligner le nez sur
