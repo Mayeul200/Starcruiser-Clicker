@@ -3846,21 +3846,22 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
-        // "Ding" de piece de metal, doux : une piece qu'on pose sur une pile.
-        // Deux partiels inharmoniques typiques du metal (fondamentale +
-        // quinte un peu detendue) avec longue resonance qui s'evanouit,
-        // pitch improvise a chaque clic pour eviter la repetition mecanique.
+        // Monnaie qu'on remue : une poignee de petites pieces qui s'entrechoquent.
+        // 3 a 4 micro-tints assourdis (sine feutree, pas de partiel acide),
+        // pitches et decalages aleatoires — chaque clic sonne comme un petit
+        // frisson de pieces, jamais deux fois pareil, doux pour la repetition.
         const now = performance.now();
         if (now - Sound._lastClick < 40) return;
         Sound._lastClick = now;
-        const base = 520 + Math.random() * 120;
-        // Fondamentale : le ding, resonnance douce et naturelle (decay expo)
-        soundTone(base, base * 0.995, 0.35, 'sine', 0.22);
-        // Partiel metallique : legerement au-dessus de la quinte (inharmonie
-        // caracteristique des pieces), plus court et discret
-        soundTone(base * 1.51, base * 1.5, 0.18, 'sine', 0.08, 0.003);
-        // Tres leger souffle d'attaque pour le contact
-        soundNoise(0.02, 0.05, 6000, 2500);
+        const n = 3 + (Math.random() < 0.4 ? 1 : 0);
+        for (let i = 0; i < n; i++) {
+            const base = 440 + Math.random() * 280;
+            const at = Math.random() * 0.09;
+            // Micro-tint : sine feutree, courte resonance, volume decroissant
+            soundTone(base, base * 0.99, 0.12 + Math.random() * 0.06, 'sine', 0.1 + Math.random() * 0.08, at);
+        }
+        // Souffle de contact global, tres discret
+        soundNoise(0.05, 0.04, 4000, 1500);
     },
     // Achat : pop satisfaisant, deux notes montantes
     buy() {
