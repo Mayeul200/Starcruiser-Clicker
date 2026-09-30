@@ -285,10 +285,10 @@ const TROPHIES = [
     { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.png", threshold: 100000000000000000, type: "score" },
 
     // Bonus cliqués (icônes: comète)
-    { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comète.png", threshold: 1, type: "bonus" },
+    { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comete.png", threshold: 1, type: "bonus" },
     { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/comet-card.png", threshold: 10, type: "bonus" },
-    { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comète.png", threshold: 50, type: "bonus" },
-    { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comète.png", threshold: 100, type: "bonus" },
+    { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comete.png", threshold: 50, type: "bonus" },
+    { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comete.png", threshold: 100, type: "bonus" },
 
     // Collection (icône: carte trou noir)
     { id: "all-buildings", name: "Space Collector", description: "Débloquer tous les types de bâtiments", icon: "images/cards/collection/milky-way-center-card.png", threshold: BUILDINGS.length, type: "building-types" },
@@ -3320,7 +3320,7 @@ function spawnRandomBonus(shower) {
     // - queue de plasma continue attachee derriere le noyau, orientee
     //   dans l'axe oppose au vol
     // - queue de poussiere : particules qui derivent vers l'arriere
-    bonusElement.innerHTML = '<img src="images/effects/com\u00e8te.png" class="comet-img" alt="Comete">'
+    bonusElement.innerHTML = '<img src="images/effects/comete.png" class="comet-img" alt="Comete">'
         + '<div class="comet-coma"></div>'
         + '<div class="comet-tail-plasma"></div>'
         + '<div class="comet-tail-dust"></div>';
@@ -5518,7 +5518,7 @@ const TUTORIAL_STEPS = [
         textKey: 'Lance ta fusée pour voyager dans l\'espace et atteindre de nouvelles planètes.\nChaque lancement reset ta partie... en échange d\'un bonus permanent. Va de plus en plus loin !',
     },
     {
-        img: 'images/effects/com\u00e8te.png',
+        img: 'images/effects/comete.png',
         titleKey: 'Comètes et Bonus',
         textKey: 'Garde l\'œil ouvert : des comètes traversent régulièrement l\'écran.\nClique dessus pour des bonus instantanés et des multiplicateurs temporaires !',
     },
