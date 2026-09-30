@@ -4223,16 +4223,11 @@ function renderCounterChars(el, text) {
 function counterAnimLoop() {
     const el = getDisplayElements().scoreValue;
     if (el) {
-        if (animatedScore === null) animatedScore = score;
-        const diff = score - animatedScore;
-        if (Math.abs(diff) < 0.5) {
-            animatedScore = score;
-        } else {
-            animatedScore += diff * 0.045;
-        }
-        const shown = animatedScore < 1000
-            ? Math.round(animatedScore * 10) / 10
-            : Math.round(animatedScore);
+        // Afficher la valeur reelle au moment du tick, meme si elle a evolue
+        // plusieurs fois entre deux ticks : pas de rattrapage progressif.
+        const shown = score < 1000
+            ? Math.round(score * 10) / 10
+            : Math.round(score);
         const text = shown < 1000 ? shown.toFixed(1) : formatNumber(shown, true);        renderCounterChars(el, text);
     }
     setTimeout(counterAnimLoop, 250);
