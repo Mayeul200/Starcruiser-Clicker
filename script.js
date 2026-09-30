@@ -4455,7 +4455,7 @@ function renderCounterChars(el, text) {
                 tn.className = 'cch-sep';
                 tn.textContent = seg.str;
                 el.appendChild(tn);
-                nodes.push(null);
+                nodes.push(tn);
             } else {
                 const wrap = document.createElement('span');
                 wrap.className = 'cch-group';
