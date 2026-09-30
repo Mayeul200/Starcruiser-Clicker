@@ -1473,7 +1473,6 @@ function formatTravelSpeed(kmS) {
 }
 
 function launchRocket() {
-    Sounds.launch();
     if (!checkRocketReady()) {
         showToast("❌ " + t("Fusée pas encore prête ! Il manque des pièces."));
         return;
@@ -1485,6 +1484,7 @@ function launchRocket() {
     }
     
     isLaunching = true;
+    launchSoundSequence();
     
     // Calculer la distance
     const distance = calculateDistance();
@@ -1757,6 +1757,7 @@ function playTravelAnimation(distance, onDone) {
         if (onDone) onDone();
         return;
     }
+    travelSoundStart();
     cancelAnimationFrame(travelAnimFrame);
     const deepEl = document.getElementById('travel-deep');
     const rocketEl = document.getElementById('travel-rocket');
@@ -1989,6 +1990,7 @@ function playTravelAnimation(distance, onDone) {
     function finish() {
         if (finished) return;
         finished = true;
+        travelSoundStop();
         if (distanceEl) rollCounterText(distanceEl, formatNumber(safeDistance));
         setTimeout(cleanup, 240);
     }
@@ -3846,22 +3848,20 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
-        // Monnaie qu'on remue : une poignee de petites pieces qui s'entrechoquent.
-        // 3 a 4 micro-tints assourdis (sine feutree, pas de partiel acide),
-        // pitches et decalages aleatoires — chaque clic sonne comme un petit
-        // frisson de pieces, jamais deux fois pareil, doux pour la repetition.
+        // Piece qui teinte : UN tint clair et net, pas assourdi — comme une
+        // piece lancee sur un marbre. Fondamentale cristalline + partiel
+        // metallique inharmonique, resonance qui s'evanouit proprement.
         const now = performance.now();
         if (now - Sound._lastClick < 40) return;
         Sound._lastClick = now;
-        const n = 3 + (Math.random() < 0.4 ? 1 : 0);
-        for (let i = 0; i < n; i++) {
-            const base = 440 + Math.random() * 280;
-            const at = Math.random() * 0.09;
-            // Micro-tint : sine feutree, courte resonance, volume decroissant
-            soundTone(base, base * 0.99, 0.12 + Math.random() * 0.06, 'sine', 0.1 + Math.random() * 0.08, at);
-        }
-        // Souffle de contact global, tres discret
-        soundNoise(0.05, 0.04, 4000, 1500);
+        const base = 900 + Math.random() * 160;
+        // Le tint : sine claire, resonance moyenne (200 ms), presence nette
+        soundTone(base, base * 0.995, 0.2, 'sine', 0.22);
+        // Partiel metallique (inharmonie x2.76 typique des pieces) : donne
+        // le caractere "metal" sans acidite
+        soundTone(base * 2.76, base * 2.7, 0.09, 'sine', 0.05, 0.002);
+        // Contact tres bref, discret
+        soundNoise(0.015, 0.03, 7000, 3000);
     },
     // Achat : pop satisfaisant, deux notes montantes
     buy() {
@@ -3917,13 +3917,113 @@ const Sounds = {
         soundTone(784, 784, 0.1, 'triangle', 0.3, 0.1);
         soundTone(1047, 1047, 0.26, 'triangle', 0.38, 0.2);
     },
-    // Lancement de fusée : montée moteur + boom
-    launch() {
-        soundNoise(2.2, 0.35, 300, 2600);
-        soundTone(70, 240, 2.0, 'sawtooth', 0.18);
-        soundNoise(0.6, 0.5, 900, 60);
-    }
+    // Lancement : la sequence complete est pilotee par launchSoundSequence()
+    launch() {}
 };
+// ===== Boucles audio continues (moteurs, voyage) =====
+const SoundLoops = {};
+// Demarre une boucle de bruit rose filtrE, retourne un handle { stop() }
+function soundStartNoiseLoop(freqStart, freqEnd, vol, rampSec) {
+    if (!Sound.enabled) return null;
+    soundResume();
+    if (!Sound.ctx) return null;
+    const ctx = Sound.ctx;
+    const len = Math.floor(ctx.sampleRate * 2);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+        // Bruit rose approx : moyenne glissante du blanc
+        const w = Math.random() * 2 - 1;
+        last = (last + 0.03 * w) / 1.03;
+        data[i] = last * 3.2;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'lowpass';
+    filt.frequency.setValueAtTime(freqStart, ctx.currentTime);
+    filt.frequency.linearRampToValueAtTime(freqEnd, ctx.currentTime + (rampSec || 1));
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.15);
+    src.connect(filt); filt.connect(g); g.connect(Sound.master);
+    src.start();
+    return {
+        stop(fadeSec) {
+            const t = ctx.currentTime;
+            g.gain.cancelScheduledValues(t);
+            g.gain.setValueAtTime(g.gain.value, t);
+            g.gain.linearRampToValueAtTime(0, t + (fadeSec || 0.4));
+            setTimeout(() => { try { src.stop(); } catch (e) {} }, ((fadeSec || 0.4) * 1000) + 80);
+        }
+    };
+}
+// Boucle de moteur : oscillateurs graves + modulations, handle { stop() }
+function soundStartEngineLoop(baseFreq, vol) {
+    if (!Sound.enabled) return null;
+    soundResume();
+    if (!Sound.ctx) return null;
+    const ctx = Sound.ctx;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(vol, ctx.currentTime + 0.2);
+    g.connect(Sound.master);
+    const oscs = [];
+    // Couche 1 : grondement fondamental (sawtooth tres grave, filtre passe-bas)
+    const o1 = ctx.createOscillator(); o1.type = 'sawtooth'; o1.frequency.value = baseFreq;
+    const f1 = ctx.createBiquadFilter(); f1.type = 'lowpass'; f1.frequency.value = 260;
+    o1.connect(f1); f1.connect(g); o1.start(); oscs.push(o1);
+    // Couche 2 : sub plus grave (sine) pour la poitrine
+    const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = baseFreq * 0.5;
+    o2.connect(g); o2.start(); oscs.push(o2);
+    // Couche 3 : LFO de trEmblement sur la frequence (vibration moteur)
+    const lfo = ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 11;
+    const lfoG = ctx.createGain(); lfoG.gain.value = baseFreq * 0.12;
+    lfo.connect(lfoG); lfoG.connect(o1.frequency); lfo.start(); oscs.push(lfo);
+    return {
+        stop(fadeSec) {
+            const t = ctx.currentTime;
+            g.gain.cancelScheduledValues(t);
+            g.gain.setValueAtTime(g.gain.value, t);
+            g.gain.linearRampToValueAtTime(0, t + (fadeSec || 0.5));
+            oscs.forEach(o => { try { o.stop(t + (fadeSec || 0.5) + 0.1); } catch (e) {} });
+        }
+    };
+}
+// SEQUENCE sonore complete du lancement : compte a rebours (bips), ignition
+// (moteurs + souffle), decollage (montee en puissance), puis extinction.
+function launchSoundSequence() {
+    if (!Sound.enabled) return;
+    soundResume();
+    if (!Sound.ctx) return;
+    // Bips du compte a rebours : 3.. 2.. 1 (bip grave) puis bip final aigu
+    [0, 700, 1400].forEach(d => soundTone(440, 440, 0.12, 'square', 0.14, d / 1000));
+    soundTone(880, 880, 0.25, 'square', 0.16, 2.1);
+    // Ignition a T+2.1 s (compte a rebours ~2.1 s + marge d'allumage) :
+    // grondement moteur + jet de souffle qui montent en puissance
+    setTimeout(() => {
+        SoundLoops.engine = soundStartEngineLoop(55, 0.5);
+        SoundLoops.jet = soundStartNoiseLoop(400, 2400, 0.5, 1.2);
+    }, 2050);
+    // Extinction douce apres le decollage (la fusee est sortie de l'ecran)
+    setTimeout(() => {
+        if (SoundLoops.engine) { SoundLoops.engine.stop(1.2); SoundLoops.engine = null; }
+        if (SoundLoops.jet) { SoundLoops.jet.stop(1.2); SoundLoops.jet = null; }
+    }, 6500);
+}
+// AMBIANCE DE VOYAGE : moteur continu plus doux + vent spatial discret
+function travelSoundStart() {
+    if (!Sound.enabled) return;
+    soundResume();
+    if (!Sound.ctx) return;
+    SoundLoops.travelEngine = soundStartEngineLoop(42, 0.22);
+    SoundLoops.travelWind = soundStartNoiseLoop(900, 600, 0.1, 2);
+}
+function travelSoundStop() {
+    if (SoundLoops.travelEngine) { SoundLoops.travelEngine.stop(0.6); SoundLoops.travelEngine = null; }
+    if (SoundLoops.travelWind) { SoundLoops.travelWind.stop(0.6); SoundLoops.travelWind = null; }
+}
 function toggleSound() {
     Sound.enabled = !Sound.enabled;
     localStorage.setItem('starcruiserSound', Sound.enabled ? '1' : '0');
