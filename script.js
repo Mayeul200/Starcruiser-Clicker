@@ -415,27 +415,23 @@ function getTotalProductionMultiplier() {
 
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
-// Multiplicateur propre du batiment : upgrades (x2 par palier) x bonus de contrat.
-// Exclut les bonus globaux (planets, trophees, prestige, collection, boost temporaire).
-function getBuildingOwnMultiplier(building) {
-    return getBuildingUpgradeMultiplier(building.id) * getContractBuildingMultiplier(building.id);
-}
+
 
 // Production hors boost temporaire (autoMultiplier exclu) : base de calcul des quotas
 // de contrat, pour qu'une offre generee pendant un x5 reste atteignable ensuite.
 function calculateBuildingBaseGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * upgradeMultiplier * getContractBuildingMultiplier(building.id) * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * building.count * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
 }
-// PPS total hors boost temporaire : base de calcul du prix des contrats, pour
-// qu'une offre generee pendant un x5 ne coute pas 5 fois trop cher.
+// PPS total hors boost temporaire (autoMultiplier exclu) : base de calcul des
+// contrats interactifs, pour qu'une offre generee pendant un x5 reste coherente.
 function getBasePartsPerSecond() {
     let total = 0;
     BUILDINGS.forEach(building => { total += calculateBuildingBaseGain(building); });
@@ -672,7 +668,6 @@ function saveGame() {
         contractState: {
             offers: contractState.offers,
             active: contractState.active,
-            buildingBonuses: contractState.buildingBonuses,
             nextRotationAt: contractState.nextRotationAt,
             unlockedSeen: contractState.unlockedSeen
         },
@@ -758,7 +753,6 @@ function loadGame() {
         if (parsed.contractState) {
             contractState.offers = parsed.contractState.offers || [];
             contractState.active = parsed.contractState.active || null;
-            contractState.buildingBonuses = parsed.contractState.buildingBonuses || {};
             contractState.nextRotationAt = parsed.contractState.nextRotationAt || 0;
             contractState.unlockedSeen = !!parsed.contractState.unlockedSeen;
         }
@@ -3433,6 +3427,8 @@ function spawnRandomBonus(shower) {
             bonusElement.style.transform = `translate(${impactRect.left - contRect.left - parseFloat(bonusElement.style.left)}px, ${impactRect.top - contRect.top - parseFloat(bonusElement.style.top)}px) scale(0.5)`;
             bonusElement.classList.add('clicked');
             clickedBonusesCount++;
+            // Contrat interactif en cours : la comete interceptee compte.
+            notifyContractComet();
             if (bonus.id === "meteor") {
                 const instantProduction = partsPerSecond * (shower ? 5 : 10);
                 score += instantProduction;
@@ -3664,6 +3660,8 @@ function addScore(points, event) {
     partsSinceLaunch += totalPoints;
     totalPartsFromClicks += totalPoints;
     trackPartsEarned(totalPoints);
+    // Contrat interactif en cours : le clic (et les Parts clickeEs) comptent.
+    notifyContractClick(totalPoints);
 
     showClickEffect(Math.round(totalPoints), event);
     spawnFallingCoin(event);
@@ -4938,82 +4936,167 @@ function updateBonusTimer() {
 
 // ============================================
 // CONTRATS DE FABRICATION (mini-jeu)
-// On achete un contrat ciblant un batiment precise; si on produit le quota
-// de Parts avec CE batiment dans le temps imparti, il gagne un bonus de
-// production permanent (+50% cumulable). Rotation des contrats toutes les
-// 2 minutes. Les contrats ciblent en priorite les batiments negliges.
-// Quota base sur la production HORS boost temporaire (autoMultiplier
-// exclu) + 5% : reussissable en jouant normalement, un boost facilite.
+// Contrats INTERACTIFS de 30 secondes : le joueur doit realiser une
+// action pendant la duree (cliquer, intercepter des cometes, produire)
+// pour gagner des Parts instantanees ou des bonus temporaires.
+// 5 types de contrats, chacun en 3 difficultes (prix et gains croissants).
+// Rotation des offres toutes les 2 minutes ; un contrat a la fois.
 // ============================================
 const CONTRACT_ROTATION_MS = 2 * 60 * 1000;
-const CONTRACT_DURATION_MS = 3 * 60 * 1000;
-const CONTRACT_QUOTA_RATIO = 1.05;
-const CONTRACT_REWARD_MULT = 0.50;
-const CONTRACT_REWARD_MAX_STACKS = 10;
-const CONTRACT_PRICE_PPS_SECONDS = 20;
+const CONTRACT_DURATION_MS = 30 * 1000;
+const CONTRACT_UNLOCK_BUILDING_TYPES = 4;
+const CARD_COLLECTION_UNLOCK_BUILDING_TYPES = 2;
+
+// Definitions des types de contrats interactifs.
+// objective     : cle d'i18n decrivant l'objectif (avec {target})
+// track         : comment la progression est mesurEe
+// rewardType    : 'instant' (Parts instantanees) | 'mult' (multiplicateur temporaire) | 'click' (multiplicateur de clic temporaire)
+function getContractTypes() {
+    const pps = Math.max(1, getBasePartsPerSecond());
+    const clickParts = Math.max(1, getClickComponents().baseCpC + getClickComponents().buildingBonus + getClickComponents().cpsBonus);
+    return [
+        {
+            id: 'clicks',
+            icon: '\uD83D\uDD1E',
+            // Objectif : nombre de clics sur la piece pendant 30 s
+            objective: 'Cliquez {target} fois sur la piece',
+            track: 'clicks',
+            diffs: [
+                { target: 25,  price: Math.max(50, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
+                { target: 50,  price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
+                { target: 100, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
+            ]
+        },
+        {
+            id: 'clickParts',
+            icon: '\uD83E\uDD29',
+            // Objectif : Parts produites en cliquant pendant 30 s
+            objective: 'Produisez {target} Parts en cliquant',
+            track: 'clickParts',
+            diffs: [
+                { target: Math.max(30, clickParts * 8),   price: Math.max(50, pps * 6),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
+                { target: Math.max(80, clickParts * 18),  price: Math.max(200, pps * 15), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
+                { target: Math.max(200, clickParts * 40), price: Math.max(800, pps * 35), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
+            ]
+        },
+        {
+            id: 'comets',
+            icon: '\u2604\uFE0F',
+            // Objectif : intercepter des cometes pour proteger la fusee
+            objective: 'Protegez la fusee : interceptez {target} cometes',
+            track: 'comets',
+            diffs: [
+                { target: 3, price: Math.max(100, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
+                { target: 5, price: Math.max(400, pps * 20), rewardMult: 3, rewardType: 'instant', instantSec: 90 },
+                { target: 8, price: Math.max(1500, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 180 }
+            ]
+        },
+        {
+            id: 'production',
+            icon: '\u2699\uFE0F',
+            // Objectif : produire un quota de Parts (toute production confondue)
+            objective: 'Produisez {target} Parts (toutes sources)',
+            track: 'parts',
+            diffs: [
+                { target: Math.max(100, pps * 20),  price: Math.max(50, pps * 5),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(400, pps * 50), price: Math.max(200, pps * 12), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(1200, pps * 110), price: Math.max(800, pps * 28), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+            ]
+        },
+        {
+            id: 'shower',
+            icon: '\uD83C\uDF20',
+            // Objectif : attraper les cometes d'une pluie provoquee pour le contrat
+            objective: 'Survivez a la pluie : attrapez {target} cometes',
+            track: 'comets',
+            diffs: [
+                { target: 4, price: Math.max(150, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 60, shower: 6 },
+                { target: 6, price: Math.max(600, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 120, shower: 9 },
+                { target: 9, price: Math.max(2000, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 240, shower: 14 }
+            ]
+        }
+    ];
+}
 
 let contractState = {
     offers: [],
     nextRotationAt: 0,
     active: null,
-    buildingBonuses: {},
     unlockedSeen: false,
-    // Offres deja annoncees par le pulse : le pulse ne se redeclenche
-    // que pour de NOUVELLES offres, pas a chaque tick sur les memes.
     offersSeenIds: []
 };
 
-const CONTRACT_UNLOCK_BUILDING_TYPES = 4;
-const CARD_COLLECTION_UNLOCK_BUILDING_TYPES = 2;
 function areCardsUnlocked() {
     return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES;
 }
 function areContractsUnlocked() {
     return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES;
 }
-function getContractEligibleBuildings() {
-    if (!areContractsUnlocked()) return [];
-    return BUILDINGS.filter(b => b.count > 0 && b.unlockCondition());
-}
 
-function pickContractTargets() {
-    const eligible = getContractEligibleBuildings();
-    if (eligible.length === 0) return [];
-    const totalPps = Math.max(1e-9, partsPerSecond);
-    const scored = eligible.map(b => {
-        const share = calculateBuildingGain(b) / totalPps;
-        const stacks = contractState.buildingBonuses[b.id] || 0;
-        const targetScore = (1 - share) + (CONTRACT_REWARD_MAX_STACKS - stacks) * 0.02 + Math.random() * 0.3;
-        return { b, targetScore, share };
-    });
-    scored.sort((x, y) => y.targetScore - x.targetScore);
-    const n = Math.min(2, scored.length);
-    return scored.slice(0, n).map(s => s.b);
-}
-
-function getContractPrice() {
-    return Math.max(50, Math.floor(getBasePartsPerSecond() * CONTRACT_PRICE_PPS_SECONDS));
-}
-
+// Genere 2 a 3 offres aleatoires parmi les 5 types, difficultes variees.
 function generateContractOffers() {
-    const targets = pickContractTargets();
     const now = Date.now();
-    contractState.offers = targets.map(b => {
-        const ppsBuilding = calculateBuildingBaseGain(b);
-        const quota = Math.max(10, Math.floor(ppsBuilding * (CONTRACT_DURATION_MS / 1000) * CONTRACT_QUOTA_RATIO));
-        return {
-            id: 'contract-' + b.id + '-' + now + '-' + Math.floor(Math.random() * 1e6),
-            buildingId: b.id,
-            price: getContractPrice(),
-            quota: quota,
-            expiresAt: now + CONTRACT_DURATION_MS
-        };
-    });
+    const types = getContractTypes();
+    const picked = [];
+    const pool = types.slice();
+    const n = Math.min(3, pool.length);
+    for (let i = 0; i < n; i++) {
+        const idx = Math.floor(Math.random() * pool.length);
+        const type = pool.splice(idx, 1)[0];
+        // Difficulte ponderee vers le milieu : 40% normal, 35% facile, 25% difficile.
+        const roll = Math.random();
+        const diffIdx = roll < 0.35 ? 0 : (roll < 0.75 ? 1 : 2);
+        const diff = type.diffs[diffIdx];
+        picked.push({
+            id: 'contract-' + type.id + '-' + diffIdx + '-' + now + '-' + Math.floor(Math.random() * 1e6),
+            typeId: type.id,
+            diffIdx: diffIdx,
+            target: Math.max(1, Math.floor(diff.target)),
+            price: Math.floor(diff.price),
+            rewardType: diff.rewardType,
+            instantSec: diff.instantSec || 0,
+            clickMult: diff.clickMult || 0,
+            mult: diff.mult || 0,
+            duration: diff.duration || 0,
+            shower: diff.shower || 0,
+            expiresAt: now + CONTRACT_ROTATION_MS
+        });
+    }
+    contractState.offers = picked;
     contractState.nextRotationAt = now + CONTRACT_ROTATION_MS;
     if (typeof renderContracts === 'function' && document.getElementById('contracts-modal').classList.contains('active')) {
         renderContracts();
     }
 }
+
+function findContractType(typeId) {
+    return getContractTypes().find(tp => tp.id === typeId) || null;
+}
+
+function getContractPrice() {
+    return Math.max(50, Math.floor(getBasePartsPerSecond() * 20));
+}
+
+function contractObjectiveText(offer) {
+    const type = findContractType(offer.typeId);
+    if (!type) return '';
+    return tf(type.objective, { target: formatNumber(offer.target) });
+}
+
+function contractRewardText(offer) {
+    const pps = Math.max(1, getBasePartsPerSecond());
+    if (offer.rewardType === 'instant') {
+        return tf('Gains : +{parts} Parts instantanees', { parts: formatNumber(Math.floor(pps * offer.instantSec)) });
+    }
+    if (offer.rewardType === 'mult') {
+        return tf('Gains : production x{mult} pendant {sec} s', { mult: offer.mult, sec: offer.duration });
+    }
+    if (offer.rewardType === 'click') {
+        return tf('Gains : clic x{mult} pendant {sec} s', { mult: offer.clickMult, sec: offer.duration });
+    }
+    return '';
+}
+
 function openContracts() {
     if (!areContractsUnlocked()) {
         showToast('\uD83D\uDD12 ' + tf('Debloque {count} types de batiments pour les contrats', { count: CONTRACT_UNLOCK_BUILDING_TYPES }));
@@ -5023,7 +5106,6 @@ function openContracts() {
     clearPulseHint(document.getElementById('contracts-card-status')?.closest('.mini-game-card'));
     showExclusiveModal('contracts-modal', renderContracts);
 }
-
 function closeContracts() {
     document.getElementById('contracts-modal').classList.remove('active');
 }
@@ -5032,40 +5114,96 @@ function acceptContract(offerId) {
     Sounds.contractAccept();
     const offer = contractState.offers.find(o => o.id === offerId);
     if (!offer) return;
-    // Contrat accepte : rotation en pause tant qu'il n'est pas termine.
     if (contractState.active) {
-        showToast('\u26a0\ufe0f ' + t('Un contrat a la fois !'));
+        showToast('\u26A0\uFE0F ' + t('Un contrat a la fois !'));
         return;
     }
     if (score < offer.price) {
-        showToast('\u274c ' + t('Pas assez de Parts'));
+        showToast('\u274C ' + t('Pas assez de Parts'));
         return;
     }
     score -= offer.price;
     partsSinceLaunch = Math.max(0, partsSinceLaunch - offer.price);
-    const building = findBuildingById(offer.buildingId);
     contractState.active = {
         offerId: offer.id,
-        buildingId: offer.buildingId,
-        quota: offer.quota,
+        typeId: offer.typeId,
+        target: offer.target,
         progress: 0,
-        startTotal: totalGeneratedByBuilding[offer.buildingId] || 0,
+        rewardType: offer.rewardType,
+        instantSec: offer.instantSec,
+        clickMult: offer.clickMult,
+        mult: offer.mult,
+        duration: offer.duration,
+        shower: offer.shower,
+        startTotal: totalPartsEarnedThisLaunch,
+        startClickParts: totalPartsFromClicks,
         acceptedAt: Date.now(),
         expiresAt: Date.now() + CONTRACT_DURATION_MS
     };
     contractState.offers = contractState.offers.filter(o => o.id !== offer.id);
-    showToast('\u2705 ' + tf('Contrat accepte : {building} !', { building: t(building.name) }), building.imgPath);
+    const type = findContractType(offer.typeId);
+    showToast('\u2705 ' + t('Contrat accepte !') + ' ' + (type ? type.icon : ''), null);
+    // Contrat "pluie" : on declenche SA pluie immediatement, les cometes
+    // a attraper sont celles du contrat.
+    if (offer.shower) {
+        triggerContractShower(offer.shower);
+    }
+    // Contrat "cometes" : on fait tomber les cometes a intercepter.
+    if (offer.typeId === 'comets' && !offer.shower) {
+        triggerContractShower(Math.min(offer.target + 2, 12));
+    }
+    if (offer.typeId === 'comets' || offer.shower) {
+        showToast('\u2604\uFE0F ' + t('Des cometes arrivent ! Interception !'), null);
+    }
     renderContracts();
     clearPulseHint(document.getElementById('contracts-card-status')?.closest('.mini-game-card'));
     saveGame();
 }
 
+// Pluie dediee au contrat : meme mecanique que startCometShower mais sans
+// verrou cometShowerActive (les pluies de contrat sont independantes).
+function triggerContractShower(count) {
+    const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
+    const COUNT = isMobileLike ? Math.max(3, Math.ceil(count * 0.6)) : count;
+    const SPREAD_MS = Math.min(CONTRACT_DURATION_MS - 4000, COUNT * 900);
+    for (let i = 0; i < COUNT; i++) {
+        setTimeout(() => {
+            if (contractState.active) spawnRandomBonus(true);
+        }, (i / COUNT) * SPREAD_MS + Math.random() * 300);
+    }
+}
+
+// Hook appele depuis addScore (clics sur la piece) : alimente les contrats
+// de type 'clicks' et 'clickParts'.
+function notifyContractClick(points) {
+    const c = contractState.active;
+    if (!c) return;
+    if (c.typeId === 'clicks') {
+        c.progress += 1;
+    } else if (c.typeId === 'clickParts') {
+        c.progress += points;
+    }
+}
+
+// Hook appele quand une comete est interceptee/attrapee (clickedBonusesCount
+// vient d'incrementer) : alimente les contrats 'comets' et 'shower'.
+function notifyContractComet() {
+    const c = contractState.active;
+    if (!c) return;
+    if (c.typeId === 'comets' || c.typeId === 'shower') {
+        c.progress += 1;
+    }
+}
+
 function updateContractProgress() {
     const c = contractState.active;
     if (!c) return;
-    const totalNow = totalGeneratedByBuilding[c.buildingId] || 0;
-    c.progress = Math.max(0, totalNow - c.startTotal);
-    if (c.progress >= c.quota) {
+    // Contrat "production" : Parts gagnees toutes sources confondues.
+    if (c.typeId === 'production') {
+        c.progress = Math.max(0, totalPartsEarnedThisLaunch - c.startTotal);
+    }
+    // clicks / clickParts / comets : progression incrementee par les hooks.
+    if (c.progress >= c.target) {
         completeContract();
     }
 }
@@ -5074,55 +5212,86 @@ function completeContract() {
     Sounds.contractDone();
     const c = contractState.active;
     if (!c) return;
-    const building = findBuildingById(c.buildingId);
-    const stacks = (contractState.buildingBonuses[c.buildingId] || 0);
-    const maxed = stacks >= CONTRACT_REWARD_MAX_STACKS;
-    if (!maxed) {
-        contractState.buildingBonuses[c.buildingId] = stacks + 1;
-        invalidateBuildingGainsCache();
+    const pps = Math.max(1, getBasePartsPerSecond());
+    if (c.rewardType === 'instant') {
+        const gain = Math.floor(pps * c.instantSec);
+        score += gain;
+        partsSinceLaunch += gain;
+        trackPartsEarned(gain);
+        showBonusPopup('+' + formatNumber(gain) + ' ' + t('Parts'), 'instant');
+        showToast('\uD83D\uDC8F ' + tf('Contrat rempli ! +{parts} Parts', { parts: formatNumber(gain) }), 'images/parts.png');
+    } else if (c.rewardType === 'mult') {
+        activateContractTempMultiplier(c.mult, c.duration * 1000);
+        showToast('\u2705 ' + tf('Contrat rempli ! Production x{mult} pendant {sec} s', { mult: c.mult, sec: c.duration }), null);
+    } else if (c.rewardType === 'click') {
+        activateContractTempClickMultiplier(c.clickMult, c.duration * 1000);
+        showToast('\u2705 ' + tf('Contrat rempli ! Clic x{mult} pendant {sec} s', { mult: c.clickMult, sec: c.duration }), null);
     }
-    const mult = getContractBuildingMultiplier(c.buildingId);
-    showToast(tf('Contrat rempli ! {building} x{mult}', { building: t(building.name), mult: mult.toFixed(2) }), building.imgPath);
     contractState.active = null;
     contractState.offers = [];
-    // Contrat termine : le timer repart de zero, prochaine offre dans 2 min.
     contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
+    updateDisplay();
     checkTrophies();
     saveGame();
+}
+
+// Multiplicateur de production temporaire accorde par un contrat : passe
+// par le meme canal que la flare (activeRandomBonuses) pour profiter du
+// rainbow et du timer existants, avec un id distinct.
+function activateContractTempMultiplier(mult, durationMs) {
+    const endTime = Date.now() + durationMs;
+    activeRandomBonuses.push({
+        id: 'contract-mult',
+        effect: 'multiplier',
+        multiplier: mult,
+        endTime: endTime
+    });
+    rebuildAutoMultipliers();
+    updateDisplay();
+    setTimeout(() => {
+        activeRandomBonuses = activeRandomBonuses.filter(bonus => bonus.endTime !== endTime);
+        rebuildAutoMultipliers();
+        updateDisplay();
+    }, durationMs);
+}
+
+// Multiplicateur de clic temporaire accorde par un contrat.
+function activateContractTempClickMultiplier(mult, durationMs) {
+    const endTime = Date.now() + durationMs;
+    activeRandomBonuses.push({
+        id: 'contract-click',
+        effect: 'click',
+        multiplier: mult,
+        endTime: endTime
+    });
+    rebuildAutoMultipliers();
+    updateDisplay();
+    setTimeout(() => {
+        activeRandomBonuses = activeRandomBonuses.filter(bonus => bonus.endTime !== endTime);
+        rebuildAutoMultipliers();
+        updateDisplay();
+    }, durationMs);
 }
 
 function failContract() {
     Sounds.contractFail();
     const c = contractState.active;
     if (!c) return;
-    const building = findBuildingById(c.buildingId);
-    showToast('\u23f3 ' + tf('Contrat echoue pour {building}...', { building: t(building.name) }), building.imgPath);
+    showToast('\u23F3 ' + t('Contrat echoue... Le temps est ecoule.'), null);
     contractState.active = null;
     contractState.offers = [];
-    // Contrat echoue : le timer repart de zero, prochaine offre dans 2 min.
     contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
     saveGame();
 }
 
-function getContractBuildingMultiplier(buildingId) {
-    const stacks = contractState.buildingBonuses[buildingId] || 0;
-    return Math.pow(1 + CONTRACT_REWARD_MULT, stacks);
-}
-
 function tickContracts() {
     const now = Date.now();
-    // Deblocage au 3e batiment : la premiere offre arrive immediatement,
-    // puis le timer de rotation (2 min) cadence les suivantes.
     if (areContractsUnlocked() && !contractState.unlockedSeen) {
         contractState.unlockedSeen = true;
         if (contractState.offers.length === 0 && !contractState.active) {
             generateContractOffers();
         }
     }
-    // Le timer de rotation se met en pause tant qu'un contrat est en cours.
-    // nextRotationAt a 0 (apres un lancement/reset ou une sauvegarde ancienne) :
-    // on genere des offres immediatement des que les contrats sont debloques,
-    // sinon le timer resterait bloque a 00:00 sans jamais rien proposer.
     const rotationPaused = !!contractState.active;
     if (!rotationPaused && areContractsUnlocked()
         && (contractState.nextRotationAt === 0 || now >= contractState.nextRotationAt)) {
@@ -5140,7 +5309,6 @@ function tickContracts() {
     renderContractsCardStatus();
     renderCollectionCardStatus();
 }
-
 function renderCollectionCardStatus() {
     const statusEl = document.getElementById('collection-card-status');
     if (!statusEl) return;
@@ -5151,7 +5319,7 @@ function renderCollectionCardStatus() {
         const collected = Object.keys(cardCollection).filter(id => cardCollection[id] > 0);
         ccbOwned.textContent = collected.length;
         document.getElementById('ccb-total').textContent = COLLECTIBLE_CARDS.length;
-        document.getElementById('ccb-bonus').textContent = '×' + getCollectionMultiplier().toFixed(2);
+        document.getElementById('ccb-bonus').textContent = '\u00d7' + getCollectionMultiplier().toFixed(2);
     }
     if (!areCardsUnlocked()) {
         statusEl.className = 'game-status visible';
@@ -5161,7 +5329,6 @@ function renderCollectionCardStatus() {
     statusEl.className = 'game-status';
     statusEl.textContent = '';
 }
-
 function renderContractsCardStatus() {
     const statusEl = document.getElementById('contracts-card-status');
     if (!statusEl) return;
@@ -5173,12 +5340,12 @@ function renderContractsCardStatus() {
     }
     if (contractState.active) {
         const c = contractState.active;
-        const building = findBuildingById(c.buildingId);
+        const type = findContractType(c.typeId);
         const remaining = Math.max(0, c.expiresAt - now);
-        const pct = Math.min(100, (c.progress / c.quota) * 100);
+        const pct = Math.min(100, (c.progress / c.target) * 100);
         statusEl.className = 'game-status visible';
-        statusEl.innerHTML = t(building.name)
-            + ' <span class="status-timer">' + formatContractTime(remaining) + '</span>'
+        statusEl.innerHTML = (type ? type.icon + ' ' : '')
+            + '<span class="status-timer">' + formatContractTime(remaining) + '</span>'
             + '<span class="status-bar"><div style="width:' + pct + '%"></div></span>';
     } else if (contractState.offers.length > 0) {
         const nextIn = Math.max(0, contractState.nextRotationAt - now);
@@ -5198,7 +5365,6 @@ function renderContractsCardStatus() {
         statusEl.textContent = '';
     }
 }
-
 function contractsStructureKey() {
     if (contractState.active) return 'active:' + contractState.active.offerId;
     return 'offers:' + contractState.offers.map(o => o.id).join(',');
@@ -5211,41 +5377,43 @@ function renderContracts() {
     const now = Date.now();
     const key = contractsStructureKey();
     // Reconstruire le DOM seulement si la structure change (nouvelles offres,
-    // contrat actif/termine). Sinon mise a jour ciblee des valeurs dynamiques :
-    // reconstruire innerHTML detruirait le bouton sous le curseur (flicker).
+    // contrat actif/termine). Sinon mise a jour ciblee des valeurs dynamiques.
     if (listEl.dataset.structureKey !== key) {
         listEl.dataset.structureKey = key;
         listEl.innerHTML = buildContractsHtml();
     }
     updateContractsDynamicValues(listEl, now);
 }
+function contractDifficultyLabel(diffIdx) {
+    return diffIdx === 0 ? t('Facile') : (diffIdx === 1 ? t('Normal') : t('Difficile'));
+}
 function buildContractsHtml() {
     let html = '<div class="contract-rotation">\u23f3 ' + tf('nouveaux contrats dans {time}', { time: '<span class="contract-rotation-timer">' + formatContractTime(Math.max(0, contractState.nextRotationAt - Date.now())) + '</span>' }) + '</div>';
     if (contractState.active) {
         const c = contractState.active;
-        const building = findBuildingById(c.buildingId);
+        const type = findContractType(c.typeId);
         html += '<div class="contract-card active">'
-            + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div><div class="contract-title">' + t(building.name) + '</div>'
+            + '<div class="contract-head"><div class="contract-icon">' + (type ? type.icon : '') + '</div><div><div class="contract-title">' + tf(type ? type.objective : '', { target: formatNumber(c.target) }) + '</div>'
             + '<div class="contract-sub">' + t('Contrat en cours') + '</div></div></div>'
             + '<div class="contract-progress"><div class="contract-progress-fill" style="width:0%"></div></div>'
-            + '<div class="contract-meta"><span class="contract-progress-text"></span><span class="contract-required-rate"></span>'
+            + '<div class="contract-meta"><span class="contract-progress-text"></span>'
             + '<span class="contract-timer"></span></div>'
             + '</div>';
     } else if (contractState.offers.length === 0) {
         html += '<div class="contract-empty">' + t('Aucun contrat disponible') + '</div>';
     } else {
         contractState.offers.forEach(offer => {
-            const building = findBuildingById(offer.buildingId);
-            const stacks = contractState.buildingBonuses[offer.buildingId] || 0;
-            const rewardMult = getContractBuildingMultiplier(offer.buildingId) * (1 + CONTRACT_REWARD_MULT);
+            const type = findContractType(offer.typeId);
+            const rewardLabel = offer.rewardType === 'instant'
+                ? tf('+{parts} Parts', { parts: formatNumber(Math.floor(Math.max(1, getBasePartsPerSecond()) * offer.instantSec)) })
+                : (offer.rewardType === 'mult'
+                    ? 'x' + offer.mult + ' ' + t('production') + ' (' + offer.duration + ' s)'
+                    : 'x' + offer.clickMult + ' ' + t('clic') + ' (' + offer.duration + ' s)');
             html += '<div class="contract-card">'
-                + '<div class="contract-head"><img src="' + building.imgPath + '" alt=""><div>'
-                + '<div class="contract-title">' + t(building.name) + '</div>'
-                + '<div class="contract-sub">' + tf('Produis {quota} Parts avec ce batiment en 3 min', { quota: formatNumber(offer.quota) }) + ' · ' + tf('soit {rate} {unit}/s', { rate: formatNumber(offer.quota / (CONTRACT_DURATION_MS / 1000)), unit: t('Parts') }) + '</div></div></div>'
-                + '<div class="contract-reward">+' + Math.round(CONTRACT_REWARD_MULT * 100) + '% ' + t('production permanente') + ' (x' + rewardMult.toFixed(2) + ')'
-                + (stacks > 0 ? ' \u00b7 ' + t('deja') + ' x' + getContractBuildingMultiplier(offer.buildingId).toFixed(2) : '')
-                + (stacks >= CONTRACT_REWARD_MAX_STACKS ? ' \u00b7 ' + t('palier max') : '')
-                + '</div>'
+                + '<div class="contract-head"><div class="contract-icon">' + (type ? type.icon : '') + '</div><div>'
+                + '<div class="contract-title">' + contractObjectiveText(offer) + '</div>'
+                + '<div class="contract-sub">' + t('30 secondes') + ' \u00b7 ' + contractDifficultyLabel(offer.diffIdx) + '</div></div></div>'
+                + '<div class="contract-reward">' + contractRewardText(offer) + '</div>'
                 + '<button class="contract-buy-btn" data-offer-id="' + offer.id + '" onclick="acceptContract(\'' + offer.id + '\')">'
                 + '<img src="images/parts.png" class="coin-icon" alt=""> ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
                 + '</div>';
@@ -5259,13 +5427,17 @@ function updateContractsDynamicValues(listEl, now) {
     if (contractState.active) {
         const c = contractState.active;
         const remaining = Math.max(0, c.expiresAt - now);
-        const pct = Math.min(100, (c.progress / c.quota) * 100);
+        const pct = Math.min(100, (c.progress / c.target) * 100);
         const fill = listEl.querySelector('.contract-progress-fill');
         if (fill) fill.style.width = pct + '%';
         const text = listEl.querySelector('.contract-progress-text');
-        if (text) text.textContent = formatNumber(Math.floor(c.progress)) + ' / ' + formatNumber(c.quota) + ' ' + t('Parts');
-        const rateEl = listEl.querySelector('.contract-required-rate');
-        if (rateEl) rateEl.textContent = '(' + tf('requis : {rate} {unit}/s', { rate: formatNumber(c.quota / (CONTRACT_DURATION_MS / 1000)), unit: t('Parts') }) + ')';
+        if (text) {
+            if (c.typeId === 'clickParts' || c.typeId === 'production') {
+                text.textContent = formatNumber(Math.floor(c.progress)) + ' / ' + formatNumber(c.target) + ' ' + t('Parts');
+            } else {
+                text.textContent = Math.floor(c.progress) + ' / ' + c.target;
+            }
+        }
         const timer = listEl.querySelector('.contract-timer');
         if (timer) timer.textContent = formatContractTime(remaining);
     } else {
@@ -5275,7 +5447,6 @@ function updateContractsDynamicValues(listEl, now) {
         });
     }
 }
-
 function formatContractTime(ms) {
     const s = Math.max(0, Math.ceil(ms / 1000));
     const h = Math.floor(s / 3600);
@@ -5285,14 +5456,13 @@ function formatContractTime(ms) {
     const rr = (r < 10 ? '0' : '') + r;
     return (h > 0 ? h + ':' : '') + mm + ':' + rr;
 }
-
 function resetContractState() {
     contractState.offers = [];
     contractState.active = null;
-    contractState.buildingBonuses = {};
     contractState.nextRotationAt = 0;
-    // unlockedSeen reste true : les contrats restent debloques d'un run a l'autre.
+    contractState.unlockedSeen = contractState.unlockedSeen;
 }
+
 
 // ============================================
 // CARD COLLECTION MINI-GAME
