@@ -6096,8 +6096,13 @@ function renderRocketPartsShop() {
         }
     }
     // Piece de fusee abordable : pulse pour attirer l'oeil (10 s max).
-    if (isAffordable) pulseHint(container);
-    else clearPulseHint(container);
+    // Cible la carte de la piece, pas le conteneur : celui-ci est une colonne
+    // laterale haute comme la page et la lueur s'etalerait sur toute sa longueur.
+    const partCard = container.querySelector('.rocket-part-frame');
+    if (partCard) {
+        if (isAffordable) pulseHint(partCard);
+        else clearPulseHint(partCard);
+    }
 }
 
 // ============================================
