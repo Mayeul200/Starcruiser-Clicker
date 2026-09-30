@@ -3337,69 +3337,44 @@ body {
     flex-wrap: wrap;
     margin-bottom: 18px;
 }
-/* Le badge collection reste sur la meme ligne que les boosters :
-   il ne passe jamais a la ligne, il se resserre si la place manque. */
-.cc-collection-badge {
-    flex-shrink: 0;
-    flex-wrap: nowrap;
-}
-/* Badge informatif collection : cartes obtenues / 20 + bonus actuel,
-   affiche a droite sur la ligne des boosters payants. */
-.cc-collection-badge {
+/* Badge informatif collection dans la case du mini-jeu : cartes
+   obtenues / 20 + bonus actuel, a droite sur la ligne "Boosters payants". */
+.game-cost {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
     gap: 6px;
-    min-width: 84px;
-    padding: 10px 10px;
+}
+.game-cost .cc-collection-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-left: auto;
-    flex-shrink: 0;
+    padding: 2px 8px;
     background: rgba(59, 130, 246, 0.12);
     border: 1px solid rgba(59, 130, 246, 0.35);
-    border-radius: var(--radius);
+    border-radius: 999px;
     font-weight: 700;
-}
-.ccb-cards {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.ccb-icon {
-    width: 26px;
-    height: 26px;
-    object-fit: contain;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .ccb-count {
-    font-size: 1.15rem;
+    font-size: 0.78rem;
     color: var(--accent-light);
     font-variant-numeric: tabular-nums;
 }
 .ccb-sep {
     color: var(--text-light);
-    margin: 0 2px;
+    margin: 0 1px;
 }
 .ccb-divider {
-    width: 80%;
-    height: 1px;
-    background: rgba(59, 130, 246, 0.3);
-}
-.ccb-bonus {
-    display: flex;
-    align-items: baseline;
-    gap: 6px;
+    width: 1px;
+    height: 12px;
+    background: rgba(59, 130, 246, 0.4);
 }
 .ccb-mult {
-    font-size: 1.05rem;
+    font-size: 0.78rem;
     color: #ffd700;
     font-variant-numeric: tabular-nums;
-}
-.ccb-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--text-light);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
 }
 .cc-booster-btn {
     flex: 1;

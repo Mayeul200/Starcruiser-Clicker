@@ -4670,6 +4670,15 @@ function tickContracts() {
 function renderCollectionCardStatus() {
     const statusEl = document.getElementById('collection-card-status');
     if (!statusEl) return;
+    // Badge informatif dans la case du mini-jeu : cartes / total + bonus,
+    // visible des le deblocage de la collection.
+    const ccbOwned = document.getElementById('ccb-owned');
+    if (ccbOwned) {
+        const collected = Object.keys(cardCollection).filter(id => cardCollection[id] > 0);
+        ccbOwned.textContent = collected.length;
+        document.getElementById('ccb-total').textContent = COLLECTIBLE_CARDS.length;
+        document.getElementById('ccb-bonus').textContent = '×' + getCollectionMultiplier().toFixed(2);
+    }
     if (!areCardsUnlocked()) {
         statusEl.className = 'game-status visible';
         statusEl.textContent = '\uD83D\uDD12 ' + tf('{count} batiments requis', { count: CARD_COLLECTION_UNLOCK_BUILDING_TYPES });
@@ -4929,13 +4938,6 @@ function updateCardCollectionDisplay() {
     document.getElementById('cc-collected-count').textContent = collected.length;
     document.getElementById('cc-total-count').textContent = COLLECTIBLE_CARDS.length;
     document.getElementById('cc-bonus-display').textContent = '×' + getCollectionMultiplier().toFixed(2);
-    // Badge informatif sur la ligne des boosters : cartes / total et bonus.
-    const ccbOwned = document.getElementById('ccb-owned');
-    if (ccbOwned) {
-        ccbOwned.textContent = collected.length;
-        document.getElementById('ccb-total').textContent = COLLECTIBLE_CARDS.length;
-        document.getElementById('ccb-bonus').textContent = '×' + getCollectionMultiplier().toFixed(2);
-    }
 }
 
 function isCollectionComplete() {
