@@ -4476,6 +4476,10 @@ function updateBonusTimer() {
     if (!countersEl) return;
     const hasBonus = activeRandomBonuses.some(b => b.effect === 'multiplier' || b.id === 'flare');
     countersEl.classList.toggle('bonus-active', hasBonus);
+    // Le boost temporaire multiplie aussi la vitesse (partsPerSecond inclus
+    // autoMultiplier) : meme effet rainbow sur la tuile Vitesse.
+    const speedTile = document.getElementById('sidebar-speed');
+    if (speedTile) speedTile.closest('.stat-tile')?.classList.toggle('bonus-active', hasBonus);
 }
 
 // ============================================
