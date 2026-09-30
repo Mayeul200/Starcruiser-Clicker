@@ -4995,10 +4995,11 @@ function startBuildingScrollWatchdog() {
     if (buildingScrollWatchdog) return;
     let lastTop = 0;
     let touching = false;
+    let settling = 0;
     const panel = document.querySelector('.main-grid.mobile-view-right > .right-panel');
     if (!panel) return;
-    const onTouchStart = () => { touching = true; };
-    const onTouchEnd = () => { touching = false; lastTop = panel.scrollTop; };
+    const onTouchStart = () => { touching = true; settling = 0; };
+    const onTouchEnd = () => { touching = false; settling = 6; lastTop = panel.scrollTop; };
     panel.addEventListener('touchstart', onTouchStart, { passive: true });
     panel.addEventListener('touchend', onTouchEnd, { passive: true });
     panel.addEventListener('touchcancel', onTouchEnd, { passive: true });
@@ -5011,14 +5012,24 @@ function startBuildingScrollWatchdog() {
         const top = panel.scrollTop;
         if (touching) {
             lastTop = top;
+            settling = 0;
             return;
         }
-        if (lastTop - top > 120 && top < lastTop - 120) {
+        // Apres le lever du doigt, laisser le momentum iOS se terminer
+        // (le scrollTop bouge encore tout seul pendant la deceleration).
+        if (settling > 0) {
+            settling--;
+            lastTop = top;
+            return;
+        }
+        // Remontee anormale a froid : le scrollTop baisse tout seul (reclamp
+        // du navigateur apres re-layout). Seuil bas : capte les petits sauts.
+        if (lastTop - top > 8) {
             panel.scrollTop = lastTop;
         } else {
             lastTop = top;
         }
-    }, 120);
+    }, 80);
 }
 function setMobileView(view) {
     mobileActiveView = view;
