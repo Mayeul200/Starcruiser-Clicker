@@ -3962,6 +3962,18 @@ const Sounds = {
         soundTone(1760, 1760, 0.35, 'sine', 0.1, 0.5);
         soundTone(440, 440, 0.3, 'sine', 0.12, 0.55);
     },
+    // Pièce de fusée qui s'empile : choc métallique + verrouillage
+    partStack() {
+        // Une pièce de fusée qui tombe à sa place : clac métallique grave
+        // au contact (le choc), puis petit cliquetis de verrouillage (la
+        // pièce qui se clipse), discret et satisfaisant, dans le style des
+        // autres sons.
+        soundTone(320, 180, 0.08, 'square', 0.14);
+        soundTone(160, 90, 0.14, 'sine', 0.2);
+        soundNoise(0.06, 0.14, 4000, 900);
+        soundTone(1175, 1175, 0.05, 'square', 0.06, 0.09);
+        soundTone(1568, 1568, 0.07, 'sine', 0.08, 0.1);
+    },
     // Trophée : fanfare discrète
     trophy() {
         soundTone(659, 659, 0.1, 'triangle', 0.3);
@@ -6553,6 +6565,9 @@ function updateConstructionScene() {
                 constructedParts.add(part.id);
                 piece.classList.add('new', 'unlocked');
                 spawnBuildDust(container, part);
+                // Bruit d'empilement au moment où la pièce touche la fusée
+                // (0.55 s ≈ fin de l'animation de chute de 0.6 s)
+                setTimeout(() => Sounds.partStack(), 550);
                 setTimeout(() => {
                     piece.classList.remove('new');
                 }, 600);
