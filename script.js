@@ -3929,8 +3929,9 @@ const Sounds = {
             const at = 0.05 + (i / 9) * 0.75 + Math.random() * 0.06;
             soundTone(base, base * 0.9, 0.1 + Math.random() * 0.08, 'sine', 0.09, at);
         }
-        // Chaleureux discret de glace qui se disperse
-        soundNoise(0.35, 0.08, 5000, 1200);
+        // Chaleureux discret de glace qui se disperse — retirE : le bruit
+        // de fin donnait l'impression que la comete se disloquait en
+        // trainant, alors qu'elle eclate net.
     },
     // Contrat : accepté / rempli / échoué
     contractAccept() {
