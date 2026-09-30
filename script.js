@@ -5191,22 +5191,21 @@ function acceptContract(offerId) {
 // Pluie dediee au contrat : meme mecanique que startCometShower mais sans
 // verrou cometShowerActive (les pluies de contrat sont independantes).
 function triggerContractShower(count) {
-    // Les cometes sont lancees par VAGUES SIMULTANEES (2 a 3 d'un coup), pas
-    // une par une : le joueur n'a pas le temps de toutes les prendre
-    // tranquillement, il doit en choisir ou viser vite. Les vagues sont
-    // espacees de ~2,5 s sur la duree du contrat.
+    // Les cometes sont lancees par VAGUES SIMULTANEES avec un intervalle
+    // fixe de 1 seconde entre chaque vague (2 cometes par vague) : le
+    // rythme reste soutenu sans decomployer la pluie d'un seul coup.
     const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
     const COUNT = isMobileLike ? Math.max(3, Math.ceil(count * 0.6)) : count;
     const WAVE_SIZE = isMobileLike ? 2 : (COUNT >= 9 ? 3 : 2);
     const waves = Math.ceil(COUNT / WAVE_SIZE);
-    const SPREAD_MS = Math.min(CONTRACT_DURATION_MS - 6000, waves * 2500);
+    const WAVE_INTERVAL_MS = 1000;
     for (let w = 0; w < waves; w++) {
         setTimeout(() => {
             if (!contractState.active) return;
             for (let k = 0; k < WAVE_SIZE; k++) {
                 spawnRandomBonus(true);
             }
-        }, (w / waves) * SPREAD_MS + Math.random() * 250);
+        }, w * WAVE_INTERVAL_MS);
     }
 }
 
