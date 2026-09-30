@@ -4251,6 +4251,16 @@ body {
     .building-left { overflow: visible; }
 }
 
+/* Desktop : case d'achat de la pièce de fusée descendue de 50px */
+@media (min-width: 1025px) {
+    .rocket-parts-shop { top: calc(var(--top-height) + 50px); }
+}
+
+/* Écrans larges (>=1920px) : carte d'ouverture de booster 10% plus petite */
+@media (min-width: 1920px) {
+    .cc-reveal-card.pack { width: min(70.2cqw, 378px, 64.8cqh); }
+}
+
 /* Desktop : image du reveal doublee (mobile : 210px).
    Bornée à 30dvh pour laisser la place aux textes du bas dans le cadre. */
 @media (min-width: 1025px) {
