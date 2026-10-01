@@ -5583,8 +5583,11 @@ function renderContractsCardStatus() {
             pulseHint(statusEl.closest('.mini-game-card'));
         }
     } else {
-        statusEl.className = 'game-status';
-        statusEl.textContent = '';
+        // Permanence : meme sans offre active, la case affiche TOUJOURS
+        // quand arrive la prochaine rotation de contrats.
+        const nextIn = Math.max(0, contractState.nextRotationAt - now);
+        statusEl.className = 'game-status visible';
+        statusEl.textContent = '\u23F3 ' + tf('prochain contrat dans {time}', { time: formatContractTime(nextIn) });
     }
 }
 function contractsStructureKey() {
