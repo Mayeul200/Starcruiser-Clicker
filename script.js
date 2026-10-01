@@ -3731,6 +3731,7 @@ function addScore(points, event) {
     notifyContractClick(totalPoints);
 
     showClickEffect(Math.round(totalPoints), event);
+    spawnShockwave(event);
     spawnFallingCoin(event);
 
     const medal = document.getElementById('medal');
@@ -3758,6 +3759,34 @@ function addScore(points, event) {
     renderUpgrades();
     checkBuildingUnlocks();
     checkTrophies();
+}
+
+// Ondes de choc : 2 anneaux emis au point EXACT du clic (le 2e plus petit,
+// 60 ms plus tard), qui s'etendent en s'estompant : sensation de frappe.
+function spawnShockwave(event) {
+    const container = document.getElementById('click-effects');
+    if (!container) return;
+    let x, y;
+    if (event && event.clientX !== undefined) {
+        x = event.clientX; y = event.clientY;
+    } else {
+        const medal = document.getElementById('medal');
+        const r = medal.getBoundingClientRect();
+        x = r.left + r.width / 2; y = r.top + r.height / 2;
+    }
+    const rect = container.getBoundingClientRect();
+    const cx = x - rect.left, cy = y - rect.top;
+    const w1 = document.createElement('div');
+    w1.className = 'shockwave';
+    w1.style.left = cx + 'px';
+    w1.style.top = cy + 'px';
+    const w2 = document.createElement('div');
+    w2.className = 'shockwave small';
+    w2.style.left = cx + 'px';
+    w2.style.top = cy + 'px';
+    container.appendChild(w1);
+    container.appendChild(w2);
+    setTimeout(() => { w1.remove(); w2.remove(); }, 700);
 }
 
 function showClickEffect(value, event) {

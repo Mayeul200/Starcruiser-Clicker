@@ -3062,6 +3062,62 @@ body {
     0%   { opacity: 0.9; transform: scale(0.85); }
     100% { opacity: 0; transform: scale(1.45); }
 }
+/* ===== Reflet speculaire balayant (permanant, GPU) ===== */
+/* Voile lumineux qui traverse la piece en diagonale toutes les ~6 s :
+   la piece parait "vivante", metal precieux exposE sous un eclairage. */
+.medal-shine {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+}
+.medal-shine::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -60%;
+    width: 45%;
+    height: 140%;
+    background: linear-gradient(105deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.06) 35%,
+        rgba(255, 255, 255, 0.35) 50%,
+        rgba(255, 255, 255, 0.06) 65%,
+        transparent 100%);
+    transform: skewX(-18deg);
+    animation: medal-shine-sweep 5.5s ease-in-out infinite;
+    filter: blur(1px);
+}
+@keyframes medal-shine-sweep {
+    0%, 55%  { left: -60%; }   /* longue pause hors piece : balayage ponctuel, pas un stroboscope */
+    85%, 100% { left: 130%; }
+}
+
+/* ===== Ondes de choc au point d'impact ===== */
+/* 2 anneaux emIS au point EXACT du clic, 60 ms d'ecart, s'etendent en
+   s'estompant : sensation de frapper la piece, pas de la survoler. */
+.shockwave {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    border: 2px solid rgba(160, 210, 255, 0.85);
+    box-shadow: 0 0 8px rgba(160, 210, 255, 0.5), inset 0 0 6px rgba(160, 210, 255, 0.35);
+    pointer-events: none;
+    opacity: 0.9;
+    animation: shockwave-expand 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.shockwave.small {
+    border-width: 1.5px;
+    animation-delay: 0.06s;
+}
+@keyframes shockwave-expand {
+    0%   { transform: scale(0.4); opacity: 0.9; }
+    100% { transform: scale(3.2); opacity: 0; }
+}
 /* Bouton de lancement */
 .launch-button {
     position: absolute;
