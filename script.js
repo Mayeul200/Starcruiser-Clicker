@@ -5143,9 +5143,9 @@ function getContractTypes() {
             objective: 'Cliquez {target} fois sur la piece',
             track: 'clicks',
             diffs: [
-                { target: 60,  price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
-                { target: 120, price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
-                { target: 240, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
+                { target: 45, price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
+                { target: 60, price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
+                { target: 99, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
             ]
         },
         {
@@ -5155,9 +5155,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(40, clickParts * 35), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(120, clickParts * 70), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(280, clickParts * 130), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(40, clickParts * 45), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(60, clickParts * 60), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(99, clickParts * 99), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
             ]
         },
         {
@@ -5354,14 +5354,12 @@ function acceptContract(offerId) {
 // Pluie dediee au contrat : meme mecanique que startCometShower mais sans
 // verrou cometShowerActive (les pluies de contrat sont independantes).
 function triggerContractShower(count) {
-    // Les cometes sont lancees par VAGUES SIMULTANEES avec un intervalle
-    // fixe de 1 seconde entre chaque vague (2 cometes par vague) : le
-    // rythme reste soutenu sans decomployer la pluie d'un seul coup.
+    // Les cometes sont lancees UNE PAR UNE avec un intervalle fixe de
+    // 0,33 seconde entre chaque : le rythme reste soutenu sans decomployer
+    // la pluie d'un seul coup.
     const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
     const COUNT = isMobileLike ? Math.max(3, Math.ceil(count * 0.6)) : count;
-    const WAVE_SIZE = isMobileLike ? 2 : (COUNT >= 9 ? 3 : 2);
-    const waves = Math.ceil(COUNT / WAVE_SIZE);
-    const WAVE_INTERVAL_MS = 1000;
+    const COMET_INTERVAL_MS = 330;
     // Suivi de la pluie du contrat : le total prevu, combien sont lancees
     // et combien sont encore en vol. Sert a echouer DES la derniere comete
     // passe si la cible n'est plus atteignable (plus de cometes a venir).
@@ -5370,16 +5368,13 @@ function triggerContractShower(count) {
         contractState.active.showerLaunched = 0;
         contractState.active.showerInFlight = 0;
     }
-    for (let w = 0; w < waves; w++) {
+    for (let k = 0; k < COUNT; k++) {
         setTimeout(() => {
             if (!contractState.active) return;
-            const spawnCount = Math.min(WAVE_SIZE, COUNT - contractState.active.showerLaunched);
-            for (let k = 0; k < spawnCount; k++) {
-                contractState.active.showerLaunched += 1;
-                contractState.active.showerInFlight += 1;
-                spawnRandomBonus(true);
-            }
-        }, w * WAVE_INTERVAL_MS);
+            contractState.active.showerLaunched += 1;
+            contractState.active.showerInFlight += 1;
+            spawnRandomBonus(true);
+        }, k * COMET_INTERVAL_MS);
     }
 }
 
