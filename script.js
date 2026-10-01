@@ -5357,8 +5357,11 @@ function triggerContractShower(count) {
     // Les cometes sont lancees UNE PAR UNE avec un intervalle fixe de
     // 0,33 seconde entre chaque : le rythme reste soutenu sans decomployer
     // la pluie d'un seul coup.
-    const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
-    const COUNT = isMobileLike ? Math.max(3, Math.ceil(count * 0.6)) : count;
+    // Sur mobile on MAINTIENT le nombre de cometes prevues : la reduction
+    // a 60% rendait les contrats IMPOSSIBLES (defense parfaite facile :
+    // cible 4, seulement 3 cometes lancees). Le contrat doit toujours etre
+    // gagnable, on garde donc le compte exact.
+    const COUNT = count;
     const COMET_INTERVAL_MS = 330;
     // Suivi de la pluie du contrat : le total prevu, combien sont lancees
     // et combien sont encore en vol. Sert a echouer DES la derniere comete
