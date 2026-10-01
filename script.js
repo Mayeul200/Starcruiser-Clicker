@@ -5144,8 +5144,8 @@ function getContractTypes() {
             track: 'clicks',
             diffs: [
                 { target: 60,  price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
-                { target: 110, price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
-                { target: 220, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
+                { target: 90, price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
+                { target: 180, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
             ]
         },
         {
