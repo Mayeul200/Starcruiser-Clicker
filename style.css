@@ -3100,23 +3100,25 @@ body {
    s'estompant : sensation de frapper la piece, pas de la survoler. */
 .shockwave {
     position: absolute;
-    width: 14px;
-    height: 14px;
-    margin: -7px 0 0 -7px;
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
     border-radius: 50%;
-    border: 2px solid rgba(160, 210, 255, 0.85);
-    box-shadow: 0 0 8px rgba(160, 210, 255, 0.5), inset 0 0 6px rgba(160, 210, 255, 0.35);
+    border: 3px solid rgba(190, 225, 255, 0.95);
+    box-shadow: 0 0 14px rgba(160, 210, 255, 0.7), 0 0 28px rgba(160, 210, 255, 0.35);
     pointer-events: none;
-    opacity: 0.9;
-    animation: shockwave-expand 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 1;
+    animation: shockwave-expand 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    z-index: 2;
 }
 .shockwave.small {
-    border-width: 1.5px;
-    animation-delay: 0.06s;
+    border-width: 2px;
+    animation-delay: 0.07s;
 }
 @keyframes shockwave-expand {
-    0%   { transform: scale(0.4); opacity: 0.9; }
-    100% { transform: scale(3.2); opacity: 0; }
+    0%   { transform: scale(0.25); opacity: 1; }
+    70%  { opacity: 0.6; }
+    100% { transform: scale(2.6); opacity: 0; }
 }
 /* Bouton de lancement */
 .launch-button {
