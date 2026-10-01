@@ -5053,8 +5053,8 @@ function updateBonusTimer() {
 // ============================================
 const CONTRACT_ROTATION_MS = 2 * 60 * 1000;
 const CONTRACT_DURATION_MS = 30 * 1000;
-const CONTRACT_UNLOCK_BUILDING_TYPES = 4;
-const CARD_COLLECTION_UNLOCK_BUILDING_TYPES = 2;
+const CONTRACT_UNLOCK_BUILDING_TYPES = 2;
+const CARD_COLLECTION_UNLOCK_BUILDING_TYPES = 4;
 
 // Definitions des types de contrats interactifs.
 // objective     : cle d'i18n decrivant l'objectif (avec {target})
