@@ -1434,9 +1434,15 @@ const STARDUST_TAIL_EXP = 0.35;
 const STARDUST_TAIL_START_KM = 891000000000; // Nuage d'Oort
 
 // Croissance du coût des pièces de fusée entre les lancements.
-// Douce (×1.15) pour que la fusée se reconstruise vite après un reset,
-// comme dans Cookie Clicker où l'ascension est toujours accessible.
-const ROCKET_PART_COST_GROWTH = 1.15;
+// Croissance calibrée sur le multiplicateur de production permanent MOYEN
+// gagné par cycle de lancement. Estimation fixe (constante, pas variable) :
+// - prestige (log) : ×1,15 à ×1,35 par cycle, décroissant
+// - planète débloquée (~1/cycle) : +30 à 50% additif -> ~×1,1-1,2 effectif
+// - Poussière d'Étoiles dépensée en production : +25 à 45% additif -> ~×1,1
+// Cumul moyen ~×1,3 par lancement (×1,5 en début de partie, ×1,2 en fin).
+// La fusée reste reconstruisible en début de cycle (le joueur produit ~30%
+// plus vite qu'au cycle précédent) sans devenir gratuite en fin de partie.
+const ROCKET_PART_COST_GROWTH = 1.3;
 
 function calculateDistance() {
     const partsUnlocked = ROCKET_PARTS.filter(part => part.purchased).length;
