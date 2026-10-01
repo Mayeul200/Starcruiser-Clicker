@@ -5391,6 +5391,7 @@ function notifyContractClick(points) {
     } else if (c.typeId === 'clickParts') {
         c.progress += points;
     }
+    updateContractHud();
 }
 
 // Hook appele quand une comete est interceptee/attrapee (clickedBonusesCount
@@ -5400,6 +5401,7 @@ function notifyContractComet() {
     if (!c) return;
     if (c.typeId === 'comets' || c.typeId === 'shower') {
         c.progress += 1;
+        updateContractHud();
     }
 }
 
@@ -5439,6 +5441,7 @@ function completeContract() {
     contractState.offers = [];
     contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
     updateDisplay();
+    updateContractHud();
     checkTrophies();
     saveGame();
 }
@@ -5497,6 +5500,7 @@ function failContract() {
     contractState.active = null;
     contractState.offers = [];
     contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;
+    updateContractHud();
     saveGame();
 }
 
@@ -5524,6 +5528,7 @@ function tickContracts() {
     }
     renderContractsCardStatus();
     renderCollectionCardStatus();
+    updateContractHud();
 }
 function renderCollectionCardStatus() {
     const statusEl = document.getElementById('collection-card-status');
@@ -5591,6 +5596,41 @@ function renderContractsCardStatus() {
 function contractsStructureKey() {
     if (contractState.active) return 'active:' + contractState.active.offerId;
     return 'offers:' + contractState.offers.map(o => o.id).join(',');
+}
+// Panneau flottant du contrat actif (HUD central) : objectif court,
+// progression cible et chrono restant, mis a jour par tickContracts
+// et par les hooks de progression pour rester reactif entre deux ticks.
+function getContractHudShortLabel(c) {
+    const type = findContractType(c.typeId);
+    if (!type) return t('Contrat en cours');
+    if (c.typeId === 'clicks') return t('Contrat de clics');
+    if (c.typeId === 'clickParts') return t('Contrat de Parts en cliquant');
+    if (c.typeId === 'comets') return t('Defense parfaite');
+    if (c.typeId === 'shower') return t('Survie a la pluie');
+    if (c.typeId === 'production') return t('Contrat de production');
+    return t('Contrat en cours');
+}
+function updateContractHud() {
+    const hud = document.getElementById('contract-hud');
+    if (!hud) return;
+    const c = contractState.active;
+    if (!c) {
+        hud.style.display = 'none';
+        return;
+    }
+    const labelEl = document.getElementById('contract-hud-label');
+    const progressEl = document.getElementById('contract-hud-progress');
+    const timeEl = document.getElementById('contract-hud-time');
+    const barEl = document.getElementById('contract-hud-bar-fill');
+    const secLeft = Math.max(0, Math.ceil((c.expiresAt - Date.now()) / 1000));
+    const current = c.typeId === 'production'
+        ? Math.max(0, totalPartsEarnedThisLaunch - c.startTotal)
+        : Math.max(0, c.progress);
+    if (labelEl) labelEl.textContent = getContractHudShortLabel(c);
+    if (progressEl) progressEl.textContent = formatNumber(Math.min(current, c.target)) + ' / ' + formatNumber(c.target);
+    if (timeEl) timeEl.textContent = secLeft + ' s';
+    if (barEl) barEl.style.width = Math.min(100, (current / c.target) * 100) + '%';
+    hud.style.display = 'block';
 }
 function renderContracts() {
     const modal = document.getElementById('contracts-modal');
