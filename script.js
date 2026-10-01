@@ -396,6 +396,17 @@ function initGlobals() {
 function findBuildingById(buildingId) {
     return BUILDINGS.find(b => b.id === buildingId);
 }
+// Cache d'accEs par id : findBuildingById est appelE dans toutes les boucles
+// de rendu (plusieurs fois par tick). La liste ne change jamais apres init.
+const buildingByIdCache = new Map();
+function findBuildingByIdFast(buildingId) {
+    let b = buildingByIdCache.get(buildingId);
+    if (b === undefined) {
+        b = BUILDINGS.find(x => x.id === buildingId) || null;
+        buildingByIdCache.set(buildingId, b);
+    }
+    return b;
+}
 
 function getPrestigeProductionBoost() {
     const p = isNaN(prestigeMultiplier) ? 1 : prestigeMultiplier;
@@ -465,8 +476,12 @@ function isBuildingUpgradeAvailable(buildingId, threshold) {
 function getBuildingTooltip(building) {
     const unitGain = calculateUnitBuildingGain(building);
     const totalGain = calculateBuildingGain(building);
-    let currentTotal = 0;
-    BUILDINGS.forEach(b => { currentTotal += calculateBuildingGain(b); });
+    // Total de production rEutilisE du snapshot du gameLoop (dEjA calculE
+    // pour partsPerSecond) au lieu de recalculer le gain de TOUS les
+    // batiments pour CHAQUE tooltip — c'Etait O(batiments^2) par tick.
+    const currentTotal = cachedGainPerBuilding.get(building.id) === totalGain && buildingGainsCache !== null
+        ? buildingGainsCache
+        : (BUILDINGS.reduce((acc, b) => acc + (cachedGainPerBuilding.get(b.id) || calculateBuildingGain(b)), 0));
     const percent = currentTotal > 0 ? ((totalGain / currentTotal) * 100).toFixed(2) : 0;
     return tf('{flavor}: +{gain} Parts/s\nMultiplicateur: x{mult}\n% de la production: {percent}%\nTotal g\u00e9n\u00e9r\u00e9: {total} Parts', {
         flavor: t(building.description),
@@ -1184,7 +1199,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     showToast('+ ' + t(building.name) + ' ' + t('am\u00e9lior\u00e9 x2') + ' (-' + formatNumber(cost) + ' Parts)');
 }
 
-function updateBuildingButton(buildingId) {
+function updateBuildingButton(buildingId, pulseTarget) {
     const element = document.getElementById(`building-${buildingId}`);
     if (!element) return;
 
@@ -1232,23 +1247,26 @@ function updateBuildingButton(buildingId) {
 
     const newTooltip = getBuildingTooltip(building);
     if (element.getAttribute('data-tooltip') !== newTooltip) element.setAttribute('data-tooltip', newTooltip);
-    // Pulse d'attention : le dernier batiment debloque non possede dont le
-    // prix est abordable (les batiments suivants ne sont pas encore rendus,
-    // leur deblocage passe par la et declenche le meme pulse).
-    if (notPurchased && isAffordable) {
-        const anyUnpurchasedBefore = BUILDINGS.some(b =>
-            b.id !== building.id && b.count === 0 && isBuildingUnlocked(b)
-            && BUILDINGS.indexOf(b) < BUILDINGS.indexOf(building));
-        if (!anyUnpurchasedBefore) pulseHint(element);
+    // Pulse d'attention : le premier batiment debloquE non possEdE dont le
+    // prix est abordable (la cible est pre-calcullEe par updateAllBuildingButtons).
+    if (pulseTarget !== undefined && building.id === pulseTarget && isAffordable) {
+        pulseHint(element);
     } else if (!notPurchased) {
         clearPulseHint(element);
     }
 }
 
 function updateAllBuildingButtons() {
+    // Cible du pulse calculEe UNE fois (et non par batiment) : le premier
+    // batiment debloquE non possEdE. Chaque bouton testait avant avec un
+    // BUILDINGS.some() — O(batiments^2) a chaque tick de 500 ms.
+    let pulseTarget = null;
+    for (const b of BUILDINGS) {
+        if (isBuildingUnlocked(b) && b.count === 0) { pulseTarget = b.id; break; }
+    }
     document.querySelectorAll('.building-item').forEach(element => {
         const buildingId = element.id.replace('building-', '');
-        updateBuildingButton(buildingId);
+        updateBuildingButton(buildingId, pulseTarget);
     });
 }
 
@@ -4164,7 +4182,8 @@ const partsRain = {
     dpr: 1,
     spawnDebt: 0,
     lastTick: 0,
-    lastFrame: 0
+    lastFrame: 0,
+    canvasClean: false
 };
 function getPartsRainRate() {
     if (partsPerSecond <= 0) return 0;
@@ -4210,8 +4229,20 @@ function rainFrame(now) {
     const dt = Math.min((now - (partsRain.lastFrame || now)) / 1000, 0.1);
     partsRain.lastFrame = now;
     if (canvas.width <= 1) { resizeRainCanvas(); return; }
+    // Idle quasi gratuit : si rien a dessiner, on ne clear meme pas le canvas
+    // (il l'a deja EtE au dernier passage) — la boucle RAF devient no-op.
+    if (partsRain.suspended || partsRain.parts.length === 0) {
+        if (!partsRain.canvasClean) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            partsRain.canvasClean = true;
+        }
+        return;
+    }
+    partsRain.canvasClean = false;
+    // Reinitialiser la matrice a l'identite : la frame precedente peut avoir
+    // laisse une transformation piece en place, faussant clearRect.
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (partsRain.suspended || partsRain.parts.length === 0) return;
     const img = partsRain.coinImg;
     if (!img || !img.complete || !img.naturalWidth) return;
     const parts = partsRain.parts;
@@ -4222,11 +4253,10 @@ function rainFrame(now) {
         p.angle += p.spinSpeed * dt;
         if (p.y - p.size > canvas.height) { parts.splice(i, 1); continue; }
         const flip = Math.cos(p.angle);
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.scale(flip, 1);
+        // setTransform remplace save/translate/scale/restore : une seule
+        // ecriture de matrice par piece au lieu de deux empilements de pile.
+        ctx.setTransform(flip, 0, 0, 1, p.x, p.y);
         ctx.drawImage(img, -p.size / 2, -p.size / 2, p.size, p.size);
-        ctx.restore();
     }
 }
 function tickPartsRain(now) {
@@ -5446,9 +5476,13 @@ function renderContractsCardStatus() {
         const remaining = Math.max(0, c.expiresAt - now);
         const pct = Math.min(100, (c.progress / c.target) * 100);
         statusEl.className = 'game-status visible';
-        statusEl.innerHTML = (type ? contractIconHtml(type, 'status-contract-icon') + ' ' : '')
+        const html = (type ? contractIconHtml(type, 'status-contract-icon') + ' ' : '')
             + '<span class="status-timer">' + formatContractTime(remaining) + '</span>'
             + '<span class="status-bar"><div style="width:' + pct + '%"></div></span>';
+        if (statusEl.dataset.lastHtml !== html) {
+            statusEl.dataset.lastHtml = html;
+            statusEl.innerHTML = html;
+        }
     } else if (contractState.offers.length > 0) {
         const nextIn = Math.max(0, contractState.nextRotationAt - now);
         statusEl.className = 'game-status visible';
@@ -6100,8 +6134,12 @@ function updateLaunchTimer() {
     // Avant le premier lancement, le chrono court depuis le debut de la partie
     const start = lastLaunchAt || gameStartTime || 0;
     if (!start) return;
-    el.textContent = formatLaunchTimer(Date.now() - start);
+    setTextIfChanged(el, formatLaunchTimer(Date.now() - start));
     el.classList.toggle('has-launch', !!lastLaunchAt);
+}
+// Ecriture DOM dEdoublonnEe : ne toucher el que si le texte change vraiment.
+function setTextIfChanged(el, text) {
+    if (el.textContent !== text) el.textContent = text;
 }
 
 // ============================================
