@@ -4297,7 +4297,11 @@ function rainFrame(now) {
     const ctx = partsRain.ctx;
     if (!canvas || !ctx) return;
     const dt = Math.min((now - (partsRain.lastFrame || now)) / 1000, 0.1);
+    // Horloge murale distincte : les timestamps rAF comptent depuis le
+    // chargement de la page, pas l'epoch — les comparer a Date.now()
+    // cassait le garde-fou de tickPartsRain et purgait la pluie a chaque tick.
     partsRain.lastFrame = now;
+    partsRain.lastFrameWall = Date.now();
     if (canvas.width <= 1) { resizeRainCanvas(); return; }
     // Idle quasi gratuit : si rien a dessiner, on ne clear meme pas le canvas
     // (il l'a deja EtE au dernier passage) — la boucle RAF devient no-op.
@@ -4340,7 +4344,7 @@ function tickPartsRain(now) {
     // throttling RAF du navigateur), le timer continuait a spawn des pieces
     // qui n'etaient ni animees ni supprimees — d'ou la pile qui tourne d'un
     // coup au retour. On purge tout tant que le rendu est fige.
-    if (partsRain.lastFrame && now - partsRain.lastFrame > 1000) {
+    if (partsRain.lastFrameWall && now - partsRain.lastFrameWall > 1000) {
         partsRain.parts.length = 0;
         partsRain.spawnDebt = 0;
         partsRain.lastTick = now;
