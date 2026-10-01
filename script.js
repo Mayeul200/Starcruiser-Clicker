@@ -5155,9 +5155,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(40, clickParts * 45), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(60, clickParts * 60), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(99, clickParts * 99), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(60, clickParts * 60), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(90, clickParts * 90), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(180, clickParts * 180), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
             ]
         },
         {
