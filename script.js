@@ -577,13 +577,13 @@ function getToastContainer() {
     }
     return container;
 }
-function showToast(message, icon, durationMs) {
+function showToast(message, icon, durationMs, options) {
     const container = getToastContainer();
     while (container.children.length >= TOAST_MAX_STACK) {
         container.firstElementChild.remove();
     }
     const toast = document.createElement('div');
-    toast.className = 'toast';
+    toast.className = 'toast' + (options && options.failure ? ' failure' : '');
     toast.innerHTML = '';
     if (icon) {
         const iconEl = document.createElement('span');
@@ -5475,9 +5475,12 @@ function failContract() {
     // Defense parfaite : echec cause par UNE comete ratee, pas par le temps.
     // Message distinct pour que le joueur comprenne pourquoi il a perdu.
     const missedComet = c.failed && c.typeId === 'comets';
-    showToast((missedComet ? '\uD83D\uDD25 ' : '\u23F3 ') + t(missedComet
-        ? 'Defense parfaite echouee : une comete a frappe la fusee !'
-        : 'Contrat echoue... Le temps est ecoule.'), null);
+    const failMsg = missedComet
+        ? t('Defense parfaite echouee : une comete a frappe la fusee !')
+        : (c.typeId === 'shower' && c.failed
+            ? t('Trop de cometes ratees... Le contrat est perdu.')
+            : t('Contrat echoue... Le temps est ecoule.'));
+    showToast('\u274C ' + failMsg, null, undefined, { failure: true });
     contractState.active = null;
     contractState.offers = [];
     contractState.nextRotationAt = Date.now() + CONTRACT_ROTATION_MS;

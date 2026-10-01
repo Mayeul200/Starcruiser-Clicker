@@ -1442,6 +1442,28 @@ body {
     opacity: 1;
     cursor: pointer;
 }
+/* Toast d'ECHEC de contrat : rouge sombre, secousse a l'apparition —
+   impossible a confondre avec une notification normale. */
+.toast.failure {
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+    border: 1px solid #f87171;
+    color: #fecaca;
+    font-weight: 700;
+}
+.toast.failure .toast-icon {
+    color: #f87171;
+}
+.toast.failure.active {
+    animation: toast-shake 0.4s ease-out;
+}
+@keyframes toast-shake {
+    0%   { transform: translateX(0); }
+    20%  { transform: translateX(-8px); }
+    40%  { transform: translateX(7px); }
+    60%  { transform: translateX(-5px); }
+    80%  { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+}
 .coin-icon {
     display: inline-block;
     width: 18px;
