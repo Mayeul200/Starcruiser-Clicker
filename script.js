@@ -2889,19 +2889,19 @@ function updateSpaceProgress() {
     const traveledDistance = maxDistance;
     const progress = calculatePlanetProgress(reachableDistance);
 
-    // Afficher la progression vers la PROCHAINE planète (basé sur distance parcourue)
+    // Afficher la progression vers la PROCHAINE planète : en temps reel sur la
+    // distance ACTUELLEMENT atteignable (elle croit a chaque Part gagnee),
+    // pas sur la distance parcourue qui ne bouge qu'au lancement.
     const planetDisplay = document.getElementById('current-planet-display');
     if (planetDisplay) {
-        const traveledProgress = calculatePlanetProgress(traveledDistance);
-        if (traveledProgress.nextPlanet) {
-            planetDisplay.innerHTML = `${t(traveledProgress.nextPlanet.name)}: ${Math.min(100, Math.max(0, traveledProgress.progressPercent))}%`;
+        if (progress.nextPlanet) {
+            planetDisplay.innerHTML = `${t(progress.nextPlanet.name)}: ${Math.min(100, Math.max(0, progress.progressPercent))}%`;
         } else {
-            planetDisplay.innerHTML = `${t(traveledProgress.currentPlanet.name)}: 100%`;
+            planetDisplay.innerHTML = `${t(progress.currentPlanet.name)}: 100%`;
         }
     }
-
-    // Mettre à jour la mini-carte (basé sur distance parcourue)
-    updateMiniSpaceMap(traveledDistance);
+    // Mettre à jour la mini-carte : meme base temps reel que le pourcentage
+    updateMiniSpaceMap(reachableDistance);
 
     // Mettre à jour les stats
     const sidebarDistance = document.getElementById('sidebar-distance');
