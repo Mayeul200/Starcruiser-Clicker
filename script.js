@@ -5084,7 +5084,9 @@ function updateBonusTimer() {
                 ? t('Clic') + ' ×' + active.multiplier
                 : '×' + active.multiplier;
             els.bonusTimer.textContent = label + ' · ' + secLeft + ' s';
-            els.bonusTimer.style.display = '';
+            // 'block' explicite : le CSS de .bonus-timer est display:none,
+            // style.display='' retirerait le style inline et le cacherait.
+            els.bonusTimer.style.display = 'block';
         } else {
             els.bonusTimer.textContent = '';
             els.bonusTimer.style.display = 'none';
@@ -5128,9 +5130,9 @@ function getContractTypes() {
             objective: 'Cliquez {target} fois sur la piece',
             track: 'clicks',
             diffs: [
-                { target: 40,  price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
-                { target: 80,  price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
-                { target: 160, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
+                { target: 60,  price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
+                { target: 120, price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
+                { target: 240, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
             ]
         },
         {
@@ -5140,9 +5142,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(20, clickParts * 22), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(60, clickParts * 45), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(150, clickParts * 90), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(40, clickParts * 35), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(120, clickParts * 70), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(280, clickParts * 130), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
             ]
         },
         {
@@ -5164,9 +5166,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
             diffs: [
-                { target: Math.max(50, pps * 15),  price: Math.max(20, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
-                { target: Math.max(150, pps * 24), price: Math.max(80, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: Math.max(500, pps * 40), price: Math.max(300, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
+                { target: Math.max(50, pps * 22),  price: Math.max(20, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
+                { target: Math.max(150, pps * 40), price: Math.max(80, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
+                { target: Math.max(500, pps * 70), price: Math.max(300, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
             ]
         },
         {
