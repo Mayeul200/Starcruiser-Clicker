@@ -3122,9 +3122,8 @@ body {
    s'estompant : sensation de frapper la piece, pas de la survoler. */
 .shockwave {
     position: absolute;
-    width: 45px;
-    height: 45px;
-    margin: -23px 0 0 -23px;
+    /* Taille et marges definies en JS (adaptatives, proportionnelles a
+       la piece) : ici seulement le style. */
     border-radius: 50%;
     border: 3px solid rgba(190, 225, 255, 0.95);
     box-shadow: 0 0 14px rgba(160, 210, 255, 0.7), 0 0 28px rgba(160, 210, 255, 0.35);

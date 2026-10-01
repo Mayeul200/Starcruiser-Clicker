@@ -3795,14 +3795,27 @@ function spawnShockwave(event) {
     }
     const rect = container.getBoundingClientRect();
     const cx = x - rect.left, cy = y - rect.top;
+    // Taille ADAPTATIVE : proportionnelle au diametre reel de la piece
+    // (~22%), elle-meme adaptee a l'ecran (21cqh min/max). L'onde suit
+    // donc la piece sur mobile comme sur PC, sans media query.
+    const medal = document.getElementById('medal');
+    const medalRect = medal.getBoundingClientRect();
+    const base = Math.max(20, Math.round(medalRect.width * 0.22));
+    const half = -(base / 2);
     const w1 = document.createElement('div');
     w1.className = 'shockwave';
     w1.style.left = cx + 'px';
     w1.style.top = cy + 'px';
+    w1.style.width = base + 'px';
+    w1.style.height = base + 'px';
+    w1.style.margin = half + 'px 0 0 ' + half + 'px';
     const w2 = document.createElement('div');
     w2.className = 'shockwave small';
     w2.style.left = cx + 'px';
     w2.style.top = cy + 'px';
+    w2.style.width = base + 'px';
+    w2.style.height = base + 'px';
+    w2.style.margin = half + 'px 0 0 ' + half + 'px';
     container.appendChild(w1);
     container.appendChild(w2);
     setTimeout(() => { w1.remove(); w2.remove(); }, 700);
