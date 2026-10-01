@@ -3715,7 +3715,10 @@ function addScore(points, event) {
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const critMult = (Math.random() < getCritChance()) ? 3 : 1;
-    const totalPoints = basePoints * getClickPowerBonus() * critMult;
+    // clickMultiplier : multiplicateurs temporaires de CLIC (contrats,
+    // flares). Il etait calcule et sauvegarde mais jamais applique ici —
+    // les rewards "Clic x2/3/5" des contrats n'avaient donc AUCUN effet.
+    const totalPoints = basePoints * clickMultiplier * getClickPowerBonus() * critMult;
     if (getGalacticUpgradeLevel('click6') > 0 && Math.random() < 0.05) {
         spawnRandomBonus();
     }
@@ -4421,7 +4424,7 @@ function calculateLaunchGenerated() {
 
 function getClickPower() {
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
-    return (baseCpC + buildingBonus + cpsBonus) * getClickPowerBonus();
+    return (baseCpC + buildingBonus + cpsBonus) * clickMultiplier * getClickPowerBonus();
 }
 
 function getTotalBuildingsOwned() {
@@ -5077,7 +5080,7 @@ function getContractTypes() {
             objective: 'Cliquez {target} fois sur la piece',
             track: 'clicks',
             diffs: [
-                { target: 40,  price: Math.max(50, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
+                { target: 40,  price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
                 { target: 80,  price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
                 { target: 160, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
             ]
@@ -5089,9 +5092,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(100, clickParts * 22), price: Math.max(50, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(250, clickParts * 45), price: Math.max(200, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(600, clickParts * 90), price: Math.max(800, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(20, clickParts * 22), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
+                { target: Math.max(60, clickParts * 45), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
+                { target: Math.max(150, clickParts * 90), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
             ]
         },
         {
@@ -5101,7 +5104,7 @@ function getContractTypes() {
             objective: 'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)',
             track: 'comets',
             diffs: [
-                { target: 4, price: Math.max(100, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
+                { target: 4, price: Math.max(50, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
                 { target: 7, price: Math.max(400, pps * 20), rewardMult: 3, rewardType: 'instant', instantSec: 90 },
                 { target: 11, price: Math.max(1500, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 180 }
             ]
@@ -5113,9 +5116,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
             diffs: [
-                { target: Math.max(100, pps * 28),  price: Math.max(50, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
-                { target: Math.max(400, pps * 65), price: Math.max(200, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: Math.max(1200, pps * 140), price: Math.max(800, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
+                { target: Math.max(50, pps * 15),  price: Math.max(20, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
+                { target: Math.max(150, pps * 24), price: Math.max(80, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
+                { target: Math.max(500, pps * 40), price: Math.max(300, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
             ]
         },
         {
@@ -5125,7 +5128,7 @@ function getContractTypes() {
             objective: 'Survivez a la pluie : attrapez {target} cometes',
             track: 'comets',
             diffs: [
-                { target: 5, price: Math.max(150, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 60, shower: 6 },
+                { target: 5, price: Math.max(80, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 60, shower: 6 },
                 { target: 8, price: Math.max(600, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 120, shower: 9 },
                 { target: 12, price: Math.max(2000, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 240, shower: 14 }
             ]
