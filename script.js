@@ -3466,6 +3466,19 @@ function spawnRandomBonus(shower) {
             c.failed = true;
             failContract();
         }
+        // Contrat "Survie a la pluie" : cette comete vient de finir sa course.
+        // Si toutes les cometes prevues sont passees (plus en vol, plus a venir)
+        // et que la cible n'est plus atteignable, le contrat est DEJA perdu :
+        // inutile d'attendre les dernieres secondes du chrono, on arrete net.
+        if (shower && c && c.typeId === 'shower') {
+            c.showerInFlight = Math.max(0, (c.showerInFlight || 0) - 1);
+            if (c.showerLaunched >= (c.showerTotal || 0)
+                && c.showerInFlight === 0
+                && c.progress < c.target) {
+                c.failed = true;
+                failContract();
+            }
+        }
     }, duration);
 
     bonusElement.onclick = () => {
@@ -3493,6 +3506,12 @@ function spawnRandomBonus(shower) {
             clickedBonusesCount++;
             // Contrat interactif en cours : la comete interceptee compte.
             notifyContractComet();
+            // La comete n'atteindra jamais son timeout de fin de course
+            // (clearTimeout ci-dessus) : decrementer le compteur de vol ici.
+            const cc = contractState.active;
+            if (shower && cc && cc.typeId === 'shower') {
+                cc.showerInFlight = Math.max(0, (cc.showerInFlight || 0) - 1);
+            }
             if (bonus.id === "meteor") {
                 const instantProduction = partsPerSecond * (shower ? 5 : 10);
                 score += instantProduction;
@@ -5328,10 +5347,21 @@ function triggerContractShower(count) {
     const WAVE_SIZE = isMobileLike ? 2 : (COUNT >= 9 ? 3 : 2);
     const waves = Math.ceil(COUNT / WAVE_SIZE);
     const WAVE_INTERVAL_MS = 1000;
+    // Suivi de la pluie du contrat : le total prevu, combien sont lancees
+    // et combien sont encore en vol. Sert a echouer DES la derniere comete
+    // passe si la cible n'est plus atteignable (plus de cometes a venir).
+    if (contractState.active) {
+        contractState.active.showerTotal = COUNT;
+        contractState.active.showerLaunched = 0;
+        contractState.active.showerInFlight = 0;
+    }
     for (let w = 0; w < waves; w++) {
         setTimeout(() => {
             if (!contractState.active) return;
-            for (let k = 0; k < WAVE_SIZE; k++) {
+            const spawnCount = Math.min(WAVE_SIZE, COUNT - contractState.active.showerLaunched);
+            for (let k = 0; k < spawnCount; k++) {
+                contractState.active.showerLaunched += 1;
+                contractState.active.showerInFlight += 1;
                 spawnRandomBonus(true);
             }
         }, w * WAVE_INTERVAL_MS);
