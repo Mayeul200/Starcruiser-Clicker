@@ -316,6 +316,7 @@ let totalGeneratedByBuilding = {};
 let totalGeneratedAtLaunchStart = 0;
 let totalPartsEarnedAllTime = 0;
 let totalPartsEarnedThisLaunch = 0;
+let naturalPartsThisLaunch = 0;
 let lastSaveTime = 0;
 let lastBuildingsUpdate = 0;
 let lastRocketPartsUpdate = 0;
@@ -785,6 +786,12 @@ function loadGame() {
             }));
             const oa = parsed.contractState.active;
             contractState.active = (oa && oa.typeId && oa.target) ? oa : null;
+            // Le compteur de Parts naturelles repart de zero au chargement :
+            // reancrer la progression du contrat production sur la valeur
+            // courante pour eviter une cible devenue inatteignable.
+            if (contractState.active && contractState.active.typeId === 'production') {
+                contractState.active.naturalStartTotal = 0;
+            }
             contractState.nextRotationAt = parsed.contractState.nextRotationAt || 0;
             contractState.unlockedSeen = !!parsed.contractState.unlockedSeen;
         }
@@ -2575,6 +2582,7 @@ function confirmPostTravelReset() {
     totalGeneratedByBuilding = {};
     partsSinceLaunch = 0;
     totalPartsEarnedThisLaunch = 0;
+    naturalPartsThisLaunch = 0;
     activeRandomBonuses = [];
     rebuildAutoMultipliers();
     updateBonusTimer();
@@ -3757,6 +3765,7 @@ function addScore(points, event) {
     partsSinceLaunch += totalPoints;
     totalPartsFromClicks += totalPoints;
     trackPartsEarned(totalPoints);
+    trackNaturalParts(basePoints);
     // Contrat interactif en cours : le clic compte. Pour clickParts on mesure
     // les Parts naturelles (sans multiplicateurs) pour rester coherent avec
     // la cible calculee sur le Parts/clic naturel.
@@ -4441,9 +4450,11 @@ function gameLoop() {
     const dtSeconds = (now - lastGameTick) / 1000;
     lastGameTick = now;
     const tickGain = partsPerSecond * dtSeconds;
+    const naturalTickGain = getBasePartsPerSecond() * dtSeconds;
     score += tickGain;
     partsSinceLaunch += tickGain;
     trackPartsEarned(tickGain);
+    trackNaturalParts(naturalTickGain);
     updateLaunchTimer();
     if (dtSeconds > 0) {
         BUILDINGS.forEach(building => {
@@ -4486,6 +4497,15 @@ function trackPartsEarned(amount) {
     if (!(amount > 0)) return;
     totalPartsEarnedAllTime += amount;
     totalPartsEarnedThisLaunch += amount;
+}
+
+// Parts "naturelles" gagnees depuis le debut du run : production de base (hors
+// autoMultiplier) + Parts naturelles des clics. Les bonus instantanes (meteores)
+// et les multiplicateurs temporaires sont exclus. Sert de base coherente au
+// contrat de production, dont la cible est calculee sur le PPS naturel.
+function trackNaturalParts(amount) {
+    if (!(amount > 0)) return;
+    naturalPartsThisLaunch += amount;
 }
 function calculateTotalGenerated() {
     let total = 0;
@@ -5340,6 +5360,7 @@ function acceptContract(offerId) {
         duration: offer.duration,
         shower: offer.shower,
         startTotal: totalPartsEarnedThisLaunch,
+        naturalStartTotal: naturalPartsThisLaunch,
         startClickParts: totalPartsFromClicks,
         acceptedAt: Date.now(),
         expiresAt: Date.now() + CONTRACT_DURATION_MS
@@ -5425,9 +5446,11 @@ function notifyContractComet() {
 function updateContractProgress() {
     const c = contractState.active;
     if (!c) return;
-    // Contrat "production" : Parts gagnees toutes sources confondues.
+    // Contrat "production" : Parts naturelles gagnees toutes sources confondues
+    // (production de base + clics naturels), coherentes avec la cible calculee
+    // sur le PPS naturel. Les boosts temporaires ne faussent plus la progression.
     if (c.typeId === 'production') {
-        c.progress = Math.max(0, totalPartsEarnedThisLaunch - c.startTotal);
+        c.progress = Math.max(0, naturalPartsThisLaunch - (c.naturalStartTotal || 0));
     }
     // clicks / clickParts / comets : progression incrementee par les hooks.
     if (c.progress >= c.target) {
@@ -5641,7 +5664,7 @@ function updateContractHud() {
     const barEl = document.getElementById('contract-hud-bar-fill');
     const secLeft = Math.max(0, Math.ceil((c.expiresAt - Date.now()) / 1000));
     const current = c.typeId === 'production'
-        ? Math.max(0, totalPartsEarnedThisLaunch - c.startTotal)
+        ? Math.max(0, naturalPartsThisLaunch - (c.naturalStartTotal || 0))
         : Math.max(0, c.progress);
     if (labelEl) labelEl.textContent = getContractHudShortLabel(c);
     if (progressEl) progressEl.textContent = formatNumber(Math.min(current, c.target)) + ' / ' + formatNumber(c.target);
