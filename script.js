@@ -12,7 +12,14 @@ document.body.appendChild(tooltip);
 let tooltipAnchor = null;
 
 function showTooltip(text, x, y, options) {
-    tooltip.textContent = text;
+    // Chaque ligne du tooltip est insecable (nowrap) : un nombre ne peut jamais
+    // etre coupe en deux par le retour a la ligne impose par max-width.
+    tooltip.replaceChildren(...text.split('\n').map(line => {
+        const span = document.createElement('span');
+        span.className = 'tooltip-line';
+        span.textContent = line;
+        return span;
+    }));
     tooltip.style.width = '';
     tooltip.style.maxWidth = '';
     if (options && options.width) {
@@ -5469,13 +5476,13 @@ function completeContract() {
         partsSinceLaunch += gain;
         trackPartsEarned(gain);
         showBonusPopup('+' + formatNumber(gain) + ' ' + t('Parts'), 'instant');
-        showToast('\uD83D\uDC8F ' + tf('Contrat rempli ! +{parts} Parts', { parts: formatNumber(gain) }), 'images/parts.png');
+        showToast(tf('Contrat rempli ! +{parts} Parts', { parts: formatNumber(gain) }), 'images/parts.png');
     } else if (c.rewardType === 'mult') {
         activateContractTempMultiplier(c.mult, c.duration * 1000);
-        showToast('\u2705 ' + tf('Contrat rempli ! Production x{mult} pendant {sec} s', { mult: c.mult, sec: c.duration }), null);
+        showToast(tf('Contrat rempli ! Production x{mult} pendant {sec} s', { mult: c.mult, sec: c.duration }), null);
     } else if (c.rewardType === 'click') {
         activateContractTempClickMultiplier(c.clickMult, c.duration * 1000);
-        showToast('\u2705 ' + tf('Contrat rempli ! Clic x{mult} pendant {sec} s', { mult: c.clickMult, sec: c.duration }), null);
+        showToast(tf('Contrat rempli ! Clic x{mult} pendant {sec} s', { mult: c.clickMult, sec: c.duration }), null);
     }
     contractState.active = null;
     contractState.offers = [];

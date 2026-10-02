@@ -167,6 +167,11 @@ body {
     text-shadow: none;
 }
 /* Tooltip for upgrades */
+.upgrade-tooltip .tooltip-line {
+    display: block;
+    white-space: nowrap;
+}
+
 .upgrade-tooltip {
     position: fixed;
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(30, 41, 59, 0.97));
@@ -4548,7 +4553,12 @@ body {
     .comet-img { width: clamp(calc(96px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(150px * var(--mscale, 1))); height: clamp(calc(96px * var(--mscale, 1)), calc(15vw * var(--mscale, 1)), calc(150px * var(--mscale, 1))); }
 
     /* Tooltip : plus lisible au doigt, reste au-dessus du clavier virtuel */
-    .upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: pre-line; border-left-width: calc(3px * var(--mscale, 1)); }
+    .upgrade-tooltip .tooltip-line {
+    display: block;
+    white-space: nowrap;
+}
+
+.upgrade-tooltip { font-size: 0.8rem; max-width: 85vw; white-space: pre-line; border-left-width: calc(3px * var(--mscale, 1)); }
 
     /* Sur mobile, pas de tooltip CSS au survol (pas de hover) */
     .building-item:hover::after { opacity: 0; visibility: hidden; }
