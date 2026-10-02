@@ -3,8 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Starcruiser Clicker</title>
+    <title>Starcruiser Clicker — Construisez votre fusée, explorez l'espace</title>
+    <meta name="description" content="Construisez votre fusée pièce par pièce, lancez-la vers d'autres planètes et exploitez l'espace dans ce clicker spatial. Jeu gratuit, 6 langues, jouable sur PC et mobile.">
     <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <meta name="theme-color" content="#0b1030">
+    <!-- Open Graph : aperçu riche lors du partage (Discord, Twitter/X, Reddit, WhatsApp) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Starcruiser Clicker">
+    <meta property="og:description" content="Construisez votre fusée pièce par pièce et partez explorer l'espace. Clicker spatial gratuit, 6 langues, PC et mobile.">
+    <meta property="og:image" content="images/logo2.png">
+    <meta property="og:locale" content="fr_FR">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Starcruiser Clicker">
+    <meta name="twitter:description" content="Construisez votre fusée et explorez l'espace. Clicker spatial gratuit, PC et mobile.">
+    <meta name="twitter:image" content="images/logo2.png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -484,6 +498,15 @@
         <button data-view="right"><span class="nav-icon"><img src="images/buildings/workshop.png" alt="" class="nav-img"></span><span data-i18n="Bâtiments">Bâtiments</span></button>
     </nav>
 
+    <script>
+        // Enregistrement du service worker : PWA installable + relecture instantanee.
+        // HTTPS uniquement (GitHub Pages le fournit) : silencieux en local file://.
+        if ('serviceWorker' in navigator && location.protocol === 'https:') {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+    </script>
     <script src="i18n.js"></script>
     <script src="script.js"></script>
 </body>

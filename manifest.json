@@ -1,0 +1,20 @@
+{
+    "name": "Starcruiser Clicker",
+    "short_name": "Starcruiser",
+    "description": "Construisez votre fusée, explorez l'espace et lancez-vous à la conquête des planètes dans ce clicker spatial addictif.",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#0b1030",
+    "theme_color": "#0b1030",
+    "lang": "fr",
+    "icons": [
+        {
+            "src": "images/logo.png",
+            "sizes": "563x563",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
