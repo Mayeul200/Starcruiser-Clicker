@@ -3164,46 +3164,53 @@ body {
 
 
 /* ===== Halo pulsant autour de la piece ===== */
-/* Anneau lumineux dore qui respire lentement : attire l'oeil vers la piece
-   sans crier, discret quand la piece est deja cliquee regulierement. */
+/* Lueur blanche diffuse qui respire lentement : attire l'oeil vers la piece
+   sans crier. Aucun bord net, juste un voile lumineux qui s'evanouit
+   progressivement vers l'exterieur. */
 .medal-halo {
     position: absolute;
-    inset: -14%;
+    inset: -22%;
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;
     background:
         radial-gradient(circle,
-            transparent 52%,
-            rgba(251, 191, 36, 0.28) 62%,
-            rgba(251, 191, 36, 0.10) 74%,
-            transparent 82%);
+            rgba(255, 255, 255, 0.38) 48%,
+            rgba(255, 255, 255, 0.20) 58%,
+            rgba(255, 255, 255, 0.08) 70%,
+            transparent 88%);
+    filter: blur(14px);
     animation: medal-halo-breathe 2.6s ease-in-out infinite;
-    opacity: 0.85;
+    opacity: 0.9;
 }
 
-/* Renflement de lueur aux poles qui tourne lentement : effet "vivant" */
+/* Voile blanc legerement dephase qui renforce la profondeur du flou */
 .medal-halo::before {
+    content: '';
+    position: absolute;
+    inset: 4%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle,
+            rgba(255, 255, 255, 0.22) 50%,
+            transparent 78%);
+    filter: blur(10px);
+    animation: medal-halo-breathe 2.6s ease-in-out infinite reverse;
+}
+
+/* Renflement de lueur tres diffus qui tourne lentement : effet "vivant" */
+.medal-halo::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: 50%;
     background: conic-gradient(from 0deg,
-        rgba(255, 255, 255, 0.22) 0deg,
-        transparent 55deg,
-        transparent 305deg,
-        rgba(255, 255, 255, 0.22) 360deg);
-    filter: blur(6px);
+        rgba(255, 255, 255, 0.14) 0deg,
+        transparent 70deg,
+        transparent 290deg,
+        rgba(255, 255, 255, 0.14) 360deg);
+    filter: blur(18px);
     animation: medal-halo-spin 9s linear infinite;
-}
-
-.medal-halo::after {
-    content: '';
-    position: absolute;
-    inset: 6%;
-    border-radius: 50%;
-    box-shadow: 0 0 22px 4px rgba(251, 191, 36, 0.30);
-    animation: medal-halo-breathe 2.6s ease-in-out infinite reverse;
 }
 
 @keyframes medal-halo-breathe {
