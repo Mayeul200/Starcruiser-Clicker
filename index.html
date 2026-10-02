@@ -30,9 +30,9 @@
         </div>
         <div class="top-bar-controls">
             <div class="launch-timer" id="launch-timer" data-i18n-title="Temps écoulé depuis le dernier lancement"></div>
-            <button class="control-button" onclick="toggleStats()" title="Statistics" data-i18n-title="Statistics">📊</button>
-            <button class="control-button" id="sound-toggle-btn" onclick="toggleSound()" title="Son" data-i18n-title="Son">🔊</button>
-            <button class="control-button" onclick="toggleSettings()" title="Settings" data-i18n-title="Settings">⚙️</button>
+            <button class="control-button" onclick="toggleStats()" title="Statistics" data-i18n-title="Statistics"></button>
+            <button class="control-button" id="sound-toggle-btn" onclick="toggleSound()" title="Son" data-i18n-title="Son"></button>
+            <button class="control-button" onclick="toggleSettings()" title="Settings" data-i18n-title="Settings"></button>
         </div>
     </div>
 
@@ -106,7 +106,7 @@
     <div class="modal" id="launch-results-modal">
         <div class="modal-content launch-modal">
             <div class="modal-header">
-                <h2 data-i18n="🚀 Mission Résultats">🚀 Mission Résultats</h2>
+                <h2 data-i18n="Mission Résultats">Mission Résultats</h2>
                 <span class="close-button" onclick="closeLaunchResults()">&times;</span>
             </div>
             <div class="modal-body">
@@ -119,7 +119,7 @@
                     <span class="launch-value" id="launch-results-multiplier">x1</span>
                 </div>
                 <div class="launch-result-item">
-                    <span class="launch-label">✨ <span data-i18n="Poussière d'Étoiles gagnée:">Poussière d'Étoiles gagnée:</span></span>
+                    <span class="launch-label"> <span data-i18n="Poussière d'Étoiles gagnée:">Poussière d'Étoiles gagnée:</span></span>
                     <span class="launch-value" id="launch-results-stardust">0</span>
                 </div>
                 <div class="launch-result-item">
@@ -222,7 +222,7 @@
                 <button class="modal-button" onclick="importSave()">📥 <span data-i18n="Import">Import</span></button>
                 <button class="modal-button" onclick="document.getElementById('import-file-input').click()">📁 <span data-i18n="Importer un fichier">Importer un fichier</span></button>
                 <input type="file" id="import-file-input" accept=".txt,text/plain,application/json" style="display: none;">
-                <button class="modal-button" onclick="toggleSettings(); startTutorial(true)">🎓 <span data-i18n="Revoir le tutoriel">Revoir le tutoriel</span></button>
+                <button class="modal-button" onclick="toggleSettings(); startTutorial(true)"><span data-i18n="Revoir le tutoriel">Revoir le tutoriel</span></button>
                 <button class="modal-button delete" onclick="confirmDeleteSave()">🗑️ <span data-i18n="Delete">Delete</span></button>
             </div>
         </div>
@@ -236,15 +236,15 @@
             <div class="space-progress-container" id="space-progress-sidebar">
                 <div class="space-progress-header">
                     <span class="current-planet-display" id="current-planet-display">
-                        🌍 Terre: 0%
-                    </span>
+                         Terre: 0%
+</span>
                     <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique" data-i18n-title="Atelier Galactique">
-                        <span class="galactic-shop-label">⚙ <span data-i18n="Atelier">Atelier</span></span>
-                        <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
+                        <span class="galactic-shop-label"> <span data-i18n="Atelier">Atelier</span></span>
+                        <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)"> <span id="stardust-value">0</span></span>
                         <span class="galactic-shop-preview" id="stardust-preview" title="PE gagnées si lancement" data-i18n-title="PE gagnées si lancement">
                             <span class="galactic-shop-preview-bar" id="stardust-preview-bar"></span>
-                            <span class="galactic-shop-preview-text">+<span id="stardust-preview-value">0</span> ✨</span>
-                        </span>
+                            <span class="galactic-shop-preview-text">+<span id="stardust-preview-value">0</span> </span>
+</span>
                     </button>
                 </div>
                 <div class="mini-space-map" id="mini-space-map"></div>
@@ -382,8 +382,8 @@
     <div class="modal" id="galactic-shop-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>✨ <span data-i18n="Atelier Galactique">Atelier Galactique</span></h2>
-                <div class="stardust-display">✨ <span id="stardust-value-2">0</span></div>
+                <h2> <span data-i18n="Atelier Galactique">Atelier Galactique</span></h2>
+                <div class="stardust-display"> <span id="stardust-value-2">0</span></div>
                 <span class="close-button" onclick="tryCloseGalacticShop()">&times;</span>
             </div>
             <div class="modal-body">
@@ -442,7 +442,7 @@
     <!-- CHOIX DE LA LANGUE (premiere visite) -->
     <div class="lang-picker-overlay" id="lang-picker-overlay">
         <div class="lang-picker-box">
-            <div class="lang-picker-rocket">🚀</div>
+            <div class="lang-picker-rocket"></div>
             <h2 class="lang-picker-title">Choose your language</h2>
             <div class="lang-picker-buttons">
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('fr')">

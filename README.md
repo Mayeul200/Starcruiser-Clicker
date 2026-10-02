@@ -1,16 +1,16 @@
-# 🚀 Starcruiser Clicker
+# Starcruiser Clicker
 
 > Construisez votre fusée pièce par pièce, lancez-la vers les étoiles et exploitez l'espace dans ce clicker spatial gratuit.
 
 ![Starcruiser Clicker](images/logo2.png)
 
-## 🎮 Jouer
+## Jouer
 
-**[▶ Jouer maintenant](https://mayeul200.github.io/Starcruiser-Clicker/)**
+**[Jouer maintenant](https://mayeul200.github.io/Starcruiser-Clicker/)**
 
 100 % gratuit, sans inscription, directement dans le navigateur — PC et mobile. Installable comme une application (PWA).
 
-## 🛰️ Le concept
+## Le concept
 
 Vous dirigez un programme spatial naissant :
 
@@ -20,7 +20,7 @@ Vous dirigez un programme spatial naissant :
 4. **Lancez-la !** Votre fusée parcourt des kilomètres réels et atteint de nouvelles planètes : Lune, Mars, Neptune, Proxima Centauri... jusqu'à l'Amas de Virgo
 5. **Prestige** : chaque lancement vous donne de la Poussière d'Étoiles à dépenser dans l'Atelier Galactique (améliorations permanentes)
 
-## ✨ Caractéristiques
+## Caractéristiques
 
 - **Boucle de jeu complète** : clic → production → fusée → voyage → prestige
 - **11 planètes** à atteindre, chacune avec son bonus permanent
@@ -33,7 +33,7 @@ Vous dirigez un programme spatial naissant :
 - **Sauvegarde automatique** + production hors-ligne
 - **Responsive** : jouable au doigt comme à la souris
 
-## 🛠️ Technique
+## Technique
 
 Jeu 100 % vanilla (HTML/CSS/JS, aucune dépendance, aucun framework) :
 
@@ -42,6 +42,6 @@ Jeu 100 % vanilla (HTML/CSS/JS, aucune dépendance, aucun framework) :
 - PWA : installable, service worker, reprise hors-ligne
 - Sauvegarde localStorage versionnée avec migration
 
-## 📄 Licence
+## Licence
 
 Tous droits réservés © Mayeul

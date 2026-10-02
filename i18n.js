@@ -5,6 +5,7 @@
 // ============================================
 const TRANSLATIONS = {
     en: {
+        'Muet': 'Muted',
         // --- Top bar / commun ---
         'Statistics': 'Statistics',
         'Temps écoulé depuis le dernier lancement': 'Time since last launch',
@@ -493,8 +494,8 @@ const TRANSLATIONS = {
         'Acheter le maximum possible': 'Buy the maximum possible',
         // --- Clés HTML avec emoji ---
         'Progression Spatiale': 'Space Progress',
-        '📦 Collection de Cartes': '📦 Card Collection',
-        '🚀 Mission Résultats': '🚀 Mission Results',
+        'Collection de Cartes': 'Card Collection',
+        'Mission Résultats': 'Mission Results',
         // --- Tutoriel ---
         'Bienvenue dans Starcruiser !': 'Welcome to Starcruiser!',
         'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'Your mission: build a rocket piece by piece and explore the depths of space.\nEvery planet you reach makes you stronger. Ready for takeoff?',
@@ -543,6 +544,7 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Perfect defense: no comet may hit the rocket ({target} comets)',
 },
     es: {
+        'Muet': 'Silencio',
         'Statistics': 'Estadísticas',
         'Temps écoulé depuis le dernier lancement': 'Tiempo transcurrido desde el último lanzamiento',
         'Jamais lancé': 'Nunca lanzado',
@@ -1005,8 +1007,8 @@ const TRANSLATIONS = {
         'Acheter 5 à la fois': 'Comprar 5 a la vez',
         'Acheter 50 à la fois': 'Comprar 50 a la vez',
         'Acheter le maximum possible': 'Comprar el máximo posible',
-        '📦 Collection de Cartes': '📦 Colección de Cartas',
-        '🚀 Mission Résultats': '🚀 Resultados de la Misión',
+        'Collection de Cartes': 'Colección de Cartas',
+        'Mission Résultats': 'Resultados de la Misión',
         'Bienvenue dans Starcruiser !': '¡Bienvenido a Starcruiser!',
         'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'Tu misión: construye tu cohete pieza a pieza y explora las profundidades del espacio.\nCada planeta que alcanzas te hace más fuerte. ¿Listo para el despegue?',
         'Les Parts': 'Las Piezas',
@@ -1054,6 +1056,7 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Defensa perfecta: ningun cometa debe tocar el cohete ({target} cometas)',
 },
     de: {
+        'Muet': 'Stumm',
         'Statistics': 'Statistiken',
         'Temps écoulé depuis le dernier lancement': 'Zeit seit dem letzten Start',
         'Jamais lancé': 'Nie gestartet',
@@ -1516,8 +1519,8 @@ const TRANSLATIONS = {
         'Acheter 5 à la fois': 'Je 5 kaufen',
         'Acheter 50 à la fois': 'Je 50 kaufen',
         'Acheter le maximum possible': 'Maximal mögliche kaufen',
-        '📦 Collection de Cartes': '📦 Kartensammlung',
-        '🚀 Mission Résultats': '🚀 Missionsergebnisse',
+        'Collection de Cartes': 'Kartensammlung',
+        'Mission Résultats': 'Missionsergebnisse',
         'Bienvenue dans Starcruiser !': 'Willkommen bei Starcruiser!',
         'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'Deine Mission: baue deine Rakete Stück für Stück und erforsche die Tiefen des Weltraums.\nJeder erreichte Planet macht dich stärker. Bereit zum Abflug?',
         'Les Parts': 'Die Teile',
@@ -1565,6 +1568,7 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Perfekte Verteidigung: kein Komet darf die Rakete treffen ({target} Kometen)',
 },
     it: {
+        'Muet': 'Muto',
         'Statistics': 'Statistiche',
         'Temps écoulé depuis le dernier lancement': 'Tempo trascorso dall’ultimo lancio',
         'Jamais lancé': 'Mai lanciato',
@@ -2027,8 +2031,8 @@ const TRANSLATIONS = {
         'Acheter 5 à la fois': 'Compra 5 alla volta',
         'Acheter 50 à la fois': 'Compra 50 alla volta',
         'Acheter le maximum possible': 'Compra il massimo possibile',
-        '📦 Collection de Cartes': '📦 Collezione di Carte',
-        '🚀 Mission Résultats': '🚀 Risultati della Missione',
+        'Collection de Cartes': 'Collezione di Carte',
+        'Mission Résultats': 'Risultati della Missione',
         'Bienvenue dans Starcruiser !': 'Benvenuto in Starcruiser!',
         'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'La tua missione: costruisci il tuo razzo pezzo per pezzo ed esplora le profondità dello spazio.\nOgni pianeta raggiunto ti rende più forte. Pronto al decollo?',
         'Les Parts': 'I Pezzi',
@@ -2076,6 +2080,7 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Difesa perfetta: nessuna cometa deve colpire il razzo ({target} comete)',
 },
     pt: {
+        'Muet': 'Mudo',
         'Statistics': 'Estatísticas',
         'Temps écoulé depuis le dernier lancement': 'Tempo decorrido desde o último lançamento',
         'Jamais lancé': 'Nunca lançado',
@@ -2538,8 +2543,8 @@ const TRANSLATIONS = {
         'Acheter 5 à la fois': 'Comprar 5 de cada vez',
         'Acheter 50 à la fois': 'Comprar 50 de cada vez',
         'Acheter le maximum possible': 'Comprar o máximo possível',
-        '📦 Collection de Cartes': '📦 Coleção de Cartas',
-        '🚀 Mission Résultats': '🚀 Resultados da Missão',
+        'Collection de Cartes': 'Coleção de Cartas',
+        'Mission Résultats': 'Resultados da Missão',
         'Bienvenue dans Starcruiser !': 'Bem-vindo ao Starcruiser!',
         'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'A tua missão: constrói o teu foguete peça a peça e explora as profundezas do espaço.\nCada planeta alcançado torna-te mais forte. Pronto para a descolagem?',
         'Les Parts': 'As Peças',
@@ -2560,6 +2565,7 @@ const TRANSLATIONS = {
         'Revoir le tutoriel': 'Rever o tutorial',
     },
     nl: {
+        'Muet': 'Geluid uit',
         'Statistics': 'Statistieken',
         'Temps écoulé depuis le dernier lancement': 'Tijd sinds de laatste lancering',
         'Jamais lancé': 'Nooit gelanceerd',
@@ -3023,8 +3029,8 @@ const TRANSLATIONS = {
         'Acheter 5 à la fois': 'Koop 5 per keer',
         'Acheter 50 à la fois': 'Koop 50 per keer',
         'Acheter le maximum possible': 'Koop het maximale aantal',
-        '📦 Collection de Cartes': '📦 Kaartenverzameling',
-        '🚀 Mission Résultats': '🚀 Missie resultaten',
+        'Collection de Cartes': 'Kaartenverzameling',
+        'Mission Résultats': 'Missie resultaten',
         'Bienvenue dans Starcruiser !': 'Welkom bij Starcruiser!',
         'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?': 'Je missie: bouw je raket onderdeel voor onderdeel en verken de diepten van de ruimte.\nElke planeet die je bereikt maakt je sterker. Klaar voor de lancering?',
         'Les Parts': 'De Onderdelen',

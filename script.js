@@ -105,20 +105,20 @@ const SPACE_UPDATE_INTERVAL_MS = 500;
 // ============================================
 // Les noms/descriptions sont en FR (cles i18n) : affiches via t()/tf().
 const PRODUCTION_BUILDINGS = [
-    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici", baseCost: 15,            gain: 0.1,      count: 0, image: "🛠️", imgPath: "images/buildings/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
-    { id: "factory",       name: "Usine",                    description: "Construit les ateliers", baseCost: 100,           gain: 1,         count: 0, image: "🏭",       imgPath: "images/buildings/factory.png",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
-    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines", baseCost: 1100,          gain: 8,        count: 0, image: "⛏️",       imgPath: "images/buildings/stellar-mine.png", unlockCondition: () => score >= 500,      totalGenerated: 0 },
-    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe", baseCost: 12000,         gain: 47,       count: 0, image: "☀️",       imgPath: "images/buildings/solar-central.png", unlockCondition: () => score >= 6000,     totalGenerated: 0 },
-    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules", baseCost: 130000,       gain: 260,     count: 0, image: "🛰️", imgPath: "images/buildings/orbital-autofab.png", unlockCondition: () => score >= 65000,   totalGenerated: 0 },
-    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes", baseCost: 1400000,      gain: 1400,    count: 0, image: "📡", imgPath: "images/buildings/essaim-sonde.png", unlockCondition: () => score >= 700000, totalGenerated: 0 },
-    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première", baseCost: 20000000,     gain: 7800,   count: 0, image: "⚙️", imgPath: "images/buildings/nanoforge.png", unlockCondition: () => score >= 10000000, totalGenerated: 0 },
-    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure", baseCost: 330000000,    gain: 44000,  count: 0, image: "🧬", imgPath: "images/buildings/quantic-printer.png", unlockCondition: () => score >= 150000000, totalGenerated: 0 },
-    { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime", baseCost: 5100000000,   gain: 260000, count: 0, image: "🌀", imgPath: "images/buildings/antimatter_collector.png", unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
-    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique", baseCost: 75000000000,          gain: 1600000,      count: 0, image: "⚫",       imgPath: "images/buildings/voidforge.png", unlockCondition: () => score >= 35000000000,       totalGenerated: 0 },
-    { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar", baseCost: 1000000000000,        gain: 10000000,    count: 0, image: "💫",       imgPath: "images/buildings/quasar-motor.png", unlockCondition: () => score >= 500000000000,    totalGenerated: 0 },
-    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières", baseCost: 14000000000000,          gain: 65000000,      count: 0, image: "🌟",       imgPath: "images/buildings/stellar-fundry.png", unlockCondition: () => score >= 7500000000000,      totalGenerated: 0 },
-    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers", baseCost: 170000000000000,          gain: 430000000,      count: 0, image: "⭐",       imgPath: "images/buildings/pulsar-clock.png", unlockCondition: () => score >= 100000000000000,    totalGenerated: 0 },
-    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur", baseCost: 2100000000000000,          gain: 2900000000,      count: 0, image: "🕳️",       imgPath: "images/buildings/black-hole-factory.png", unlockCondition: () => score >= 1500000000000000,    totalGenerated: 0 },
+    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici", baseCost: 15,            gain: 0.1,      count: 0, image: "", imgPath: "images/buildings/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
+    { id: "factory",       name: "Usine",                    description: "Construit les ateliers", baseCost: 100,           gain: 1,         count: 0, image: "",       imgPath: "images/buildings/factory.png",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
+    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines", baseCost: 1100,          gain: 8,        count: 0, image: "",       imgPath: "images/buildings/stellar-mine.png", unlockCondition: () => score >= 500,      totalGenerated: 0 },
+    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe", baseCost: 12000,         gain: 47,       count: 0, image: "",       imgPath: "images/buildings/solar-central.png", unlockCondition: () => score >= 6000,     totalGenerated: 0 },
+    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules", baseCost: 130000,       gain: 260,     count: 0, image: "", imgPath: "images/buildings/orbital-autofab.png", unlockCondition: () => score >= 65000,   totalGenerated: 0 },
+    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes", baseCost: 1400000,      gain: 1400,    count: 0, image: "", imgPath: "images/buildings/essaim-sonde.png", unlockCondition: () => score >= 700000, totalGenerated: 0 },
+    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première", baseCost: 20000000,     gain: 7800,   count: 0, image: "", imgPath: "images/buildings/nanoforge.png", unlockCondition: () => score >= 10000000, totalGenerated: 0 },
+    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure", baseCost: 330000000,    gain: 44000,  count: 0, image: "", imgPath: "images/buildings/quantic-printer.png", unlockCondition: () => score >= 150000000, totalGenerated: 0 },
+    { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime", baseCost: 5100000000,   gain: 260000, count: 0, image: "", imgPath: "images/buildings/antimatter_collector.png", unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
+    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique", baseCost: 75000000000,          gain: 1600000,      count: 0, image: "",       imgPath: "images/buildings/voidforge.png", unlockCondition: () => score >= 35000000000,       totalGenerated: 0 },
+    { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar", baseCost: 1000000000000,        gain: 10000000,    count: 0, image: "",       imgPath: "images/buildings/quasar-motor.png", unlockCondition: () => score >= 500000000000,    totalGenerated: 0 },
+    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières", baseCost: 14000000000000,          gain: 65000000,      count: 0, image: "",       imgPath: "images/buildings/stellar-fundry.png", unlockCondition: () => score >= 7500000000000,      totalGenerated: 0 },
+    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers", baseCost: 170000000000000,          gain: 430000000,      count: 0, image: "",       imgPath: "images/buildings/pulsar-clock.png", unlockCondition: () => score >= 100000000000000,    totalGenerated: 0 },
+    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur", baseCost: 2100000000000000,          gain: 2900000000,      count: 0, image: "",       imgPath: "images/buildings/black-hole-factory.png", unlockCondition: () => score >= 1500000000000000,    totalGenerated: 0 },
 ];
 
 // Bâtiments de production = liste utilisée par la boucle clicker (achat en masse, gain Parts/s)
@@ -129,16 +129,16 @@ const BUILDINGS = PRODUCTION_BUILDINGS;
 // Achats uniques par run (payés en Parts). Compléter les 10 = lancement.
 // ============================================
 const ROCKET_PARTS = [
-    { id: "nozzles",       name: "Tuyères",        description: "Propulsion", cost: 50,           image: "🎯",       imgPath: "images/rocket/nozzles.PNG",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
-    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux", cost: 150,          image: "🔥",       imgPath: "images/rocket/engines.png",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
-    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant", cost: 450,          image: "⛽",       imgPath: "images/rocket/fuel-tank.png",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
-    { id: "rocket-body",   name: "Corps",          description: "Structure", cost: 1300,         image: "🏭",       imgPath: "images/rocket/body.png",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
-    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire", cost: 3800,         image: "🚀",       imgPath: "images/rocket/boosters-left.png", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
-    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire", cost: 11000,        image: "🚀",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
-    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "👨‍🚀", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
-    { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "🛡️",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
-    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "🚀",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
-    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "👩‍🚀", imgPath: "images/rocket/astronaut.png",     x: 60,    y: 635, width: 25,  height: 60,  order: 10, purchased: false }
+    { id: "nozzles",       name: "Tuyères",        description: "Propulsion", cost: 50,           image: "",       imgPath: "images/rocket/nozzles.PNG",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
+    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux", cost: 150,          image: "",       imgPath: "images/rocket/engines.png",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
+    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant", cost: 450,          image: "",       imgPath: "images/rocket/fuel-tank.png",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
+    { id: "rocket-body",   name: "Corps",          description: "Structure", cost: 1300,         image: "",       imgPath: "images/rocket/body.png",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
+    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire", cost: 3800,         image: "",       imgPath: "images/rocket/boosters-left.png", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire", cost: 11000,        image: "",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
+    { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
+    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
+    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "", imgPath: "images/rocket/astronaut.png",     x: 60,    y: 635, width: 25,  height: 60,  order: 10, purchased: false }
 ];
 
 
@@ -182,8 +182,8 @@ const UPGRADE_COLORS = [
 ];
 
 const RANDOM_BONUSES = [
-    { id: "meteor", symbol: "🌠", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" },
-    { id: "flare", symbol: "☀️", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
+    { id: "meteor", symbol: "", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" },
+    { id: "flare", symbol: "", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
 ];
 
 const SAVE_VERSION = "2.2.0";
@@ -346,15 +346,15 @@ let totalStardustEarned = 0; // Cumul de toutes les Poussière d'Étoiles gagné
 // ROCKET CONSTRUCTION DATA
 // ============================================
 const ROCKET_PART_POSITIONS = {
-    'nozzles': { position: 'bottom', emoji: '⛽', name: 'Tuyères', class: 'rocket-engine' },
-    'engines': { position: 'bottom', emoji: '⛽', name: 'Moteurs', class: 'rocket-engine' },
-    'fuel-tank': { position: 'middle', emoji: '⛽', name: 'Réservoir', class: 'rocket-body' },
-    'rocket-body': { position: 'middle', emoji: '⛽', name: 'Corps', class: 'rocket-body' },
-    'wings': { position: 'sides', emoji: '✈️', name: 'Stabilisateurs', class: 'rocket-wings' },
-    'cockpit': { position: 'top', emoji: '♁', name: 'Cockpit', class: 'rocket-nose' },
-    'shield': { position: 'top', emoji: '♁', name: 'Bouclier', class: 'rocket-nose' },
-    'launch-pad': { position: 'bottom', emoji: '♁', name: 'Pas de tir', class: 'rocket-engine' },
-    'astronaut': { position: 'top', emoji: '♁', name: 'Astronaute', class: 'rocket-nose' }
+    'nozzles': { position: 'bottom', emoji: '', name: 'Tuyères', class: 'rocket-engine' },
+    'engines': { position: 'bottom', emoji: '', name: 'Moteurs', class: 'rocket-engine' },
+    'fuel-tank': { position: 'middle', emoji: '', name: 'Réservoir', class: 'rocket-body' },
+    'rocket-body': { position: 'middle', emoji: '', name: 'Corps', class: 'rocket-body' },
+    'wings': { position: 'sides', emoji: '', name: 'Stabilisateurs', class: 'rocket-wings' },
+    'cockpit': { position: 'top', emoji: '', name: 'Cockpit', class: 'rocket-nose' },
+    'shield': { position: 'top', emoji: '', name: 'Bouclier', class: 'rocket-nose' },
+    'launch-pad': { position: 'bottom', emoji: '', name: 'Pas de tir', class: 'rocket-engine' },
+    'astronaut': { position: 'top', emoji: '', name: 'Astronaute', class: 'rocket-nose' }
 };
 
 let isLaunching = false;
@@ -1512,7 +1512,7 @@ function formatTravelSpeed(kmS) {
 
 function launchRocket() {
     if (!checkRocketReady()) {
-        showToast("❌ " + t("Fusée pas encore prête ! Il manque des pièces."));
+        showToast(t("Fusée pas encore prête ! Il manque des pièces."));
         return;
     }
     
@@ -1538,7 +1538,7 @@ function launchRocket() {
             updateSpaceProgress();
             updateConstructionScene();
             isLaunching = false;
-            showToast(`🚀 ${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
+            showToast(`${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
         });
     });
 }
@@ -2844,7 +2844,7 @@ function renderGalacticShop() {
                     const ru = GALACTIC_UPGRADES.find(u => u.id === r);
                     return ru ? ru.name : r;
                 });
-                reqHtml = '<span class="galactic-req">⛔ ' + t('Prérequis:') + ' ' + reqNames.map(r => t(r)).join(', ') + '</span>';
+                reqHtml = '<span class="galactic-req">' + t('Prérequis:') + ' ' + reqNames.map(r => t(r)).join(', ') + '</span>';
             }
 
             el.innerHTML =
@@ -2859,7 +2859,7 @@ function renderGalacticShop() {
                         ? ''
                         : locked
                             ? reqHtml
-                            : '<button class="galactic-btn" onclick="buyGalacticUpgrade(\'' + upgrade.id + '\')"' + (!affordable ? ' disabled' : '') + '>' + formatNumber(cost) + ' ✨</button>') +
+                            : '<button class="galactic-btn" onclick="buyGalacticUpgrade(\'' + upgrade.id + '\')"' + (!affordable ? ' disabled' : '') + '>' + formatNumber(cost) + ' </button>') +
                 '</div>';
             treeEl.appendChild(el);
         });
@@ -4226,7 +4226,7 @@ function toggleSound() {
     Sound.enabled = !Sound.enabled;
     localStorage.setItem('starcruiserSound', Sound.enabled ? '1' : '0');
     const btn = document.getElementById('sound-toggle-btn');
-    if (btn) btn.textContent = Sound.enabled ? '🔊' : '🔇';
+    if (btn) btn.textContent = Sound.enabled ? t('Son') : t('Son coupé');
     if (Sound.enabled) Sounds.click();
 }
 document.addEventListener('visibilitychange', () => {
@@ -5747,7 +5747,7 @@ const CARD_RARITIES = {
     alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
 };
 
-const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '🌍', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '🌙', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '🐀', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '🔧', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '🏭', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '⛏️', imgPath: 'images/cards/collection/stellar-mine-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '☀️', imgPath: 'images/cards/collection/solar-factory-card.png' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '☄', imgPath: 'images/cards/collection/comet-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '🌊', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '❄️', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '☉', imgPath: 'images/cards/collection/proxima-centauri-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '🛰️', imgPath: 'images/cards/collection/orbital-autofab-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '📡', imgPath: 'images/cards/collection/probe-swarm-card.png' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '💫', imgPath: 'images/cards/collection/quasar-engine-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '⭐', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '🌀', imgPath: 'images/cards/collection/oort-cloud-card.png' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '⭐', imgPath: 'images/cards/collection/pulsar-clock-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '🌌', imgPath: 'images/cards/collection/milky-way-center-card.png' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '🚀', imgPath: 'images/cards/collection/missile-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '🔭', imgPath: 'images/cards/collection/andromeda-card.png' }];
+const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '', imgPath: 'images/cards/collection/stellar-mine-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '', imgPath: 'images/cards/collection/solar-factory-card.png' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '', imgPath: 'images/cards/collection/comet-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/proxima-centauri-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/orbital-autofab-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/probe-swarm-card.png' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/quasar-engine-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/oort-cloud-card.png' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/pulsar-clock-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/milky-way-center-card.png' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/missile-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '', imgPath: 'images/cards/collection/andromeda-card.png' }];
 
 const BOOSTERS = {
     standard:  { name: 'Standard',   cardCount: 1, cost: () => Math.max(100, Math.floor(getBasePartsPerSecond() * 8)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
@@ -5889,7 +5889,7 @@ function buyBooster(type) {
     if (!booster) return;
     const cost = Math.floor(booster.cost() * (1 - getBoosterDiscount()));
     if (score < cost) {
-        showToast('❌ ' + t('Pas assez de Parts pour ce booster !'));
+        showToast(t('Pas assez de Parts pour ce booster !'));
         return;
     }
     score -= cost;
@@ -6054,7 +6054,7 @@ function renderCardAlbum() {
     if (complete) {
         const banner = document.createElement('div');
         banner.className = 'cc-set-complete';
-        banner.textContent = '🚀 ' + t('Collection complète ! +20% prod');
+        banner.textContent = t('Collection complète ! +20% prod');
         grid.appendChild(banner);
     }
     COLLECTIBLE_CARDS.forEach(card => {
@@ -6470,7 +6470,7 @@ function scheduleBonusSpawn() {
 }
 scheduleBonusSpawn();
 // Etat du bouton son au chargement (icône cohérente avec le réglage sauvegardé)
-(() => { const b = document.getElementById('sound-toggle-btn'); if (b && !Sound.enabled) b.textContent = '🔇'; })();
+(() => { const b = document.getElementById('sound-toggle-btn'); if (b && !Sound.enabled) b.textContent = t('Son coupé'); })();
 // Prechargement du sprite du missile : il n'est insere dans le DOM qu'au
 // premier tir, sans ce prechargement le premier missile vole sans image
 // le temps du premier telechargement.
@@ -6821,9 +6821,9 @@ function initDebugMode() {
         b.style.cssText = 'background:#111;color:#0f0;border:1px solid #0f0;padding:4px 8px;border-radius:4px;cursor:pointer;font-family:monospace;font-size:11px;';
         return b;
     };
-    panel.appendChild(btn('☄ Comète', () => Debug.comet(1)));
-    panel.appendChild(btn('☄ x10 Comètes', () => Debug.comet(10)));
-    panel.appendChild(btn('🌧 Pluie de comètes', () => Debug.shower()));
+    panel.appendChild(btn('Comète', () => Debug.comet(1)));
+    panel.appendChild(btn('x10 Comètes', () => Debug.comet(10)));
+    panel.appendChild(btn('Pluie de comètes', () => Debug.shower()));
     panel.appendChild(btn('+100k Parts', () => Debug.addScore(1e5)));
     panel.appendChild(btn('+1M Parts', () => Debug.addScore(1e6)));
     panel.appendChild(btn('+100 PE', () => Debug.addStardust(100)));
