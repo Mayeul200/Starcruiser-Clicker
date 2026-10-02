@@ -58,7 +58,12 @@ function hideTooltip() {
 let tooltipLiveRefresh = null;
 function refreshLiveTooltip() {
     if (tooltipLiveRefresh && tooltip.classList.contains('visible')) {
-        tooltip.textContent = tooltipLiveRefresh();
+        tooltip.replaceChildren(...tooltipLiveRefresh().split('\n').map(line => {
+            const span = document.createElement('span');
+            span.className = 'tooltip-line';
+            span.textContent = line;
+            return span;
+        }));
         if (tooltipAnchor) {
             const rect = tooltip.getBoundingClientRect();
             const margin = 8;
