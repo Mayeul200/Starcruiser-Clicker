@@ -4226,7 +4226,7 @@ function toggleSound() {
     Sound.enabled = !Sound.enabled;
     localStorage.setItem('starcruiserSound', Sound.enabled ? '1' : '0');
     const btn = document.getElementById('sound-toggle-btn');
-    if (btn) btn.textContent = Sound.enabled ? t('Son') : t('Son coupé');
+    if (btn) btn.textContent = Sound.enabled ? t('Son') : t('Muet');
     if (Sound.enabled) Sounds.click();
 }
 document.addEventListener('visibilitychange', () => {
@@ -6470,7 +6470,7 @@ function scheduleBonusSpawn() {
 }
 scheduleBonusSpawn();
 // Etat du bouton son au chargement (icône cohérente avec le réglage sauvegardé)
-(() => { const b = document.getElementById('sound-toggle-btn'); if (b && !Sound.enabled) b.textContent = t('Son coupé'); })();
+(() => { const b = document.getElementById('sound-toggle-btn'); if (b) b.textContent = Sound.enabled ? t('Son') : t('Muet'); })();
 // Prechargement du sprite du missile : il n'est insere dans le DOM qu'au
 // premier tir, sans ce prechargement le premier missile vole sans image
 // le temps du premier telechargement.
