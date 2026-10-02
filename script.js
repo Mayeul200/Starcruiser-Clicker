@@ -1161,6 +1161,7 @@ function buyClickUpgrade(threshold) {
     
     score -= upgrade.cost;
     activatedClickUpgrades.push(threshold);
+    Sounds.upgrade();
     updateDisplay();
     saveGame();
     hideTooltip();
