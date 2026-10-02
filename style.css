@@ -3162,6 +3162,73 @@ body {
     85%, 100% { left: 130%; }
 }
 
+
+/* ===== Halo pulsant autour de la piece ===== */
+/* Anneau lumineux dore qui respire lentement : attire l'oeil vers la piece
+   sans crier, discret quand la piece est deja cliquee regulierement. */
+.medal-halo {
+    position: absolute;
+    inset: -14%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        radial-gradient(circle,
+            transparent 52%,
+            rgba(251, 191, 36, 0.28) 62%,
+            rgba(251, 191, 36, 0.10) 74%,
+            transparent 82%);
+    animation: medal-halo-breathe 2.6s ease-in-out infinite;
+    opacity: 0.85;
+}
+
+/* Renflement de lueur aux poles qui tourne lentement : effet "vivant" */
+.medal-halo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+        rgba(255, 255, 255, 0.22) 0deg,
+        transparent 55deg,
+        transparent 305deg,
+        rgba(255, 255, 255, 0.22) 360deg);
+    filter: blur(6px);
+    animation: medal-halo-spin 9s linear infinite;
+}
+
+.medal-halo::after {
+    content: '';
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    box-shadow: 0 0 22px 4px rgba(251, 191, 36, 0.30);
+    animation: medal-halo-breathe 2.6s ease-in-out infinite reverse;
+}
+
+@keyframes medal-halo-breathe {
+    0%, 100% { transform: scale(1);    opacity: 0.85; }
+    50%      { transform: scale(1.07); opacity: 1; }
+}
+
+@keyframes medal-halo-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Le halo s'efface quand la piece n'est pas utilisable (lancement en cours) */
+.medal.disabled .medal-halo,
+.medal:disabled .medal-halo {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .medal-halo, .medal-halo::before, .medal-halo::after {
+        animation: none;
+        opacity: 0.6;
+    }
+}
+
 /* ===== Ondes de choc au point d'impact ===== */
 /* 2 anneaux emIS au point EXACT du clic, 60 ms d'ecart, s'etendent en
    s'estompant : sensation de frapper la piece, pas de la survoler. */
