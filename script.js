@@ -3717,6 +3717,16 @@ function spawnCometExplosion(cx, cy, scale) {
 // VISUAL EFFECTS
 // ============================================
 
+// Parts par clic "naturelles" : base + bonus batiments + bonus production de base,
+// sans aucun multiplicateur (temporaire, galactique ou critique). Sert de base
+// de calcul pour les cibles et la progression des contrats clickParts.
+function getNaturalClickParts() {
+    const nbUpgrades = activatedClickUpgrades.length;
+    const { baseCpC, buildingBonus } = getClickComponents();
+    const naturalCpsBonus = nbUpgrades * 0.01 * getBasePartsPerSecond();
+    return baseCpC + buildingBonus + naturalCpsBonus;
+}
+
 function getClickComponents() {
     const nbUpgrades = activatedClickUpgrades.length;
     // Base qui double a chaque upgrade de clic (comme Reinforced finger / Carpal tunnel).
@@ -3747,8 +3757,10 @@ function addScore(points, event) {
     partsSinceLaunch += totalPoints;
     totalPartsFromClicks += totalPoints;
     trackPartsEarned(totalPoints);
-    // Contrat interactif en cours : le clic (et les Parts clickeEs) comptent.
-    notifyContractClick(totalPoints);
+    // Contrat interactif en cours : le clic compte. Pour clickParts on mesure
+    // les Parts naturelles (sans multiplicateurs) pour rester coherent avec
+    // la cible calculee sur le Parts/clic naturel.
+    notifyContractClick(basePoints);
 
     showClickEffect(Math.round(totalPoints), event);
     spawnShockwave(event);
@@ -5139,7 +5151,7 @@ const CARD_COLLECTION_UNLOCK_BUILDING_TYPES = 4;
 // rewardType    : 'instant' (Parts instantanees) | 'mult' (multiplicateur temporaire) | 'click' (multiplicateur de clic temporaire)
 function getContractTypes() {
     const pps = Math.max(1, getBasePartsPerSecond());
-    const clickParts = Math.max(1, getClickComponents().baseCpC + getClickComponents().buildingBonus + getClickComponents().cpsBonus);
+    const clickParts = Math.max(1, getNaturalClickParts());
     return [
         {
             id: 'clicks',
