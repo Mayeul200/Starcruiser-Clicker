@@ -11,8 +11,8 @@
     "lang": "fr",
     "icons": [
         {
-            "src": "images/logo.png",
-            "sizes": "563x563",
+            "src": "images/icon.png",
+            "sizes": "512x512",
             "type": "image/png",
             "purpose": "any"
         }

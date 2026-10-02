@@ -6320,7 +6320,7 @@ function setTextIfChanged(el, text) {
 // ============================================
 const TUTORIAL_STEPS = [
     {
-        img: 'images/logo.png',
+        img: 'images/icon.png',
         titleKey: 'Bienvenue dans Starcruiser !',
         textKey: 'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?',
     },
