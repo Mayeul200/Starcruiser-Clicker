@@ -255,7 +255,7 @@ body {
     border-radius: var(--radius);
     background: var(--primary);
     color: white;
-    font-size: 16px;
+    font-size: calc(1rem * var(--ui-scale, 1));
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
@@ -469,7 +469,7 @@ body {
     color: #ffd700;
 }
 .close-button {
-    font-size: 20px;
+    font-size: calc(1.25rem * var(--ui-scale, 1));
     line-height: 1;
     cursor: pointer;
     color: white;
@@ -1252,8 +1252,9 @@ body {
    l'axe +x du conteneur, donc sur la direction du vol. */
 .comet-missile {
     position: fixed;
-    width: 150px;
-    height: 112px; /* conserve le ratio 4:3 du canevas du sprite */
+    /* Taille adaptative : ratio 4:3 du sprite conserve, mobile via --mscale */
+    width: clamp(calc(84px * var(--mscale, 1)), 11vw, 150px);
+    height: clamp(calc(63px * var(--mscale, 1)), calc(8.25vw), 112px);
     /* Comme les cometes (z-index 10000) : le missile passe devant les
        modals, la nav et la lightbox. */
     z-index: 10001;
@@ -3928,7 +3929,9 @@ body {
 }
 .cc-album-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 192px);
+    /* Colonnes fluides : 192px ideal, compressibles jusqu'a 150px et
+       repondantes a la largeur disponible (tablettes, fenetres etroites). */
+    grid-template-columns: repeat(auto-fill, minmax(min(192px, 100%), 1fr));
     gap: 14px;
     justify-content: center;
 }
@@ -4922,7 +4925,8 @@ body {
        l'autre, quel que soit le texte ; l'image et le texte se placent
        dans l'espace disponible. 460px : la page 3 (bâtiments), la plus
        verbeuse, tient sans scroll. */
-    height: 460px;
+    min-height: min(460px, calc(100dvh - 40px));
+    height: auto;
     max-height: calc(100dvh - 40px);
     display: flex;
     flex-direction: column;
