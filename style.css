@@ -243,14 +243,12 @@ body {
     min-width: 1ch;
 }
 .control-button {
-    width: 44px; height: 40px;
+    width: 40px; height: 40px;
     border: none;
     border-radius: var(--radius);
     background: var(--primary);
     color: white;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 0 2px;
+    font-size: 16px;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
