@@ -1435,15 +1435,16 @@ const PIECE_DISTANCE_MULT = 1.0;
 const MOON_DISTANCE = 384400;
 // Parts cumulees produites lors du premier lancement d'une nouvelle partie.
 // Ce point d'ancrage calibre le debut de la courbe de distance.
-// 10.5M parts pour la Lune: debut de partie rapide meme en jeu casual
-// (la moitie du cumul d'un premier lancement, soit ~20-30 min de jeu).
-const DISTANCE_MOON_PARTS = 1.05e7;
+// 14M parts pour la Lune: premier objectif reel du jeu, demande un vrai
+// investissement (~30-40 min) mais reste atteignable en jeu casual.
+const DISTANCE_MOON_PARTS = 1.4e7;
 // Distance en deux segments:
 // - jusqu'a DISTANCE_MOON_PARTS parts : croissance lineaire (Lune atteignable
-//   des le premier lancement, debut de partie rapide et gratifiant)
-// - au-dela : croissance lineaire, distance proportionnelle aux parts
-//   (exposant 1 = aucun effet).
-const DISTANCE_SCORE_EXP = 1.0;
+//   des le premier lancement, debut de partie gratifiant)
+// - au-dela : croissance SOUS-lineaire (exposant 0.9) : doubler les parts
+//   ne donne plus x2 en distance mais x1.87 — chaque planete suivante
+//   demande proportionnellement plus d'investissement que la precedente.
+const DISTANCE_SCORE_EXP = 0.9;
 // Gain de Poussière d'Étoiles par lancement, en deux segments:
 // - jusqu'au Nuage d'Oort : (d / Lune)^0.44 (identique a avant)
 // - au-dela : croissance ralentie (exposant 0.35) ancree sur la valeur a Oort,
