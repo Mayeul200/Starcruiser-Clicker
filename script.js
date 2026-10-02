@@ -4854,8 +4854,8 @@ function showExclusiveModal(modalId, onOpen) {
     if (wasActive) {
         target.classList.remove('active');
     } else {
-        if (onOpen) onOpen();
         target.classList.add('active');
+        if (onOpen) onOpen();
     }
 }
 function toggleSettings() {
