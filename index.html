@@ -30,9 +30,9 @@
         </div>
         <div class="top-bar-controls">
             <div class="launch-timer" id="launch-timer" data-i18n-title="Temps écoulé depuis le dernier lancement"></div>
-            <button class="control-button" onclick="toggleStats()" title="Statistics" data-i18n-title="Statistics"></button>
+            <button class="control-button" onclick="toggleStats()" title="Statistics" data-i18n-title="Statistics" data-i18n="Stats">Stats</button>
             <button class="control-button" id="sound-toggle-btn" onclick="toggleSound()" title="Son" data-i18n-title="Son"></button>
-            <button class="control-button" onclick="toggleSettings()" title="Settings" data-i18n-title="Settings"></button>
+            <button class="control-button" onclick="toggleSettings()" title="Settings" data-i18n-title="Settings" data-i18n="Réglages">Réglages</button>
         </div>
     </div>
 
@@ -442,7 +442,7 @@
     <!-- CHOIX DE LA LANGUE (premiere visite) -->
     <div class="lang-picker-overlay" id="lang-picker-overlay">
         <div class="lang-picker-box">
-            <div class="lang-picker-rocket"></div>
+            <div class="lang-picker-rocket"><img src="images/logo.png" alt="Starcruiser Clicker"></div>
             <h2 class="lang-picker-title">Choose your language</h2>
             <div class="lang-picker-buttons">
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('fr')">

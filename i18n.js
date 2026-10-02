@@ -5,6 +5,9 @@
 // ============================================
 const TRANSLATIONS = {
     en: {
+        'Stats': 'Stats',
+        'Réglages': 'Options',
+        'Son': 'Sound',
         'Muet': 'Muted',
         // --- Top bar / commun ---
         'Statistics': 'Statistics',
@@ -544,6 +547,9 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Perfect defense: no comet may hit the rocket ({target} comets)',
 },
     es: {
+        'Stats': 'Stats',
+        'Réglages': 'Ajustes',
+        'Son': 'Sonido',
         'Muet': 'Silencio',
         'Statistics': 'Estadísticas',
         'Temps écoulé depuis le dernier lancement': 'Tiempo transcurrido desde el último lanzamiento',
@@ -1056,6 +1062,9 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Defensa perfecta: ningun cometa debe tocar el cohete ({target} cometas)',
 },
     de: {
+        'Stats': 'Stats',
+        'Réglages': 'Optionen',
+        'Son': 'Ton',
         'Muet': 'Stumm',
         'Statistics': 'Statistiken',
         'Temps écoulé depuis le dernier lancement': 'Zeit seit dem letzten Start',
@@ -1568,6 +1577,9 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Perfekte Verteidigung: kein Komet darf die Rakete treffen ({target} Kometen)',
 },
     it: {
+        'Stats': 'Stat.',
+        'Réglages': 'Opzioni',
+        'Son': 'Audio',
         'Muet': 'Muto',
         'Statistics': 'Statistiche',
         'Temps écoulé depuis le dernier lancement': 'Tempo trascorso dall’ultimo lancio',
@@ -2080,6 +2092,9 @@ const TRANSLATIONS = {
         'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)': 'Difesa perfetta: nessuna cometa deve colpire il razzo ({target} comete)',
 },
     pt: {
+        'Stats': 'Stats',
+        'Réglages': 'Ajustes',
+        'Son': 'Som',
         'Muet': 'Mudo',
         'Statistics': 'Estatísticas',
         'Temps écoulé depuis le dernier lancement': 'Tempo decorrido desde o último lançamento',
@@ -2565,6 +2580,9 @@ const TRANSLATIONS = {
         'Revoir le tutoriel': 'Rever o tutorial',
     },
     nl: {
+        'Stats': 'Stats',
+        'Réglages': 'Instel.',
+        'Son': 'Geluid',
         'Muet': 'Geluid uit',
         'Statistics': 'Statistieken',
         'Temps écoulé depuis le dernier lancement': 'Tijd sinds de laatste lancering',

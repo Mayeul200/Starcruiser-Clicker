@@ -243,12 +243,14 @@ body {
     min-width: 1ch;
 }
 .control-button {
-    width: 40px; height: 40px;
+    width: 44px; height: 40px;
     border: none;
     border-radius: var(--radius);
     background: var(--primary);
     color: white;
-    font-size: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 0 2px;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: var(--shadow);
@@ -4991,6 +4993,13 @@ body {
     text-align: center;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
     animation: tutorialPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lang-picker-rocket img {
+    width: 72px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 .lang-picker-rocket {
