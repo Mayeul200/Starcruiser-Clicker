@@ -2868,7 +2868,7 @@ function renderGalacticShop() {
                         ? ''
                         : locked
                             ? reqHtml
-                            : '<button class="galactic-btn" onclick="buyGalacticUpgrade(\'' + upgrade.id + '\')"' + (!affordable ? ' disabled' : '') + '>' + formatNumber(cost) + ' </button>') +
+                            : '<button class="galactic-btn" onclick="buyGalacticUpgrade(\'' + upgrade.id + '\')"' + (!affordable ? ' disabled' : '') + '>' + formatNumber(cost) + ' ✨</button>') +
                 '</div>';
             treeEl.appendChild(el);
         });
