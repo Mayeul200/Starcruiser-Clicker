@@ -740,7 +740,6 @@ body {
 }
 .bonus-timer {
     position: static;
-    order: 2;
     flex: 0 0 auto;
     font-size: 1rem;
     color: var(--accent-light);
@@ -3441,6 +3440,16 @@ body {
     gap: 4px;
     max-width: calc(100cqw - 28cqw);
     z-index: 100;
+}
+
+/* Ligne unique : compteur a gauche, bonus temporaire colle a sa droite.
+   Ainsi le panneau de contrat reste seul sur la ligne du dessous et ne
+   s'empile plus avec le rappel de bonus. */
+.hud-counters-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
 }
 .counters {
     display: flex;
