@@ -379,16 +379,16 @@ let nextPlanetNotified = false;
 // ============================================
 const PLANETS = [
     { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
-    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 30, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 35, color: '#ef4444', imgPath: 'images/planets/mars.png' },
-    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 40, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 45, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
-    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 50, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 55, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 60, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 65, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 75, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 90, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 25, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 30, color: '#ef4444', imgPath: 'images/planets/mars.png' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 35, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
+    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 40, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
+    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 45, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 50, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
+    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -1435,16 +1435,13 @@ const PIECE_DISTANCE_MULT = 1.0;
 const MOON_DISTANCE = 384400;
 // Parts cumulees produites lors du premier lancement d'une nouvelle partie.
 // Ce point d'ancrage calibre le debut de la courbe de distance.
-// 18.2M parts pour la Lune: premier objectif reel du jeu, demande un vrai
-// investissement (~40-50 min) mais reste atteignable en jeu casual.
-const DISTANCE_MOON_PARTS = 1.82e7;
-// Distance en deux segments:
-// - jusqu'a DISTANCE_MOON_PARTS parts : croissance lineaire (Lune atteignable
-//   des le premier lancement, debut de partie gratifiant)
-// - au-dela : croissance SOUS-lineaire (exposant 0.9) : doubler les parts
-//   ne donne plus x2 en distance mais x1.87 — chaque planete suivante
-//   demande proportionnellement plus d'investissement que la precedente.
-const DISTANCE_SCORE_EXP = 0.9;
+// 22M parts pour la Lune: premier objectif reel du jeu, demande un vrai
+// investissement (~50-60 min) mais reste atteignable en jeu casual.
+const DISTANCE_MOON_PARTS = 2.2e7;
+// Distance lineaire : exposant 1.0, la vitesse km/s ne diminue jamais quand
+// les parts croissent. La difficulte vient uniquement du prix des batiments
+// et de l'ancre de la Lune, pas d'un ralentissement de la distance.
+const DISTANCE_SCORE_EXP = 1.0;
 // Gain de Poussière d'Étoiles par lancement, en deux segments:
 // - jusqu'au Nuage d'Oort : (d / Lune)^0.44 (identique a avant)
 // - au-dela : croissance ralentie (exposant 0.35) ancree sur la valeur a Oort,
@@ -5242,7 +5239,7 @@ function getContractTypes() {
             diffs: [
                 { target: 60,  price: Math.max(20, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 30 },
                 { target: 90, price: Math.max(200, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 60 },
-                { target: 180, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 120 }
+                { target: 180, price: Math.max(800, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 80 }
             ]
         },
         {
@@ -5254,7 +5251,7 @@ function getContractTypes() {
             diffs: [
                 { target: Math.max(60, clickParts * 60), price: Math.max(20, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
                 { target: Math.max(90, clickParts * 90), price: Math.max(80, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(180, clickParts * 180), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 5, duration: 60 }
+                { target: Math.max(180, clickParts * 180), price: Math.max(300, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 4, duration: 45 }
             ]
         },
         {
@@ -5266,7 +5263,7 @@ function getContractTypes() {
             diffs: [
                 { target: 4, price: Math.max(50, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 45 },
                 { target: 7, price: Math.max(400, pps * 20), rewardMult: 3, rewardType: 'instant', instantSec: 90 },
-                { target: 11, price: Math.max(1500, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 180 }
+                { target: 11, price: Math.max(1500, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 120 }
             ]
         },
         {
@@ -5278,7 +5275,7 @@ function getContractTypes() {
             diffs: [
                 { target: Math.max(50, pps * 22),  price: Math.max(20, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
                 { target: Math.max(150, pps * 40), price: Math.max(80, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: Math.max(500, pps * 70), price: Math.max(300, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 5, duration: 60 }
+                { target: Math.max(500, pps * 70), price: Math.max(300, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 45 }
             ]
         },
         {
@@ -5290,7 +5287,7 @@ function getContractTypes() {
             diffs: [
                 { target: 5, price: Math.max(80, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 60, shower: 6 },
                 { target: 8, price: Math.max(600, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 120, shower: 9 },
-                { target: 12, price: Math.max(2000, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 240, shower: 14 }
+                { target: 12, price: Math.max(2000, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 150, shower: 14 }
             ]
         }
     ];
