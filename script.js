@@ -5698,14 +5698,9 @@ function contractsStructureKey() {
 // progression cible et chrono restant, mis a jour par tickContracts
 // et par les hooks de progression pour rester reactif entre deux ticks.
 function getContractHudShortLabel(c) {
-    const type = findContractType(c.typeId);
-    if (!type) return t('Contrat en cours');
-    if (c.typeId === 'clicks') return t('Contrat de clics');
-    if (c.typeId === 'clickParts') return t('Contrat de Parts en cliquant');
-    if (c.typeId === 'comets') return t('Defense parfaite');
-    if (c.typeId === 'shower') return t('Survie a la pluie');
-    if (c.typeId === 'production') return t('Contrat de production');
-    return t('Contrat en cours');
+    // Toujours juste "Contrat" : le type complet ne tenait jamais dans la
+    // largeur du HUD, le reste de la ligne (progression + chrono) etait rogne.
+    return t('Contrat');
 }
 function updateContractHud() {
     const hud = document.getElementById('contract-hud');
