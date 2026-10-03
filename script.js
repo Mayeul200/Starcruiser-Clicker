@@ -6547,8 +6547,11 @@ function init() {
     }
     if (isMobileLayout()) {
         setMobileView(mobileActiveView);
-        applySceneScale();
     }
+    // Recalage systematique de la scene (desktop aussi) : la mise a l'echelle
+    // depend de la hauteur rendue de la scene, fausse tant que le CSS et les
+    // polices ne sont pas appliques.
+    applySceneScale();
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else {
@@ -6654,10 +6657,16 @@ setInterval(() => {
         gameStartTime = Date.now();
     }
     initDebugMode();
-    // Recalage de la scene une fois les polices/images stabilisees :
-    // la hauteur de la top-bar peut encore changer au premier rendu.
+    // Recalage de la scene une fois le layout stabilise : polices, images,
+    // et dimensions finales de la scene. Plusieurs passes car le premier
+    // rendu a lieu avant l'application complete du CSS.
+    requestAnimationFrame(applySceneScale);
     setTimeout(applySceneScale, 100);
+    setTimeout(applySceneScale, 400);
     window.addEventListener('load', applySceneScale);
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(applySceneScale);
+    }
 })();
 
 // ============================================
