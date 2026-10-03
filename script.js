@@ -7026,6 +7026,9 @@ function renderRocketPartsShop() {
     }
     const cost = getRocketPartCost(nextPart);
     const isAffordable = score >= cost;
+    // Calcule au niveau de la fonction : la branche de mise a jour (else)
+    // en a besoin aussi, sinon ReferenceError au changement de langue.
+    const purchasedCount = ROCKET_PARTS.filter(p => p.purchased).length;
     // Ne recrerer le DOM que si la piece affichee change. Sinon, mettre a jour
     // uniquement le cout et l'etat du bouton pour eviter le clignotement du hover.
     if (container.dataset.partId !== nextPart.id) {
@@ -7034,7 +7037,6 @@ function renderRocketPartsShop() {
         const imageHtml = imageUrl
             ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + nextPart.name + '">'
             : '<span class="rocket-part-icon-placeholder"></span>';
-        const purchasedCount = ROCKET_PARTS.filter(p => p.purchased).length;
         container.innerHTML =
             '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '">' +
                 '<div class="rocket-part-frame-title">' + t('Pi\u00e8ce') + ' ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length + '</div>' +
