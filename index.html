@@ -517,6 +517,16 @@
                 navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
+        // Filet de securite de l'ecran de chargement : si le jeu ne l'a pas
+        // masque en 8 s (script en erreur, cache SW perime, init figee),
+        // on force sa disparition pour ne JAMAIS bloquer la page.
+        setTimeout(function () {
+            var el = document.getElementById('loading-screen');
+            if (el) {
+                el.classList.add('hidden');
+                setTimeout(function () { el.remove(); }, 500);
+            }
+        }, 8000);
     </script>
     <script src="i18n.js"></script>
     <script src="script.js"></script>
