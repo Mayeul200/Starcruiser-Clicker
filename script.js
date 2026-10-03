@@ -5286,7 +5286,10 @@ function getContractTypes() {
             diffs: [
                 { target: Math.max(50, pps * 22),  price: Math.max(5, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
                 { target: Math.max(150, pps * 40), price: Math.max(20, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: Math.max(500, pps * 70), price: Math.max(75, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 45 }
+                // Cible atteignable : le contrat dure 30 s, la production
+                // passive y vaut pps*30 — pps*40 demande ~33% d'apport actif
+                // (clics, boost), contre pps*70 (233%) quasi impossible.
+                { target: Math.max(500, pps * 40), price: Math.max(75, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 45 }
             ]
         },
         {
