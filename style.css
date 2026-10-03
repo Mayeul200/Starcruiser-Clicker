@@ -754,7 +754,9 @@ body {
     max-width: 40%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: pre-line;
+    /* nowrap : le libelle est court ("x5 - 12 s"), le wrap le rendait
+       illisible en vertical quand la largeur manquait. */
+    white-space: nowrap;
 }
 /* ===== ECRAN DE CHARGEMENT ===== */
 /* Overlay opaque au-dessus de tout : couvre le temps de chargement des
