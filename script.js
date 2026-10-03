@@ -6540,6 +6540,25 @@ function init() {
     } else {
         startTutorial(false);
     }
+    hideLoadingScreen();
+}
+
+// Masque l'ecran de chargement une fois le jeu initialise : on attend aussi
+// le logo de l'overlay pour eviter un flash de contenu a moitie charge.
+function hideLoadingScreen() {
+    const overlay = document.getElementById('loading-screen');
+    if (!overlay) return;
+    const logo = overlay.querySelector('.loading-logo');
+    const hide = () => {
+        overlay.classList.add('hidden');
+        setTimeout(() => overlay.remove(), 500);
+    };
+    if (logo && !logo.complete) {
+        logo.addEventListener('load', hide, { once: true });
+        logo.addEventListener('error', hide, { once: true });
+    } else {
+        hide();
+    }
 }
 
 // ============================================

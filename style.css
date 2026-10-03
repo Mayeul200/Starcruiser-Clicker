@@ -756,6 +756,56 @@ body {
     text-overflow: ellipsis;
     white-space: pre-line;
 }
+/* ===== ECRAN DE CHARGEMENT ===== */
+/* Overlay opaque au-dessus de tout : couvre le temps de chargement des
+   scripts, des images et de l'init du jeu. Masque via .hidden (opacity +
+   pointer-events) pour une transition douce. */
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: linear-gradient(180deg, #0b1030 0%, #1e3a6e 100%);
+    transition: opacity 0.4s ease;
+}
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.loading-logo {
+    width: min(320px, 70vw);
+    height: auto;
+    animation: loading-pulse 1.6s ease-in-out infinite;
+}
+.loading-spinner {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.15);
+    border-top-color: #ffd700;
+    animation: loading-spin 0.9s linear infinite;
+}
+.loading-text {
+    color: #cbd5e1;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+@keyframes loading-spin {
+    to { transform: rotate(360deg); }
+}
+@keyframes loading-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.75; transform: scale(1.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .loading-logo, .loading-spinner { animation: none; }
+}
+
 /* Panneau flottant de contrat actif : objectif + progression + chrono,
    affiche sous le compteur tant que le contrat de 30 s est en cours. */
 .contract-hud {

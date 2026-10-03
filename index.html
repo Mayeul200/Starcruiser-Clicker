@@ -23,6 +23,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- ECRAN DE CHARGEMENT : visible des le premier rendu, masque une fois
+         le jeu initialise (init() dans script.js). Les scripts etant en fin
+         de body, l'overlay couvre le temps de parse + init. -->
+    <div id="loading-screen" role="status" aria-label="Chargement">
+        <img src="images/logo2.png" alt="Starcruiser Clicker" class="loading-logo">
+        <div class="loading-spinner" aria-hidden="true"></div>
+        <div class="loading-text" data-i18n="Chargement...">Chargement...</div>
+    </div>
     <!-- TOP BAR (10% height max) -->
     <div class="top-bar">
         <div class="top-bar-logo">

@@ -6,6 +6,7 @@
 const TRANSLATIONS = {
     en: {
         'Stats': 'Stats',
+        'Chargement...': 'Loading...',
         'Contrat': 'Contract',
         'Réglages': 'Options',
         'Son': 'Sound',
@@ -549,6 +550,7 @@ const TRANSLATIONS = {
 },
     es: {
         'Stats': 'Stats',
+        'Chargement...': 'Cargando...',
         'Contrat': 'Contrato',
         'Réglages': 'Ajustes',
         'Son': 'Sonido',
@@ -1065,6 +1067,7 @@ const TRANSLATIONS = {
 },
     de: {
         'Stats': 'Stats',
+        'Chargement...': 'Laden...',
         'Contrat': 'Auftrag',
         'Réglages': 'Optionen',
         'Son': 'Ton',
@@ -1581,6 +1584,7 @@ const TRANSLATIONS = {
 },
     it: {
         'Stats': 'Stat.',
+        'Chargement...': 'Caricamento...',
         'Contrat': 'Contratto',
         'Réglages': 'Opzioni',
         'Son': 'Audio',
@@ -2097,6 +2101,7 @@ const TRANSLATIONS = {
 },
     pt: {
         'Stats': 'Stats',
+        'Chargement...': 'Carregando...',
         'Contrat': 'Contrato',
         'Réglages': 'Ajustes',
         'Son': 'Som',
@@ -2586,6 +2591,7 @@ const TRANSLATIONS = {
     },
     nl: {
         'Stats': 'Stats',
+        'Chargement...': 'Laden...',
         'Contrat': 'Contract',
         'Réglages': 'Instel.',
         'Son': 'Geluid',
