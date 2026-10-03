@@ -3345,7 +3345,7 @@ function rebuildAutoMultipliers() {
     updateClickMultiplier();
 }
 
-function spawnRandomBonus(shower) {
+function spawnRandomBonus(shower, isContract) {
     // Pluie de comètes : bonus instantané uniquement (pas de flare, pas de
     // cumul de multiplicateurs), look distinct, récompense généreuse.
     let bonus = shower
@@ -3389,6 +3389,7 @@ function spawnRandomBonus(shower) {
 
     const bonusElement = document.createElement('div');
     bonusElement.className = `random-bonus comet ${bonus.colorClass}` + (shower ? ' shower' : '');
+    if (isContract) bonusElement.dataset.contractComet = '1';
     if (!goRight) bonusElement.classList.add('reverse');
     // Structure detaillee inspiree des vraies cometes :
     // - chevelure (coma) : halo diffus autour du noyau
@@ -3540,10 +3541,12 @@ function spawnRandomBonus(shower) {
                 cc.showerInFlight = Math.max(0, (cc.showerInFlight || 0) - 1);
             }
             if (bonus.id === "meteor") {
-                // Cometes des contrats (pluie provoquee) : aucun bonus, elles
-                // ne servent qu'a remplir l'objectif du contrat.
-                if (!shower) {
-                    const instantProduction = partsPerSecond * 10;
+                // Cometes de CONTRAT uniquement : aucun bonus direct, elles ne
+                // servent qu'a remplir l'objectif. Les pluies naturelles (shower)
+                // donnent bien leurs parts, comme les cometes isolees.
+                const isContractComet = bonusElement.dataset.contractComet === '1';
+                if (!isContractComet) {
+                    const instantProduction = partsPerSecond * (shower ? 5 : 10);
                     score += instantProduction;
                     partsSinceLaunch += instantProduction;
                     trackPartsEarned(instantProduction);
@@ -5470,6 +5473,8 @@ function acceptContract(offerId) {
 // Pluie dediee au contrat : meme mecanique que startCometShower mais sans
 // verrou cometShowerActive (les pluies de contrat sont independantes).
 function triggerContractShower(count) {
+    // Les cometes lancees ici sont des cometes de CONTRAT (aucun bonus direct
+    // de parts), a distinguer des pluies naturelles qui, elles, en donnent.
     // Les cometes sont lancees UNE PAR UNE avec un intervalle fixe de
     // 0,33 seconde entre chaque : le rythme reste soutenu sans decomployer
     // la pluie d'un seul coup.
@@ -5492,7 +5497,7 @@ function triggerContractShower(count) {
             if (!contractState.active) return;
             contractState.active.showerLaunched += 1;
             contractState.active.showerInFlight += 1;
-            spawnRandomBonus(true);
+            spawnRandomBonus(true, true);
         }, k * COMET_INTERVAL_MS);
     }
 }
