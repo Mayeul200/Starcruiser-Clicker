@@ -3447,7 +3447,10 @@ body {
 
 /* Le badge de bonus est en position absolue a droite du compteur : le
    compteur garde exactement la meme position avec ou sans bonus actif,
-   le badge n'occupe aucune place dans le flux. */
+   le badge n'occupe aucune place dans le flux. Si l'espace a droite (ou a
+   gauche) manque, la classe .bonus-below ajoutee en JS le repasse en
+   statique sous le compteur : il reste entier et visible sans deborder
+   du panneau central ni chevaucher les voisins. */
 .hud-counters-row {
     position: relative;
     display: flex;
@@ -3462,6 +3465,14 @@ body {
     top: 50%;
     transform: translateY(-50%);
     max-width: 220px;
+}
+
+.hud-counters-row .bonus-timer.bonus-below {
+    position: static;
+    transform: none;
+    margin-top: 4px;
+    max-width: 100%;
+    white-space: nowrap;
 }
 .counters {
     display: flex;
@@ -4338,12 +4349,12 @@ body {
        etroite pour les cote a cote sans faire deborder les chiffres. */
     .hud-top-row { top: calc(56px * var(--mscale, 1)); flex-wrap: nowrap; max-width: calc(100% - calc(24px * var(--mscale, 1))); transform: translateX(-50%); }
     .hud-counters-row { flex-direction: column; gap: 4px; width: 100%; }
-    .hud-counters-row .bonus-timer { position: static; transform: none; max-width: 34vw; }
+    .hud-counters-row .bonus-timer { position: static; transform: none; max-width: 100%; }
     .counters { width: auto; max-width: 100%; }
     .counters { width: auto; max-width: calc(100% - 16px); flex-wrap: nowrap; gap: clamp(calc(6px * var(--mscale, 1)), calc(0.8vw * var(--mscale, 1)), calc(10px * var(--mscale, 1))); padding: calc(6px * var(--mscale, 1)) clamp(calc(8px * var(--mscale, 1)), calc(1vw * var(--mscale, 1)), calc(12px * var(--mscale, 1))); }
     .counters { flex-direction: row !important; }
     .counter { font-size: 0.95rem; min-width: 0; }
-    .bonus-timer { max-width: 34vw; }
+    .bonus-timer { max-width: 100%; }
 
     /* --- Barre d'upgrades (horizontale, déjà scrollable) --- */
     .upgrades-bar { height: calc(57px * var(--mscale, 1)); }

@@ -4321,6 +4321,7 @@ function ensureRainCanvas() {
     img.src = 'images/parts.png';
     partsRain.coinImg = img;
     window.addEventListener('resize', resizeRainCanvas);
+    window.addEventListener('resize', refreshBonusBadgePosition);
     resizeRainCanvas();
     partsRain.lastFrame = 0;
     requestAnimationFrame(rainFrame);
@@ -5135,6 +5136,22 @@ function updateStardustPreview() {
     previewBar.style.width = (fracPart * 100) + '%';
 }
 
+// Re-evalue la position du badge de bonus (a cote ou sous le compteur)
+// apres un redimensionnement de la fenetre.
+function refreshBonusBadgePosition() {
+    const badge = document.getElementById('bonus-timer');
+    if (!badge || badge.style.display === 'none') return;
+    const badgeRow = badge.closest('.hud-counters-row');
+    const panel = badge.closest('.center-panel') || badgeRow?.parentElement;
+    if (!badgeRow || !panel) return;
+    const rowRect = badgeRow.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const badgeW = badge.getBoundingClientRect().width;
+    const fitsRight = rowRect.right + 8 + badgeW <= panelRect.right - 8;
+    const fitsLeft = rowRect.left - 8 - badgeW >= panelRect.left + 8;
+    badge.classList.toggle('bonus-below', !(fitsRight || fitsLeft));
+}
+
 function updateBonusTimer() {
     const els = getDisplayElements();
     if (els.bonusTimer) {
@@ -5150,6 +5167,18 @@ function updateBonusTimer() {
             // 'block' explicite : le CSS de .bonus-timer est display:none,
             // style.display='' retirerait le style inline et le cacherait.
             els.bonusTimer.style.display = 'block';
+            // S'il n'y a pas la place a cote du compteur (petit ecran),
+            // le badge passe sous le compteur au lieu de deborder/chevaucher.
+            const badgeRow = els.bonusTimer.closest('.hud-counters-row');
+            const panel = els.bonusTimer.closest('.center-panel') || badgeRow.parentElement;
+            if (badgeRow && panel) {
+                const rowRect = badgeRow.getBoundingClientRect();
+                const panelRect = panel.getBoundingClientRect();
+                const badgeW = els.bonusTimer.getBoundingClientRect().width;
+                const fitsRight = rowRect.right + 8 + badgeW <= panelRect.right - 8;
+                const fitsLeft = rowRect.left - 8 - badgeW >= panelRect.left + 8;
+                els.bonusTimer.classList.toggle('bonus-below', !(fitsRight || fitsLeft));
+            }
         } else {
             els.bonusTimer.textContent = '';
             els.bonusTimer.style.display = 'none';
