@@ -682,6 +682,9 @@ function saveGame() {
         galacticUpgrades: {...galacticUpgrades},
         rocketsLaunched: rocketsLaunched,
         lastLaunchAt: lastLaunchAt,
+        lastLaunchDistance: lastLaunchDistance,
+        // Multiplicateur d'achat (x1/x5/x10/max) : confort, sinon retombe a x1.
+        buyMultiplier: buyMultiplier === 'max' ? 'max' : (buyMultiplier || 1),
         unlockedPlanets: Array.from(unlockedPlanets),
         planetBonuses: {...planetBonuses},
         cardCollection: {...cardCollection},
@@ -771,6 +774,10 @@ function loadGame() {
         });
         rocketsLaunched = parsed.rocketsLaunched || 0;
         lastLaunchAt = parsed.lastLaunchAt || 0;
+        lastLaunchDistance = parsed.lastLaunchDistance || 0;
+        if (parsed.buyMultiplier === 'max' || [1, 5, 10].includes(parsed.buyMultiplier)) {
+            buyMultiplier = parsed.buyMultiplier;
+        }
         
         activatedClickUpgrades = parsed.activatedClickUpgrades || [];
         unlockedBuildings = new Set(parsed.unlockedBuildings || []);
@@ -928,6 +935,12 @@ function loadGame() {
                     if (savedPart.purchased) constructedParts.add(part.id);
                 }
             });
+        }
+        // Etat construit persiste (format recent) : prioritaire sur la
+        // regeneration via rocketParts, identique en pratique.
+        if (parsed.constructedParts) {
+            constructedParts = new Set(parsed.constructedParts.filter(id =>
+                ROCKET_PARTS.some(p => p.id === id && p.purchased)));
         }
 
         // Restaurer les planetes atteintes et leurs bonus de production
@@ -6542,6 +6555,8 @@ function init() {
         });
     }
     loadGame();
+    // Refleter le multiplicateur d'achat restaure (bouton actif de la sidebar).
+    if (typeof setBuyMultiplier === 'function') setBuyMultiplier(buyMultiplier);
     applyStartupBonus();
 
     updateDisplay();
