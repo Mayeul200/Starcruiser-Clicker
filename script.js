@@ -1435,9 +1435,10 @@ const PIECE_DISTANCE_MULT = 1.0;
 const MOON_DISTANCE = 384400;
 // Parts cumulees produites lors du premier lancement d'une nouvelle partie.
 // Ce point d'ancrage calibre le debut de la courbe de distance.
-// 22M parts pour la Lune: premier objectif reel du jeu, demande un vrai
-// investissement (~50-60 min) mais reste atteignable en jeu casual.
-const DISTANCE_MOON_PARTS = 2.2e7;
+// 50M parts pour la Lune: premier objectif reel du jeu. Les tests montrent
+// que 22M etaient atteints en ~15 min de jeu intensif (clics + contrats +
+// planetes cumules dans partsSinceLaunch) ; 50M vise ~35-45 min actives.
+const DISTANCE_MOON_PARTS = 5e7;
 // Distance lineaire : exposant 1.0, la vitesse km/s ne diminue jamais quand
 // les parts croissent. La difficulte vient uniquement du prix des batiments
 // et de l'ancre de la Lune, pas d'un ralentissement de la distance.
@@ -3532,11 +3533,15 @@ function spawnRandomBonus(shower) {
                 cc.showerInFlight = Math.max(0, (cc.showerInFlight || 0) - 1);
             }
             if (bonus.id === "meteor") {
-                const instantProduction = partsPerSecond * (shower ? 5 : 10);
-                score += instantProduction;
-                partsSinceLaunch += instantProduction;
-                trackPartsEarned(instantProduction);
-                showBonusPopup('+' + formatNumber(instantProduction) + ' ' + t("Parts"), 'instant');
+                // Cometes des contrats (pluie provoquee) : aucun bonus, elles
+                // ne servent qu'a remplir l'objectif du contrat.
+                if (!shower) {
+                    const instantProduction = partsPerSecond * 10;
+                    score += instantProduction;
+                    partsSinceLaunch += instantProduction;
+                    trackPartsEarned(instantProduction);
+                    showBonusPopup('+' + formatNumber(instantProduction) + ' ' + t("Parts"), 'instant');
+                }
             }
             else if (bonus.id === "flare") {
                 // Chaque flare porte un endTime unique : le timer d'expiration
