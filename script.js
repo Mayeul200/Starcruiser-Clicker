@@ -695,10 +695,10 @@ function saveGame() {
             id: building.id,
             count: building.count
         })),
-        rocketParts: ROCKET_PARTS.map(part => ({
-            id: part.id,
-            purchased: part.purchased
-        })),
+        rocketParts: ROCKET_PARTS.map(part => ({            id: part.id,            purchased: part.purchased        })),
+        // Pieces deja construites : evite de rejouer l'animation de chute
+        // pour toute la fusee a chaque rechargement de la page.
+        constructedParts: [...constructedParts],
         startupBonusApplied: startupBonusApplied,
         tutorialSeen: tutorialSeen,
         contractState: {
@@ -922,6 +922,10 @@ function loadGame() {
                 const part = ROCKET_PARTS.find(p => p.id === savedPart.id);
                 if (part) {
                     part.purchased = !!savedPart.purchased;
+                    // Restaurer aussi l'etat construit : sans ca, toutes les
+                    // pieces achetees rejouaient l'animation de chute d'un coup
+                    // au chargement et paraissaient empilees n'importe comment.
+                    if (savedPart.purchased) constructedParts.add(part.id);
                 }
             });
         }
@@ -6581,6 +6585,107 @@ function hideLoadingScreen() {
     }
 }
 
+// Pieces de fusee deja construites : initialise ICI, avant startGame qui
+// recharge la sauvegarde (loadGame y ajoute les pieces achetees) — la
+// declaration etait avant plus bas dans le fichier, apres l'IIFE d'init,
+// ce qui levait une ReferenceError (TDZ) au chargement d'une sauvegarde.
+let constructedParts = new Set();
+
+const DEBUG_MODE = new URLSearchParams(window.location.search).has('debug');
+
+const Debug = {
+    addScore(n) {
+        score += n;
+        partsSinceLaunch += n;
+        trackPartsEarned(n);
+        updateDisplay();
+    },
+    addStardust(n) {
+        starDust += n;
+        totalStardustEarned += n;
+        updateStardustDisplay();
+        renderGalacticShop();
+    },
+    buyAllParts() {
+        ROCKET_PARTS.forEach(p => {
+            if (!p.purchased) {
+                p.purchased = true;
+                constructedParts = new Set(ROCKET_PARTS.map(x => x.id));
+                updateConstructionScene();
+            }
+        });
+        renderRocketPartsShop();
+    },
+    launch() {
+        if (!checkRocketReady()) { this.buyAllParts(); }
+        launchRocket();
+    },
+    comet(n) {
+        // Fait apparaitre n cometes immediatement (1 par defaut)
+        const count = Math.max(1, Math.min(20, parseInt(n, 10) || 1));
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => spawnRandomBonus(false), i * 350);
+        }
+    },
+    shower() {
+        startCometShower();
+    },
+    fast(seconds) {
+        debugSimulateTime(seconds);
+        debugRenderAll();
+    },
+    giveBuildings(buildingId, n) {
+        const b = findBuildingById(buildingId);
+        if (!b) { console.warn('Bâtiment inconnu:', buildingId); return; }
+        b.count += n;
+        unlockedBuildings.add(b.id);
+        debugRenderAll();
+    },
+    reset() {
+        localStorage.removeItem('starcruiserClickerSave');
+        location.search = '?debug=1';
+    },
+    estimate() {
+        const r = debugEstimateTime();
+        if (r.error) { console.warn('[DEBUG] ' + r.error); showToast('[DEBUG] ' + r.error); return r; }
+        console.log('[DEBUG] Prochaine planète: ' + r.planet + ' dans ~' + r.formatted + ' de jeu actif');
+        showToast('[DEBUG] ' + r.planet + ' dans ~' + r.formatted);
+        return r;
+    },
+    breakdown() {
+        const factors = {
+            temporaire: autoMultiplier,
+            cartes: getCollectionMultiplier(),
+            atelier_production: getProductionBonus(),
+            prestige: getPrestigeProductionBoost(),
+            planetes: getPlanetProductionBonus()
+        };
+        let total = 1;
+        Object.entries(factors).forEach(([k, v]) => {
+            total *= v;
+            console.log('[DEBUG] ' + k.padEnd(18) + ' x' + v.toFixed(2));
+        });
+        console.log('[DEBUG] TOTAL              x' + total.toFixed(2));
+        return { ...factors, total };
+    },
+    shower() { startCometShower(); },
+    setPlanet(index) {
+        const p = PLANETS[index];
+        if (!p) { console.warn('Index invalide. 0=Terre ... ' + (PLANETS.length - 1) + '=' + PLANETS[PLANETS.length - 1].name); return; }
+        const dust = calculateStardustGain(p.distanceRequired);
+        if (dust > 0) { starDust += dust; totalStardustEarned += dust; }
+        maxDistance = Math.max(maxDistance, p.distanceRequired);
+        prestigeMultiplier = 1 + Math.log(1 + maxDistance / MOON_DISTANCE) / 2;
+        unlockedPlanets = new Set(PLANETS.slice(0, index + 1).map(x => x.id));
+        updateSpaceProgress();
+        updateStardustDisplay();
+        renderGalacticShop();
+        console.log('Positionné sur ' + p.name + ' (+' + dust + ' PE, prestige x' + prestigeMultiplier.toFixed(2) + ')');
+    }
+};
+
+window.Debug = Debug;
+
 // ============================================
 // TIMERS
 // ============================================
@@ -6679,7 +6784,7 @@ setInterval(() => {
 // Debug.buyAllParts(), Debug.launch(), Debug.fast(n),
 // Debug.giveBuildings(id, n), Debug.reset(), Debug.setPlanet(index)
 // ============================================
-const DEBUG_MODE = new URLSearchParams(window.location.search).has('debug');
+
 
 function debugSimulateTime(seconds) {
     // Avance une horloge virtuelle et rejoue gameLoop pas a pas
@@ -6855,99 +6960,6 @@ function debugEstimateTime() {
     return { ...result, formatted: formatDurationHMS(result.seconds * 1000) };
 }
 
-const Debug = {
-    addScore(n) {
-        score += n;
-        partsSinceLaunch += n;
-        trackPartsEarned(n);
-        updateDisplay();
-    },
-    addStardust(n) {
-        starDust += n;
-        totalStardustEarned += n;
-        updateStardustDisplay();
-        renderGalacticShop();
-    },
-    buyAllParts() {
-        ROCKET_PARTS.forEach(p => {
-            if (!p.purchased) {
-                p.purchased = true;
-                constructedParts = new Set(ROCKET_PARTS.map(x => x.id));
-                updateConstructionScene();
-            }
-        });
-        renderRocketPartsShop();
-    },
-    launch() {
-        if (!checkRocketReady()) { this.buyAllParts(); }
-        launchRocket();
-    },
-    comet(n) {
-        // Fait apparaitre n cometes immediatement (1 par defaut)
-        const count = Math.max(1, Math.min(20, parseInt(n, 10) || 1));
-        for (let i = 0; i < count; i++) {
-            setTimeout(() => spawnRandomBonus(false), i * 350);
-        }
-    },
-    shower() {
-        startCometShower();
-    },
-    fast(seconds) {
-        debugSimulateTime(seconds);
-        debugRenderAll();
-    },
-    giveBuildings(buildingId, n) {
-        const b = findBuildingById(buildingId);
-        if (!b) { console.warn('Bâtiment inconnu:', buildingId); return; }
-        b.count += n;
-        unlockedBuildings.add(b.id);
-        debugRenderAll();
-    },
-    reset() {
-        localStorage.removeItem('starcruiserClickerSave');
-        location.search = '?debug=1';
-    },
-    estimate() {
-        const r = debugEstimateTime();
-        if (r.error) { console.warn('[DEBUG] ' + r.error); showToast('[DEBUG] ' + r.error); return r; }
-        console.log('[DEBUG] Prochaine planète: ' + r.planet + ' dans ~' + r.formatted + ' de jeu actif');
-        showToast('[DEBUG] ' + r.planet + ' dans ~' + r.formatted);
-        return r;
-    },
-    breakdown() {
-        const factors = {
-            temporaire: autoMultiplier,
-            cartes: getCollectionMultiplier(),
-            atelier_production: getProductionBonus(),
-            prestige: getPrestigeProductionBoost(),
-            planetes: getPlanetProductionBonus()
-        };
-        let total = 1;
-        Object.entries(factors).forEach(([k, v]) => {
-            total *= v;
-            console.log('[DEBUG] ' + k.padEnd(18) + ' x' + v.toFixed(2));
-        });
-        console.log('[DEBUG] TOTAL              x' + total.toFixed(2));
-        return { ...factors, total };
-    },
-    shower() { startCometShower(); },
-    setPlanet(index) {
-        const p = PLANETS[index];
-        if (!p) { console.warn('Index invalide. 0=Terre ... ' + (PLANETS.length - 1) + '=' + PLANETS[PLANETS.length - 1].name); return; }
-        const dust = calculateStardustGain(p.distanceRequired);
-        if (dust > 0) { starDust += dust; totalStardustEarned += dust; }
-        maxDistance = Math.max(maxDistance, p.distanceRequired);
-        prestigeMultiplier = 1 + Math.log(1 + maxDistance / MOON_DISTANCE) / 2;
-        unlockedPlanets = new Set(PLANETS.slice(0, index + 1).map(x => x.id));
-        updateSpaceProgress();
-        updateStardustDisplay();
-        renderGalacticShop();
-        console.log('Positionné sur ' + p.name + ' (+' + dust + ' PE, prestige x' + prestigeMultiplier.toFixed(2) + ')');
-    }
-};
-
-window.Debug = Debug;
-
 function initDebugMode() {
     if (!DEBUG_MODE) return;
     const panel = document.createElement('div');
@@ -7093,10 +7105,6 @@ function renderRocketPartsShop() {
 // ============================================
 // ROCKET CONSTRUCTION SCENE
 // ============================================
-
-// Track constructed parts
-let constructedParts = new Set();
-
 function updateConstructionScene() {
     const container = document.getElementById('rocket-parts-container');
     if (!container) return;
