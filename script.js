@@ -4050,6 +4050,12 @@ const Sounds = {
         soundTone(360, 520, 0.09, 'sine', 0.4);
         soundTone(540, 720, 0.12, 'sine', 0.3, 0.06);
     },
+    // Un bâtiment devient abordable : carillon doux deux notes,
+    // discret pour ne pas spammer quand le score monte vite.
+    affordable() {
+        soundTone(880, 880, 0.09, 'sine', 0.16);
+        soundTone(1175, 1175, 0.14, 'sine', 0.18, 0.09);
+    },
     // Nouveau bâtiment débloqué : jingle 3 notes ascendantes
     unlock() {
         soundTone(523, 523, 0.14, 'triangle', 0.35);
@@ -6996,6 +7002,11 @@ function renderRocketPartsShop() {
                     '<div class="rocket-part-frame-title">' + t('Pi\u00e8ces compl\u00e8tes') + '</div>' +
                     '<div class="rocket-part-frame-complete">\u2713 ' + t('Fus\u00e9e pr\u00eate \u00e0 lancer') + '</div>' +
                 '</div>';
+        } else {
+            const titleEl = container.querySelector('.rocket-part-frame-title');
+            if (titleEl) titleEl.textContent = t('Pièces complètes');
+            const completeEl = container.querySelector('.rocket-part-frame-complete');
+            if (completeEl) completeEl.textContent = '✓ ' + t('Fusée prête à lancer');
         }
         return;
     }
@@ -7023,9 +7034,17 @@ function renderRocketPartsShop() {
     } else {
         const costEl = container.querySelector('.rocket-part-cost');
         if (costEl) costEl.textContent = formatNumber(cost) + ' ' + t('Parts');
+        // Textes traduits rafraichis aussi sans re-creation du DOM : sinon un
+        // changement de langue n'etait pris en compte qu'apres rechargement.
+        const titleEl = container.querySelector('.rocket-part-frame-title');
+        if (titleEl) titleEl.textContent = t('Pièce') + ' ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length;
+        const nameEl = container.querySelector('.rocket-part-name');
+        if (nameEl) nameEl.textContent = t(nextPart.name);
         const btn = container.querySelector('.rocket-part-btn');
         if (btn) {
             btn.disabled = !isAffordable;
+            const btnLabel = t('Construire');
+            if (btn.textContent !== btnLabel) btn.textContent = btnLabel;
         }
         const frame = container.querySelector('.rocket-part-frame');
         if (frame) {
