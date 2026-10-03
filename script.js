@@ -164,16 +164,19 @@ const CLICK_UPGRADES = [
     // Deblocage par Parts gagnees via les clics uniquement, cumulees depuis
     // le debut du run (reset au lancement comme les upgrades). Le cout reste
     // le vrai verrou, decalant chaque achat dans le temps.
-    { threshold: 100,       name: "Doigt renforcé",        cost: 100 },
-    { threshold: 500,       name: "Précision laser",       cost: 500 },
-    { threshold: 2500,      name: "Lancement puissant",   cost: 10000 },
-    { threshold: 10000,     name: "Ingénieur expert",     cost: 50000 },
-    { threshold: 50000,     name: "Scientifique spatial",  cost: 1000000 },
-    { threshold: 250000,    name: "Pionnier galactique",  cost: 5000000 },
-    { threshold: 1000000,   name: "Click galactique",     cost: 100000000 },
-    { threshold: 5000000,   name: "Maître cosmique",      cost: 500000000 },
-    { threshold: 25000000,  name: "Puissance interstellaire", cost: 10000000000 },
-    { threshold: 100000000, name: "Main de l'univers",   cost: 50000000000 }
+    // Echelonnement resserre : premier palier des ~50 clics (au lieu de 100
+    // parts cumulees), puis progression ~x4 a x5 par palier pour lisser
+    // la courbe vers les hauts multiplicateurs.
+    { threshold: 50,        name: "Doigt renforcé",        cost: 50 },
+    { threshold: 250,       name: "Précision laser",       cost: 250 },
+    { threshold: 1200,      name: "Lancement puissant",   cost: 2500 },
+    { threshold: 6000,      name: "Ingénieur expert",     cost: 15000 },
+    { threshold: 30000,     name: "Scientifique spatial",  cost: 100000 },
+    { threshold: 150000,    name: "Pionnier galactique",  cost: 750000 },
+    { threshold: 750000,    name: "Click galactique",     cost: 5000000 },
+    { threshold: 4000000,   name: "Maître cosmique",      cost: 40000000 },
+    { threshold: 20000000,  name: "Puissance interstellaire", cost: 300000000 },
+    { threshold: 100000000, name: "Main de l'univers",   cost: 2000000000 }
 ];
 
 // Paliers de 1 a 200 batiments : personne ne depassera 200 exemplaires
