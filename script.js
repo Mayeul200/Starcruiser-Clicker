@@ -1239,6 +1239,11 @@ function buyBuildingUpgrade(buildingId, threshold) {
     showToast('+ ' + t(building.name) + ' ' + t('am\u00e9lior\u00e9 x2') + ' (-' + formatNumber(cost) + ' Parts)');
 }
 
+// Bâtiments déjà signalés comme abordables : le son ne joue qu'au passage
+// inabordable -> abordable, pas en continu ni au chargement initial.
+const affordableNotifiedBuildings = new Set();
+let affordableSoundReady = false;
+
 function updateBuildingButton(buildingId, pulseTarget) {
     const element = document.getElementById(`building-${buildingId}`);
     if (!element) return;
@@ -1294,6 +1299,16 @@ function updateBuildingButton(buildingId, pulseTarget) {
     } else if (!notPurchased) {
         clearPulseHint(element);
     }
+    if (isAffordable) {
+        if (!affordableNotifiedBuildings.has(building.id)) {
+            affordableNotifiedBuildings.add(building.id);
+            // Pas de son au tout premier passage (chargement de partie) :
+            // on ne carillonne que les transitions ultérieures.
+            if (affordableSoundReady) Sounds.affordable();
+        }
+    } else {
+        affordableNotifiedBuildings.delete(building.id);
+    }
 }
 
 function updateAllBuildingButtons() {
@@ -1308,6 +1323,7 @@ function updateAllBuildingButtons() {
         const buildingId = element.id.replace('building-', '');
         updateBuildingButton(buildingId, pulseTarget);
     });
+    affordableSoundReady = true;
 }
 
 // Pulse d'attention : allume un element pendant 10 s maxi, puis s'eteint
@@ -4082,6 +4098,12 @@ const Sounds = {
     },
     // Un bâtiment devient abordable : carillon doux deux notes,
     // discret pour ne pas spammer quand le score monte vite.
+    affordable() {
+        soundTone(880, 880, 0.09, 'sine', 0.16);
+        soundTone(1175, 1175, 0.14, 'sine', 0.18, 0.09);
+    },
+    // Un bâtiment devient abordable : carillon doux deux notes, discret
+    // pour ne pas spammer quand le score monte vite.
     affordable() {
         soundTone(880, 880, 0.09, 'sine', 0.16);
         soundTone(1175, 1175, 0.14, 'sine', 0.18, 0.09);
