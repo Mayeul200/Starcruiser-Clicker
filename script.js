@@ -1408,7 +1408,9 @@ function renderBuilding(building) {
             const rect = buildingElement.getBoundingClientRect();
             showTooltip(getBuildingTooltip(building), rect.left, rect.top, {
                 align: 'left',
-                width: Math.round(rect.width * 0.75)
+                // 90 % de la largeur de la case : texte aise sans deborder
+                // sur les elements voisins.
+                width: Math.round(rect.width * 0.9)
             });
             tooltipLiveRefresh = () => getBuildingTooltip(building);
         });
