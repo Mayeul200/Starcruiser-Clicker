@@ -6642,7 +6642,12 @@ setInterval(() => {
     }
 }, 10000);
 
-window.onload = function() {
+// Initialisation des que le script s'execute (il est charge en fin de body,
+// le DOM est deja parse) : NE PAS attendre window.onload — il ne se declenche
+// qu'une fois TOUTES les ressources chargees (polices Google, images), et
+// sur une premiere visite vierge une ressource lente/bloquee figeait
+// l'ecran de chargement indéfiniment.
+(function startGame() {
     if (typeof initLanguage === 'function') initLanguage();
     init();
     if (!gameStartTime) {
@@ -6652,7 +6657,8 @@ window.onload = function() {
     // Recalage de la scene une fois les polices/images stabilisees :
     // la hauteur de la top-bar peut encore changer au premier rendu.
     setTimeout(applySceneScale, 100);
-};
+    window.addEventListener('load', applySceneScale);
+})();
 
 // ============================================
 // MODE DEBUG (test de progression rapide)
