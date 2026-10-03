@@ -6557,15 +6557,22 @@ function init() {
     hideLoadingScreen();
 }
 
-// Masque l'ecran de chargement une fois le jeu initialise : on attend aussi
-// le logo de l'overlay pour eviter un flash de contenu a moitie charge.
+// Masque l'ecran de chargement une fois le jeu initialise : on attend le logo
+// de l'overlay ET une duree minimum d'une seconde — un affichage eclair est
+// plus bizarre qu'un leger attente, il donne l'impression d'un flash.
+const LOADING_MIN_MS = 1000;
+let loadingShownAt = Date.now();
+
 function hideLoadingScreen() {
     const overlay = document.getElementById('loading-screen');
     if (!overlay) return;
     const logo = overlay.querySelector('.loading-logo');
     const hide = () => {
-        overlay.classList.add('hidden');
-        setTimeout(() => overlay.remove(), 500);
+        const wait = Math.max(0, LOADING_MIN_MS - (Date.now() - loadingShownAt));
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            setTimeout(() => overlay.remove(), 500);
+        }, wait);
     };
     if (logo && !logo.complete) {
         logo.addEventListener('load', hide, { once: true });
