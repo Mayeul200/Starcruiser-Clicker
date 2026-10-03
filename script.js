@@ -4283,6 +4283,7 @@ const partsRain = {
     canvas: null,
     ctx: null,
     coinImg: null,
+    sprite: null,
     parts: [],
     dpr: 1,
     spawnDebt: 0,
@@ -4307,6 +4308,22 @@ function resizeRainCanvas() {
     canvas.width = Math.max(1, Math.round(rect.width * dpr));
     canvas.height = Math.max(1, Math.round(rect.height * dpr));
 }
+// Pre-rend la piece dans un petit canvas offscreen (~48 px) : dessiner
+// l'image 687x664 redimensionnee a 5-22 px pour chaque piece a chaque frame
+// coutait tres cher et faisait decrocher le rendu sous les 60 fps.
+function buildRainSprite() {
+    const img = partsRain.coinImg;
+    if (!img || !img.complete || !img.naturalWidth) return false;
+    const spriteSize = 48;
+    const off = document.createElement('canvas');
+    off.width = spriteSize;
+    off.height = spriteSize;
+    const octx = off.getContext('2d');
+    octx.drawImage(img, 0, 0, spriteSize, spriteSize);
+    partsRain.sprite = off;
+    return true;
+}
+
 function ensureRainCanvas() {
     if (partsRain.canvas) return true;
     const container = partsRain.container || document.getElementById('parts-rain');
@@ -4319,6 +4336,7 @@ function ensureRainCanvas() {
     partsRain.ctx = canvas.getContext('2d');
     const img = new Image();
     img.src = 'images/parts.png';
+    img.onload = buildRainSprite;
     partsRain.coinImg = img;
     window.addEventListener('resize', resizeRainCanvas);
     window.addEventListener('resize', refreshBonusBadgePosition);
@@ -4353,8 +4371,8 @@ function rainFrame(now) {
     // laisse une transformation piece en place, faussant clearRect.
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const img = partsRain.coinImg;
-    if (!img || !img.complete || !img.naturalWidth) return;
+    if (!partsRain.sprite && !buildRainSprite()) return;
+    const sprite = partsRain.sprite;
     const parts = partsRain.parts;
     for (let i = parts.length - 1; i >= 0; i--) {
         const p = parts[i];
@@ -4366,7 +4384,7 @@ function rainFrame(now) {
         // setTransform remplace save/translate/scale/restore : une seule
         // ecriture de matrice par piece au lieu de deux empilements de pile.
         ctx.setTransform(flip, 0, 0, 1, p.x, p.y);
-        ctx.drawImage(img, -p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.drawImage(sprite, -p.size / 2, -p.size / 2, p.size, p.size);
     }
 }
 function tickPartsRain(now) {
