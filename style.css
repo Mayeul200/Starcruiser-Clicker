@@ -3520,8 +3520,13 @@ body {
 }
 
 .hud-counters-row .bonus-timer.bonus-below {
-    position: static;
-    transform: none;
+    /* Absolu sous le compteur, centre : le badge n'occupe aucune place
+       dans le flux, le conteneur central ne bouge pas d'un pixel quand
+       un bonus temporaire apparait ou disparait. */
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     margin-top: 4px;
     max-width: 100%;
     white-space: nowrap;
