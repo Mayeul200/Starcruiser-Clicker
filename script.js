@@ -6454,49 +6454,37 @@ function setTextIfChanged(el, text) {
 // ============================================
 
 // ============================================
+// ============================================
 // TUTORIEL DEBUT DE PARTIE
-// Pop-ups guident le nouveau joueur : objectif, sections, batiments, etc.
-// Persiste dans la save (tutorialSeen) pour ne jamais revenir seul.
+// Coach proactif : au lieu d'une presentation que le joueur subit,
+// un guide flottant suit ses premiers gestes (clic, achat, construction)
+// et passe a l'etape suivante QUAND l'action est faite. Le jeu reste
+// jouable a chaque instant (pas d'overlay bloquant).
+// Persiste dans la save (tutorialSeen).
 // ============================================
 const TUTORIAL_STEPS = [
     {
-        img: 'images/icon.png',
-        titleKey: 'Bienvenue dans Starcruiser !',
-        textKey: 'Ta mission : construire ta fusée pièce par pièce et explorer les profondeurs de l\'espace.\nChaque planète atteinte te rend plus fort. Prêt pour le décollage ?',
-    },
-    {
         img: 'images/parts.png',
-        titleKey: 'Les Parts',
-        textKey: 'Les Parts sont ta ressource principale.\nClique sur la Pièce pour en gagner, puis investis-les dans des bâtiments et des améliorations.',
+        titleKey: 'Clique sur la pièce',
+        textKey: 'Chaque clic te rapporte des Parts. Clique pour en gagner !',
+        done: () => totalPartsFromClicks >= 1,
     },
     {
         img: 'images/buildings/workshop.png',
-        titleKey: 'Les Bâtiments',
-        textKey: 'Les bâtiments produisent des Parts automatiquement.\nTu gagnes jusqu\'a 10 minutes de production hors-ligne gratuite ; pour plus, regarde les améliorations galactiques.\nAchète-les dans le panneau Bâtiments !',
+        titleKey: 'Construis ton premier Atelier',
+        textKey: 'Les bâtiments produisent des Parts tout seuls. Achète un Atelier dans le panneau Bâtiments.',
+        done: () => (findBuildingById('workshop')?.count || 0) >= 1,
     },
     {
-        img: 'images/rocket/Fus\u00e9e3.png',
-        titleKey: 'La Fusée',
-        textKey: 'Achète les 10 pièces de fusée pour compléter ton vaisseau.\nUne fois complet, tu pourras lancer ta fusée vers de nouvelles planètes !',
-    },
-    {
-        img: 'images/planets/moon.png',
-        titleKey: 'Voyage Spatial',
-        textKey: 'Lance ta fusée pour voyager dans l\'espace et atteindre de nouvelles planètes.\nChaque lancement reset ta partie... en échange d\'un bonus permanent. Va de plus en plus loin !',
-    },
-    {
-        img: 'images/effects/comete.png',
-        titleKey: 'Comètes et Bonus',
-        textKey: 'Garde l\'œil ouvert : des comètes traversent régulièrement l\'écran.\nClique dessus pour des bonus instantanés et des multiplicateurs temporaires !',
-    },
-    {
-        img: 'images/cards/collection/booster1.png',
-        titleKey: 'Cartes, Contrats et plus',
-        textKey: 'Complète des albums de cartes et des contrats de fabrication pour des bonus supplémentaires.\nTout se trouve dans le panneau Espace. Bonne chance, commandant !',
+        img: 'images/rocket/Fusée3.png',
+        titleKey: 'Construis ta première pièce de fusée',
+        textKey: 'La carte Prochaine étape indique ta progression. Construis la première pièce !',
+        done: () => ROCKET_PARTS.some(p => p.purchased),
     },
 ];
 let tutorialStep = 0;
 let tutorialActive = false;
+let tutorialPollTimer = null;
 
 function isTutorialSeen() {
     return !!tutorialSeen;
@@ -6529,51 +6517,58 @@ function chooseGameLanguage(lang) {
 function startTutorial(force) {
     if (tutorialActive) return;
     if (!force && isTutorialSeen()) return;
+    // Deja de la progression sauvegardee : le coach n'a plus lieu d'etre.
+    const workshop = findBuildingById('workshop');
+    if (!force && (workshop?.count > 0 || ROCKET_PARTS.some(p => p.purchased))) {
+        tutorialSeen = true;
+        return;
+    }
     tutorialActive = true;
     tutorialStep = 0;
     renderTutorialStep();
-    const overlay = document.getElementById('tutorial-overlay');
-    if (overlay) overlay.classList.add('active');
+    if (tutorialPollTimer) clearInterval(tutorialPollTimer);
+    tutorialPollTimer = setInterval(pollTutorialProgress, 400);
 }
 
 function renderTutorialStep() {
     const step = TUTORIAL_STEPS[tutorialStep];
     if (!step) { endTutorial(); return; }
-    const visual = document.getElementById('tutorial-visual');
-    const titleEl = document.getElementById('tutorial-title');
-    const textEl = document.getElementById('tutorial-text');
-    const nextBtn = document.getElementById('tutorial-next-btn');
-    const skipBtn = document.getElementById('tutorial-skip-btn');
-    const curEl = document.getElementById('tutorial-step-current');
-    const totalEl = document.getElementById('tutorial-step-total');
-    const progressEl = document.getElementById('tutorial-progress');
-    if (!visual || !titleEl || !textEl) return;
+    const coach = document.getElementById('tutorial-coach');
+    if (!coach) return;
+    coach.classList.add('active');
+    const stepEl = coach.querySelector('.tutorial-coach-step');
+    const imgEl = coach.querySelector('.tutorial-coach-visual');
+    const titleEl = coach.querySelector('.tutorial-coach-title');
+    const textEl = coach.querySelector('.tutorial-coach-text');
+    if (stepEl) stepEl.textContent = (tutorialStep + 1) + '/' + TUTORIAL_STEPS.length;
+    if (imgEl) imgEl.src = step.img;
+    if (titleEl) titleEl.textContent = t(step.titleKey);
+    if (textEl) textEl.textContent = t(step.textKey);
+}
 
-    visual.innerHTML = '<img src="' + step.img + '" alt="">';
-    titleEl.textContent = t(step.titleKey);
-    textEl.textContent = t(step.textKey);
-    if (curEl) curEl.textContent = tutorialStep + 1;
-    if (totalEl) totalEl.textContent = TUTORIAL_STEPS.length;
-    if (nextBtn) nextBtn.textContent = tutorialStep === TUTORIAL_STEPS.length - 1 ? t('C\'est parti !') : t('Suivant');
-    if (skipBtn) skipBtn.style.display = tutorialStep === TUTORIAL_STEPS.length - 1 ? 'none' : '';
-    if (progressEl) {
-        progressEl.innerHTML = '';
-        TUTORIAL_STEPS.forEach((_, i) => {
-            const dot = document.createElement('span');
-            if (i < tutorialStep) dot.className = 'done';
-            else if (i === tutorialStep) dot.className = 'current';
-            progressEl.appendChild(dot);
-        });
+// Le joueur fait l'action (clic, achat...) : on verifie regulierement
+// si l'etape courante est accomplie et on avance automatiquement.
+function pollTutorialProgress() {
+    if (!tutorialActive) return;
+    const step = TUTORIAL_STEPS[tutorialStep];
+    if (!step) { endTutorial(); return; }
+    if (step.done && step.done()) {
+        tutorialStep++;
+        if (tutorialStep >= TUTORIAL_STEPS.length) {
+            endTutorial();
+        } else {
+            renderTutorialStep();
+        }
     }
 }
 
+// Compatible avec les anciens appels : passer une etape a la main reste
+// possible, mais le coach avance surtout tout seul.
 function nextTutorialStep() {
+    if (!tutorialActive) return;
     tutorialStep++;
-    if (tutorialStep >= TUTORIAL_STEPS.length) {
-        endTutorial();
-    } else {
-        renderTutorialStep();
-    }
+    if (tutorialStep >= TUTORIAL_STEPS.length) endTutorial();
+    else renderTutorialStep();
 }
 
 function skipTutorial() {
@@ -6583,9 +6578,10 @@ function skipTutorial() {
 function endTutorial() {
     tutorialActive = false;
     tutorialSeen = true;
+    if (tutorialPollTimer) { clearInterval(tutorialPollTimer); tutorialPollTimer = null; }
     saveGame();
-    const overlay = document.getElementById('tutorial-overlay');
-    if (overlay) overlay.classList.remove('active');
+    const coach = document.getElementById('tutorial-coach');
+    if (coach) coach.classList.remove('active');
 }
 
 function init() {

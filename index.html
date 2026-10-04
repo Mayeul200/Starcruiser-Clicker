@@ -488,19 +488,16 @@
         </div>
     </div>
     <!-- TUTORIEL DEBUT DE PARTIE -->
-    <div class="tutorial-overlay" id="tutorial-overlay">
-        <div class="tutorial-popup">
-            <button class="tutorial-close-btn" onclick="skipTutorial()" title="Fermer">&times;</button>
-            <div class="tutorial-step-badge"><span id="tutorial-step-current">1</span>/<span id="tutorial-step-total">7</span></div>
-            <div class="tutorial-visual" id="tutorial-visual"></div>
-            <h2 class="tutorial-title" id="tutorial-title"></h2>
-            <p class="tutorial-text" id="tutorial-text"></p>
-            <div class="tutorial-actions">
-                <button class="tutorial-btn tutorial-skip-btn" id="tutorial-skip-btn" onclick="skipTutorial()" data-i18n="Passer le tutoriel">Passer le tutoriel</button>
-                <button class="tutorial-btn tutorial-next-btn" id="tutorial-next-btn" onclick="nextTutorialStep()"></button>
+    <div class="tutorial-coach" id="tutorial-coach">
+        <button class="tutorial-close-btn" onclick="skipTutorial()" title="Fermer">&times;</button>
+        <div class="tutorial-coach-head">
+            <img class="tutorial-coach-visual" src="images/parts.png" alt="">
+            <div class="tutorial-coach-head-text">
+                <span class="tutorial-coach-step">1/3</span>
+                <h2 class="tutorial-coach-title"></h2>
             </div>
-            <div class="tutorial-progress" id="tutorial-progress"></div>
         </div>
+        <p class="tutorial-coach-text"></p>
     </div>
 
     <nav class="mobile-nav" id="mobile-nav">
