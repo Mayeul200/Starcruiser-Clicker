@@ -2967,6 +2967,32 @@ function updateSpaceProgress() {
     const sidebarSpeed = document.getElementById('sidebar-speed');
     const sidebarBonus = document.getElementById('sidebar-bonus');
 
+    // Tuile narrative "Prochaine planete" : nom, barre d'avancement et %,
+    // plus le teaser de l'etape d'apres ("Puis : Mars") pour la curiosite.
+    const nextPlanetEl = document.getElementById('sidebar-next-planet');
+    const planetFillEl = document.getElementById('sidebar-planet-fill');
+    const planetPctEl = document.getElementById('sidebar-planet-pct');
+    const planetAfterEl = document.getElementById('sidebar-planet-after');
+    if (nextPlanetEl && planetFillEl && planetPctEl) {
+        if (progress.nextPlanet) {
+            const pct = Math.min(100, Math.max(0, progress.progressPercent));
+            const afterIdx = PLANETS.findIndex(p => p.id === progress.nextPlanet.id) + 1;
+            nextPlanetEl.textContent = t(progress.nextPlanet.name);
+            planetFillEl.style.width = pct + '%';
+            planetFillEl.style.background = progress.nextPlanet.color || 'var(--accent)';
+            planetPctEl.textContent = pct + ' %';
+            if (planetAfterEl) {
+                planetAfterEl.textContent = afterIdx < PLANETS.length
+                    ? t('Puis') + ' : ' + t(PLANETS[afterIdx].name)
+                    : '';
+            }
+        } else {
+            nextPlanetEl.textContent = t(progress.currentPlanet.name);
+            planetFillEl.style.width = '100%';
+            planetPctEl.textContent = '100 %';
+            if (planetAfterEl) planetAfterEl.textContent = '';
+        }
+    }
     if (sidebarDistance) {
         rollCounterText(sidebarDistance, formatNumber(reachableDistance) + ' ' + t('km'));
     }

@@ -2590,6 +2590,50 @@ body {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
+/* Tuile "Prochaine planete" : nom + barre + % + teaser de l'etape d'apres.
+   La barre est le coeur de la motivation : le joueur voit OU il va et
+   QU'EST-CE QU'IL Y A APRÈS. */
+.planet-progress-tile {
+    gap: 3px;
+}
+.planet-progress-name {
+    font-size: 0.95rem;
+    color: var(--accent-light);
+}
+.planet-progress-bar {
+    position: relative;
+    width: 100%;
+    height: 14px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(71, 85, 105, 0.6);
+    border-radius: 7px;
+    overflow: hidden;
+    margin-top: 1px;
+}
+.planet-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 7px;
+    transition: width 0.4s;
+}
+.planet-progress-pct {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.58rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+.planet-progress-next {
+    font-size: 0.6rem;
+    color: #94a3b8;
+    font-style: italic;
+    min-height: 0.9em;
+}
 /* Responsive for sidebar */
 
 /* ============================================
