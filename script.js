@@ -5150,19 +5150,29 @@ function fitCounterFontSize() {
     // d'un coup jusqu'a ce que tout le nombre tienne dans la boite,
     // au lieu de rogner les chiffres (tablette paysage, grands nombres).
     const rootPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    document.querySelectorAll('.hud-top-row .counter').forEach(box => {
+    const boxes = Array.from(document.querySelectorAll('.hud-top-row .counter'));
+    boxes.forEach(box => {
         if (box.style.fontSize) {
             box.style.fontSize = '';
             void box.offsetWidth;
         }
-        let fs = parseFloat(getComputedStyle(box).fontSize) / rootPx || 1.6;
+    });
+    // Taille homogene : les deux compteurs partagent la police du plus
+    // contraint d'entre eux, sinon un compteur retreci et pas l'autre.
+    const basePx = boxes.length ? (parseFloat(getComputedStyle(boxes[0]).fontSize) || rootPx * 1.6) : 0;
+    let common = basePx;
+    boxes.forEach(box => {
+        let fs = basePx;
         let guard = 0;
-        while ((box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) && fs > 0.6 && guard < 24) {
-            fs = Math.max(0.6, fs * 0.92);
-            box.style.fontSize = fs.toFixed(3) + 'rem';
+        while ((box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) && fs > rootPx * 0.6 && guard < 24) {
+            fs = Math.max(rootPx * 0.6, fs * 0.92);
+            box.style.fontSize = fs + 'px';
             guard++;
         }
+        common = Math.min(common, fs);
+        if (box.style.fontSize) box.style.fontSize = '';
     });
+    boxes.forEach(box => { box.style.fontSize = common + 'px'; });
 }
 setInterval(fitCounterFontSize, 500);
 window.addEventListener('orientationchange', () => setTimeout(refreshBonusBadgePosition, 250));

@@ -3550,6 +3550,7 @@ body {
     min-width: 0;
     display: flex;
     align-items: baseline;
+    justify-content: center;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
