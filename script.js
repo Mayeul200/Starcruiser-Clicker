@@ -6582,6 +6582,110 @@ function endTutorial() {
     saveGame();
     const coach = document.getElementById('tutorial-coach');
     if (coach) coach.classList.remove('active');
+    // Le coach de base est fini : les lecons contextuelles prennent le
+    // relais (un deblocage = une explication, une seule fois).
+    startFeatureLessons();
+}
+
+// ============================================
+// LECONS CONTEXTUELLES : chaque mecanique est expliquee au moment ou
+// le joueur la debloque, pas avant. Chaque lecon a une condition de
+// declenchement et une cle d'historisation (jamais reaffichee).
+// ============================================
+let featureLessonTimer = null;
+
+const FEATURE_LESSONS = [
+    {
+        key: 'building-factory',
+        titleKey: 'Nouveau bâtiment : Usine',
+        textKey: 'L\'Usine est disponible ! Elle produit bien plus qu\'un Atelier. Achète-en pour accélérer ta production.',
+        img: 'images/buildings/factory.png',
+        trigger: () => isBuildingUnlocked(findBuildingById('factory')),
+    },
+    {
+        key: 'first-comet',
+        titleKey: 'Une comète !',
+        textKey: 'Des comètes traversent l\'écran de temps en temps. Clique dessus vite pour récupérer des Parts et des bonus temporaires !',
+        img: 'images/effects/comete.png',
+        trigger: () => Date.now() > cometLessonReadyAt,
+    },
+    {
+        key: 'contracts-unlocked',
+        titleKey: 'Les Contrats sont disponibles',
+        textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses. Ouvre le panneau Espace !',
+        img: 'images/effects/comete.png',
+        trigger: () => getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES,
+    },
+    {
+        key: 'click-upgrades',
+        titleKey: 'Améliorations de clic',
+        textKey: 'La barre du haut propose des améliorations de clic à mesure que tu cliques. Elles boostent chaque clic, garde un œil dessus !',
+        img: 'images/parts.png',
+        trigger: () => CLICK_UPGRADES.some(u => totalPartsFromClicks >= u.threshold),
+    },
+    {
+        key: 'rocket-complete',
+        titleKey: 'Fusée prête !',
+        textKey: 'Toutes les pièces sont construites. Appuie sur LANCER LA FUSÉE pour voyager vers une nouvelle planète et repartir plus fort !',
+        img: 'images/rocket/Fusée3.png',
+        trigger: () => ROCKET_PARTS.every(p => p.purchased),
+    },
+    {
+        key: 'first-launch',
+        titleKey: 'Bon voyage !',
+        textKey: 'Chaque lancement te fait atteindre des planètes : tu repars de zéro, mais avec un bonus permanent. Va de plus en plus loin !',
+        img: 'images/planets/moon.png',
+        trigger: () => launchCount >= 1,
+    },
+];
+
+// Premiere comete : le coach ne peut pas la deviner, on arme un timer au
+// demarrage et la lecon tombe apres le delai naturel d'apparition.
+let cometLessonReadyAt = 0;
+
+function startFeatureLessons() {
+    if (featureLessonTimer) clearInterval(featureLessonTimer);
+    featureLessonTimer = setInterval(pollFeatureLessons, 1000);
+    pollFeatureLessons();
+}
+
+function pollFeatureLessons() {
+    if (tutorialActive) return;
+    const seen = getSeenLessons();
+    const next = FEATURE_LESSONS.find(l => !seen.includes(l.key) && l.trigger && l.trigger());
+    if (next) showFeatureLesson(next);
+}
+
+function getSeenLessons() {
+    try { return JSON.parse(localStorage.getItem('starcruiser-lessons-seen') || '[]'); }
+    catch (e) { return []; }
+}
+
+function showFeatureLesson(lesson) {
+    const seen = getSeenLessons();
+    if (!seen.includes(lesson.key)) {
+        seen.push(lesson.key);
+        localStorage.setItem('starcruiser-lessons-seen', JSON.stringify(seen));
+    }
+    const coach = document.getElementById('tutorial-coach');
+    if (!coach) return;
+    coach.classList.add('active');
+    const stepEl = coach.querySelector('.tutorial-coach-step');
+    const imgEl = coach.querySelector('.tutorial-coach-visual');
+    const titleEl = coach.querySelector('.tutorial-coach-title');
+    const textEl = coach.querySelector('.tutorial-coach-text');
+    if (stepEl) stepEl.textContent = '';
+    if (imgEl) imgEl.src = lesson.img;
+    if (titleEl) titleEl.textContent = t(lesson.titleKey);
+    if (textEl) textEl.textContent = t(lesson.textKey);
+    clearTimeout(showFeatureLesson.hideTimer);
+    showFeatureLesson.hideTimer = setTimeout(dismissFeatureLesson, 12000);
+}
+
+function dismissFeatureLesson() {
+    clearTimeout(showFeatureLesson.hideTimer);
+    const coach = document.getElementById('tutorial-coach');
+    if (coach && !tutorialActive) coach.classList.remove('active');
 }
 
 function init() {
@@ -6629,6 +6733,10 @@ function init() {
     } else {
         startTutorial(false);
     }
+    // Joueur qui a deja fini le tutoriel : les lecons contextuelles
+    // (debut d'un nouveau run inclus) tournent quand meme, chaque lecon
+    // n'est montree qu'une fois via starcruiser-lessons-seen.
+    if (isTutorialSeen() && !tutorialActive) startFeatureLessons();
     hideLoadingScreen();
 }
 
@@ -6787,6 +6895,11 @@ function scheduleCometShower() {
     const delay = firstCometShower
         ? 55000 + Math.random() * 25000
         : 240000 + Math.random() * 120000;
+    if (firstCometShower) {
+        // Lecon comete : armee pour tomber juste apres la premiere pluie,
+        // quand le joueur a vraiment vu une comete a l'ecran.
+        cometLessonReadyAt = Date.now() + delay;
+    }
     firstCometShower = false;
     setTimeout(() => {
         startCometShower();
