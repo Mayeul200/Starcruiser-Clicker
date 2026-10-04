@@ -3573,8 +3573,17 @@ body {
 }
 .counter > span[data-i18n="Parts"], .counter .unit {
     align-self: baseline;
-    min-width: 0;
     white-space: nowrap;
+}
+/* Detection d'overflow fiable : si les enfants pouvaient retrecir
+   (flex-shrink, min-width: 0), le contenu se rognerait silencieusement
+   sans jamais faire grandir scrollWidth, et l'auto-ajustement de police
+   (fitCounterFontSize) ne se declencherait jamais. En interdisant le
+   shrink, le contenu deborde reellement, scrollWidth > clientWidth
+   devient detectable, et JS reduit la police jusqu'a ce que tout
+   rentre (chiffres + "Parts" / "/s" bien separes). */
+.counter > * {
+    flex-shrink: 0;
 }
 #score-value {
     justify-content: flex-end;
