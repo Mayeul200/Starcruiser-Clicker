@@ -7164,6 +7164,10 @@ function renderRocketPartsShop() {
     // Piece de fusee abordable : pulse pour attirer l'oeil (10 s max).
     // Cible la carte de la piece, pas le conteneur : celui-ci est une colonne
     // laterale haute comme la page et la lueur s'etalerait sur toute sa longueur.
+    const fillEl0 = container.querySelector('.rocket-part-progress-fill');
+    const labelEl0 = container.querySelector('.rocket-part-progress-label');
+    if (fillEl0) fillEl0.style.width = Math.min(100, (score / cost) * 100) + '%';
+    if (labelEl0) labelEl0.textContent = Math.min(100, Math.floor((score / cost) * 100)) + ' %';
     const partCard = container.querySelector('.rocket-part-frame');
     if (partCard) {
         if (isAffordable) pulseHint(partCard);
