@@ -6545,18 +6545,21 @@ const TUTORIAL_STEPS = [
         titleKey: 'Clique sur la pièce',
         textKey: 'Chaque clic te rapporte des Parts. Clique pour en gagner !',
         done: () => totalPartsFromClicks >= 1,
+        target: '#medal',
     },
     {
         img: 'images/buildings/workshop.png',
         titleKey: 'Construis ton premier Atelier',
         textKey: 'Les bâtiments produisent des Parts tout seuls. Achète un Atelier dans le panneau Bâtiments.',
         done: () => (findBuildingById('workshop')?.count || 0) >= 1,
+        target: '#building-workshop',
     },
     {
         img: 'images/rocket/Fusée3.png',
         titleKey: 'Construis ta première pièce de fusée',
         textKey: 'La carte Prochaine étape indique ta progression. Construis la première pièce !',
         done: () => ROCKET_PARTS.some(p => p.purchased),
+        target: '#rocket-parts-shop',
     },
 ];
 let tutorialStep = 0;
@@ -6607,6 +6610,39 @@ function startTutorial(force) {
     tutorialPollTimer = setInterval(pollTutorialProgress, 400);
 }
 
+// Place le coach flottant a cote de l'element concerne par la lecon : sous lui
+// si la place suffit, au-dessus sinon, toujours borne dans le viewport. Si la
+// cible est absente ou masquee (ex. panneau non ouvert), le coach reste en bas
+// au centre (position CSS par defaut).
+function positionCoachNear(coach, selector) {
+    coach.style.left = '';
+    coach.style.top = '';
+    coach.style.bottom = '';
+    coach.style.transform = '';
+    if (!selector) return;
+    let targetEl = null;
+    try { targetEl = document.querySelector(selector); } catch (e) { targetEl = null; }
+    if (!targetEl || !targetEl.isConnected) return;
+    const rect = targetEl.getBoundingClientRect();
+    if (rect.width === 0 && rect.height === 0) return;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cw = Math.min(vw * 0.92, 420);
+    const ch = coach.offsetHeight || 170;
+    const margin = 12;
+    let x = rect.left + rect.width / 2 - cw / 2;
+    x = Math.max(8, Math.min(x, vw - cw - 8));
+    let y;
+    if (rect.bottom + margin + ch <= vh) y = rect.bottom + margin;
+    else if (rect.top - margin - ch >= 0) y = rect.top - margin - ch;
+    else y = Math.max(8, (vh - ch) / 2);
+    y = Math.min(y, vh - ch - 8);
+    coach.style.left = Math.round(x) + 'px';
+    coach.style.top = Math.round(y) + 'px';
+    coach.style.bottom = 'auto';
+    coach.style.transform = 'none';
+    coach.style.width = cw + 'px';
+}
 function renderTutorialStep() {
     const step = TUTORIAL_STEPS[tutorialStep];
     if (!step) { endTutorial(); return; }
@@ -6621,6 +6657,7 @@ function renderTutorialStep() {
     if (imgEl) imgEl.src = step.img;
     if (titleEl) titleEl.textContent = t(step.titleKey);
     if (textEl) textEl.textContent = t(step.textKey);
+    positionCoachNear(coach, step.target);
 }
 
 // Le joueur fait l'action (clic, achat...) : on verifie regulierement
@@ -6658,7 +6695,10 @@ function endTutorial() {
     if (tutorialPollTimer) { clearInterval(tutorialPollTimer); tutorialPollTimer = null; }
     saveGame();
     const coach = document.getElementById('tutorial-coach');
-    if (coach) coach.classList.remove('active');
+    if (coach) {
+        coach.classList.remove('active');
+        positionCoachNear(coach, null);
+    }
     // Le coach de base est fini : les lecons contextuelles prennent le
     // relais (un deblocage = une explication, une seule fois).
     startFeatureLessons();
@@ -6678,6 +6718,7 @@ const FEATURE_LESSONS = [
         textKey: 'L\'Usine est disponible ! Elle produit bien plus qu\'un Atelier. Achète-en pour accélérer ta production.',
         img: 'images/buildings/factory.png',
         trigger: () => isBuildingUnlocked(findBuildingById('factory')),
+        target: '#building-factory',
     },
     {
         key: 'first-comet',
@@ -6685,6 +6726,7 @@ const FEATURE_LESSONS = [
         textKey: 'Des comètes traversent l\'écran de temps en temps. Clique dessus vite pour récupérer des Parts et des bonus temporaires !',
         img: 'images/effects/comete.png',
         trigger: () => Date.now() > cometLessonReadyAt,
+        target: '#medal',
     },
     {
         key: 'contracts-unlocked',
@@ -6692,6 +6734,7 @@ const FEATURE_LESSONS = [
         textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses. Ouvre le panneau Espace !',
         img: 'images/effects/comete.png',
         trigger: () => getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES,
+        target: '#contracts-mini-card',
     },
     {
         key: 'click-upgrades',
@@ -6699,6 +6742,7 @@ const FEATURE_LESSONS = [
         textKey: 'La barre du haut propose des améliorations de clic à mesure que tu cliques. Elles boostent chaque clic, garde un œil dessus !',
         img: 'images/parts.png',
         trigger: () => CLICK_UPGRADES.some(u => totalPartsFromClicks >= u.threshold),
+        target: '#upgrades-bar',
     },
     {
         key: 'rocket-complete',
@@ -6706,6 +6750,7 @@ const FEATURE_LESSONS = [
         textKey: 'Toutes les pièces sont construites. Appuie sur LANCER LA FUSÉE pour voyager vers une nouvelle planète et repartir plus fort !',
         img: 'images/rocket/Fusée3.png',
         trigger: () => ROCKET_PARTS.every(p => p.purchased),
+        target: '#launch-button',
     },
     {
         key: 'first-launch',
@@ -6755,6 +6800,7 @@ function showFeatureLesson(lesson) {
     if (imgEl) imgEl.src = lesson.img;
     if (titleEl) titleEl.textContent = t(lesson.titleKey);
     if (textEl) textEl.textContent = t(lesson.textKey);
+    positionCoachNear(coach, lesson.target);
     clearTimeout(showFeatureLesson.hideTimer);
     showFeatureLesson.hideTimer = setTimeout(dismissFeatureLesson, 12000);
 }
@@ -6762,7 +6808,10 @@ function showFeatureLesson(lesson) {
 function dismissFeatureLesson() {
     clearTimeout(showFeatureLesson.hideTimer);
     const coach = document.getElementById('tutorial-coach');
-    if (coach && !tutorialActive) coach.classList.remove('active');
+    if (coach && !tutorialActive) {
+        coach.classList.remove('active');
+        positionCoachNear(coach, null);
+    }
 }
 
 function init() {
