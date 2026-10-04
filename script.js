@@ -4395,6 +4395,7 @@ function ensureRainCanvas() {
     partsRain.coinImg = img;
     window.addEventListener('resize', resizeRainCanvas);
     window.addEventListener('resize', refreshBonusBadgePosition);
+    window.addEventListener('resize', fitCounterFontSize);
     resizeRainCanvas();
     partsRain.lastFrame = 0;
     requestAnimationFrame(rainFrame);
@@ -5143,19 +5144,23 @@ function renderCounterChars(el, text) {
 // on reduit la font-size du .counter conteneur jusqu'a ce que tout rentre.
 // Reaugmente progressivement quand l'espace redevient suffisant.
 function fitCounterFontSize() {
+    // Adaptation directe a la largeur de l'encadre : on repart de la
+    // taille CSS de base a chaque passe (retour automatique a la taille
+    // normale quand l'espace redevient suffisant), puis on reduit
+    // d'un coup jusqu'a ce que tout le nombre tienne dans la boite,
+    // au lieu de rogner les chiffres (tablette paysage, grands nombres).
+    const rootPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     document.querySelectorAll('.hud-top-row .counter').forEach(box => {
-        const base = 1.6;
-        if (box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) {
-            let fs = parseFloat(getComputedStyle(box).fontSize) || base;
-            fs = Math.max(0.72, fs - 0.08);
-            box.style.fontSize = fs.toFixed(2) + 'rem';
-        } else if (box.style.fontSize) {
-            const cur = parseFloat(box.style.fontSize);
-            const probe = Math.min(base, cur + 0.04);
-            box.style.fontSize = probe.toFixed(2) + 'rem';
-            if (box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) {
-                box.style.fontSize = cur.toFixed(2) + 'rem';
-            }
+        if (box.style.fontSize) {
+            box.style.fontSize = '';
+            void box.offsetWidth;
+        }
+        let fs = parseFloat(getComputedStyle(box).fontSize) / rootPx || 1.6;
+        let guard = 0;
+        while ((box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1) && fs > 0.6 && guard < 24) {
+            fs = Math.max(0.6, fs * 0.92);
+            box.style.fontSize = fs.toFixed(3) + 'rem';
+            guard++;
         }
     });
 }
