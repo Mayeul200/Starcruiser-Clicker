@@ -3555,6 +3555,26 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 0 8px;
+    /* Container flex : les espaces du HTML entre number et "Parts" ou
+       entre les chiffres et "/s" sont IGNORES (anonymous flex items),
+       d'ou le "1.5M" colle au "Parts" et le "/s" fusionne avec le nombre.
+       Le gap flex restitue un espacement vivant, proportionnel a l'ecran. */
+    gap: clamp(3px, 0.7vw, 9px);
+}
+.counter .gain-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
+}
+.counter .unit {
+    display: inline-flex;
+    align-items: baseline;
+    white-space: nowrap;
+}
+.counter > span[data-i18n="Parts"], .counter .unit {
+    align-self: baseline;
+    min-width: 0;
+    white-space: nowrap;
 }
 #score-value {
     justify-content: flex-end;
@@ -3579,6 +3599,7 @@ body {
     }
     .counter {
         padding: 0 2px;
+        width: 100%;
     }
 }
 /* Barre des upgrades */
