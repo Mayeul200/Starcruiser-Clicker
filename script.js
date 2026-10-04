@@ -3934,12 +3934,18 @@ function spawnShockwave(event) {
 // en page. Auto-suppression apres l'animation.
 function showBuyFeedback(targetEl, costText, gainText) {
     if (!targetEl) return;
-    if (getComputedStyle(targetEl).position === 'static') targetEl.style.position = 'relative';
+    // Ancrage viewport (fixed) dans <body> : la carte du batiment a un overflow
+    // cache qui rognerait un enfant absolu -- le popup doit sortir de la case.
+    const rect = targetEl.getBoundingClientRect();
+    const anchorX = rect.left + rect.width / 2;
+    const anchorY = rect.top;
     [{ cls: 'buy-feedback-cost', text: costText }, { cls: 'buy-feedback-gain', text: gainText }].forEach(cfg => {
         const el = document.createElement('div');
         el.className = 'buy-feedback ' + cfg.cls;
         el.textContent = cfg.text;
-        targetEl.appendChild(el);
+        el.style.left = anchorX + 'px';
+        el.style.top = anchorY + 'px';
+        document.body.appendChild(el);
         setTimeout(() => el.remove(), 1600);
     });
 }

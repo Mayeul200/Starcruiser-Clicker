@@ -1469,15 +1469,12 @@ body {
     100% { opacity: 0; transform: translate(-50%, -26px) scale(0.92); }
 }
 .buy-feedback {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    transform: translate(-50%, 0);
+    position: fixed;
     font-size: 1.05rem;
     font-weight: 800;
     white-space: nowrap;
     pointer-events: none;
-    z-index: 60;
+    z-index: 13000;
     animation: buyFeedbackIn 1.5s ease-out forwards;
     opacity: 0;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
