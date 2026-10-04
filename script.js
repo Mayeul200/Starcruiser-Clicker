@@ -7132,27 +7132,35 @@ function renderRocketPartsShop() {
             : '<span class="rocket-part-icon-placeholder"></span>';
         container.innerHTML =
             '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '">' +
-                '<div class="rocket-part-frame-title">' + t('Pi\u00e8ce') + ' ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length + '</div>' +
+                '<div class="rocket-part-frame-title">' + t('Prochaine \u00e9tape') + '</div>' +
                 '<div class="rocket-part-left">' + imageHtml + '</div>' +
                 '<div class="rocket-part-info">' +
                     '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
-                    '<span class="rocket-part-cost">' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +
+                    '<span class="rocket-part-cost">' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +
+                    '<div class="rocket-part-progress">' +
+                        '<div class="rocket-part-progress-fill"></div>' +
+                        '<span class="rocket-part-progress-label"></span>' +
+                    '</div>' +
                 '</div>' +
-                '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + nextPart.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>' + t('Construire') + '</button>' +
+                '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + nextPart.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>' + t('Construire') + ' \u2014 ' + formatNumber(cost) + ' ' + t('Parts') + '</button>' +
             '</div>';
     } else {
         const costEl = container.querySelector('.rocket-part-cost');
-        if (costEl) costEl.textContent = formatNumber(cost) + ' ' + t('Parts');
+        if (costEl) costEl.textContent = formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
+        const fillEl = container.querySelector('.rocket-part-progress-fill');
+        const labelEl = container.querySelector('.rocket-part-progress-label');
+        if (fillEl) fillEl.style.width = Math.min(100, (score / cost) * 100) + '%';
+        if (labelEl) labelEl.textContent = Math.min(100, Math.floor((score / cost) * 100)) + ' %';
         // Textes traduits rafraichis aussi sans re-creation du DOM : sinon un
         // changement de langue n'etait pris en compte qu'apres rechargement.
         const titleEl = container.querySelector('.rocket-part-frame-title');
-        if (titleEl) titleEl.textContent = t('Pièce') + ' ' + (purchasedCount + 1) + ' / ' + ROCKET_PARTS.length;
+        if (titleEl) titleEl.textContent = t('Prochaine étape');
         const nameEl = container.querySelector('.rocket-part-name');
         if (nameEl) nameEl.textContent = t(nextPart.name);
         const btn = container.querySelector('.rocket-part-btn');
         if (btn) {
             btn.disabled = !isAffordable;
-            const btnLabel = t('Construire');
+            const btnLabel = t('Construire') + ' — ' + formatNumber(cost) + ' ' + t('Parts');
             if (btn.textContent !== btnLabel) btn.textContent = btnLabel;
         }
         const frame = container.querySelector('.rocket-part-frame');
