@@ -3493,7 +3493,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 4px;
-    max-width: calc(100cqw - 28cqw);
+    /* 24cqw de marge au lieu de 28 : aligne la zone HUD sur la boutique   de pieces de fusée (24cqw), le badge de bonus a cote du compteur   reste dans la zone visible sur tablette paysage (panneau etroit). */    max-width: calc(100cqw - 24cqw);
     z-index: 100;
 }
 
@@ -3568,13 +3568,14 @@ body {
 /* Tres petites largeurs (<1150px) : une seule rangee ne peut pas tenir entre
    la boutique de pieces et le bord du panneau central sans rogner "Parts".
    On empile les deux compteurs et on borne la boite a l'espace libre reel. */
+/* Tablettes paysage (layout PC, panneau central etroit) : la boutique de   pieces fait 24cqw, on borne la boite de compteurs a l'espace reellement   libre entre elle et le bord du panneau. */
 @media (max-width: 1150px) {
     .counters {
         flex-direction: column;
         gap: 2px;
         height: auto;
         padding: 4px 10px;
-        width: min(clamp(min(280px, 60cqw), 42vw, 440px), calc(100cqw - 270px));
+        width: min(clamp(min(280px, 60cqw), 42vw, 440px), calc(100cqw - 24cqw - 40px));
     }
     .counter {
         padding: 0 2px;

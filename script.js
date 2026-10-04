@@ -5159,7 +5159,9 @@ function fitCounterFontSize() {
         }
     });
 }
-setInterval(fitCounterFontSize, 1000);
+setInterval(fitCounterFontSize, 500);
+window.addEventListener('orientationchange', () => setTimeout(refreshBonusBadgePosition, 250));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) requestAnimationFrame(fitCounterFontSize); });
 function counterAnimLoop() {
     const el = getDisplayElements().scoreValue;
     if (el) {
@@ -5215,7 +5217,10 @@ function refreshBonusBadgePosition() {
     const badge = document.getElementById('bonus-timer');
     if (!badge || badge.style.display === 'none') return;
     const badgeRow = badge.closest('.hud-counters-row');
-    const panel = badge.closest('.center-panel') || badgeRow?.parentElement;
+    // Parent contraignant : .hud-top-row (max-width calc(100cqw - 24cqw)),
+    // PAS .center-panel : sur tablette paysage le badge pouvait sembler
+    // tenir dans le panneau central alors qu'il debordait de la zone HUD.
+    const panel = badgeRow?.parentElement;
     if (!badgeRow || !panel) return;
     const rowRect = badgeRow.getBoundingClientRect();
     const panelRect = panel.getBoundingClientRect();
@@ -5228,6 +5233,17 @@ function refreshBonusBadgePosition() {
 function updateBonusTimer() {
     const els = getDisplayElements();
     if (els.bonusTimer) {
+        const repositionBadge = () => {
+            const badgeRow = els.bonusTimer.closest('.hud-counters-row');
+            const panel = badgeRow ? badgeRow.parentElement : null;
+            if (!badgeRow || !panel) return;
+            const rowRect = badgeRow.getBoundingClientRect();
+            const panelRect = panel.getBoundingClientRect();
+            const badgeW = els.bonusTimer.getBoundingClientRect().width;
+            const fitsRight = rowRect.right + 8 + badgeW <= panelRect.right - 8;
+            const fitsLeft = rowRect.left - 8 - badgeW >= panelRect.left + 8;
+            els.bonusTimer.classList.toggle('bonus-below', !(fitsRight || fitsLeft));
+        };
         // Affiche le multiplicateur temporaire actif et le temps restant
         // (ex: "×5 · 12 s") a cote du compteur tant que le bonus dure.
         const active = activeRandomBonuses.find(b => (b.effect === 'multiplier' || b.effect === 'click' || b.id === 'flare') && b.endTime > Date.now());
@@ -5240,21 +5256,15 @@ function updateBonusTimer() {
             // 'block' explicite : le CSS de .bonus-timer est display:none,
             // style.display='' retirerait le style inline et le cacherait.
             els.bonusTimer.style.display = 'block';
-            // S'il n'y a pas la place a cote du compteur (petit ecran),
-            // le badge passe sous le compteur au lieu de deborder/chevaucher.
-            const badgeRow = els.bonusTimer.closest('.hud-counters-row');
-            const panel = els.bonusTimer.closest('.center-panel') || badgeRow.parentElement;
-            if (badgeRow && panel) {
-                const rowRect = badgeRow.getBoundingClientRect();
-                const panelRect = panel.getBoundingClientRect();
-                const badgeW = els.bonusTimer.getBoundingClientRect().width;
-                const fitsRight = rowRect.right + 8 + badgeW <= panelRect.right - 8;
-                const fitsLeft = rowRect.left - 8 - badgeW >= panelRect.left + 8;
-                els.bonusTimer.classList.toggle('bonus-below', !(fitsRight || fitsLeft));
-            }
+            // Refroidissement force : garantit que la largeur mesuree du
+            // badge (et donc le bascule bonus-below) correspond au texte
+            // reellement affiche, meme au premier rendu de la frame.
+            void els.bonusTimer.offsetWidth;
+            repositionBadge();
         } else {
             els.bonusTimer.textContent = '';
             els.bonusTimer.style.display = 'none';
+            els.bonusTimer.classList.remove('bonus-below');
         }
     }
     const countersEl = document.querySelector('.counters');
