@@ -1133,11 +1133,13 @@ function buyBuilding(buildingId) {
 
     if (buildingsToBuy > 0) {
         const isNewType = building.count === 0;
+        const gainedPps = calculateUnitBuildingGain(building) * buildingsToBuy;
         score -= totalCost;
         building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
         invalidateBuildingGainsCache();
         Sounds.buy();
+        showBuyFeedback(document.getElementById('building-' + building.id), '-' + formatNumber(totalCost) + ' ' + t('Parts'), '+' + formatNumber(gainedPps) + '/s');
         if (isNewType) { showNewBuildingModal(building); Sounds.unlock(); }
         updateDisplay();
         updateConstructionScene();
@@ -1591,6 +1593,8 @@ function launchRocket() {
             // Fin du voyage : l'atelier galactique s'ouvre en plein ecran,
             // non fermable -- on en sort uniquement par le bouton Continuer
             // (qui applique le reset). Plus d'ecran de space map intermediaire.
+            Sounds.launchFanfare();
+            showLaunchReward(distance);
             showPostTravelShop(distance);
             updateSpaceProgress();
             updateConstructionScene();
@@ -3925,6 +3929,31 @@ function spawnShockwave(event) {
     setTimeout(() => { w1.remove(); w2.remove(); }, 700);
 }
 
+// Feedback d'achat : deux popups flottants (cout rouge, gain vert) ancre au-dessus
+// de l'element acheteur. Position absolue dans l'element : aucun decalage de mise
+// en page. Auto-suppression apres l'animation.
+function showBuyFeedback(targetEl, costText, gainText) {
+    if (!targetEl) return;
+    if (getComputedStyle(targetEl).position === 'static') targetEl.style.position = 'relative';
+    [{ cls: 'buy-feedback-cost', text: costText }, { cls: 'buy-feedback-gain', text: gainText }].forEach(cfg => {
+        const el = document.createElement('div');
+        el.className = 'buy-feedback ' + cfg.cls;
+        el.textContent = cfg.text;
+        targetEl.appendChild(el);
+        setTimeout(() => el.remove(), 1600);
+    });
+}
+// Recompense audiovisuelle de fin de lancement : gros popup central avec la
+// distance atteinte en caracteres geants, fanfare majesteuse en parallele.
+function showLaunchReward(distance) {
+    const el = document.createElement('div');
+    el.className = 'launch-reward';
+    el.innerHTML = '<span class="launch-reward-emoji">🚀</span>' +
+        '<span class="launch-reward-distance">' + formatNumber(distance) + ' ' + t('km') + '</span>' +
+        '<span class="launch-reward-label">' + t('Fusée lancée ! Distance atteinte:') + '</span>';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2900);
+}
 function showClickEffect(value, event) {
     const container = document.getElementById('click-effects');
 
@@ -4121,6 +4150,28 @@ const Sounds = {
     buy() {
         soundTone(360, 520, 0.09, 'sine', 0.4);
         soundTone(540, 720, 0.12, 'sine', 0.3, 0.06);
+    },
+    // Construction d'une piece de fusee : soudure metallique (souffle bref)
+    // puis note claire qui "verrouille" la piece, comme un rivet pose.
+    partBuilt() {
+        soundNoise(0.12, 0.22, 2600, 900);
+        soundTone(220, 90, 0.1, 'square', 0.12);
+        soundTone(1245, 1245, 0.16, 'triangle', 0.3, 0.1);
+        soundTone(1865, 1865, 0.22, 'sine', 0.18, 0.16);
+    },
+    // Fanfare de reussite du lancement : arpege majeur triomphal qui monte,
+    // la recompense de plusieurs minutes de production.
+    launchFanfare() {
+        const notes = [523, 659, 784, 1047];
+        notes.forEach((f, i) => {
+            soundTone(f, f, 0.16, 'triangle', 0.32, i * 0.11);
+        });
+        soundTone(1047, 1047, 0.5, 'triangle', 0.36, 0.44);
+        soundTone(1319, 1319, 0.5, 'sine', 0.26, 0.44);
+        soundTone(523, 523, 0.55, 'sine', 0.2, 0.46);
+        // Etincelles cristallines au-dessus de l'accord final
+        soundTone(2093, 2093, 0.18, 'sine', 0.1, 0.55);
+        soundTone(2637, 2637, 0.22, 'sine', 0.08, 0.62);
     },
     // Un bâtiment devient abordable : carillon doux deux notes,
     // discret pour ne pas spammer quand le score monte vite.
@@ -7217,10 +7268,12 @@ function buyRocketPart(partId) {
         return;
     }
     score -= cost;
-    Sounds.buy();
+    Sounds.partBuilt();
     part.purchased = true;
     updateDisplay();
     updateConstructionScene();
+    const builtCard = document.querySelector('#rocket-parts-shop .rocket-part-frame');
+    if (builtCard) { builtCard.classList.remove('part-built-flash'); void builtCard.offsetWidth; builtCard.classList.add('part-built-flash'); }
     renderRocketPartsShop();
     checkBuildingUnlocks();
     saveGame();

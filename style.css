@@ -1458,16 +1458,92 @@ body {
     12% { opacity: 1; transform: translate(calc(-50% + var(--ce-dx, 0px) * 0.25), calc(-50% + var(--ce-dy, 0px) * 0.25)) scale(1.2); }
     100% { opacity: 0; transform: translate(calc(-50% + var(--ce-dx, 0px)), calc(-50% + var(--ce-dy, 0px))) rotate(var(--ce-rot, 0deg)) scale(0.95); }
 }
+/* Feedback d'achat : popup flottant au-dessus de la carte du batiment.
+   Deux lignes : cout en rouge (montee rapide), gain de production en vert
+   (apparition decalee). Position absolue dans la carte, sans decaler la mise
+   en page. */
+@keyframes buyFeedbackIn {
+    0% { opacity: 0; transform: translate(-50%, 6px) scale(0.7); }
+    18% { opacity: 1; transform: translate(-50%, -4px) scale(1.08); }
+    70% { opacity: 1; transform: translate(-50%, -14px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -26px) scale(0.92); }
+}
+.buy-feedback {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, 0);
+    font-size: 1.05rem;
+    font-weight: 800;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 60;
+    animation: buyFeedbackIn 1.5s ease-out forwards;
+    opacity: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.buy-feedback-cost { color: #ff6b6b; animation-delay: 0s; }
+.buy-feedback-gain { color: #7CFC98; animation-delay: 0.45s; }
+/* Flash de la carte "Prochaine etape" quand une piece est construite */
+@keyframes partBuiltFlash {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    25% { box-shadow: 0 0 22px 6px rgba(255, 215, 0, 0.65); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+.rocket-part-frame.part-built-flash { animation: partBuiltFlash 1.2s ease-out; }
+/* Gros popup central de reussite du lancement : distance en grand */
+@keyframes launchRewardIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+    14% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    22% { transform: translate(-50%, -50%) scale(1); }
+    78% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.25); }
+}
+.launch-reward {
+    position: fixed;
+    left: 50%;
+    top: 42%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 12000;
+    opacity: 0;
+    animation: launchRewardIn 2.8s ease-out forwards;
+}
+.launch-reward-emoji {
+    display: block;
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.launch-reward-distance {
+    display: block;
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 18px rgba(255, 215, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.9);
+    white-space: nowrap;
+}
+.launch-reward-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+    margin-top: 4px;
+}
+
 .click-effect {
     position: absolute;
     color: #ffd700;
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 0, 0, 0.6);
-    background: rgba(30, 58, 138, 0.7);
-    padding: 2px 8px;
-    border-radius: 4px;
-    animation: clickBurst 1.2s ease-out forwards;
+    font-size: 1.9rem;
+    font-weight: 800;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 14px rgba(255, 215, 0, 0.45);
+    background: rgba(30, 58, 138, 0.82);
+    border: 1px solid rgba(255, 215, 0, 0.55);
+    padding: 4px 12px;
+    border-radius: 8px;
+    animation: clickBurst 1.4s ease-out forwards;
     opacity: 0;
     z-index: 1000;
     white-space: nowrap;
