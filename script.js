@@ -6625,6 +6625,7 @@ function positionCoachNear(coach, selector) {
     coach.style.top = '';
     coach.style.bottom = '';
     coach.style.transform = '';
+    coach.style.width = '';
     if (!selector) return;
     let targetEl = null;
     try { targetEl = document.querySelector(selector); } catch (e) { targetEl = null; }
@@ -6633,21 +6634,54 @@ function positionCoachNear(coach, selector) {
     if (rect.width === 0 && rect.height === 0) return;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const cw = Math.min(vw * 0.92, 420);
+    // Largeur adaptative : la carte complete (420px) sur grand ecran, plus
+    // etroite sur petit ecran PC pour liberer de la place autour de la cible.
+    let cw = Math.min(vw * 0.92, 420);
+    if (vw < 1000) cw = Math.min(vw * 0.7, 340);
+    if (vw < 700) cw = Math.min(vw * 0.88, 300);
+    coach.style.width = cw + 'px';
     const ch = coach.offsetHeight || 170;
     const margin = 12;
-    let x = rect.left + rect.width / 2 - cw / 2;
-    x = Math.max(8, Math.min(x, vw - cw - 8));
-    let y;
-    if (rect.bottom + margin + ch <= vh) y = rect.bottom + margin;
-    else if (rect.top - margin - ch >= 0) y = rect.top - margin - ch;
-    else y = Math.max(8, (vh - ch) / 2);
-    y = Math.min(y, vh - ch - 8);
+    // La piece a cliquer ne doit JAMAIS etre recouverte : le joueur en a
+    // besoin pendant tout le tutoriel (gagner des Parts pour acheter).
+    const medalEl = document.getElementById('medal');
+    const medalRect = medalEl ? medalEl.getBoundingClientRect() : null;
+    const pad = 10;
+    const overlapsMedal = (l, t) => {
+        if (!medalRect) return false;
+        const r = l + cw, b = t + ch;
+        return !(r < medalRect.left - pad || l > medalRect.right + pad || b < medalRect.top - pad || t > medalRect.bottom + pad);
+    };
+    // Placements candidats, du plus naturel au repli : sous la cible,
+    // au-dessus, a droite, a gauche. On garde le premier qui ne couvre ni
+    // la piece ni ne sort de l'ecran ; sinon le moins penalise.
+    const candidates = [
+        { x: rect.left + rect.width / 2 - cw / 2, y: rect.bottom + margin },
+        { x: rect.left + rect.width / 2 - cw / 2, y: rect.top - margin - ch },
+        { x: rect.right + margin, y: rect.top + rect.height / 2 - ch / 2 },
+        { x: rect.left - margin - cw, y: rect.top + rect.height / 2 - ch / 2 },
+    ];
+    let best = null, bestScore = Infinity;
+    for (const c of candidates) {
+        const clipped = Math.max(8, Math.min(c.x, vw - cw - 8)) !== c.x || Math.max(8, Math.min(c.y, vh - ch - 8)) !== c.y;
+        let score = (overlapsMedal(Math.max(8, Math.min(c.x, vw - cw - 8)), Math.max(8, Math.min(c.y, vh - ch - 8))) ? 1000 : 0) + (clipped ? 5 : 0);
+        if (score < bestScore) { bestScore = score; best = c; }
+        if (score === 0) break;
+    }
+    if (bestScore >= 1000) {
+        // Tous les placements couvrent la piece (ecran tres petit) : repli
+        // en bas au centre, position CSS par defaut, avec la largeur adaptive.
+        coach.style.bottom = '';
+        coach.style.left = '50%';
+        coach.style.transform = 'translateX(-50%)';
+        return;
+    }
+    const x = Math.max(8, Math.min(best.x, vw - cw - 8));
+    const y = Math.max(8, Math.min(best.y, vh - ch - 8));
     coach.style.left = Math.round(x) + 'px';
     coach.style.top = Math.round(y) + 'px';
     coach.style.bottom = 'auto';
     coach.style.transform = 'none';
-    coach.style.width = cw + 'px';
 }
 function renderTutorialStep() {
     const step = TUTORIAL_STEPS[tutorialStep];
