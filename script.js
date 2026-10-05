@@ -6571,6 +6571,7 @@ const TUTORIAL_STEPS = [
         textKey: 'La carte Prochaine étape indique ta progression. Construis la première pièce !',
         done: () => ROCKET_PARTS.some(p => p.purchased),
         target: '#rocket-parts-shop',
+        prefer: 'below',
     },
 ];
 let tutorialStep = 0;
@@ -6626,7 +6627,7 @@ function startTutorial(force) {
 // si la place suffit, au-dessus sinon, toujours borne dans le viewport. Si la
 // cible est absente ou masquee (ex. panneau non ouvert), le coach reste en bas
 // au centre (position CSS par defaut).
-function positionCoachNear(coach, selector) {
+function positionCoachNear(coach, selector, prefer) {
     coach.style.left = '';
     coach.style.top = '';
     coach.style.bottom = '';
@@ -6667,6 +6668,18 @@ function positionCoachNear(coach, selector) {
         { x: rect.right + margin, y: rect.top + rect.height / 2 - ch / 2 },
         { x: rect.left - margin - cw, y: rect.top + rect.height / 2 - ch / 2 },
     ];
+    // Preference de placement demandee par la lecon : ce cote est teste en
+    // premier, les autres restent en repli si jamais il couvre la piece.
+    if (prefer === 'above') {
+        const above = candidates.splice(1, 1)[0];
+        candidates.unshift(above);
+    } else if (prefer === 'right') {
+        const right = candidates.splice(2, 1)[0];
+        candidates.unshift(right);
+    } else if (prefer === 'left') {
+        const left = candidates.splice(3, 1)[0];
+        candidates.unshift(left);
+    }
     let best = null, bestScore = Infinity;
     for (const c of candidates) {
         const clipped = Math.max(8, Math.min(c.x, vw - cw - 8)) !== c.x || Math.max(8, Math.min(c.y, vh - ch - 8)) !== c.y;
@@ -6703,7 +6716,7 @@ function renderTutorialStep() {
     if (imgEl) imgEl.src = step.img;
     if (titleEl) titleEl.textContent = t(step.titleKey);
     if (textEl) textEl.textContent = t(step.textKey);
-    positionCoachNear(coach, step.target);
+    positionCoachNear(coach, step.target, step.prefer);
 }
 
 // Le joueur fait l'action (clic, achat...) : on verifie regulierement
@@ -6767,14 +6780,6 @@ const FEATURE_LESSONS = [
         target: '#building-factory',
     },
     {
-        key: 'first-comet',
-        titleKey: 'Une comète !',
-        textKey: 'Des comètes traversent l\'écran de temps en temps. Clique dessus vite pour récupérer des Parts et des bonus temporaires !',
-        img: 'images/effects/comete.png',
-        trigger: () => Date.now() > cometLessonReadyAt,
-        target: '#medal',
-    },
-    {
         key: 'contracts-unlocked',
         titleKey: 'Les Contrats sont disponibles',
         textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses. Ouvre le panneau Espace !',
@@ -6789,6 +6794,7 @@ const FEATURE_LESSONS = [
         img: 'images/parts.png',
         trigger: () => CLICK_UPGRADES.some(u => totalPartsFromClicks >= u.threshold),
         target: '#upgrades-bar',
+        prefer: 'right',
     },
     {
         key: 'rocket-complete',
@@ -6846,7 +6852,7 @@ function showFeatureLesson(lesson) {
     if (imgEl) imgEl.src = lesson.img;
     if (titleEl) titleEl.textContent = t(lesson.titleKey);
     if (textEl) textEl.textContent = t(lesson.textKey);
-    positionCoachNear(coach, lesson.target);
+    positionCoachNear(coach, lesson.target, lesson.prefer);
     clearTimeout(showFeatureLesson.hideTimer);
     showFeatureLesson.hideTimer = setTimeout(dismissFeatureLesson, 12000);
 }
