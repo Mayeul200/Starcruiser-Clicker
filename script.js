@@ -198,7 +198,7 @@ const UPGRADE_COLORS = [
 
 const RANDOM_BONUSES = [
     { id: "meteor", symbol: "", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" },
-    { id: "flare", symbol: "", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 5, duration: 15000, colorClass: "flare" }
+    { id: "flare", symbol: "", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 4, duration: 30000, colorClass: "flare" }
 ];
 
 const SAVE_VERSION = "2.2.0";
@@ -461,13 +461,13 @@ function calculateUnitBuildingGain(building) {
 
 
 // Production hors boost temporaire (autoMultiplier exclu) : base de calcul des quotas
-// de contrat, pour qu'une offre generee pendant un x5 reste atteignable ensuite.
+// de contrat, pour qu'une offre generee pendant un x4 reste atteignable ensuite.
 function calculateBuildingBaseGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
     return building.gain * building.count * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
 }
 // PPS total hors boost temporaire (autoMultiplier exclu) : base de calcul des
-// contrats interactifs, pour qu'une offre generee pendant un x5 reste coherente.
+// contrats interactifs, pour qu'une offre generee pendant un x4 reste coherente.
 function getBasePartsPerSecond() {
     let total = 0;
     BUILDINGS.forEach(building => { total += calculateBuildingBaseGain(building); });
@@ -1547,7 +1547,7 @@ function calculateTravelSpeedKmS() {
     if (parts <= 0 || partsPerSecond <= 0) return 0;
     return travelSpeedFromPps(parts, partsPerSecond);
 }
-// Vitesse hors boost temporaire de production (x5 etc.) : base des trophees
+// Vitesse hors boost temporaire de production (x4 etc.) : base des trophees
 // de vitesse, pour qu'un multiplicateur ephemere ne debloque pas un trophee.
 function calculateTravelSpeedKmSBase() {
     const parts = Math.max(partsSinceLaunch, 0);
@@ -2653,6 +2653,9 @@ function confirmPostTravelReset() {
     rebuildAutoMultipliers();
     updateBonusTimer();
     resetContractState();
+    // Les batiments sont retombes a zero : reevaluer le deblocage des
+    // mini-jeux pour masquer les cases jusqu'au nouveau seuil.
+    updateMiniGamesVisibility();
     updateDisplay();
     saveGame();
     checkBuildingUnlocks();
@@ -2702,6 +2705,27 @@ function buyGalacticUpgrade(upgradeId) {
     galacticUpgrades[upgradeId] = level + 1;
     updateStardustDisplay();
     renderGalacticShop();
+    // Reduction du temps d'attente des boosters (coll1/coll3/coll5) :
+    // appliquer IMMEDIATEMENT aux cooldowns en cours, pas seulement au
+    // prochain cycle. Le facteur est recalcule et le nouveau deadline
+    // garde la proportion deja ecoulee de l'ancien cycle.
+    if (upgradeId === 'coll1' || upgradeId === 'coll3' || upgradeId === 'coll5') {
+        // Ratio entre le facteur apres achat et le facteur avant achat :
+        // le reste du cooldown en cours est recale au meme ratio.
+        const now = Date.now();
+        galacticUpgrades[upgradeId] = level;
+        const prevFactor = getBoosterCooldownFactor();
+        galacticUpgrades[upgradeId] = level + 1;
+        const newFactor = getBoosterCooldownFactor();
+        const ratio = newFactor / prevFactor;
+        for (const key in BOOSTERS) {
+            const deadline = boosterReadyAt[key] || 0;
+            if (deadline > now) {
+                boosterReadyAt[key] = now + (deadline - now) * ratio;
+            }
+        }
+        updateBoosterTimers();
+    }
 
     // rock1 donne des ateliers gratuits: les ajouter immediatement en cours de run
     if (upgradeId === 'rock1') {
@@ -3666,7 +3690,7 @@ function spawnRandomBonus(shower, isContract) {
 // Interception en vol : la comete NE S'ARRETE PAS. Le missile calcule
 // un point de rendez-vous sur la trajectoire future de la comete et
 // s'y crash pile au moment ou elle y passe.
-// Gros popup de bonus au centre de l'ecran : "+X Parts" ou "Production x5",
+// Gros popup de bonus au centre de l'ecran : "+X Parts" ou "Production x4",
 // position et angle aleatoires, comme un gain dans un jeu video. Vit dans
 // .click-effects (calque fixe au-dessus du jeu, sous les cometes).
 function showBonusPopup(text, kind) {
@@ -4286,6 +4310,16 @@ const Sounds = {
         soundTone(1319, 1319, 0.45, 'sine', 0.28, 0.38);
         soundTone(1760, 1760, 0.35, 'sine', 0.1, 0.5);
         soundTone(440, 440, 0.3, 'sine', 0.12, 0.55);
+    },
+    // Booster pret a etre ouvert : annonce claire et festive, deux notes
+    // cristallines montees puis accord lumineux tenu — un "fanfare courte"
+    // distinct de l'ouverture mystique du paquet.
+    boosterReady() {
+        soundTone(659, 659, 0.14, 'triangle', 0.34);
+        soundTone(988, 988, 0.16, 'triangle', 0.34, 0.12);
+        soundTone(1319, 1319, 0.3, 'sine', 0.3, 0.24);
+        soundTone(1976, 1976, 0.35, 'sine', 0.16, 0.28);
+        soundTone(659, 659, 0.35, 'sine', 0.12, 0.3);
     },
     // Pièce de fusée qui s'empile : choc métallique + verrouillage
     partStack() {
@@ -5360,7 +5394,7 @@ function updateBonusTimer() {
             els.bonusTimer.classList.toggle('bonus-below', !(fitsRight || fitsLeft));
         };
         // Affiche le multiplicateur temporaire actif et le temps restant
-        // (ex: "×5 · 12 s") a cote du compteur tant que le bonus dure.
+        // (ex: "×4 · 12 s") a cote du compteur tant que le bonus dure.
         const active = activeRandomBonuses.find(b => (b.effect === 'multiplier' || b.effect === 'click' || b.id === 'flare') && b.endTime > Date.now());
         if (active && active.multiplier) {
             const secLeft = Math.ceil((active.endTime - Date.now()) / 1000);
@@ -5497,10 +5531,6 @@ function updateMiniGamesVisibility() {
     // Carte par carte : les Contrats apparaissent des 2 types de batiments,
     // la Collection des 4 (memes conditions que le deblocage des mini-jeux).
     // Avant, le joueur ne les voit pas du tout.
-    // Persistant : une fois debloquee, une carte reste visible meme apres le
-    // reset qui suit un lancement (les batiments retombent sous le seuil).
-    if (areCardsUnlocked()) localStorage.setItem('starcruiserCardsSeen', '1');
-    if (areContractsUnlocked()) localStorage.setItem('starcruiserContractsSeen', '1');
     const contractsCard = document.getElementById('contracts-mini-card');
     if (contractsCard) contractsCard.style.display = areContractsUnlocked() ? '' : 'none';
     const cardsCard = document.getElementById('card-collection-mini-card');
@@ -5510,12 +5540,10 @@ function updateMiniGamesVisibility() {
 }
 
 function areCardsUnlocked() {
-    return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES
-        || localStorage.getItem('starcruiserCardsSeen') === '1';
+    return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES;
 }
 function areContractsUnlocked() {
-    return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES
-        || localStorage.getItem('starcruiserContractsSeen') === '1';
+    return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES;
 }
 
 // Genere 2 a 3 offres aleatoires parmi les 5 types, difficultes variees.
@@ -5823,11 +5851,50 @@ function tickBoosterTimers() {
             // Pas de toast au lancement : les boosters partent "prets"
             // (boosterReadyAt = 0) avant le deblocage de la collection,
             // et on ne notifie qu'un cycle DEJA reclame au moins une fois.
-            if (!modalOpen && areCardsUnlocked() && boosterReadyAt[key] > 0) showToast('\ud83c\udf81 ' + t('Booster') + ' ' + t(BOOSTERS[key].name) + ' ' + t('est prêt !'));
+            if (!modalOpen && areCardsUnlocked() && boosterReadyAt[key] > 0) {
+                showToast('\ud83c\udf81 ' + t('Booster') + ' ' + t(BOOSTERS[key].name) + ' ' + t('est prêt !'));
+                showBoosterReadyBanner(key);
+                Sounds.boosterReady();
+            }
         } else if (!isBoosterReady(key)) {
             boosterReadyNotified[key] = false;
         }
     }
+}
+let boosterReadyBannerTimer = null;
+function showBoosterReadyBanner(key) {
+    const banner = document.createElement('div');
+    banner.id = 'booster-ready-banner';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:12000;display:flex;align-items:center;justify-content:center;gap:14px;padding:22px 18px;background:linear-gradient(135deg,rgba(88,28,135,0.97),rgba(2,6,23,0.97));border-bottom:3px solid var(--accent, #fbbf24);box-shadow:0 8px 30px rgba(0,0,0,0.6);cursor:pointer;transform:translateY(-100%);transition:transform 0.45s cubic-bezier(0.22,1,0.36,1);';
+    const icon = document.createElement('span');
+    icon.textContent = '\ud83c\udf81';
+    icon.style.cssText = 'font-size:2.4rem;filter:drop-shadow(0 0 10px rgba(251,191,36,0.8));';
+    banner.appendChild(icon);
+    const text = document.createElement('div');
+    text.style.cssText = 'display:flex;flex-direction:column;gap:4px;text-align:center;';
+    const title = document.createElement('strong');
+    title.textContent = t('Booster') + ' ' + t(BOOSTERS[key].name) + ' ' + t('est pr\u00eat !');
+    title.style.cssText = 'font-size:1.35rem;font-weight:800;color:#fbbf24;text-shadow:0 0 12px rgba(251,191,36,0.5);letter-spacing:0.5px;';
+    text.appendChild(title);
+    const sub = document.createElement('span');
+    sub.textContent = t('Clique pour ouvrir la collection');
+    sub.style.cssText = 'font-size:0.9rem;color:rgba(226,232,240,0.85);';
+    text.appendChild(sub);
+    banner.appendChild(text);
+    banner.addEventListener('click', () => {
+        dismissBoosterReadyBanner(banner);
+        openCardCollection();
+    });
+    document.body.appendChild(banner);
+    requestAnimationFrame(() => { banner.style.transform = 'translateY(0)'; });
+    if (boosterReadyBannerTimer) clearTimeout(boosterReadyBannerTimer);
+    boosterReadyBannerTimer = setTimeout(() => dismissBoosterReadyBanner(banner), 6000);
+}
+function dismissBoosterReadyBanner(banner) {
+    if (!banner || !banner.isConnected) return;
+    if (boosterReadyBannerTimer) { clearTimeout(boosterReadyBannerTimer); boosterReadyBannerTimer = null; }
+    banner.style.transform = 'translateY(-100%)';
+    setTimeout(() => { if (banner.isConnected) banner.remove(); }, 500);
 }
 function tickContracts() {
     tickBoosterTimers();
@@ -6059,9 +6126,9 @@ const CARD_RARITIES = {
 const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '', imgPath: 'images/cards/collection/stellar-mine-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '', imgPath: 'images/cards/collection/solar-factory-card.png' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '', imgPath: 'images/cards/collection/comet-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/proxima-centauri-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/orbital-autofab-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/probe-swarm-card.png' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/quasar-engine-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/oort-cloud-card.png' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/pulsar-clock-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/milky-way-center-card.png' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/missile-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '', imgPath: 'images/cards/collection/andromeda-card.png' }];
 
 const BOOSTERS = {
-    standard:  { name: 'Standard',   cardCount: 1, cooldownMs: 5 * 60 * 1000,      rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
-    premium:   { name: 'Premium',    cardCount: 2, cooldownMs: 30 * 60 * 1000,     rarities: { common: 0.50, rare: 0.30, epic: 0.15, legendary: 0.04, alternative: 0.01 } },
-    legendary: { name: 'Légendaire', cardCount: 3, cooldownMs: 12 * 60 * 60 * 1000, rarities: { common: 0.25, rare: 0.30, epic: 0.25, legendary: 0.15, alternative: 0.05 } }
+    standard:  { name: 'Standard',   cardCount: 1, cooldownMs: 5 * 60 * 1000,      rarities: { common: 0.88, rare: 0.11, epic: 0.01 } },
+    premium:   { name: 'Premium',    cardCount: 1, cooldownMs: 30 * 60 * 1000,     rarities: { common: 0.68, rare: 0.28, epic: 0.035, legendary: 0.004, alternative: 0.001 } },
+    legendary: { name: 'Légendaire', cardCount: 1, cooldownMs: 12 * 60 * 60 * 1000, rarities: { common: 0.42, rare: 0.44, epic: 0.12, legendary: 0.018, alternative: 0.002 } }
 };
 // Timestamps (Date.now()) de disponibilite de chaque booster : le timer tourne
 // jeu ferme (timestamp absolu). Un booster pret ne s'empile pas : son cycle
