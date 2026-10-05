@@ -822,6 +822,13 @@ body {
    affiche sous le compteur tant que le contrat de 30 s est en cours. */
 .contract-hud {
     order: 3;
+    /* Le badge de bonus en position basse (bonus-below) est absolu sous
+       le compteur : decaler le HUD de contrat sous cet espace reserve
+       pour eviter toute superposition. */
+    margin-top: 8px;
+}
+.hud-top-row:has(.bonus-timer.bonus-below) .contract-hud {
+    margin-top: 44px;
     flex: 0 0 auto;
     min-width: min(280px, 40cqw);
     max-width: 60%;
