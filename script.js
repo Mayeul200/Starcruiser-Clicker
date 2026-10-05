@@ -1476,10 +1476,9 @@ const PIECE_DISTANCE_MULT = 1.0;
 const MOON_DISTANCE = 384400;
 // Parts cumulees produites lors du premier lancement d'une nouvelle partie.
 // Ce point d'ancrage calibre le debut de la courbe de distance.
-// 50M parts pour la Lune: premier objectif reel du jeu. Les tests montrent
-// que 22M etaient atteints en ~15 min de jeu intensif (clics + contrats +
-// planetes cumules dans partsSinceLaunch) ; 50M vise ~35-45 min actives.
-const DISTANCE_MOON_PARTS = 5e7;
+// 35M parts pour la Lune: premier objectif reel du jeu (baisse depuis 50M,
+// juge trop long ; 35M vise ~25-30 min de jeu actif).
+const DISTANCE_MOON_PARTS = 3.5e7;
 // Distance lineaire : exposant 1.0, la vitesse km/s ne diminue jamais quand
 // les parts croissent. La difficulte vient uniquement du prix des batiments
 // et de l'ancre de la Lune, pas d'un ralentissement de la distance.
@@ -3412,18 +3411,24 @@ function spawnRandomBonus(shower, isContract) {
     const verticalTravel = endY - startY;
     // À 60°, déplacement horizontal = vertical / tan(60°) ~ 0.577
     const horizontalTravel = verticalTravel * 0.577;
-    // Direction aléatoire: gauche→droite ou droite→gauche
+    // Direction aléatoire: gauche→droite ou droite→gauche.
+    // IMPORTANT : les panneaux lateraux (Progression Spatiale a gauche,
+    // Batiments a droite) couvrent ~20% de chaque cote et passent AU-DESSUS
+    // de la zone de jeu (z-index). Une comete spawn/hors de la bande centrale
+    // est invisible ET incliquable : le joueur croit qu'elle n'est jamais
+    // tombee. On bride donc le depart a la bande centrale visible.
     const goRight = Math.random() < 0.5;
     let startX, endX;
+    const marginX = Math.min(window.innerWidth * 0.22, 260);
+    const minVisibleX = marginX;
+    const maxVisibleX = window.innerWidth - marginX - 100;
     if (goRight) {
-        // Gauche→droite: départ à gauche, visible jusqu'à la sortie à droite
-        const maxStartX = Math.max(0, window.innerWidth * 0.5 - 100);
-        startX = Math.random() * maxStartX;
+        // Gauche→droite: depart dans la bande centrale, sortie a droite
+        startX = minVisibleX + Math.random() * Math.max(0, maxVisibleX - minVisibleX);
         endX = startX + horizontalTravel;
     } else {
-        // Droite→gauche: départ à droite, visible dès le début
-        const minStartX = window.innerWidth - window.innerWidth * 0.5;
-        startX = minStartX + Math.random() * Math.max(0, window.innerWidth - minStartX - 100);
+        // Droite→gauche: depart dans la bande centrale, sortie a gauche
+        startX = minVisibleX + Math.random() * Math.max(0, maxVisibleX - minVisibleX);
         endX = startX - horizontalTravel;
     }
     // Cometes de contrat : plus rapides (4 s au lieu de 6 s), plus dures
@@ -7108,9 +7113,8 @@ function startCometShower() {
     cometShowerActive = true;
     Sounds.showerAlert();
     showToast('\ud83c\udf20 ' + t('Pluie de com\u00e8tes ! Attrapez-les !'));
-    // Mobile/tablette : moitie moins de cometes, la pluie y coute tres cher
-    const isMobileLike = window.matchMedia('(max-width: 1024px) and (pointer: coarse)').matches;
-    const COUNT = isMobileLike ? 6 : 12;
+    // Nombre de cometes identique sur mobile et desktop.
+    const COUNT = 12;
     const SPREAD_MS = 8000;
     for (let i = 0; i < COUNT; i++) {
         setTimeout(() => spawnRandomBonus(true), (i / COUNT) * SPREAD_MS + Math.random() * 400);
