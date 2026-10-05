@@ -266,16 +266,6 @@ body {
     box-shadow: var(--shadow-lg), var(--glow);
 }
 /* ===== Nouveau batiment : reveal plein ecran ===== */
-.new-building-modal {
-    width: 92%;
-    max-width: 420px;
-    z-index: 1100;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: auto;
-    max-height: 80vh;
-}
 .new-building-modal.active {
     animation: nbModalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -394,6 +384,18 @@ body {
 .modal.active {
     display: flex;
     flex-direction: column;
+}
+/* Nouveau batiment : apres .modal pour surcharger le plein panneau,
+   petite fenetre centree carree/rectangulaire. */
+.new-building-modal {
+    width: 92%;
+    max-width: 420px;
+    z-index: 1100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    max-height: 80vh;
 }
 .modal.active > .modal-content {
     display: flex;
