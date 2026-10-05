@@ -1954,7 +1954,27 @@ function playTravelAnimation(distance, onDone) {
     // planete supplementaire ajoute un troncon de meme duree (Mars = deux
     // fois Terre -> Lune).
     const legs = itinerary.length - 1;
-    const animMs = Math.max(1, legs) * TRAVEL_ANIM_LEG_MS;
+    // Traversee du Nuage d'Oort plus longue : les troncons qui y arrivent
+    // et qui en repartent durent OORT_LEG_WEIGHT fois la duree standard.
+    const oortLegIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
+    const OORT_LEG_WEIGHT = 2.2;
+    const legWeights = [];
+    for (let i = 0; i < legs; i++) {
+        let w = 1;
+        if (oortLegIdx > 0 && (i === oortLegIdx - 1 || i === oortLegIdx)) w = OORT_LEG_WEIGHT;
+        legWeights.push(w);
+    }
+    const totalWeight = legWeights.reduce((a, b) => a + b, 0);
+    const animMs = Math.max(1, legs) * TRAVEL_ANIM_LEG_MS * (totalWeight / Math.max(1, legs));
+    // progressions cumulees des poids : t (0..1) -> troncon + avancement
+    const legAt = (t) => {
+        let scaled = Math.max(0, Math.min(1, t)) * totalWeight;
+        for (let k = 0; k < legs; k++) {
+            if (scaled <= legWeights[k] || k === legs - 1) return { k, f: Math.min(1, scaled / legWeights[k]) };
+            scaled -= legWeights[k];
+        }
+        return { k: legs - 1, f: 1 };
+    };
 
     // Corps celestes generes dynamiquement (calque de profondeur)
     // Le Nuage d'Oort n'a PAS de sprite : il est remplace par le champ
@@ -2155,21 +2175,19 @@ function playTravelAnimation(distance, onDone) {
     // du compteur km (distances reelles croissantes) et des trainees.
     const camAt = (t) => {
         if (legs <= 0) return CAM_START;
-        const scaled = Math.min(t, 1) * legs;
-        const k = Math.min(legs - 1, Math.floor(scaled));
+        const { k, f } = legAt(t);
         // Le premier troncon part de CAM_START (derriere la Terre, bien
         // visible au depart) ; les suivants de la planete k a la k+1.
         const from = (k === 0) ? CAM_START : k * DEPTH_STEP;
         const to = (k === legs - 1) ? CAM_END : (k + 1) * DEPTH_STEP;
-        return lerp(from, to, scaled - k);
+        return lerp(from, to, f);
     };
     // Position absolue normalisee sur la route COMPLETE (0 Terre, 1 Virgo) :
     // troncons deja franchis + avancement dans le troncon courant.
     const posAt = (t) => {
         if (legs <= 0) return 0;
-        const scaled = Math.min(t, 1) * legs;
-        const k = Math.min(legs - 1, Math.floor(scaled));
-        return Math.min(1, (k + (scaled - k)) / totalLegs);
+        const { k, f } = legAt(t);
+        return Math.min(1, (k + f) / totalLegs);
     };
     // Compteur km : interpolation REELLE entre planetes. Quand la camera
     // croise la Lune, le compteur lit exactement 384 400 km, quel que soit
@@ -2656,10 +2674,8 @@ function confirmPostTravelReset() {
     applyNewPlanets(checkNewPlanetsUnlocked(lastLaunchDistance));
     // Reset du score, des batiments et des pieces de fusee (garde les bonus/prestige)
     score = 0;
-    // Nouvelle partie = boosters offerts : les cycles de cooldown repartent
-    // a zero pour que le joueur retrouve ses boosters des le debut.
-    boosterReadyAt = { standard: 0, premium: 0, legendary: 0 };
-    boosterReadyNotified = { standard: false, premium: false, legendary: false };
+    // Les cooldowns des boosters ne sont PAS remis a zero au reset :
+    // ils continuent de courir entre les parties (timers absolus).
     BUILDINGS.forEach(b => b.count = 0);
     ROCKET_PARTS.forEach(p => p.purchased = false);
     constructedParts = new Set();
@@ -4836,7 +4852,9 @@ function checkTrophies() {
             
             switch (trophy.type) {
                 case 'pps':
-                    unlocked = partsPerSecond >= trophy.threshold;
+                    // PPS de base uniquement : un bonus temporaire (flare)
+                    // ne doit jamais debloquer un trophee.
+                    unlocked = getBasePartsPerSecond() >= trophy.threshold;
                     break;
                 case 'building-upgrade':
                     unlocked = getTotalBuildingUpgrades() >= trophy.threshold;
@@ -5512,9 +5530,9 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts en cliquant',
             track: 'clickParts',
             diffs: [
-                { target: Math.max(60, clickParts * 60), price: Math.max(5, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 30 },
-                { target: Math.max(90, clickParts * 90), price: Math.max(20, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 45 },
-                { target: Math.max(180, clickParts * 180), price: Math.max(75, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 4, duration: 45 }
+                { target: Math.max(60, clickParts * 60), price: Math.max(5, pps * 6),  rewardMult: 2, rewardType: 'mult', mult: 2, duration: 12 },
+                { target: Math.max(90, clickParts * 90), price: Math.max(20, pps * 15), rewardMult: 3, rewardType: 'mult', mult: 3, duration: 16 },
+                { target: Math.max(180, clickParts * 180), price: Math.max(75, pps * 35), rewardMult: 5, rewardType: 'mult', mult: 4, duration: 20 }
             ]
         },
         {
@@ -5541,9 +5559,9 @@ function getContractTypes() {
                 // En 30 s de contrat la production passive vaut pps*30 —
                 // pps*22 laisse ~27% d'apport actif (clics, boost), pps*40
                 // sur 45 s demande ~33% d'apport actif.
-                { target: pps * 22,  price: pps * 5,  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
-                { target: pps * 40, price: pps * 12, rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                { target: pps * 40, price: pps * 28, rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 45 }
+                { target: pps * 22,  price: pps * 5,  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 12 },
+                { target: pps * 40, price: pps * 12, rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 16 },
+                { target: pps * 40, price: pps * 28, rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 20 }
             ]
         },
         {
