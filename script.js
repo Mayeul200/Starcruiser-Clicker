@@ -1138,6 +1138,7 @@ function buyBuilding(buildingId) {
         building.count += buildingsToBuy;
         unlockedBuildings.add(building.id);
         invalidateBuildingGainsCache();
+        updateMiniGamesVisibility();
         Sounds.buy();
         showBuyFeedback(document.getElementById('building-' + building.id), '-' + formatNumber(totalCost) + ' ' + t('Parts'), '+' + formatNumber(gainedPps) + '/s');
         if (isNewType) { showNewBuildingModal(building); Sounds.unlock(); }
@@ -5458,8 +5459,15 @@ let contractState = {
 // perturber a l'arrivee. Des le premier lancement (et donc au reset qui
 // suit), les cartes reapparaisseent definitivement.
 function updateMiniGamesVisibility() {
+    // Carte par carte : les Contrats apparaissent des 2 types de batiments,
+    // la Collection des 4 (memes conditions que le deblocage des mini-jeux).
+    // Avant, le joueur ne les voit pas du tout.
+    const contractsCard = document.getElementById('contracts-mini-card');
+    if (contractsCard) contractsCard.style.display = areContractsUnlocked() ? '' : 'none';
+    const cardsCard = document.querySelector('.mini-games-container .mini-game-card:not(#contracts-mini-card)');
+    if (cardsCard) cardsCard.style.display = areCardsUnlocked() ? '' : 'none';
     const section = document.querySelector('.mini-games-section');
-    if (section) section.style.display = rocketsLaunched > 0 ? '' : 'none';
+    if (section) section.style.display = (areContractsUnlocked() || areCardsUnlocked()) ? '' : 'none';
 }
 
 function areCardsUnlocked() {
