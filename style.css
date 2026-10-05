@@ -2653,6 +2653,9 @@ body {
     width: 23px;
     height: 43px;
     z-index: 3;
+    /* Deplacement fluide : la position est recalculee toutes les 500 ms,
+       la transition interpole entre chaque mise a jour (pas d'a-coups). */
+    transition: left 0.55s linear;
 }
 .mini-space-map .spaceship .spaceship-img {
     width: 100%;

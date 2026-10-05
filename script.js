@@ -408,17 +408,17 @@ let nextPlanetNotified = false;
 // SPACE MAP SYSTEM (Planets & Bonuses)
 // ============================================
 const PLANETS = [
-    { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#10b981', imgPath: 'images/planets/earth.png' },
-    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 25, color: '#a9a9a9', imgPath: 'images/planets/moon.png' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 30, color: '#ef4444', imgPath: 'images/planets/mars.png' },
-    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 35, color: '#06b6d4', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 40, color: '#8b5cf6', imgPath: 'images/planets/pluto.png' },
-    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 45, color: '#f59e0b', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 50, color: '#10b981', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#3b82f6', imgPath: 'images/planets/sirius.png' },
-    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#fbbf24', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#ec4899', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a855f7', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#4a90d9', imgPath: 'images/planets/earth.png' },
+    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 25, color: '#9aa0a6', imgPath: 'images/planets/moon.png' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 30, color: '#d97b4a', imgPath: 'images/planets/mars.png' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 35, color: '#4878f8', imgPath: 'images/planets/neptune.png' },
+    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 40, color: '#c8a878', imgPath: 'images/planets/pluto.png' },
+    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 45, color: '#b8c4d0', imgPath: 'images/planets/oort-cloud.png' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 50, color: '#f87828', imgPath: 'images/planets/proxima-centauri.png' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#a8c8e8', imgPath: 'images/planets/sirius.png' },
+    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#e8c898', imgPath: 'images/planets/milky-way-center.png' },
+    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#b89a9a', imgPath: 'images/planets/andromeda.png' },
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/virgo-cluster.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -3024,7 +3024,7 @@ function updateSpaceProgress() {
     const planetText = document.getElementById('current-planet-text');
     const planetBarFill = document.getElementById('header-planet-fill');
     const pct = Math.min(100, Math.max(0, progress.progressPercent));
-    const pctText = pct.toFixed(1).replace(/\.0$/, '');
+    const pctText = pct.toFixed(1);
     if (planetText) {
         if (progress.nextPlanet) {
             planetText.textContent = `${t('Objectif')} ${t(progress.nextPlanet.name)}: ${pctText}%`;
@@ -3083,6 +3083,7 @@ function updateSpaceProgress() {
 function updateMiniSpaceMap(distance) {
     const container = document.getElementById('mini-space-map');
     if (!container) return;
+    let spaceship = container.querySelector('.spaceship');
     
     const progress = calculatePlanetProgress(distance);
     
@@ -3114,6 +3115,9 @@ function updateMiniSpaceMap(distance) {
     if (container.dataset.planetsKey !== planetsKey) {
         container.dataset.planetsKey = planetsKey;
         container.innerHTML = '';
+        // Changement de fenetre de planetes : le vaisseau est recree
+        // (innerHTML = ''), pas de transition de position a animer.
+        spaceship = null;
         
         // Dessiner les planètes
         planetsToShow.forEach((planet, index) => {
@@ -3171,8 +3175,6 @@ function updateMiniSpaceMap(distance) {
         }
     }
     
-    // Mettre à jour ou créer le vaisseau
-    let spaceship = container.querySelector('.spaceship');
     const shouldShowShip = true;
     
     if (shouldShowShip) {
