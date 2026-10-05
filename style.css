@@ -2511,6 +2511,25 @@ body {
     align-items: stretch;
     gap: 8px;
 }
+/* Barre de progression de la planete courante, integree a l'encadre jaune
+   du header de la Progression Spatiale (sous le nom de la planete). */
+.header-planet-bar {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 150px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(71, 85, 105, 0.6);
+    border-radius: 5px;
+    overflow: hidden;
+}
+.header-planet-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 5px;
+    transition: width 0.4s;
+}
+
 .current-planet-display {
     flex: 1 1 calc(50% - 4px);
     min-width: 150px;

@@ -2955,12 +2955,18 @@ function updateSpaceProgress() {
     // distance ACTUELLEMENT atteignable (elle croit a chaque Part gagnee),
     // pas sur la distance parcourue qui ne bouge qu'au lancement.
     const planetDisplay = document.getElementById('current-planet-display');
+    const planetBarFill = document.getElementById('header-planet-fill');
+    const pct = Math.min(100, Math.max(0, progress.progressPercent));
     if (planetDisplay) {
         if (progress.nextPlanet) {
-            planetDisplay.innerHTML = `${t(progress.nextPlanet.name)}: ${Math.min(100, Math.max(0, progress.progressPercent))}%`;
+            planetDisplay.textContent = `${t(progress.nextPlanet.name)}: ${pct}%`;
         } else {
-            planetDisplay.innerHTML = `${t(progress.currentPlanet.name)}: 100%`;
+            planetDisplay.textContent = `${t(progress.currentPlanet.name)}: 100%`;
         }
+    }
+    if (planetBarFill) {
+        planetBarFill.style.width = pct + '%';
+        planetBarFill.style.background = (progress.nextPlanet && progress.nextPlanet.color) || '';
     }
     // Mettre à jour la mini-carte : meme base temps reel que le pourcentage
     updateMiniSpaceMap(reachableDistance);
@@ -2971,38 +2977,7 @@ function updateSpaceProgress() {
     const sidebarSpeed = document.getElementById('sidebar-speed');
     const sidebarBonus = document.getElementById('sidebar-bonus');
 
-    // Bloc narratif "Prochaine planete" (dans l'encadre jaune du header) :
-    // nom, barre d'avancement et %, plus le teaser de l'etape d'apres
-    // ("Puis : Mars") pour la curiosite.
-    const nextPlanetEl = document.getElementById('sidebar-next-planet');
-    const planetFillEl = document.getElementById('sidebar-planet-fill');
-    const planetPctEl = document.getElementById('sidebar-planet-pct');
-    const planetAfterEl = document.getElementById('sidebar-planet-after');
-    const planetBarEl = document.getElementById('sidebar-planet-bar');
-    if (nextPlanetEl && planetFillEl && planetPctEl) {
-        if (planetBarEl) planetBarEl.hidden = false;
-        nextPlanetEl.hidden = false;
-        if (planetAfterEl) planetAfterEl.hidden = false;
-        if (progress.nextPlanet) {
-            const pct = Math.min(100, Math.max(0, progress.progressPercent));
-            const afterIdx = PLANETS.findIndex(p => p.id === progress.nextPlanet.id) + 1;
-            nextPlanetEl.textContent = t(progress.nextPlanet.name);
-            planetFillEl.style.width = pct + '%';
-            planetFillEl.style.background = progress.nextPlanet.color || 'var(--accent)';
-            planetPctEl.textContent = pct + ' %';
-            if (planetAfterEl) {
-                planetAfterEl.textContent = afterIdx < PLANETS.length
-                    ? t('Puis') + ' : ' + t(PLANETS[afterIdx].name)
-                    : '';
-            }
-        } else {
-            nextPlanetEl.textContent = t(progress.currentPlanet.name);
-            planetFillEl.style.width = '100%';
-            planetPctEl.textContent = '100 %';
-            if (planetAfterEl) planetAfterEl.textContent = '';
-        }
-    }
-    if (sidebarDistance) {
+        if (sidebarDistance) {
         rollCounterText(sidebarDistance, formatNumber(reachableDistance) + ' ' + t('km'));
     }
     if (sidebarDistanceMax) {
@@ -6910,8 +6885,10 @@ function init() {
     applySceneScale();
     if (shouldAskLanguage()) {
         showLanguagePicker();
+    } else if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) {
+        // Le coach demarrera a la fermeture de l'ecran d'accueil ; ne pas
+        // retourner ici : hideLoadingScreen() doit toujours etre appele.
     } else {
-        if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) return;
         startTutorial(false);
     }
     // Joueur qui a deja fini le tutoriel : les lecons contextuelles
