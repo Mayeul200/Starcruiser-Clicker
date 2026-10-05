@@ -1,7 +1,7 @@
 // Service worker Starcruiser Clicker : cache-first sur les ressources
 // statiques pour un chargement quasi instantane en relecture, et un
 // fallback hors-ligne. Les mises a jour passent par un bump de version.
-const CACHE_NAME = 'starcruiser-clicker-v34';
+const CACHE_NAME = 'starcruiser-clicker-v35';
 const ASSETS = [
     './',
     './index.html',
@@ -24,7 +24,11 @@ self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then(keys => Promise.all(
             keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-        )).then(() => self.clients.claim())
+        )).then(() => self.clients.claim()).then(() => self.clients.matchAll()).then(clients => {
+            // Annonce la version active : la page compare avec sa version
+            // embarquee et propose le rechargement si elle est derriere.
+            clients.forEach(client => client.postMessage({ type: 'SW_VERSION', version: CACHE_NAME }));
+        })
     );
 });
 
