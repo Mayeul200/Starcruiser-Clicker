@@ -5341,14 +5341,22 @@ function renderCounterChars(el, text) {
 // leur boite (petits ecrans PC / tablette paysage avec grands nombres),
 // on reduit la font-size du .counter conteneur jusqu'a ce que tout rentre.
 // Reaugmente progressivement quand l'espace redevient suffisant.
+let fitCounterLastSig = '';
 function fitCounterFontSize() {
+    // Court-circuit : tant que le contenu des compteurs et la largeur
+    // de la fenetre n'ont pas change, la taille de police calculee
+    // precedemment reste valide. Chaque passe force sinon des reflows
+    // (scrollWidth/clientWidth en boucle) toutes les 500 ms, ce qui
+    // accentue le lag pendant un bonus temporaire.
+    const boxes = Array.from(document.querySelectorAll('.hud-top-row .counter'));
+    const sig = window.innerWidth + '|' + boxes.map(b => b.textContent.length + ':' + (b.style.fontSize || '')).join('|');
+    if (sig === fitCounterLastSig) return;
     // Adaptation directe a la largeur de l'encadre : on repart de la
     // taille CSS de base a chaque passe (retour automatique a la taille
     // normale quand l'espace redevient suffisant), puis on reduit
     // d'un coup jusqu'a ce que tout le nombre tienne dans la boite,
     // au lieu de rogner les chiffres (tablette paysage, grands nombres).
     const rootPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    const boxes = Array.from(document.querySelectorAll('.hud-top-row .counter'));
     boxes.forEach(box => {
         if (box.style.fontSize) {
             box.style.fontSize = '';
@@ -5371,6 +5379,7 @@ function fitCounterFontSize() {
         if (box.style.fontSize) box.style.fontSize = '';
     });
     boxes.forEach(box => { box.style.fontSize = common + 'px'; });
+    fitCounterLastSig = sig;
 }
 setInterval(fitCounterFontSize, 500);
 window.addEventListener('orientationchange', () => setTimeout(refreshBonusBadgePosition, 250));
@@ -5465,19 +5474,26 @@ function updateBonusTimer() {
             const label = active.effect === 'click'
                 ? t('Clic') + ' ×' + active.multiplier
                 : '×' + active.multiplier;
-            els.bonusTimer.textContent = label + ' · ' + secLeft + ' s';
+            const text = label + ' · ' + secLeft + ' s';
             // 'block' explicite : le CSS de .bonus-timer est display:none,
             // style.display='' retirerait le style inline et le cacherait.
+            const wasHidden = els.bonusTimer.style.display === 'none' || !els.bonusTimer.style.display;
+            els.bonusTimer.textContent = text;
             els.bonusTimer.style.display = 'block';
-            // Refroidissement force : garantit que la largeur mesuree du
-            // badge (et donc le bascule bonus-below) correspond au texte
-            // reellement affiche, meme au premier rendu de la frame.
-            void els.bonusTimer.offsetWidth;
-            repositionBadge();
+            // Le repositionnement (3 getBoundingClientRect + reflow force)
+            // ne sert que quand le badge apparait ou quand la largeur du
+            // texte change : le decompte des secondes garde une largeur
+            // stable, inutile de le refaire a chaque tick de 500 ms.
+            if (wasHidden || text.length !== (els.bonusTimer.dataset.lastLen | 0)) {
+                void els.bonusTimer.offsetWidth;
+                repositionBadge();
+                els.bonusTimer.dataset.lastLen = text.length;
+            }
         } else {
             els.bonusTimer.textContent = '';
             els.bonusTimer.style.display = 'none';
             els.bonusTimer.classList.remove('bonus-below');
+            delete els.bonusTimer.dataset.lastLen;
         }
     }
     const countersEl = document.querySelector('.counters');
