@@ -3502,6 +3502,19 @@ body {
    le fichier n'est pas affecte : cette regle ne s'applique qu'a partir de
    1500px, hors des breakpoints mobiles existants. */
 @media (min-width: 1500px) {
+    /* Case d'achat des batiments : elements internes agrandis pour exploiter
+       la largeur gagnee par les colonnes laterales a 25%. */
+    .building-item {
+        min-height: 18.5cqw;
+        max-height: 25cqw;
+    }
+    .building-name { font-size: 4.6cqw; }
+    .building-production { font-size: 4.2cqw; }
+    .building-item button {
+        font-size: 4.2cqw;
+        padding: 2.2cqw 3cqw;
+    }
+    .building-image { max-height: 20cqw; }
     .rocket-parts-shop {
         width: clamp(200px, 15vw, 280px);
         padding: 14px;
