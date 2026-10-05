@@ -3713,7 +3713,7 @@ function spawnRandomBonus(shower, isContract) {
                 // donnent bien leurs parts, comme les cometes isolees.
                 const isContractComet = bonusElement.dataset.contractComet === '1';
                 if (!isContractComet) {
-                    const instantProduction = partsPerSecond * (shower ? 2.5 : 5);
+                    const instantProduction = partsPerSecond * (shower ? 5 : 10);
                     score += instantProduction;
                     partsSinceLaunch += instantProduction;
                     trackPartsEarned(instantProduction);
