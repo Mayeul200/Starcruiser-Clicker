@@ -2961,9 +2961,9 @@ function updateSpaceProgress() {
     const pct = Math.min(100, Math.max(0, progress.progressPercent));
     if (planetText) {
         if (progress.nextPlanet) {
-            planetText.textContent = `${t('Objectif')}: ${t(progress.nextPlanet.name)}: ${pct}%`;
+            planetText.textContent = `${t('Objectif')} ${t(progress.nextPlanet.name)}: ${pct}%`;
         } else {
-            planetText.textContent = `${t('Objectif')}: ${t(progress.currentPlanet.name)}: 100%`;
+            planetText.textContent = `${t('Objectif')} ${t(progress.currentPlanet.name)}: 100%`;
         }
     }
     if (planetDisplay && planetText) planetDisplay.title = planetText.textContent;
@@ -6805,8 +6805,8 @@ const FEATURE_LESSONS = [
     },
     {
         key: 'click-upgrades',
-        titleKey: 'Améliorations de clic',
-        textKey: 'La barre du haut propose des améliorations de clic à mesure que tu cliques. Elles boostent chaque clic, garde un œil dessus !',
+        titleKey: 'Améliorations',
+        textKey: 'La barre du haut propose des améliorations : clics boostés, production des bâtiments, prix réduits… Améliore ta fusée à chaque occasion !',
         img: 'images/parts.png',
         trigger: () => CLICK_UPGRADES.some(u => totalPartsFromClicks >= u.threshold),
         target: '#upgrades-bar',
