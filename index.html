@@ -192,7 +192,6 @@
                     <button class="cc-view-album-btn" onclick="showCardAlbum()" data-i18n="Voir mon album">Voir mon album</button>
                 </div>
                 <div class="cc-screen" id="cc-reveal-screen" style="display:none;">
-                    <div class="cc-reveal-intro" id="cc-reveal-intro" data-i18n="Retourne les cartes une par une !">Retourne les cartes une par une !</div>
                     <div class="cc-reveal-cards" id="cc-reveal-cards"></div>
                     <div class="cc-reveal-actions">
                         <button class="cc-action-btn" id="cc-reveal-all-btn" onclick="revealAllCards()"><span data-i18n="Tout révéler">Tout révéler</span></button>
@@ -551,7 +550,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v41';
+            var APP_CACHE_VERSION = 'v42';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;

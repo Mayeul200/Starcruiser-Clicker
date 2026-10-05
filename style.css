@@ -413,6 +413,11 @@ body {
     border-bottom: 1px solid var(--border-light);
 }
 
+/* Modale des contrats : pleine largeur du panneau central (50%) */
+#contracts-modal.modal {
+    width: 50%;
+    max-width: 50%;
+}
 /* Cartes / Contrats (PC) : titre et compteur sur une seule ligne, en-tete compact */
 #card-collection-modal .modal-header,
 #contracts-modal .modal-header {

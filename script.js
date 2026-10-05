@@ -2755,7 +2755,7 @@ function buyGalacticUpgrade(upgradeId) {
 
 // Plafond hors-ligne de base, gratuit des le debut du jeu (10 minutes).
 // Les ameliorations galactiques de la branche hors-ligne augmentent ce plafond.
-const BASE_OFFLINE_CAP_HOURS = 10 / 60;
+const BASE_OFFLINE_CAP_HOURS = 5 / 60;
 function getOfflineCapHours() {
     let hours = BASE_OFFLINE_CAP_HOURS;
     for (const up of GALACTIC_UPGRADES) {
@@ -3001,6 +3001,17 @@ function updateSpaceProgress() {
             planetText.textContent = `${t('Objectif')} ${t(progress.nextPlanet.name)}: ${pctText}%`;
         } else {
             planetText.textContent = `${t('Objectif')} ${t(progress.currentPlanet.name)}: 100%`;
+        }
+        // Texte trop long pour la case (ex. Nuage d'Oort) : on reduit la
+        // police par paliers jusqu'a ce que tout rentre sans ellipsis.
+        const display = planetDisplay || planetText.parentElement;
+        if (display) {
+            let fs = 0.95;
+            planetText.style.fontSize = fs + 'rem';
+            while (fs > 0.55 && (planetText.getBoundingClientRect().width > display.clientWidth - 20)) {
+                fs -= 0.05;
+                planetText.style.fontSize = fs + 'rem';
+            }
         }
     }
     if (planetDisplay && planetText) planetDisplay.title = planetText.textContent;
@@ -6117,10 +6128,10 @@ function resetContractState() {
 
 const CARD_RARITIES = {
     common:     { name: 'Commune',     color: '#94a3b8', glow: 'rgba(148,163,184,0.4)', bonusMult: 0.01 },
-    rare:       { name: 'Rare',        color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.01 },
-    epic:       { name: 'Épique',     color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.03 },
-    legendary:  { name: 'Légendaire',  color: '#fbbf24', glow: 'rgba(251,191,36,0.7)', bonusMult: 0.08 },
-    alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.20 }
+    rare:       { name: 'Rare',        color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.03 },
+    epic:       { name: 'Épique',     color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.08 },
+    legendary:  { name: 'Légendaire',  color: '#fbbf24', glow: 'rgba(251,191,36,0.7)', bonusMult: 0.20 },
+    alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
 };
 
 const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '', imgPath: 'images/cards/collection/stellar-mine-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '', imgPath: 'images/cards/collection/solar-factory-card.png' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '', imgPath: 'images/cards/collection/comet-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/proxima-centauri-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/orbital-autofab-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/probe-swarm-card.png' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/quasar-engine-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/oort-cloud-card.png' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/pulsar-clock-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/milky-way-center-card.png' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/missile-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '', imgPath: 'images/cards/collection/andromeda-card.png' }];
@@ -6188,13 +6199,17 @@ const GALACTIC_UPGRADES = [
     { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+10% chance de coup critique (x3).',    baseCost: 60,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['click3'] },
     { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x2 puissance de clic.',                baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['click4'] },
     { id: 'click6', branch: 'click', tier: 6, name: 'Appel cosmique',         desc: '5% de chance de d\u00e9clencher une com\u00e8te \u00e0 chaque clic.', baseCost: 400, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click5'] },
-    // === BRANCHE HORS-LIGNE (5) - production pendant l'absence ===
-    { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',          desc: 'Production continue jusqu\u0027\u00e0 20min apr\u00e8s fermeture du jeu.',  baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1/3 },
-    { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',         desc: 'Production continue jusqu\u0027\u00e0 40min apr\u00e8s fermeture du jeu.',  baseCost: 3,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2/3, requires: ['off1'] },
-    { id: 'off3', branch: 'offline', tier: 3, name: 'IA de bord',                  desc: 'Production continue jusqu\u0027\u00e0 1h20 apr\u00e8s fermeture du jeu.',  baseCost: 8,  costMult: 1.0, maxLevel: 1, effectPerLevel: 4/3, requires: ['off2'] },
-    { id: 'off4', branch: 'offline', tier: 4, name: 'Colonie autonome',            desc: 'Production continue jusqu\u0027\u00e0 2h40 apr\u00e8s fermeture du jeu.',  baseCost: 20,  costMult: 1.0, maxLevel: 1, effectPerLevel: 8/3, requires: ['off3'] },
-    { id: 'off5', branch: 'offline', tier: 5, name: 'Civilisation robotis\u00e9e', desc: 'Production continue jusqu\u0027\u00e0 5h20 apr\u00e8s fermeture du jeu.', baseCost: 50, costMult: 1.0, maxLevel: 1, effectPerLevel: 16/3, requires: ['off4'] }
-];
+    // === BRANCHE HORS-LIGNE (8) - production pendant l'absence ===
+    // 5min gratuit (BASE_OFFLINE_CAP_HOURS), puis 8 paliers de 10min a 6h.
+    // Les derniers sont extremement chers : vises pour les chasseurs de records.
+    { id: 'off1', branch: 'offline', tier: 1, name: 'Pilote automatique',    desc: "Production continue jusqu'à 10min après fermeture du jeu.",  baseCost: 1,     costMult: 1.0, maxLevel: 1, effectPerLevel: 10/60, requires: undefined },
+    { id: 'off2', branch: 'offline', tier: 2, name: 'Drone de maintenance',   desc: "Production continue jusqu'à 15min après fermeture du jeu.",  baseCost: 3,     costMult: 1.0, maxLevel: 1, effectPerLevel: 15/60, requires: ['off1'] },
+    { id: 'off3', branch: 'offline', tier: 3, name: 'IA de bord',             desc: "Production continue jusqu'à 20min après fermeture du jeu.",  baseCost: 8,     costMult: 1.0, maxLevel: 1, effectPerLevel: 20/60, requires: ['off2'] },
+    { id: 'off4', branch: 'offline', tier: 4, name: 'Colonie autonome',       desc: "Production continue jusqu'à 25min après fermeture du jeu.",  baseCost: 18,    costMult: 1.0, maxLevel: 1, effectPerLevel: 25/60, requires: ['off3'] },
+    { id: 'off5', branch: 'offline', tier: 5, name: 'Civilisation robotisée',  desc: "Production continue jusqu'à 30min après fermeture du jeu.",  baseCost: 45,    costMult: 1.0, maxLevel: 1, effectPerLevel: 30/60, requires: ['off4'] },
+    { id: 'off6', branch: 'offline', tier: 6, name: 'Flotte autonome',         desc: "Production continue jusqu'à 1h après fermeture du jeu.",     baseCost: 150,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1,     requires: ['off5'] },
+    { id: 'off7', branch: 'offline', tier: 7, name: 'Essaim de drones',        desc: "Production continue jusqu'à 2h après fermeture du jeu.",     baseCost: 600,   costMult: 1.0, maxLevel: 1, effectPerLevel: 2,     requires: ['off6'] },
+    { id: 'off8', branch: 'offline', tier: 8, name: 'Empire intersidéral',   desc: "Production continue jusqu'à 6h après fermeture du jeu.",     baseCost: 3000,  costMult: 1.0, maxLevel: 1, effectPerLevel: 6,     requires: ['off7'] }];
 
 let galacticUpgrades = {};
 
