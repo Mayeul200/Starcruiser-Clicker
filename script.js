@@ -2002,6 +2002,11 @@ function playTravelAnimation(distance, onDone) {
     // jusqu'a remplir l'ecran, comme si on la traversait).
     const GALAXY_IDS = ['milky-way-center', 'andromeda', 'virgo-cluster'];
     const isGalaxyTarget = GALAXY_IDS.includes(target.id);
+    // Les galaxies sont des objets IMMENSES vus de tres loin : sans
+    // correction, la perspective (size = baseSize / rel) les rend meme
+    // pas plus grosses qu'une planete. Facteur d'echelle dedie pour
+    // qu'elles dominent l'horizon des leur apparition.
+    const GALAXY_SCALE = 6.5;
     const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
     const CAM_END = isGalaxyTarget ? zMax : zMax - 1.15;
     // Temps EQUIVALENT par troncon : Terre -> Lune garde sa duree, chaque
@@ -2053,11 +2058,15 @@ function playTravelAnimation(distance, onDone) {
         // decalage laterale (meme la Terre).
         const lat = 0;
         // La Terre un peu plus petite que l'echelle globale des planetes.
-        const scale = (i === 0) ? 0.75 : 1;
+        let scale = (i === 0) ? 0.75 : 1;
         // La planete qui suit le Nuage d'Oort est plus discrete : elle
         // se reveille en tout petit seulement apres la traversee, pour
         // ne pas gacher l'immersion dans le nuage.
         const afterOort = i === oortIdx + 1;
+        // Galaxies (Centre Voie lactee, Andromede, Amas de Virgo) :
+        // echelle dediee pour qu'elles occupent l'ecran des leur
+        // apparition a l'horizon et remplissent tout lors de la plongee.
+        if (GALAXY_IDS.includes(p.id)) scale = GALAXY_SCALE;
         return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort };
     });
 
