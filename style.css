@@ -1809,6 +1809,50 @@ body {
     color: var(--accent-light);
     font-style: italic;
 }
+/* Destination atteinte : ligne mise en avant au-dessus des autres resultats */
+.launch-destination-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.5);
+    border-radius: var(--radius);
+}
+.launch-destination-line .launch-value {
+    color: #34d399;
+}
+/* Bouton NOUVELLE EXPEDITION de la modale de resultats : meme style que
+   le bouton Continuer de l'atelier (vert d'action, pulse discret). */
+.launch-new-expedition-btn {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 14px 36px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-lg);
+}
+.launch-new-expedition-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg), 0 0 24px rgba(16, 185, 129, 0.5);
+}
+/* Note "Chaque expedition part de la Terre" dans le resume de l'atelier */
+.pts-expedition-note {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-muted, #94a3b8);
+    text-align: center;
+}
 /* ============================================
    SEQUENCE DE LANCEMENT (décollage cinématique)
    ============================================ */
@@ -2722,6 +2766,12 @@ body {
     border: 1px solid rgba(71, 85, 105, 0.4);
     border-radius: 6px;
     min-width: 0;
+}
+/* Hierarchie : Portee actuelle et Distance a parcourir (stats de l'expedition
+   en cours) legerement mises en avant par rapport aux stats secondaires. */
+.stat-tile.stat-tile-primary {
+    border-color: rgba(245, 158, 11, 0.55);
+    background: rgba(245, 158, 11, 0.07);
 }
 .stat-label {
     font-size: 0.64rem;

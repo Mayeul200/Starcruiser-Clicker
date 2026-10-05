@@ -114,10 +114,14 @@
     <div class="modal" id="launch-results-modal">
         <div class="modal-content launch-modal">
             <div class="modal-header">
-                <h2 data-i18n="Mission Résultats">Mission Résultats</h2>
+                <h2 data-i18n="Expédition terminée !">Expédition terminée !</h2>
                 <span class="close-button" onclick="closeLaunchResults()">&times;</span>
             </div>
             <div class="modal-body">
+                <div class="launch-destination-line">
+                    <span class="launch-label" data-i18n="Destination atteinte:">Destination atteinte:</span>
+                    <span class="launch-value" id="launch-results-destination">—</span>
+                </div>
                 <div class="launch-result-item">
                     <span class="launch-label" data-i18n="Distance parcourue:">Distance parcourue:</span>
                     <span class="launch-value" id="launch-results-distance">0 km</span>
@@ -135,8 +139,10 @@
                     <span class="launch-value" id="launch-results-rockets">0</span>
                 </div>
                 <div class="launch-info">
-                    <p data-i18n="Plus tu vas loin, plus ton bonus permanent augmente !">Plus tu vas loin, plus ton bonus permanent augmente !</p>
+                    <p data-i18n="Chaque expédition part de la Terre. Construisez une nouvelle fusée et utilisez vos bonus permanents pour aller encore plus loin !">Chaque expédition part de la Terre. Construisez une nouvelle fusée et utilisez vos bonus permanents pour aller encore plus loin !</p>
+                    <p data-i18n="Vos destinations débloquées, votre distance record et vos bonus permanents sont conservés.">Vos destinations débloquées, votre distance record et vos bonus permanents sont conservés.</p>
                 </div>
+                <button class="launch-new-expedition-btn" id="launch-new-expedition-btn" data-i18n="NOUVELLE EXPÉDITION">NOUVELLE EXPÉDITION</button>
             </div>
 </div>
     </div>    <!-- CONTRACTS MODAL -->
@@ -242,7 +248,7 @@
             <h3 data-i18n="Progression Spatiale">Progression Spatiale</h3>
             <div class="space-progress-container" id="space-progress-sidebar">
                 <div class="space-progress-header">
-                    <span class="current-planet-display" id="current-planet-display"><span id="current-planet-text">Objectif Terre: 0%</span><span class="header-planet-fill" id="header-planet-fill"></span></span>
+                    <span class="current-planet-display" id="current-planet-display" title="Prochaine destination de l'expédition actuelle"><span id="current-planet-text">Prochaine destination : Lune — 0.0%</span><span class="header-planet-fill" id="header-planet-fill"></span></span>
                     <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique" data-i18n-title="Atelier Galactique">
                         <span class="galactic-shop-label"> <span data-i18n="Atelier">Atelier</span></span>
                         <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
@@ -254,17 +260,21 @@
                 </div>
                 <div class="mini-space-map" id="mini-space-map"></div>
                 <div class="space-stats" id="space-stats-sidebar">
+                    <div class="stat-tile stat-tile-primary" title="Distance maximale que votre fusée actuelle pourrait parcourir si vous la lanciez maintenant.">
+                        <span class="stat-label" data-i18n="Portée actuelle:">Portée actuelle:</span>
+                        <span class="stat-value" id="sidebar-distance">0 km</span>
+                    </div>
+                    <div class="stat-tile stat-tile-primary" id="sidebar-distance-needed-tile" title="Distance nécessaire pour atteindre la prochaine destination.">
+                        <span class="stat-label" data-i18n="Distance à parcourir:">Distance à parcourir:</span>
+                        <span class="stat-value" id="sidebar-distance-needed">0 km</span>
+                    </div>
+                    <div class="stat-tile" title="Plus grande distance réellement parcourue lors d'une expédition précédente.">
+                        <span class="stat-label" data-i18n="Distance record:">Distance record:</span>
+                        <span class="stat-value" id="sidebar-distance-max">0 km</span>
+                    </div>
                     <div class="stat-tile">
                         <span class="stat-label" data-i18n="Vitesse:">Vitesse:</span>
                         <span class="stat-value" id="sidebar-speed">0 km/s</span>
-                    </div>
-                    <div class="stat-tile">
-                        <span class="stat-label" data-i18n="Distance atteignable:">Distance atteignable:</span>
-                        <span class="stat-value" id="sidebar-distance">0 km</span>
-                    </div>
-                    <div class="stat-tile">
-                        <span class="stat-label" data-i18n="Distance record:">Distance record:</span>
-                        <span class="stat-value" id="sidebar-distance-max">0 km</span>
                     </div>
                     <div class="stat-tile">
                         <span class="stat-label" data-i18n="Bonus planètes:">Bonus planètes:</span>
@@ -395,11 +405,11 @@
                 <span class="close-button" onclick="tryCloseGalacticShop()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="galactic-intro" data-i18n="Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles ne se reset jamais au lancement.</div>
+                <div class="galactic-intro" data-i18n="Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles restent acquises d'une expédition à l'autre.">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles restent acquises d'une expédition à l'autre.</div>
                 <div class="post-travel-summary" id="post-travel-summary" style="display: none;"></div>
                 <div class="galactic-shop-list" id="galactic-shop-list"></div>
                 <div class="post-travel-actions" id="post-travel-actions" style="display: none;">
-                    <button class="post-travel-continue" onclick="confirmPostTravelReset()" data-i18n="Continuer (Reset + Bonus)">Continuer (Reset + Bonus)</button>
+                    <button class="post-travel-continue" onclick="confirmPostTravelReset()" data-i18n="NOUVELLE EXPÉDITION">NOUVELLE EXPÉDITION</button>
                 </div>
             </div>
         </div>
@@ -515,8 +525,8 @@
                 <span class="intro-arrow">➜</span>
                 <div class="intro-step">
                     <img class="intro-step-img" src="images/planets/moon.png" alt="">
-                    <span class="intro-step-title" data-i18n="Recommencer">Recommencer</span>
-                    <span class="intro-step-text" data-i18n="Repart de zéro, avec un bonus permanent.">Repart de zéro, avec un bonus permanent.</span>
+                    <span class="intro-step-title" data-i18n="Nouvelle expédition">Nouvelle expédition</span>
+                    <span class="intro-step-text" data-i18n="Une nouvelle fusée repart de la Terre, avec vos acquis permanents.">Une nouvelle fusée repart de la Terre, avec vos acquis permanents.</span>
                 </div>
             </div>
             <button class="intro-btn" id="intro-start-btn" data-i18n="C'est parti !">C'est parti !</button>
@@ -550,7 +560,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v48';
+            var APP_CACHE_VERSION = 'v49';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;

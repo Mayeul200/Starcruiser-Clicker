@@ -1772,6 +1772,7 @@ function showLaunchResults(distance) {
     const distanceElement = document.getElementById('launch-results-distance');
     const multiplierElement = document.getElementById('launch-results-multiplier');
     const rocketsElement = document.getElementById('launch-results-rockets');
+    const destinationElement = document.getElementById('launch-results-destination');
     
     // Protéger contre NaN et undefined
     const safeDistance = isNaN(distance) || distance === undefined ? 0 : distance;
@@ -1782,6 +1783,13 @@ function showLaunchResults(distance) {
     // Vrai bonus total de production, identique a la ligne "Multiplicateur de production" des statistiques.
     multiplierElement.textContent = 'x' + getTotalProductionMultiplier().toFixed(2);
     rocketsElement.textContent = safeRockets;
+    // Destination la plus lointaine reellement atteinte par ce vol :
+    // la fusee retombe sur la planete atteinte par sa distance parcourue.
+    if (destinationElement) {
+        const destProgress = calculatePlanetProgress(safeDistance);
+        const destPlanet = destProgress && destProgress.currentPlanet ? destProgress.currentPlanet : null;
+        destinationElement.textContent = destPlanet ? t(destPlanet.name) : t('Terre');
+    }
     const stardustEl = document.getElementById('launch-results-stardust');
     if (stardustEl) {
         const dustGained = calculateStardustGain(safeDistance);
@@ -1794,6 +1802,17 @@ function showLaunchResults(distance) {
 function closeLaunchResults() {
     document.getElementById('launch-results-modal').classList.remove('active');
 }
+
+// Bouton NOUVELLE EXPEDITION de la modale de resultats : meme action que
+// la croix, formulee positivement (le reset a deja eu lieu, on lance la
+// suite de la progression globale).
+function startNewExpedition() {
+    closeLaunchResults();
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('launch-new-expedition-btn');
+    if (btn) btn.addEventListener('click', startNewExpedition);
+});
 
 // ============================================
 // ANIMATION DE VOYAGE (apres decollage, avant la carte de l'espace)
@@ -2626,7 +2645,8 @@ function showPostTravelShop(distance) {
         summaryEl.innerHTML =
             '<div class="pts-line">' + t('Distance parcourue') + ' <strong>' + formatNumber(isNaN(distance) ? 0 : distance) + ' km</strong></div>' +
             '<div class="pts-line">' + t('Poussière d\'Étoiles gagnée') + ' <strong>+' + formatNumber(dustGained) + ' \u2728</strong></div>' +
-            unlocksHtml;
+            unlocksHtml +
+            '<div class="pts-expedition-note">' + t("Chaque exp\u00e9dition part de la Terre. Vos bonus permanents et vos destinations d\u00e9bloqu\u00e9es sont conserv\u00e9s.") + '</div>';
         summaryEl.style.display = '';
     }
     const actionsEl = document.getElementById('post-travel-actions');
@@ -3027,11 +3047,26 @@ function toggleGalacticShop() {
 // ============================================
 
 function updateSpaceProgress() {
-    // Distance atteignable en temps réel (estimation)
+    // Distance atteignable en temps reel (estimation)
     const reachableDistance = calculateDistance();
-    // Distance réellement parcourue (ne change qu'au lancement)
+    // Distance reellement parcourue (ne change qu'au lancement)
     const traveledDistance = maxDistance;
-    const progress = calculatePlanetProgress(reachableDistance);
+    let progress = calculatePlanetProgress(reachableDistance);
+    // Destination a AFFICHER : la premiere planete pas encore debloquee.
+    // Apres une nouvelle expedition, la portee retombe a 0 et le calcul brut
+    // designe la planete suivante de la portee (ex. la Lune deja atteinte) :
+    // on avance alors jusqu'a la premiere destination verrouillee, avec le %
+    // de la portee actuelle vers cette destination (pur affichage, les
+    // mecaniques continuent d'utiliser calculatePlanetProgress tel quel).
+    while (progress.nextPlanet && unlockedPlanets.has(progress.nextPlanet.id)
+        && PLANETS.findIndex(p => p.id === progress.nextPlanet.id) < PLANETS.length - 1) {
+        const nextIdx = PLANETS.findIndex(p => p.id === progress.nextPlanet.id);
+        const target = PLANETS[nextIdx + 1];
+        const prev = PLANETS[nextIdx];
+        const pct = Math.min(100, Math.max(0,
+            (reachableDistance - prev.distanceRequired) / (target.distanceRequired - prev.distanceRequired) * 100));
+        progress = { currentPlanet: prev, nextPlanet: target, progressPercent: pct };
+    }
 
     // Afficher la progression vers la PROCHAINE planète : en temps reel sur la
     // distance ACTUELLEMENT atteignable (elle croit a chaque Part gagnee),
@@ -3043,9 +3078,9 @@ function updateSpaceProgress() {
     const pctText = pct.toFixed(1);
     if (planetText) {
         if (progress.nextPlanet) {
-            planetText.textContent = `${t('Objectif')} ${t(progress.nextPlanet.name)}: ${pctText}%`;
+            planetText.textContent = `${t('Prochaine destination')} : ${t(progress.nextPlanet.name)} — ${pctText}%`;
         } else {
-            planetText.textContent = `${t('Objectif')} ${t(progress.currentPlanet.name)}: 100%`;
+            planetText.textContent = `${t('Prochaine destination')} : ${t(progress.currentPlanet.name)} — 100%`;
         }
         // Texte trop long pour la case (ex. Nuage d'Oort) : on reduit la
         // police par paliers jusqu'a ce que tout rentre sans ellipsis.
@@ -3077,8 +3112,17 @@ function updateSpaceProgress() {
     // Mettre à jour les stats
     const sidebarDistance = document.getElementById('sidebar-distance');
     const sidebarDistanceMax = document.getElementById('sidebar-distance-max');
+    const sidebarDistanceNeeded = document.getElementById('sidebar-distance-needed');
     const sidebarSpeed = document.getElementById('sidebar-speed');
     const sidebarBonus = document.getElementById('sidebar-bonus');
+    // Distance encore necessaire pour la prochaine destination : la
+    // difference entre la distance exigee par la planete visee et la portee
+    // de la fusee en construction (jamais negative).
+    if (sidebarDistanceNeeded) {
+        const target = progress.nextPlanet ? progress.nextPlanet : progress.currentPlanet;
+        const needed = target ? Math.max(0, target.distanceRequired - reachableDistance) : 0;
+        rollCounterText(sidebarDistanceNeeded, formatNumber(needed) + ' ' + t('km'));
+    }
 
         if (sidebarDistance) {
         rollCounterText(sidebarDistance, formatNumber(reachableDistance) + ' ' + t('km'));
@@ -7050,7 +7094,7 @@ const FEATURE_LESSONS = [
     {
         key: 'rocket-complete',
         titleKey: 'Fusée prête !',
-        textKey: 'Toutes les pièces sont construites. Appuie sur LANCER LA FUSÉE pour voyager vers une nouvelle planète et repartir plus fort !',
+        textKey: 'Toutes les pièces sont construites. Appuie sur LANCER LA FUSÉE : ton expédition est terminée, tes acquis permanents seront conservés !',
         img: 'images/rocket/Fusée3.png',
         trigger: () => ROCKET_PARTS.every(p => p.purchased),
         target: '#launch-button',
@@ -7058,9 +7102,9 @@ const FEATURE_LESSONS = [
     {
         key: 'first-launch',
         titleKey: 'Bon voyage !',
-        textKey: 'Chaque lancement te fait atteindre des planètes : tu repars de zéro, mais avec un bonus permanent. Va de plus en plus loin !',
+        textKey: 'Chaque lancement termine une expédition : ta nouvelle fusée repart de la Terre, mais tes destinations débloquées, ta distance record et tes bonus permanents sont conservés. Vise de plus en plus loin !',
         img: 'images/planets/moon.png',
-        trigger: () => launchCount >= 1,
+        trigger: () => rocketsLaunched >= 1,
     },
 ];
 
