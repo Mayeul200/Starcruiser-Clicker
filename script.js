@@ -3930,7 +3930,7 @@ function showBuyFeedback(targetEl, costText, gainText) {
         el.style.left = anchorX + 'px';
         el.style.top = anchorY + 'px';
         document.body.appendChild(el);
-        setTimeout(() => el.remove(), 1600);
+        setTimeout(() => el.remove(), cfg.cls === 'buy-feedback-gain' ? 2900 : 2500);
     });
 }
 // Recompense audiovisuelle de fin de lancement : gros popup central avec la

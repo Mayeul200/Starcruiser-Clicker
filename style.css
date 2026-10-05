@@ -1463,21 +1463,21 @@ body {
    (apparition decalee). Position absolue dans la carte, sans decaler la mise
    en page. */
 @keyframes buyFeedbackIn {
-    0% { opacity: 0; transform: translate(-50%, 6px) scale(0.7); }
-    18% { opacity: 1; transform: translate(-50%, -4px) scale(1.08); }
-    70% { opacity: 1; transform: translate(-50%, -14px) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -26px) scale(0.92); }
+    0% { opacity: 0; transform: translate(-50%, 8px) scale(0.7); }
+    14% { opacity: 1; transform: translate(-50%, -8px) scale(1.08); }
+    75% { opacity: 1; transform: translate(-50%, -28px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -48px) scale(0.92); }
 }
 .buy-feedback {
     position: fixed;
-    font-size: 1.05rem;
+    font-size: 1.37rem;
     font-weight: 800;
     white-space: nowrap;
     pointer-events: none;
     z-index: 13000;
-    animation: buyFeedbackIn 1.5s ease-out forwards;
+    animation: buyFeedbackIn 2.2s ease-out forwards;
     opacity: 0;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .buy-feedback-cost { color: #ff6b6b; animation-delay: 0s; }
 .buy-feedback-gain { color: #7CFC98; animation-delay: 0.45s; }
