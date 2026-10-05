@@ -248,7 +248,7 @@
             <h3 data-i18n="Progression Spatiale">Progression Spatiale</h3>
             <div class="space-progress-container" id="space-progress-sidebar">
                 <div class="space-progress-header">
-                    <span class="current-planet-display" id="current-planet-display" title="Prochaine destination de l'expédition actuelle"><span id="current-planet-text">Prochaine destination : Lune — 0.0%</span><span class="header-planet-fill" id="header-planet-fill"></span></span>
+                    
                     <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique" data-i18n-title="Atelier Galactique">
                         <span class="galactic-shop-label"> <span data-i18n="Atelier">Atelier</span></span>
                         <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
@@ -258,7 +258,7 @@
 </span>
                     </button>
                 </div>
-                <div class="mini-space-map" id="mini-space-map"></div>
+                <div class="mini-space-map" id="mini-space-map"></div><span class="current-planet-display" id="current-planet-display" title="Prochaine destination de l'expédition actuelle"><span id="current-planet-text">Prochaine destination : Lune — 0.0%</span><span class="header-planet-fill" id="header-planet-fill"></span></span>
                 <div class="space-stats" id="space-stats-sidebar">
                     <div class="stat-tile stat-tile-primary" title="Distance maximale que votre fusée actuelle pourrait parcourir si vous la lanciez maintenant.">
                         <span class="stat-label" data-i18n="Portée actuelle:">Portée actuelle:</span>
@@ -268,18 +268,15 @@
                         <span class="stat-label" data-i18n="Distance à parcourir:">Distance à parcourir:</span>
                         <span class="stat-value" id="sidebar-distance-needed">0 km</span>
                     </div>
-                    <div class="stat-tile" title="Plus grande distance réellement parcourue lors d'une expédition précédente.">
-                        <span class="stat-label" data-i18n="Distance record:">Distance record:</span>
-                        <span class="stat-value" id="sidebar-distance-max">0 km</span>
-                    </div>
                     <div class="stat-tile">
                         <span class="stat-label" data-i18n="Vitesse:">Vitesse:</span>
                         <span class="stat-value" id="sidebar-speed">0 km/s</span>
+                    </div><div class="stat-tile" title="Plus grande distance réellement parcourue lors d'une expédition précédente.">
+                        <span class="stat-label" data-i18n="Distance record:">Distance record:</span>
+                        <span class="stat-value" id="sidebar-distance-max">0 km</span>
                     </div>
-                    <div class="stat-tile">
-                        <span class="stat-label" data-i18n="Bonus planètes:">Bonus planètes:</span>
-                        <span class="stat-value" id="sidebar-bonus">x1.00</span>
-                    </div>
+                    
+                    
                 </div>
             </div>
             
@@ -407,7 +404,7 @@
             <div class="modal-body">
                 <div class="galactic-intro" data-i18n="Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles restent acquises d'une expédition à l'autre.">Dépense ta Poussière d'Étoiles dans des améliorations permanentes. Elles restent acquises d'une expédition à l'autre.</div>
                 <div class="post-travel-summary" id="post-travel-summary" style="display: none;"></div>
-                <div class="galactic-shop-list" id="galactic-shop-list"></div>
+                <div class="infinite-buy-button-wrap" id="infinite-buy-button-wrap" style="display: none;"><button class="infinite-buy-button" id="infinite-buy-button" onclick="buyInfiniteProduction()"></button></div><div class="galactic-shop-list" id="galactic-shop-list"></div>
                 <div class="post-travel-actions" id="post-travel-actions" style="display: none;">
                     <button class="post-travel-continue" onclick="confirmPostTravelReset()" data-i18n="NOUVELLE EXPÉDITION">NOUVELLE EXPÉDITION</button>
                 </div>
@@ -577,7 +574,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v51';
+            var APP_CACHE_VERSION = 'v52';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;

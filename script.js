@@ -258,10 +258,10 @@ const TROPHIES = [
     // Lancements de fusée (icônes: pièces de fusée)
     { id: "launch-1", name: "Décollage !", description: "Réaliser votre premier lancement", icon: "images/rocket/engines.png", threshold: 1, type: "launches" },
     { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 5 lancements", icon: "images/rocket/cockpit.png", threshold: 5, type: "launches" },
-    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 15 lancements", icon: "images/rocket/boosters-left.png", threshold: 15, type: "launches" },
-    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.png", threshold: 30, type: "launches" },
-    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 50 lancements", icon: "images/rocket/astronaut.png", threshold: 50, type: "launches" },
-    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 100 lancements", icon: "images/rocket/astronaut.png", threshold: 100, type: "launches" },
+    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 8 lancements", icon: "images/rocket/boosters-left.png", threshold: 8, type: "launches" },
+    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 12 lancements", icon: "images/rocket/astronaut.png", threshold: 12, type: "launches" },
+    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 20 lancements", icon: "images/rocket/astronaut.png", threshold: 20, type: "launches" },
+    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.png", threshold: 30, type: "launches" },
 
     // Poussière d'étoiles (icônes: cartes du jeu)
     { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.png", threshold: 1, type: "stardust" },
@@ -3138,6 +3138,46 @@ function renderGalacticShop() {
         branchEl.appendChild(treeEl);
         container.appendChild(branchEl);
     });
+    updateInfiniteBuyButton();
+}
+
+// Suite infinie : depenser des PE en bonus de production permanent.
+// 1 PE = +1% de production permanente. Le gros bouton de l'atelier
+// convertit TOUTES les PE disponibles (hors suite infinie deja creditee
+// automatiquement -- ici on depense la reserve libre de starDust).
+function buyInfiniteProduction() {
+    if (!gameFinished) {
+        showToast(t('Disponible apres l\'Amas de Virgo'));
+        return;
+    }
+    const amount = Math.floor(starDust);
+    if (amount < 1) {
+        showToast('\u274c ' + t('Pas assez de Poussiere d\'Etoiles'));
+        return;
+    }
+    starDust -= amount;
+    postVirgoStardust += amount;
+    invalidateBuildingGainsCache();
+    saveGame();
+    updateStardustDisplay();
+    renderGalacticShop();
+    updateSpaceProgress();
+    showToast('\u2728 +' + formatNumber(amount) + '% ' + t('production permanente'));
+}
+
+function updateInfiniteBuyButton() {
+    const wrap = document.getElementById('infinite-buy-button-wrap');
+    const btn = document.getElementById('infinite-buy-button');
+    if (!wrap || !btn) return;
+    if (!gameFinished) { wrap.style.display = 'none'; return; }
+    wrap.style.display = '';
+    const amount = Math.floor(starDust);
+    btn.innerHTML =
+        '<span class="ibb-icon">\u2728</span>' +
+        '<span class="ibb-title">' + t('Suite infinie') + ' : +' + formatNumber(postVirgoStardust) + '%</span>' +
+        '<span class="ibb-desc">' + t('Depenser {n} PE pour +{n}% de production permanente').split('{n}').join(formatNumber(amount)) + '</span>' +
+        '<span class="ibb-cta' + (amount < 1 ? ' disabled' : '') + '">' + t('Convertir') + ' ' + formatNumber(amount) + ' \u2728 \u2192 +' + formatNumber(amount) + '%</span>';
+    btn.disabled = amount < 1;
 }
 
 function toggleGalacticShop() {
@@ -3229,6 +3269,19 @@ function updateSpaceProgress() {
         const target = progress.nextPlanet ? progress.nextPlanet : progress.currentPlanet;
         const needed = target ? Math.max(0, target.distanceRequired - reachableDistance) : 0;
         rollCounterText(sidebarDistanceNeeded, formatNumber(needed) + ' ' + t('km'));
+        // Suite infinie debloquee : plus de destination finale, l'objectif
+        // n'a plus de borne -- sigle infini affiche sous la valeur.
+        let infMark = sidebarDistanceNeeded.parentElement.querySelector('.stat-infinite-mark');
+        if (gameFinished) {
+            if (!infMark) {
+                infMark = document.createElement('span');
+                infMark.className = 'stat-infinite-mark';
+                sidebarDistanceNeeded.parentElement.appendChild(infMark);
+            }
+            infMark.textContent = '\u221E';
+        } else if (infMark) {
+            infMark.remove();
+        }
     }
 
         if (sidebarDistance) {
@@ -7768,7 +7821,12 @@ function initDebugMode() {
 
 function getRocketPartCost(part) {
     const discount = Math.min(0.5, getRocketPartDiscount());
-    return Math.floor(part.cost * Math.pow(ROCKET_PART_COST_GROWTH, rocketsLaunched) * (1 - discount));
+    // Les prix montent avec le multiplicateur de production general :
+    // chaque lancement rend la fusee suivante plus puissante (prestige,
+    // planetes, collection...), les pieces coutent d'autant plus cher --
+    // la progression reste exigeante au fil des expeditions.
+    const prodMult = Math.max(1, getTotalProductionMultiplier());
+    return Math.floor(part.cost * Math.pow(ROCKET_PART_COST_GROWTH, rocketsLaunched) * prodMult * (1 - discount));
 }
 
 function buyRocketPart(partId) {
