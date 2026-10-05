@@ -6796,6 +6796,14 @@ const FEATURE_LESSONS = [
         target: '#building-factory',
     },
     {
+        key: 'card-collection-unlocked',
+        titleKey: 'La Collection de Cartes est disponible',
+        textKey: 'Ouvre des boosters, complète ton album : chaque carte améliore ta production de Parts pour toujours !',
+        img: 'images/cards/collection/booster1.png',
+        trigger: () => areCardsUnlocked(),
+        target: '#card-collection-mini-card',
+    },
+    {
         key: 'contracts-unlocked',
         titleKey: 'Les Contrats sont disponibles',
         textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses. Ouvre le panneau Espace !',
