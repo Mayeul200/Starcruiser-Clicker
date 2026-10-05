@@ -7407,8 +7407,7 @@ function buyRocketPart(partId) {
     score -= cost;
     Sounds.partBuilt();
     part.purchased = true;
-    const builtCount = ROCKET_PARTS.filter(p => p.purchased).length;
-    showBuyFeedback(document.getElementById('rocket-parts-shop'), '-' + formatNumber(cost) + ' ' + t('Parts'), '+' + Math.round(4 * builtCount) + '% ' + t('production'));
+    showBuyFeedback(document.getElementById('rocket-parts-shop'), '-' + formatNumber(cost) + ' ' + t('Parts'), '+4% ' + t('production'));
     updateDisplay();
     updateConstructionScene();
     const builtCard = document.querySelector('#rocket-parts-shop .rocket-part-frame');
