@@ -3534,16 +3534,16 @@ body {
         font-size: 0.9rem;
     }
     .rocket-part-left {
-        width: 4.5rem;
-        height: 4.5rem;
+        width: 6rem;
+        height: 6rem;
     }
     .rocket-part-icon {
-        width: 4rem;
-        height: 4rem;
+        width: 5.25rem;
+        height: 5.25rem;
     }
     .rocket-part-icon-placeholder {
-        width: 4rem;
-        height: 4rem;
+        width: 5.25rem;
+        height: 5.25rem;
     }
     .rocket-part-name {
         font-size: 1.15rem;
@@ -3566,8 +3566,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.625rem 0.625rem;
+    gap: 0.7rem;
+    padding: 1rem 0.75rem;
     background: var(--secondary-light);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -3599,12 +3599,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 3.75rem;
+    height: 3.75rem;
 }
 .rocket-part-icon {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
     object-fit: contain;
     opacity: 0.85;
     pointer-events: none;
