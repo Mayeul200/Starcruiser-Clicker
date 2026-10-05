@@ -4197,17 +4197,12 @@ const Sounds = {
         soundTone(2093, 2093, 0.18, 'sine', 0.1, 0.55);
         soundTone(2637, 2637, 0.22, 'sine', 0.08, 0.62);
     },
-    // Un bâtiment devient abordable : carillon doux deux notes,
-    // discret pour ne pas spammer quand le score monte vite.
+    // Un bâtiment devient abordable : "ding-dong" feutré en registre
+    // grave, timbre triangle + quinte descendante — timbre distinct de
+    // l'achat (aigu) et du déblocage (arpège) pour être reconnaissable.
     affordable() {
-        soundTone(880, 880, 0.09, 'sine', 0.16);
-        soundTone(1175, 1175, 0.14, 'sine', 0.18, 0.09);
-    },
-    // Un bâtiment devient abordable : carillon doux deux notes, discret
-    // pour ne pas spammer quand le score monte vite.
-    affordable() {
-        soundTone(880, 880, 0.09, 'sine', 0.16);
-        soundTone(1175, 1175, 0.14, 'sine', 0.18, 0.09);
+        soundTone(660, 660, 0.12, 'triangle', 0.22);
+        soundTone(440, 440, 0.22, 'triangle', 0.2, 0.13);
     },
     // Nouveau bâtiment débloqué : jingle 3 notes ascendantes
     unlock() {
@@ -5457,12 +5452,14 @@ function getContractTypes() {
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
             diffs: [
-                { target: Math.max(50, pps * 22),  price: Math.max(5, pps * 5),  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
-                { target: Math.max(150, pps * 40), price: Math.max(20, pps * 12), rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
-                // Cible atteignable : le contrat dure 30 s, la production
-                // passive y vaut pps*30 — pps*40 demande ~33% d'apport actif
-                // (clics, boost), contre pps*70 (233%) quasi impossible.
-                { target: Math.max(500, pps * 40), price: Math.max(75, pps * 28), rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 45 }
+                // Cible TOUJOURS proportionnelle aux parts/s : un plancher
+                // fixe (ex-500) devient inatteignable en debut de partie.
+                // En 30 s de contrat la production passive vaut pps*30 —
+                // pps*22 laisse ~27% d'apport actif (clics, boost), pps*40
+                // sur 45 s demande ~33% d'apport actif.
+                { target: pps * 22,  price: pps * 5,  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 30 },
+                { target: pps * 40, price: pps * 12, rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 45 },
+                { target: pps * 40, price: pps * 28, rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 45 }
             ]
         },
         {
