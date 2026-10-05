@@ -692,6 +692,7 @@ function saveGame() {
         unlockedPlanets: Array.from(unlockedPlanets),
         planetBonuses: {...planetBonuses},
         cardCollection: {...cardCollection},
+        boosterReadyAt: {...boosterReadyAt},
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
             effect: bonus.effect,
@@ -822,6 +823,9 @@ function loadGame() {
             contractState.unlockedSeen = !!parsed.contractState.unlockedSeen;
         }
 
+        if (parsed.boosterReadyAt) {
+            boosterReadyAt = { standard: parsed.boosterReadyAt.standard || 0, premium: parsed.boosterReadyAt.premium || 0, legendary: parsed.boosterReadyAt.legendary || 0 };
+        }
         if (parsed.cardCollection) {
             cardCollection = {...parsed.cardCollection};
             // Migration : la carte Laboratoire n'existe plus, remplacee par Comete.
@@ -2844,7 +2848,7 @@ function getClickPowerBonus() {
 function getCritChance() {
     return Math.min(0.50, getUpgradeEffect('click2') + getUpgradeEffect('click4'));
 }
-function getBoosterDiscount() {
+function getBoosterTimeDiscount() {
     let discount = 1;
     if (getGalacticUpgradeLevel('coll1') > 0) discount *= 0.90;
     if (getGalacticUpgradeLevel('coll3') > 0) discount *= 0.90;
@@ -5790,7 +5794,21 @@ function failContract() {
     saveGame();
 }
 
+let boosterReadyNotified = { standard: false, premium: false, legendary: false };
+function tickBoosterTimers() {
+    const modalOpen = document.getElementById('card-collection-modal')?.classList.contains('active');
+    if (modalOpen) updateBoosterTimers();
+    for (const key in BOOSTERS) {
+        if (isBoosterReady(key) && !boosterReadyNotified[key]) {
+            boosterReadyNotified[key] = true;
+            if (!modalOpen) showToast('\ud83c\udf81 ' + t('Booster') + ' ' + t(BOOSTERS[key].name) + ' ' + t('est prêt !'));
+        } else if (!isBoosterReady(key)) {
+            boosterReadyNotified[key] = false;
+        }
+    }
+}
 function tickContracts() {
+    tickBoosterTimers();
     const now = Date.now();
     if (areContractsUnlocked() && !contractState.unlockedSeen) {
         contractState.unlockedSeen = true;
@@ -6018,19 +6036,32 @@ function resetContractState() {
 
 const CARD_RARITIES = {
     common:     { name: 'Commune',     color: '#94a3b8', glow: 'rgba(148,163,184,0.4)', bonusMult: 0.01 },
-    rare:       { name: 'Rare',        color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.03 },
-    epic:       { name: 'Épique',     color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.08 },
-    legendary:  { name: 'Légendaire',  color: '#fbbf24', glow: 'rgba(251,191,36,0.7)', bonusMult: 0.20 },
-    alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
+    rare:       { name: 'Rare',        color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.01 },
+    epic:       { name: 'Épique',     color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.03 },
+    legendary:  { name: 'Légendaire',  color: '#fbbf24', glow: 'rgba(251,191,36,0.7)', bonusMult: 0.08 },
+    alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.20 }
 };
 
 const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '', imgPath: 'images/cards/collection/stellar-mine-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '', imgPath: 'images/cards/collection/solar-factory-card.png' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '', imgPath: 'images/cards/collection/comet-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/proxima-centauri-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/orbital-autofab-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/probe-swarm-card.png' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/quasar-engine-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/oort-cloud-card.png' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/pulsar-clock-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/milky-way-center-card.png' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/missile-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '', imgPath: 'images/cards/collection/andromeda-card.png' }];
 
 const BOOSTERS = {
-    standard:  { name: 'Standard',   cardCount: 1, cost: () => Math.max(100, Math.floor(getBasePartsPerSecond() * 8)),     rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
-    premium:   { name: 'Premium',    cardCount: 2, cost: () => Math.max(500, Math.floor(getBasePartsPerSecond() * 40)),    rarities: { common: 0.50, rare: 0.30, epic: 0.15, legendary: 0.04, alternative: 0.01 } },
-    legendary: { name: 'Légendaire', cardCount: 3, cost: () => Math.max(2000, Math.floor(getBasePartsPerSecond() * 160)),  rarities: { common: 0.25, rare: 0.30, epic: 0.25, legendary: 0.15, alternative: 0.05 } }
+    standard:  { name: 'Standard',   cardCount: 1, cooldownMs: 5 * 60 * 1000,      rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
+    premium:   { name: 'Premium',    cardCount: 2, cooldownMs: 30 * 60 * 1000,     rarities: { common: 0.50, rare: 0.30, epic: 0.15, legendary: 0.04, alternative: 0.01 } },
+    legendary: { name: 'Légendaire', cardCount: 3, cooldownMs: 12 * 60 * 60 * 1000, rarities: { common: 0.25, rare: 0.30, epic: 0.25, legendary: 0.15, alternative: 0.05 } }
 };
+// Timestamps (Date.now()) de disponibilite de chaque booster : le timer tourne
+// jeu ferme (timestamp absolu). Un booster pret ne s'empile pas : son cycle
+// ne redemarre qu'a la reclamation. Premiere fois : tout est pret.
+let boosterReadyAt = { standard: 0, premium: 0, legendary: 0 };
+function isBoosterReady(type) {
+    return Date.now() >= (boosterReadyAt[type] || 0);
+}
+function getBoosterRemainingMs(type) {
+    return Math.max(0, (boosterReadyAt[type] || 0) - Date.now());
+}
+function getBoosterCooldownFactor() {
+    return Math.max(0.40, 1 - getBoosterTimeDiscount());
+}
 
 // ============================================
 // ATELIER GALACTIQUE - 23 upgrades uniques en 4 branches
@@ -6062,11 +6093,11 @@ const GALACTIC_UPGRADES = [
     { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',      desc: '+30% distance de lancement.',       baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['rock3'] },
 
     // === BRANCHE COLLECTION (5) - upgrades uniques ===
-    { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% coût des boosters.',          baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
+    { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% temps d\'attente des boosters.', baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
     { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+15% chance de rareté supérieure dans le booster Standard.',  baseCost: 8,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll1'] },
-    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Marché noir',           desc: '-10% coût des boosters.',          baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['coll2'] },
+    { id: 'coll3',  branch: 'collection', tier: 3, name: 'Marché noir',           desc: '-10% temps d\'attente des boosters.', baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['coll2'] },
     { id: 'coll4',  branch: 'collection', tier: 4, name: 'Boosters renforcés',      desc: '+20% au bonus des cartes possédées.',              baseCost: 80,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['coll3'] },
-    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Réseau de contrebande',  desc: '-15% coût des boosters.',          baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll4'] },
+    { id: 'coll5',  branch: 'collection', tier: 5, name: 'Réseau de contrebande',  desc: '-15% temps d\'attente des boosters.', baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll4'] },
     { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '+1 carte dans tous les boosters.',     baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll5'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
@@ -6127,9 +6158,20 @@ function showCardReveal() {
 }
 
 function updateBoosterPrices() {
+    updateBoosterTimers();
+}
+function updateBoosterTimers() {
     for (const key in BOOSTERS) {
-        const costEl = document.getElementById('cc-cost-' + key);
-        if (costEl) { costEl.textContent = ''; const coinImg = document.createElement('img'); coinImg.src = 'images/parts.png'; coinImg.className = 'coin-icon'; coinImg.alt = ''; costEl.appendChild(coinImg); costEl.appendChild(document.createTextNode(' ' + formatNumber(Math.floor(BOOSTERS[key].cost() * (1 - getBoosterDiscount()))))); }
+        const el = document.getElementById('cc-cost-' + key);
+        if (!el) continue;
+        const btn = el.closest('.cc-booster-btn');
+        if (isBoosterReady(key)) {
+            el.textContent = '\u2705 ' + t('Prêt !');
+            if (btn) btn.disabled = false;
+        } else {
+            el.textContent = '\u23f3 ' + formatContractTime(getBoosterRemainingMs(key));
+            if (btn) btn.disabled = true;
+        }
     }
 }
 
@@ -6145,10 +6187,13 @@ function isCollectionComplete() {
 }
 
 function getCollectionBonus() {
+    // Les doublons s'additionnent : chaque exemplaire d'une carte ajoute
+    // son bonus (bonus par carte reduits en consequence, minimum 1%).
     let bonus = 0;
     for (const card of COLLECTIBLE_CARDS) {
-        if (cardCollection[card.id] > 0) {
-            bonus += CARD_RARITIES[card.rarity].bonusMult;
+        const count = cardCollection[card.id] || 0;
+        if (count > 0) {
+            bonus += CARD_RARITIES[card.rarity].bonusMult * count;
         }
     }
     if (isCollectionComplete()) {
@@ -6164,14 +6209,16 @@ function getCollectionMultiplier() {
 function buyBooster(type) {
     const booster = BOOSTERS[type];
     if (!booster) return;
-    const cost = Math.floor(booster.cost() * (1 - getBoosterDiscount()));
-    if (score < cost) {
-        showToast(t('Pas assez de Parts pour ce booster !'));
+    if (!isBoosterReady(type)) {
+        showToast('\u23f3 ' + tf('Booster disponible dans {time} !', { time: formatContractTime(getBoosterRemainingMs(type)) }));
         return;
     }
-    score -= cost;
+    // Le cycle redemarre SEULEMENT a la reclamation : pas d'empilement,
+    // un booster pret reste pret indefinement jusqu'a ouverture.
+    boosterReadyAt[type] = Date.now() + booster.cooldownMs * getBoosterCooldownFactor();
+    boosterReadyNotified[type] = false;
     Sounds.booster();
-    updateDisplay();
+    updateBoosterTimers();
 
     const drawn = [];
     let cardCount = booster.cardCount;
@@ -6356,9 +6403,10 @@ function openCardLightbox(card) {
     img.alt = card.name;
     document.getElementById('cc-lightbox-name').textContent = t(card.name);
     const rarity = CARD_RARITIES[card.rarity];
-    const bonus = Math.round(CARD_RARITIES[card.rarity].bonusMult * 100);
+    const perCopy = Math.round(CARD_RARITIES[card.rarity].bonusMult * 100);
     const count = cardCollection[card.id] || 0;
-    document.getElementById('cc-lightbox-sub').textContent = t(rarity.name) + ' \u00b7 +' + bonus + '% ' + t('production') + ' \u00b7 \u00d7' + count;
+    const total = perCopy * count;
+    document.getElementById('cc-lightbox-sub').textContent = t(rarity.name) + ' \u00b7 +' + perCopy + '% ' + t('production') + ' \u00d7' + count + ' = +' + total + '%';
     document.getElementById('cc-lightbox-name').style.color = rarity.color;
     lightbox.classList.add('open');
     lightbox.dataset.cardId = card.id;
