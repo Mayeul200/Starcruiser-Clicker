@@ -3427,15 +3427,17 @@ function spawnRandomBonus(shower, isContract) {
     const marginX = Math.min(window.innerWidth * 0.22, 260);
     const minVisibleX = marginX;
     const maxVisibleX = window.innerWidth - marginX - 100;
-    if (goRight) {
-        // Gauche→droite: depart dans la bande centrale, sortie a droite
-        startX = minVisibleX + Math.random() * Math.max(0, maxVisibleX - minVisibleX);
-        endX = startX + horizontalTravel;
-    } else {
-        // Droite→gauche: depart dans la bande centrale, sortie a gauche
-        startX = minVisibleX + Math.random() * Math.max(0, maxVisibleX - minVisibleX);
-        endX = startX - horizontalTravel;
-    }
+    // Toute la trajectoire (depart ET arrivee) doit rester dans la bande
+    // centrale visible : une comete qui sort de l'ecran en plein vol est
+    // invisible ET incliquable, le joueur croit qu'elle n'est jamais tombee
+    // et perd les contrats de defense. Si la diagonale (60 deg) ne tient pas
+    // dans la bande, on la resserre (trajectoire plus verticale) au lieu de
+    // laisser la comete sortir.
+    const bandWidth = Math.max(0, maxVisibleX - minVisibleX);
+    let travelX = Math.min(horizontalTravel, bandWidth);
+    const slack = Math.max(0, bandWidth - travelX);
+    startX = minVisibleX + Math.random() * slack;
+    endX = goRight ? startX + travelX : startX - travelX;
     // Cometes de contrat : plus rapides (4 s au lieu de 6 s), plus dures
     // a intercepter — le contrat doit se mEriter.
     const isContractComet = shower && contractState.active
@@ -3464,7 +3466,6 @@ function spawnRandomBonus(shower, isContract) {
     // comme le missile) : animer left/top forcerait le layout a chaque
     // frame, la comete saccaderait et le point de rendez-vous du missile
     // serait rate des que le thread principal charge (pluie, trainee).
-    const travelX = endX - startX;
     const travelY = endY - startY;
     requestAnimationFrame(() => {
         bonusElement.style.transition = `transform ${duration}ms linear`;
