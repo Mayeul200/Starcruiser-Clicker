@@ -2459,7 +2459,7 @@ function calculatePlanetProgress(distance) {
         return {
             currentPlanet: null,
             nextPlanet: PLANETS[1],
-            progressPercent: Math.round((distance / PLANETS[1].distanceRequired) * 100)
+            progressPercent: (distance / PLANETS[1].distanceRequired) * 100
         };
     }
 
@@ -2477,7 +2477,7 @@ function calculatePlanetProgress(distance) {
     const nextPlanet = PLANETS[currentPlanetIndex + 1];
     const distanceBetween = nextPlanet.distanceRequired - currentPlanet.distanceRequired;
     const distanceFromCurrent = distance - currentPlanet.distanceRequired;
-    progressPercent = Math.round((distanceFromCurrent / distanceBetween) * 100);
+    progressPercent = (distanceFromCurrent / distanceBetween) * 100;
 
     return {
         currentPlanet: currentPlanet,
@@ -2963,9 +2963,10 @@ function updateSpaceProgress() {
     const planetText = document.getElementById('current-planet-text');
     const planetBarFill = document.getElementById('header-planet-fill');
     const pct = Math.min(100, Math.max(0, progress.progressPercent));
+    const pctText = pct.toFixed(1).replace(/\.0$/, '');
     if (planetText) {
         if (progress.nextPlanet) {
-            planetText.textContent = `${t('Objectif')} ${t(progress.nextPlanet.name)}: ${pct}%`;
+            planetText.textContent = `${t('Objectif')} ${t(progress.nextPlanet.name)}: ${pctText}%`;
         } else {
             planetText.textContent = `${t('Objectif')} ${t(progress.currentPlanet.name)}: 100%`;
         }

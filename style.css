@@ -270,6 +270,11 @@ body {
     width: 92%;
     max-width: 420px;
     z-index: 1100;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    max-height: 80vh;
 }
 .new-building-modal.active {
     animation: nbModalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
