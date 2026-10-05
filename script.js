@@ -3449,6 +3449,16 @@ function spawnRandomBonus(shower, isContract) {
     const slack = Math.max(0, bandWidth - travelX);
     startX = minVisibleX + Math.random() * slack;
     endX = goRight ? startX + travelX : startX - travelX;
+    // Angle de vol REEL (la bande peut resserrer la diagonale) : le sprite
+    // et les queues sont orientes via --comet-rot, et le noyau (a ~86% de
+    // la largeur du sprite horizontal) est recalcule via --nx/--ny pour
+    // que coma, queues et trainee suivent exactement la trajectoire.
+    const travelY0 = endY - startY;
+    const flightDeg = Math.atan2(travelY0, Math.abs(travelX)) * 180 / Math.PI;
+    const cometRot = goRight ? flightDeg : 180 - flightDeg;
+    const nucFrac = 0.358;
+    const nucX = 0.5 + (goRight ? 1 : -1) * nucFrac * Math.cos(flightDeg * Math.PI / 180);
+    const nucY = 0.5 + nucFrac * Math.sin(flightDeg * Math.PI / 180);
     // Cometes de contrat : plus rapides (4 s au lieu de 6 s), plus dures
     // a intercepter — le contrat doit se mEriter.
     const isContractComet = shower && contractState.active
@@ -3459,6 +3469,9 @@ function spawnRandomBonus(shower, isContract) {
     bonusElement.className = `random-bonus comet ${bonus.colorClass}` + (shower ? ' shower' : '');
     if (isContract) bonusElement.dataset.contractComet = '1';
     if (!goRight) bonusElement.classList.add('reverse');
+    bonusElement.style.setProperty('--comet-rot', cometRot.toFixed(2) + 'deg');
+    bonusElement.style.setProperty('--nx', (nucX * 100).toFixed(2) + '%');
+    bonusElement.style.setProperty('--ny', (nucY * 100).toFixed(2) + '%');
     // Structure detaillee inspiree des vraies cometes :
     // - chevelure (coma) : halo diffus autour du noyau
     // - queue de plasma continue attachee derriere le noyau, orientee
@@ -3498,8 +3511,7 @@ function spawnRandomBonus(shower, isContract) {
     const TRAIL_LIFE_MS = 900;
     const dirX = goRight ? 1 : -1;
     // Fraction du noyau dans le conteneur (identique aux variables CSS --nx/--ny)
-    const nucX = goRight ? 0.6716 : 0.3216;
-    const nucY = goRight ? 0.8051 : 0.8012;
+
     const trailPool = [];
     const trailInUse = [];
     const trailInterval = setInterval(() => {
@@ -5801,7 +5813,10 @@ function tickBoosterTimers() {
     for (const key in BOOSTERS) {
         if (isBoosterReady(key) && !boosterReadyNotified[key]) {
             boosterReadyNotified[key] = true;
-            if (!modalOpen) showToast('\ud83c\udf81 ' + t('Booster') + ' ' + t(BOOSTERS[key].name) + ' ' + t('est prêt !'));
+            // Pas de toast au lancement : les boosters partent "prets"
+            // (boosterReadyAt = 0) avant le deblocage de la collection,
+            // et on ne notifie qu'un cycle DEJA reclame au moins une fois.
+            if (!modalOpen && areCardsUnlocked() && boosterReadyAt[key] > 0) showToast('\ud83c\udf81 ' + t('Booster') + ' ' + t(BOOSTERS[key].name) + ' ' + t('est prêt !'));
         } else if (!isBoosterReady(key)) {
             boosterReadyNotified[key] = false;
         }
