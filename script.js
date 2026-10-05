@@ -2627,6 +2627,10 @@ function confirmPostTravelReset() {
     applyNewPlanets(checkNewPlanetsUnlocked(lastLaunchDistance));
     // Reset du score, des batiments et des pieces de fusee (garde les bonus/prestige)
     score = 0;
+    // Nouvelle partie = boosters offerts : les cycles de cooldown repartent
+    // a zero pour que le joueur retrouve ses boosters des le debut.
+    boosterReadyAt = { standard: 0, premium: 0, legendary: 0 };
+    boosterReadyNotified = { standard: false, premium: false, legendary: false };
     BUILDINGS.forEach(b => b.count = 0);
     ROCKET_PARTS.forEach(p => p.purchased = false);
     constructedParts = new Set();
@@ -5882,18 +5886,10 @@ function renderContractsCardStatus() {
         return;
     }
     if (contractState.active) {
-        const c = contractState.active;
-        const type = findContractType(c.typeId);
-        const remaining = Math.max(0, c.expiresAt - now);
-        const pct = Math.min(100, (c.progress / c.target) * 100);
-        statusEl.className = 'game-status visible';
-        const html = (type ? contractIconHtml(type, 'status-contract-icon') + ' ' : '')
-            + '<span class="status-timer">' + formatContractTime(remaining) + '</span>'
-            + '<span class="status-bar"><div style="width:' + pct + '%"></div></span>';
-        if (statusEl.dataset.lastHtml !== html) {
-            statusEl.dataset.lastHtml = html;
-            statusEl.innerHTML = html;
-        }
+        // Le rappel du contrat actif vit desormais dans le badge HUD sous le
+        // compteur : la case des contrats n'affiche plus le doublon.
+        statusEl.className = 'game-status';
+        statusEl.textContent = '';
     } else if (contractState.offers.length > 0) {
         const nextIn = Math.max(0, contractState.nextRotationAt - now);
         statusEl.className = 'game-status visible';

@@ -1754,14 +1754,15 @@ body {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
     box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
-    width: 92%;
-    max-width: 460px;
+    width: 100%;
     height: auto;
     max-height: 80vh;
 }
 #launch-results-modal {
     top: 50%;
     transform: translate(-50%, -50%);
+    width: 92%;
+    max-width: 460px;
     height: auto;
     max-height: 80vh;
 }
