@@ -7066,6 +7066,7 @@ const Debug = {
         ROCKET_PARTS.forEach(p => {
             if (!p.purchased) {
                 p.purchased = true;
+                invalidateBuildingGainsCache();
                 constructedParts = new Set(ROCKET_PARTS.map(x => x.id));
                 updateConstructionScene();
             }
@@ -7475,6 +7476,10 @@ function buyRocketPart(partId) {
     score -= cost;
     Sounds.partBuilt();
     part.purchased = true;
+    // Sans invalidation du cache des gains, le +4% de production de la piece
+    // ne s'appliquait pas immediatement (pps fige jusqu'au prochain achat
+    // de batiment) — le bonus semblait ne jamais s'appliquer.
+    invalidateBuildingGainsCache();
     showBuyFeedback(document.getElementById('rocket-parts-shop'), '-' + formatNumber(cost) + ' ' + t('Parts'), '+4% ' + t('production'));
     updateDisplay();
     updateConstructionScene();

@@ -3555,10 +3555,11 @@ body {
         min-height: 18.5cqw;
         max-height: 25cqw;
     }
-    .building-name { font-size: 4.6cqw; }
-    .building-production { font-size: 4.2cqw; }
+    /* Polices de reference PC baissees de ~10% (4.6->4.1, 4.2->3.8) */
+    .building-name { font-size: 4.1cqw; }
+    .building-production { font-size: 3.8cqw; }
     .building-item button {
-        font-size: 4.2cqw;
+        font-size: 3.8cqw;
         padding: 2.2cqw 3cqw;
     }
     .building-image { max-height: 20cqw; }
@@ -3571,7 +3572,7 @@ body {
         padding: 1rem 1rem;
     }
     .rocket-part-frame-title {
-        font-size: 0.9rem;
+        font-size: 1.05rem;
     }
     .rocket-part-left {
         width: 6rem;
@@ -3586,16 +3587,16 @@ body {
         height: 5.25rem;
     }
     .rocket-part-name {
-        font-size: 1.15rem;
+        font-size: 1.35rem;
     }
     .rocket-part-cost {
-        font-size: 0.95rem;
+        font-size: 1.15rem;
     }
     .rocket-part-progress {
         height: 22px;
     }
     .rocket-part-progress-label {
-        font-size: 0.85rem;
+        font-size: 1rem;
     }
     .rocket-part-btn {
         padding: 0.65rem 0.9rem;
@@ -3739,7 +3740,12 @@ body {
     font-size: 0.65rem;
     font-weight: 600;
     cursor: pointer;
-    white-space: nowrap;
+    /* Plus de nowrap : sur petit ecran "Construire — 250 Parts"
+       debordait du cadre. Le texte passe a la ligne dans la largeur
+       du cadre, bouton toujours pleine largeur. */
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: center;
     transition: background 0.2s;
 }
 .rocket-part-btn:hover:not(:disabled) {
