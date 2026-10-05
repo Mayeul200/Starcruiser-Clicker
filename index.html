@@ -438,6 +438,7 @@
         <div class="travel-deepfield" id="travel-deepfield"></div>
         <div class="travel-stars" id="travel-stars"></div>
         <div id="travel-deep"></div>
+        <div class="travel-through-veil" id="travel-through-veil"></div>
         <div class="travel-rocket" id="travel-rocket"></div>
         <div class="travel-hud">
             <div class="travel-distance"><span id="travel-distance-value">0</span> <span data-i18n="km">km</span></div>
@@ -445,6 +446,22 @@
         </div>
     </div>
 
+    <!-- ECRAN DE FIN : premiere arrivee a l'Amas de Virgo -->
+    <div class="game-ending-overlay" id="game-ending-overlay">
+        <div class="game-ending-fireworks" id="game-ending-fireworks"></div>
+        <div class="game-ending-content">
+            <div class="game-ending-emoji">🌌</div>
+            <h1 class="game-ending-title" data-i18n="L'UNIVERS EST À VOUS">L'UNIVERS EST À VOUS</h1>
+            <div class="game-ending-planet" data-i18n="Amas de Virgo atteint !">🛸 Amas de Virgo atteint !</div>
+            <div class="game-ending-distance"><span data-i18n="Distance parcourue :">Distance parcourue :</span> <span id="game-ending-distance">0</span> km</div>
+            <div class="game-ending-divider"></div>
+            <div class="game-ending-infinite">
+                <div class="gei-title" data-i18n="Suite infinie débloquée !">✨ Suite infinie débloquée !</div>
+                <div class="gei-desc"><span data-i18n="Chaque Poussière d'Étoiles gagnée désormais =">Chaque Poussière d'Étoiles gagnée désormais =</span> <strong data-i18n="+1% de production permanente">+1% de production permanente</strong></div>
+            </div>
+            <button class="game-ending-btn" id="game-ending-continue" data-i18n="CONTINUER L'AVENTURE">CONTINUER L'AVENTURE</button>
+        </div>
+    </div>
     <div class="next-planet-notification" id="next-planet-notification">
         <div class="npn-content">
             <button class="npn-close-btn" onclick="closeNextPlanetNotification()" title="Fermer">&times;</button>
@@ -560,7 +577,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v49';
+            var APP_CACHE_VERSION = 'v50';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;

@@ -2182,6 +2182,138 @@ body {
 }
 /* Fusee : vole vers le HAUT, meme image que la scene de construction.
    L'image body.png pointe vers le haut, aucune rotation necessaire. */
+/* Voile lumineux de la plongee galactique : quand la destination est le
+   Centre Voie lactee, Andromede ou l'Amas de Virgo, la camera traverse le
+   corps -- un voile radial chaud enveloppe l'ecran (pilote en JS).
+   z-index 2 : AU-DESSUS des planetes (#travel-deep, z-index 1),
+   SOUS la fusee (z-index 3) et le HUD. */
+.travel-through-veil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 2;
+    background:
+        radial-gradient(ellipse 140% 100% at 50% 55%,
+            rgba(255, 248, 227, 0.95) 0%,
+            rgba(253, 224, 160, 0.75) 30%,
+            rgba(190, 170, 255, 0.45) 62%,
+            rgba(10, 8, 40, 0.2) 100%);
+    transition: opacity 0.12s linear;
+}
+
+/* ---- Ecran de fin : premiere arrivee a l'Amas de Virgo ---- */
+.game-ending-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 13000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: radial-gradient(ellipse at 50% 40%, rgba(30, 20, 80, 0.96) 0%, rgba(2, 4, 18, 0.99) 70%);
+    overflow: hidden;
+}
+.game-ending-overlay.active { display: flex; }
+.game-ending-fireworks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.game-ending-fireworks span {
+    position: absolute;
+    color: var(--accent, #fbbf24);
+    opacity: 0;
+    animation: endingSparkle 3s ease-in-out infinite;
+    text-shadow: 0 0 12px rgba(251, 191, 36, 0.8);
+}
+@keyframes endingSparkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 0.95; transform: scale(1.15); }
+}
+.game-ending-content {
+    position: relative;
+    max-width: 640px;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(160deg, rgba(15, 15, 45, 0.92), rgba(5, 8, 30, 0.95));
+    border: 2px solid var(--accent, #fbbf24);
+    border-radius: 24px;
+    padding: 40px 28px 32px;
+    box-shadow: 0 0 60px rgba(251, 191, 36, 0.35), inset 0 0 40px rgba(120, 90, 255, 0.12);
+    animation: endingPop 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes endingPop {
+    from { opacity: 0; transform: scale(0.85) translateY(30px); }
+    to { opacity: 1; transform: none; }
+}
+.game-ending-emoji {
+    font-size: 64px;
+    line-height: 1;
+    margin-bottom: 12px;
+    animation: endingFloat 3.5s ease-in-out infinite;
+}
+@keyframes endingFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.game-ending-title {
+    font-size: clamp(26px, 5vw, 40px);
+    letter-spacing: 2px;
+    color: #fff;
+    margin: 0 0 10px;
+    background: linear-gradient(90deg, #fff, var(--accent, #fbbf24), #c4b5fd);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.game-ending-planet {
+    font-size: 18px;
+    color: #e2e8f0;
+    margin-bottom: 6px;
+}
+.game-ending-distance {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 18px;
+}
+.game-ending-distance span { color: var(--accent, #fbbf24); font-weight: 700; }
+.game-ending-divider {
+    height: 1px;
+    margin: 0 auto 18px;
+    width: 70%;
+    background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.6), transparent);
+}
+.game-ending-infinite {
+    background: linear-gradient(135deg, rgba(88, 28, 135, 0.35), rgba(30, 20, 80, 0.35));
+    border: 1px solid rgba(196, 181, 253, 0.4);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+}
+.gei-title { font-size: 17px; font-weight: 700; color: #e9d5ff; margin-bottom: 6px; }
+.gei-desc { font-size: 14px; color: #cbd5e1; line-height: 1.5; }
+.gei-desc strong { color: var(--accent, #fbbf24); }
+.game-ending-btn {
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #1a1200;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    border: none;
+    border-radius: 14px;
+    padding: 15px 34px;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(251, 191, 36, 0.45);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.game-ending-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 32px rgba(251, 191, 36, 0.6);
+}
+
 .travel-rocket {
     position: absolute;
     /* left/top/transform + dimensions pilotes en JS : la fusee complete

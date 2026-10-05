@@ -356,6 +356,8 @@ let lastLaunchAt = 0;
 let lastLaunchDistance = 0;
 let starDust = 0; // Poussière d'Étoiles : monnaie de prestige persistante
 let totalStardustEarned = 0; // Cumul de toutes les Poussière d'Étoiles gagnées (trophées)
+let postVirgoStardust = 0; // Suite infinie : PE gagnées au-dela de l'Amas de Virgo (+1% production chacune)
+let gameFinished = false; // Fin vue au moins une fois (ecran de fin apres Virgo)
 
 
 // ============================================
@@ -458,6 +460,11 @@ function getPrestigeProductionBoost() {
 function getPlanetProductionBonus() {
     return 1 + getTotalPlanetBonus() + unlockedTrophies.size * 0.01;
 }
+// Suite infinie : chaque Poussiere d'Etoiles gagne au-dela de l'Amas de
+// Virgo ajoute +1% de production permanent (cumulatif, jamais reset).
+function getInfiniteStardustBonus() {
+    return 1 + postVirgoStardust * 0.01;
+}
 function getRocketPartProductionBonus() {
     return 1 + 0.04 * ROCKET_PARTS.filter(p => p.purchased).length;
 }
@@ -468,6 +475,7 @@ function getTotalProductionMultiplier() {
         * getProductionBonus()
         * getPrestigeProductionBoost()
         * getPlanetProductionBonus()
+        * getInfiniteStardustBonus()
         * getRocketPartProductionBonus();
 }
 
@@ -478,12 +486,12 @@ function getBuildingOwnMultiplier(building) {
 }
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getInfiniteStardustBonus() * getRocketPartProductionBonus();
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
+    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getInfiniteStardustBonus() * getRocketPartProductionBonus();
 }
 
 
@@ -491,7 +499,7 @@ function calculateUnitBuildingGain(building) {
 // de contrat, pour qu'une offre generee pendant un x4 reste atteignable ensuite.
 function calculateBuildingBaseGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
+    return building.gain * building.count * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getInfiniteStardustBonus() * getRocketPartProductionBonus();
 }
 // PPS total hors boost temporaire (autoMultiplier exclu) : base de calcul des
 // contrats interactifs, pour qu'une offre generee pendant un x4 reste coherente.
@@ -710,6 +718,8 @@ function saveGame() {
         prestigeMultiplier: prestigeMultiplier,
         starDust: starDust,
         totalStardustEarned: totalStardustEarned,
+        postVirgoStardust: postVirgoStardust,
+        gameFinished: gameFinished,
         galacticUpgrades: {...galacticUpgrades},
         rocketsLaunched: rocketsLaunched,
         lastLaunchAt: lastLaunchAt,
@@ -793,6 +803,8 @@ function loadGame() {
         prestigeMultiplier = parsed.prestigeMultiplier || 1;
         starDust = parsed.starDust || 0;
         totalStardustEarned = parsed.totalStardustEarned || 0;
+        postVirgoStardust = parsed.postVirgoStardust || 0;
+        gameFinished = !!parsed.gameFinished;
         galacticUpgrades = parsed.galacticUpgrades || {};
         // V2.2: les upgrades galactiques sont uniques (maxLevel=1).
         // Cap les niveaux anciens pour eviter des bonus excesifs.
@@ -1631,6 +1643,21 @@ function launchRocket() {
             // (qui applique le reset). Plus d'ecran de space map intermediaire.
             Sounds.launchFanfare();
             showLaunchReward(distance);
+            // Premiere arrivee a l'Amas de Virgo : l'ecran de fin celebre
+            // la completion de la route, puis l'atelier s'ouvre normalement.
+            const virgo = PLANETS.find(p => p.id === 'virgo-cluster');
+            if (virgo && distance >= virgo.distanceRequired && !gameFinished) {
+                gameFinished = true;
+                saveGame();
+                showGameEnding(() => {
+                    showPostTravelShop(distance);
+                    updateSpaceProgress();
+                    updateConstructionScene();
+                    isLaunching = false;
+                    showToast(`${t("Fus\u00e9e lanc\u00e9e ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
+                });
+                return;
+            }
             showPostTravelShop(distance);
             updateSpaceProgress();
             updateConstructionScene();
@@ -1915,6 +1942,8 @@ function playTravelAnimation(distance, onDone) {
     cancelAnimationFrame(travelAnimFrame);
     const deepEl = document.getElementById('travel-deep');
     const rocketEl = document.getElementById('travel-rocket');
+    const throughVeil = document.getElementById('travel-through-veil');
+    if (throughVeil) throughVeil.style.opacity = '0';
     const distanceEl = document.getElementById('travel-distance-value');
     const skipBtn = document.getElementById('travel-skip');
     const safeDistance = Math.max(0, distance);
@@ -1967,8 +1996,14 @@ function playTravelAnimation(distance, onDone) {
     // planet en bas d'ecran, comme juste apres le decollage), accelere
     // puis maintient sa vitesse de croisiere jusqu'a la cible (aucune
     // deceleration, meme a l'arrivee).
+    // GALAXIES : quand la destination est le Centre Voie lactee, Andromede
+    // ou l'Amas de Virgo, la camera ne s'arrete pas devant -- elle PLONGE
+    // au centre du corps (CAM_END = zMax, rel -> 0 : la galaxie grossit
+    // jusqu'a remplir l'ecran, comme si on la traversait).
+    const GALAXY_IDS = ['milky-way-center', 'andromeda', 'virgo-cluster'];
+    const isGalaxyTarget = GALAXY_IDS.includes(target.id);
     const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
-    const CAM_END = zMax - 1.15;             // cible a rel ~1.15 a l'arrivee
+    const CAM_END = isGalaxyTarget ? zMax : zMax - 1.15;
     // Temps EQUIVALENT par troncon : Terre -> Lune garde sa duree, chaque
     // planete supplementaire ajoute un troncon de meme duree (Mars = deux
     // fois Terre -> Lune).
@@ -2154,6 +2189,7 @@ function playTravelAnimation(distance, onDone) {
     const cleanup = () => {
         cancelAnimationFrame(travelAnimFrame);
         overlay.classList.remove('active');
+        if (throughVeil) throughVeil.style.opacity = '0';
         if (skipBtn) skipBtn.removeEventListener('click', skipHandler);
         if (finished) {
             if (onDone) onDone();
@@ -2374,6 +2410,17 @@ function playTravelAnimation(distance, onDone) {
             // A la sortie : l'astre depasse la camera en grossissant et
             // sort naturellement de l'ecran par le bas, plein echelle.
         });
+
+        // ---- Plongee galactique : voile lumineux de traversée ----
+        // Quand la destination est une galaxie, la camera finit DANS le
+        // corps : au-dela du demi-tour de perspective (rel < 1.6), un
+        // voile teinte aux couleurs de la galaxie monte en opacite et
+        // enveloppe l'ecran -- immersion de traverse, pas un flash brut.
+        if (throughVeil && isGalaxyTarget) {
+            const relT = zMax - cameraZ;
+            const veilOp = relT <= 0.08 ? 1 : Math.max(0, Math.min(1, (1.6 - relT) / 1.35));
+            throughVeil.style.opacity = (veilOp * 0.92).toFixed(2);
+        }
 
         // ---- Nuage d'Oort : traverssee volumetrique ----
         // Densite progressive : vide -> premiers objets -> immersion.
@@ -2611,6 +2658,44 @@ function getTotalPlanetBonus() {
 // ouvre la meme modal en consultation (fermable librement).
 let postTravelLock = false;
 
+// Ecran de fin : premiere arrivee a l'Amas de Virgo. La route complete
+// Terre -> Virgo est terminee : on celebre la completion, on annonce la
+// suite infinie (+1% production par Poussiere d'Etoiles), puis on rend la
+// main via onDone (ouverture de l'atelier galactique).
+function showGameEnding(onDone) {
+    const overlay = document.getElementById('game-ending-overlay');
+    if (!overlay) { if (onDone) onDone(); return; }
+    const distEl = document.getElementById('game-ending-distance');
+    if (distEl && typeof lastLaunchDistance === 'number') distEl.textContent = formatNumber(lastLaunchDistance);
+    try { Sounds.launchFanfare(); } catch (e) {}
+    try { spawnEndingFireworks(); } catch (e) {}
+    overlay.classList.add('active');
+    const btn = document.getElementById('game-ending-continue');
+    const handler = () => {
+        btn.removeEventListener('click', handler);
+        overlay.classList.remove('active');
+        if (onDone) onDone();
+    };
+    if (btn) btn.addEventListener('click', handler);
+}
+
+// Petites etoiles filantes / eclats decoratifs derriere l'ecran de fin.
+function spawnEndingFireworks() {
+    const fw = document.getElementById('game-ending-fireworks');
+    if (!fw) return;
+    fw.innerHTML = '';
+    for (let i = 0; i < 26; i++) {
+        const s = document.createElement('span');
+        s.textContent = '\u2726';
+        s.style.left = (Math.random() * 100).toFixed(1) + '%';
+        s.style.top = (Math.random() * 100).toFixed(1) + '%';
+        s.style.fontSize = (10 + Math.random() * 26).toFixed(0) + 'px';
+        s.style.animationDelay = (Math.random() * 3).toFixed(2) + 's';
+        s.style.animationDuration = (2 + Math.random() * 3).toFixed(2) + 's';
+        fw.appendChild(s);
+    }
+}
+
 function showPostTravelShop(distance) {
     const modal = document.getElementById('galactic-shop-modal');
     if (!modal) return;
@@ -2632,6 +2717,15 @@ function showPostTravelShop(distance) {
         starDust += dustGained;
         totalStardustEarned += dustGained;
     }
+    // Suite infinie : au-dela de l'Amas de Virgo, chaque Poussiere d'Etoiles
+    // gagnee ajoute +1% de production permanent (cumulatif, jamais reset).
+    const virgoDist = (PLANETS.find(p => p.id === 'virgo-cluster') || {}).distanceRequired || Infinity;
+    let infiniteGain = 0;
+    if (!isNaN(lastLaunchDistance) && lastLaunchDistance > virgoDist && dustGained > 0) {
+        infiniteGain = dustGained;
+        postVirgoStardust += infiniteGain;
+        invalidateBuildingGainsCache();
+    }
     saveGame();
     const summaryEl = document.getElementById('post-travel-summary');
     if (summaryEl) {
@@ -2642,10 +2736,14 @@ function showPostTravelShop(distance) {
                 '<span class="pts-planet" style="border-color:' + planet.color + ';color:' + planet.color + ';">' +
                 t(planet.name) + ' +' + planet.bonusPercent + '%</span>').join('') + '</div>';
         }
+        const infiniteHtml = postVirgoStardust > 0
+            ? '<div class="pts-line pts-infinite">\u2728 ' + t('Suite infinie') + ' : +' + postVirgoStardust + '% ' + t('production permanente') + '</div>'
+            : '';
         summaryEl.innerHTML =
             '<div class="pts-line">' + t('Distance parcourue') + ' <strong>' + formatNumber(isNaN(distance) ? 0 : distance) + ' km</strong></div>' +
             '<div class="pts-line">' + t('Poussière d\'Étoiles gagnée') + ' <strong>+' + formatNumber(dustGained) + ' \u2728</strong></div>' +
             unlocksHtml +
+            infiniteHtml +
             '<div class="pts-expedition-note">' + t("Chaque exp\u00e9dition part de la Terre. Vos bonus permanents et vos destinations d\u00e9bloqu\u00e9es sont conserv\u00e9s.") + '</div>';
         summaryEl.style.display = '';
     }
@@ -6252,8 +6350,8 @@ const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',           
 
 const BOOSTERS = {
     standard:  { name: 'Standard',   cardCount: 1, cooldownMs: 5 * 60 * 1000,      rarities: { common: 0.88, rare: 0.11, epic: 0.01 } },
-    premium:   { name: 'Premium',    cardCount: 1, cooldownMs: 30 * 60 * 1000,     rarities: { common: 0.68, rare: 0.28, epic: 0.035, legendary: 0.004, alternative: 0.001 } },
-    legendary: { name: 'Légendaire', cardCount: 1, cooldownMs: 12 * 60 * 60 * 1000, rarities: { common: 0.42, rare: 0.44, epic: 0.12, legendary: 0.018, alternative: 0.002 } }
+    premium:   { name: 'Premium',    cardCount: 1, cooldownMs: 20 * 60 * 1000,    rarities: { common: 0.68, rare: 0.28, epic: 0.035, legendary: 0.004, alternative: 0.001 } },
+    legendary: { name: 'Légendaire', cardCount: 1, cooldownMs: 60 * 60 * 1000,    rarities: { common: 0.42, rare: 0.44, epic: 0.12, legendary: 0.018, alternative: 0.002 } }
 };
 // Timestamps (Date.now()) de disponibilite de chaque booster : le timer tourne
 // jeu ferme (timestamp absolu). Un booster pret ne s'empile pas : son cycle
@@ -7553,7 +7651,7 @@ function debugSimulateToTarget(targetDistanceKm, clickRatePerSec = 4, maxHours =
             total += b.gain * counts[i] * Math.pow(2, ups[i]);
         });
         return total * autoMultiplier * getCollectionMultiplier() * getProductionBonus()
-             * getPrestigeProductionBoost() * getPlanetProductionBonus();
+             * getPrestigeProductionBoost() * getPlanetProductionBonus() * getInfiniteStardustBonus();
     }
 
     for (steps = 0; steps < maxSteps && cum < cumRequired; steps++) {
@@ -7573,7 +7671,7 @@ function debugSimulateToTarget(targetDistanceKm, clickRatePerSec = 4, maxHours =
             let bestPayback = Infinity, action = null;
             BUILDINGS.forEach((b, i) => {
                 const c = Math.floor(b.baseCost * Math.pow(BUILDING_PRICE_GROWTH_RATE, counts[i]));
-                const unitGain = b.gain * Math.pow(2, ups[i]) * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getCollectionMultiplier();
+                const unitGain = b.gain * Math.pow(2, ups[i]) * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getInfiniteStardustBonus() * getCollectionMultiplier();
                 if (scoreSpendable >= c && unitGain > 0) {
                     const pb = c / unitGain;
                     if (pb < bestPayback) { bestPayback = pb; action = { type: 'b', i, c }; }
