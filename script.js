@@ -2962,9 +2962,9 @@ function updateSpaceProgress() {
     const pct = Math.min(100, Math.max(0, progress.progressPercent));
     if (planetText) {
         if (progress.nextPlanet) {
-            planetText.textContent = `${t(progress.nextPlanet.name)}: ${pct}%`;
+            planetText.textContent = `${t('Objectif')}: ${t(progress.nextPlanet.name)}: ${pct}%`;
         } else {
-            planetText.textContent = `${t(progress.currentPlanet.name)}: 100%`;
+            planetText.textContent = `${t('Objectif')}: ${t(progress.currentPlanet.name)}: 100%`;
         }
     }
     if (planetDisplay && planetText) planetDisplay.title = planetText.textContent;
