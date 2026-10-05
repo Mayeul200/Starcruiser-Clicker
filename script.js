@@ -2955,15 +2955,17 @@ function updateSpaceProgress() {
     // distance ACTUELLEMENT atteignable (elle croit a chaque Part gagnee),
     // pas sur la distance parcourue qui ne bouge qu'au lancement.
     const planetDisplay = document.getElementById('current-planet-display');
+    const planetText = document.getElementById('current-planet-text');
     const planetBarFill = document.getElementById('header-planet-fill');
     const pct = Math.min(100, Math.max(0, progress.progressPercent));
-    if (planetDisplay) {
+    if (planetText) {
         if (progress.nextPlanet) {
-            planetDisplay.textContent = `${t(progress.nextPlanet.name)}: ${pct}%`;
+            planetText.textContent = `${t(progress.nextPlanet.name)}: ${pct}%`;
         } else {
-            planetDisplay.textContent = `${t(progress.currentPlanet.name)}: 100%`;
+            planetText.textContent = `${t(progress.currentPlanet.name)}: 100%`;
         }
     }
+    if (planetDisplay && planetText) planetDisplay.title = planetText.textContent;
     if (planetBarFill) {
         planetBarFill.style.width = pct + '%';
         planetBarFill.style.background = (progress.nextPlanet && progress.nextPlanet.color) || '';
@@ -6557,6 +6559,22 @@ function isTutorialSeen() {
     return !!tutorialSeen;
 }
 
+// Ecran d'accueil plein ecran (premiere visite) : les etapes principales du
+// jeu en une page, affiche UNE SEULE FOIS par navigateur (localStorage),
+// independamment de la sauvegarde. Le coach pas-a-pas prend ensuite le relais.
+function showIntroScreen() {
+    const overlay = document.getElementById('intro-overlay');
+    if (!overlay) return false;
+    if (localStorage.getItem('starcruiser-intro-seen') === '1') return false;
+    localStorage.setItem('starcruiser-intro-seen', '1');
+    overlay.classList.add('active');
+    return true;
+}
+function closeIntroScreen(startCoach) {
+    const overlay = document.getElementById('intro-overlay');
+    if (overlay) overlay.classList.remove('active');
+    if (startCoach) startTutorial(false);
+}
 // Choix de la langue a la premiere visite : affiche le sélecteur
 // au-dessus de tout (z-index 14500) et differe le tutoriel.
 function shouldAskLanguage() {
@@ -6842,6 +6860,9 @@ function dismissFeatureLesson() {
 }
 
 function init() {
+    // L'ecran de chargement disparait en toute premiere action : aucune erreur
+    // runtime ulterieure ne peut plus le laisser bloque jusqu'au filet des 8 s.
+    hideLoadingScreen();
     initGlobals();
     const introStartBtn = document.getElementById('intro-start-btn');
     if (introStartBtn) introStartBtn.addEventListener('click', () => closeIntroScreen(true));
@@ -6895,7 +6916,6 @@ function init() {
     // (debut d'un nouveau run inclus) tournent quand meme, chaque lecon
     // n'est montree qu'une fois via starcruiser-lessons-seen.
     if (isTutorialSeen() && !tutorialActive) startFeatureLessons();
-    hideLoadingScreen();
 }
 
 // Masque l'ecran de chargement des que le jeu est initialise (pas de duree
