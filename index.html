@@ -246,6 +246,9 @@
                     <span class="current-planet-display" id="current-planet-display">
                          Terre: 0%
 </span>
+                    <span class="planet-progress-name" id="sidebar-next-planet" hidden>—</span>
+                    <div class="planet-progress-bar" id="sidebar-planet-bar" hidden><div class="planet-progress-fill" id="sidebar-planet-fill"></div><span class="planet-progress-pct" id="sidebar-planet-pct">0 %</span></div>
+                    <span class="planet-progress-next" id="sidebar-planet-after" hidden></span>
                     <button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique" data-i18n-title="Atelier Galactique">
                         <span class="galactic-shop-label"> <span data-i18n="Atelier">Atelier</span></span>
                         <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
@@ -261,11 +264,9 @@
                         <span class="stat-label" data-i18n="Vitesse:">Vitesse:</span>
                         <span class="stat-value" id="sidebar-speed">0 km/s</span>
                     </div>
-                    <div class="stat-tile planet-progress-tile">
-                        <span class="stat-label" data-i18n="Prochaine planète">Prochaine planète</span>
-                        <span class="stat-value planet-progress-name" id="sidebar-next-planet">—</span>
-                        <div class="planet-progress-bar"><div class="planet-progress-fill" id="sidebar-planet-fill"></div><span class="planet-progress-pct" id="sidebar-planet-pct">0 %</span></div>
-                        <span class="planet-progress-next" id="sidebar-planet-after"></span>
+                    <div class="stat-tile">
+                        <span class="stat-label" data-i18n="Distance atteignable:">Distance atteignable:</span>
+                        <span class="stat-value" id="sidebar-distance">0 km</span>
                     </div>
                     <div class="stat-tile">
                         <span class="stat-label" data-i18n="Distance record:">Distance record:</span>
@@ -490,6 +491,50 @@
         </div>
     </div>
     <!-- TUTORIEL DEBUT DE PARTIE -->
+    <div class="intro-overlay" id="intro-overlay">
+        <div class="intro-panel">
+            <h1 class="intro-title">STARCRUISER CLICKER</h1>
+            <p class="intro-subtitle" data-i18n="Voici les étapes principales du jeu :">Voici les étapes principales du jeu :</p>
+            <div class="intro-steps">
+                <div class="intro-step">
+                    <span class="intro-step-num">1</span>
+                    <div class="intro-step-body">
+                        <span class="intro-step-title" data-i18n="Cliquer">Cliquer</span>
+                        <span class="intro-step-text" data-i18n="Clique sur la pièce pour gagner des Parts.">Clique sur la pièce pour gagner des Parts.</span>
+                    </div>
+                </div>
+                <div class="intro-step">
+                    <span class="intro-step-num">2</span>
+                    <div class="intro-step-body">
+                        <span class="intro-step-title" data-i18n="Acheter des bâtiments">Acheter des bâtiments</span>
+                        <span class="intro-step-text" data-i18n="Les bâtiments produisent des Parts tout seuls, même sans cliquer.">Les bâtiments produisent des Parts tout seuls, même sans cliquer.</span>
+                    </div>
+                </div>
+                <div class="intro-step">
+                    <span class="intro-step-num">3</span>
+                    <div class="intro-step-body">
+                        <span class="intro-step-title" data-i18n="Construire sa fusée">Construire sa fusée</span>
+                        <span class="intro-step-text" data-i18n="Utilise tes Parts pour construire la fusée, pièce par pièce.">Utilise tes Parts pour construire la fusée, pièce par pièce.</span>
+                    </div>
+                </div>
+                <div class="intro-step">
+                    <span class="intro-step-num">4</span>
+                    <div class="intro-step-body">
+                        <span class="intro-step-title" data-i18n="Lancer sa fusée">Lancer sa fusée</span>
+                        <span class="intro-step-text" data-i18n="Vole vers une nouvelle planète toujours plus lointaine.">Vole vers une nouvelle planète toujours plus lointaine.</span>
+                    </div>
+                </div>
+                <div class="intro-step">
+                    <span class="intro-step-num">↻</span>
+                    <div class="intro-step-body">
+                        <span class="intro-step-title" data-i18n="Recommencer">Recommencer</span>
+                        <span class="intro-step-text" data-i18n="Repart de zéro avec un bonus permanent : va de plus en plus loin !">Repart de zéro avec un bonus permanent : va de plus en plus loin !</span>
+                    </div>
+                </div>
+            </div>
+            <button class="intro-btn" id="intro-start-btn" data-i18n="C'est parti !">C'est parti !</button>
+        </div>
+    </div>
     <div class="tutorial-coach" id="tutorial-coach">
         <button class="tutorial-close-btn" onclick="skipTutorial()" title="Fermer">&times;</button>
         <div class="tutorial-coach-head">

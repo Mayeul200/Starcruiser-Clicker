@@ -2971,13 +2971,18 @@ function updateSpaceProgress() {
     const sidebarSpeed = document.getElementById('sidebar-speed');
     const sidebarBonus = document.getElementById('sidebar-bonus');
 
-    // Tuile narrative "Prochaine planete" : nom, barre d'avancement et %,
-    // plus le teaser de l'etape d'apres ("Puis : Mars") pour la curiosite.
+    // Bloc narratif "Prochaine planete" (dans l'encadre jaune du header) :
+    // nom, barre d'avancement et %, plus le teaser de l'etape d'apres
+    // ("Puis : Mars") pour la curiosite.
     const nextPlanetEl = document.getElementById('sidebar-next-planet');
     const planetFillEl = document.getElementById('sidebar-planet-fill');
     const planetPctEl = document.getElementById('sidebar-planet-pct');
     const planetAfterEl = document.getElementById('sidebar-planet-after');
+    const planetBarEl = document.getElementById('sidebar-planet-bar');
     if (nextPlanetEl && planetFillEl && planetPctEl) {
+        if (planetBarEl) planetBarEl.hidden = false;
+        nextPlanetEl.hidden = false;
+        if (planetAfterEl) planetAfterEl.hidden = false;
         if (progress.nextPlanet) {
             const pct = Math.min(100, Math.max(0, progress.progressPercent));
             const afterIdx = PLANETS.findIndex(p => p.id === progress.nextPlanet.id) + 1;
@@ -6596,8 +6601,9 @@ function closeLanguagePicker() {
 function chooseGameLanguage(lang) {
     setGameLanguage(lang);
     closeLanguagePicker();
-    // Le tutoriel attend que la langue soit choisie pour demarrer.
-    if (!tutorialActive && !isTutorialSeen()) startTutorial(false);
+    // Le tutoriel attend que la langue soit choisie pour demarrer :
+    // d'abord l'ecran d'accueil, puis le coach pas-a-pas.
+    if (!tutorialActive && !isTutorialSeen()) showIntroScreen();
 }
 
 function startTutorial(force) {
@@ -6856,6 +6862,8 @@ function dismissFeatureLesson() {
 
 function init() {
     initGlobals();
+    const introStartBtn = document.getElementById('intro-start-btn');
+    if (introStartBtn) introStartBtn.addEventListener('click', () => closeIntroScreen(true));
     const npnLaunchBtn = document.getElementById('npn-launch-btn');
     if (npnLaunchBtn) {
         npnLaunchBtn.addEventListener('click', () => {
@@ -6897,6 +6905,7 @@ function init() {
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else {
+        if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) return;
         startTutorial(false);
     }
     // Joueur qui a deja fini le tutoriel : les lecons contextuelles
