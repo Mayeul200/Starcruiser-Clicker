@@ -2552,6 +2552,7 @@ function showPostTravelShop(distance) {
     }
     rocketsLaunched++;
     lastLaunchAt = Date.now();
+    updateMiniGamesVisibility();
     prestigeMultiplier = 1 + Math.log(1 + (isNaN(maxDistance) ? 0 : maxDistance) / MOON_DISTANCE) / 2;
     const dustGained = calculateStardustGain(isNaN(lastLaunchDistance) ? 0 : lastLaunchDistance);
     if (dustGained > 0) {
@@ -5452,6 +5453,15 @@ let contractState = {
     offersSeenIds: []
 };
 
+// Premiere partie seulement : les mini-jeux (Contrats, Collection) restent
+// caches tant que le joueur n'a jamais lance de fusee, pour ne pas le
+// perturber a l'arrivee. Des le premier lancement (et donc au reset qui
+// suit), les cartes reapparaisseent definitivement.
+function updateMiniGamesVisibility() {
+    const section = document.querySelector('.mini-games-section');
+    if (section) section.style.display = rocketsLaunched > 0 ? '' : 'none';
+}
+
 function areCardsUnlocked() {
     return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES;
 }
@@ -6890,6 +6900,7 @@ function init() {
     renderRocketPartsShop();
     updateConstructionScene();
     checkBuildingUnlocks();
+    updateMiniGamesVisibility();
     checkTrophies();
     initMobileNav();
     const ccLightbox = document.getElementById('cc-lightbox');
