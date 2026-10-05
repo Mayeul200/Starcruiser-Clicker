@@ -431,13 +431,17 @@ function getPrestigeProductionBoost() {
 function getPlanetProductionBonus() {
     return 1 + getTotalPlanetBonus() + unlockedTrophies.size * 0.01;
 }
+function getRocketPartProductionBonus() {
+    return 1 + 0.04 * ROCKET_PARTS.filter(p => p.purchased).length;
+}
 function getTotalProductionMultiplier() {
     const auto = isNaN(autoMultiplier) || autoMultiplier === undefined ? 1 : autoMultiplier;
     return auto
         * getCollectionMultiplier()
         * getProductionBonus()
         * getPrestigeProductionBoost()
-        * getPlanetProductionBonus();
+        * getPlanetProductionBonus()
+        * getRocketPartProductionBonus();
 }
 
 // Multiplicateur propre du batiment : upgrades (x2 par palier).
@@ -447,12 +451,12 @@ function getBuildingOwnMultiplier(building) {
 }
 function calculateBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * building.count * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
 }
 
 function calculateUnitBuildingGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * autoMultiplier * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
 }
 
 
@@ -460,7 +464,7 @@ function calculateUnitBuildingGain(building) {
 // de contrat, pour qu'une offre generee pendant un x5 reste atteignable ensuite.
 function calculateBuildingBaseGain(building) {
     const upgradeMultiplier = getBuildingUpgradeMultiplier(building.id);
-    return building.gain * building.count * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus();
+    return building.gain * building.count * upgradeMultiplier * getCollectionMultiplier() * getProductionBonus() * getPrestigeProductionBoost() * getPlanetProductionBonus() * getRocketPartProductionBonus();
 }
 // PPS total hors boost temporaire (autoMultiplier exclu) : base de calcul des
 // contrats interactifs, pour qu'une offre generee pendant un x5 reste coherente.
@@ -1478,7 +1482,7 @@ const MOON_DISTANCE = 384400;
 // Ce point d'ancrage calibre le debut de la courbe de distance.
 // 35M parts pour la Lune: premier objectif reel du jeu (baisse depuis 50M,
 // juge trop long ; 35M vise ~25-30 min de jeu actif).
-const DISTANCE_MOON_PARTS = 3.5e7;
+const DISTANCE_MOON_PARTS = 2.5e7;
 // Distance lineaire : exposant 1.0, la vitesse km/s ne diminue jamais quand
 // les parts croissent. La difficulte vient uniquement du prix des batiments
 // et de l'ancre de la Lune, pas d'un ralentissement de la distance.
@@ -7402,6 +7406,8 @@ function buyRocketPart(partId) {
     score -= cost;
     Sounds.partBuilt();
     part.purchased = true;
+    const builtCount = ROCKET_PARTS.filter(p => p.purchased).length;
+    showBuyFeedback(document.getElementById('rocket-parts-shop'), '-' + formatNumber(cost) + ' ' + t('Parts'), '+' + Math.round(4 * builtCount) + '% ' + t('production'));
     updateDisplay();
     updateConstructionScene();
     const builtCard = document.querySelector('#rocket-parts-shop .rocket-part-frame');
@@ -7457,6 +7463,7 @@ function renderRocketPartsShop() {
                 '<div class="rocket-part-info">' +
                     '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
                     '<span class="rocket-part-cost">' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +
+                    '<span class="rocket-part-mult">×' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production') + '</span>' +
                     '<div class="rocket-part-progress">' +
                         '<div class="rocket-part-progress-fill"></div>' +
                         '<span class="rocket-part-progress-label"></span>' +
@@ -7477,6 +7484,8 @@ function renderRocketPartsShop() {
         if (titleEl) titleEl.textContent = t('Prochaine étape');
         const nameEl = container.querySelector('.rocket-part-name');
         if (nameEl) nameEl.textContent = t(nextPart.name);
+        const multEl = container.querySelector('.rocket-part-mult');
+        if (multEl) multEl.textContent = '×' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production');
         const btn = container.querySelector('.rocket-part-btn');
         if (btn) {
             btn.disabled = !isAffordable;
