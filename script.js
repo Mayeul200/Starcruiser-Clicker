@@ -198,7 +198,7 @@ const UPGRADE_COLORS = [
 
 const RANDOM_BONUSES = [
     { id: "meteor", symbol: "", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" },
-    { id: "flare", symbol: "", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 4, duration: 30000, colorClass: "flare" }
+    { id: "flare", symbol: "", name: "Éruption solaire", effect: "multiplier", type: "flare", multiplier: 4, duration: 15000, colorClass: "flare" }
 ];
 
 const SAVE_VERSION = "2.2.0";
@@ -374,6 +374,33 @@ const ROCKET_PART_POSITIONS = {
 };
 
 let isLaunching = false;
+// Pause du gameplay pendant la cinematique de lancement et l'atelier post-vol :
+// production, cometes, pluie de pieces et contrats sont geles jusqu'au reset.
+let gameplayPaused = false;
+function setGameplayPaused(paused) {
+    if (paused === gameplayPaused) return;
+    gameplayPaused = paused;
+    if (paused) {
+        pauseStartedAt = Date.now();
+        // Purge immediate de tout element de jeu en cours d'ecran
+        const bonuses = document.getElementById('random-bonuses');
+        if (bonuses) bonuses.innerHTML = '';
+        if (typeof partsRain !== 'undefined' && partsRain) {
+            partsRain.parts.length = 0;
+            partsRain.spawnDebt = 0;
+        }
+    } else {
+        // Le contrat actif ne doit pas avoir expire pendant la cinematique :
+        // on decale ses echeances du temps de pause ecoule.
+        const pausedMs = Date.now() - (pauseStartedAt || Date.now());
+        if (pausedMs > 0) {
+            if (contractState.active) contractState.active.expiresAt += pausedMs;
+            if (contractState.nextRotationAt) contractState.nextRotationAt += pausedMs;
+        }
+        pauseStartedAt = 0;
+    }
+}
+let pauseStartedAt = 0;
 let launchSequenceActive = false;
 let nextPlanetNotified = false;
 
@@ -1589,6 +1616,7 @@ function launchRocket() {
     }
     
     isLaunching = true;
+    setGameplayPaused(true);
     launchSoundSequence();
     
     // Calculer la distance
@@ -2615,6 +2643,7 @@ function tryCloseGalacticShop() {
 // Bouton Continuer : ferme la modal, applique le reset avec les bonus,
 // puis affiche les resultats de la mission.
 function confirmPostTravelReset() {
+    setGameplayPaused(false);
     document.getElementById('galactic-shop-modal').classList.remove('active');
     postTravelLock = false;
     const summaryEl = document.getElementById('post-travel-summary');
@@ -3445,6 +3474,8 @@ function rebuildAutoMultipliers() {
 }
 
 function spawnRandomBonus(shower, isContract) {
+    // Pendant la cinematique de lancement, aucun bonus ne spawn.
+    if (gameplayPaused) return;
     // Pluie de comètes : bonus instantané uniquement (pas de flare, pas de
     // cumul de multiplicateurs), look distinct, récompense généreuse.
     let bonus = shower
@@ -4589,6 +4620,7 @@ function rainFrame(now) {
     }
 }
 function tickPartsRain(now) {
+    if (gameplayPaused) { partsRain.lastTick = now; return; }
     if (!ensureRainCanvas()) return;
     if (partsRain.suspended) { partsRain.lastTick = now; partsRain.spawnDebt = 0; return; }
     const rate = getPartsRainRate();
@@ -4677,6 +4709,7 @@ function getBuildingGainsSnapshot() {
 }
 
 function gameLoop() {
+    if (gameplayPaused) { lastGameTick = Date.now(); return; }
     getBuildingGainsSnapshot();
     tickPartsRain(Date.now());
     const now = Date.now();
@@ -5908,6 +5941,7 @@ function dismissBoosterReadyBanner(banner) {
     setTimeout(() => { if (banner.isConnected) banner.remove(); }, 500);
 }
 function tickContracts() {
+    if (gameplayPaused) return;
     tickBoosterTimers();
     const now = Date.now();
     if (areContractsUnlocked() && !contractState.unlockedSeen) {
@@ -7237,7 +7271,7 @@ function scheduleBonusSpawn() {
     const delay = Math.max(800, BONUS_SPAWN_INTERVAL_MS / (1 + bonus));
     clearTimeout(bonusSpawnTimer);
     bonusSpawnTimer = setTimeout(() => {
-        if (!cometShowerActive) spawnRandomBonus();
+        if (!gameplayPaused && !cometShowerActive) spawnRandomBonus();
         scheduleBonusSpawn();
     }, delay);
 }
@@ -7270,6 +7304,7 @@ function scheduleCometShower() {
     }
     firstCometShower = false;
     setTimeout(() => {
+        if (gameplayPaused) { scheduleCometShower(); return; }
         startCometShower();
         scheduleCometShower();
     }, delay);
