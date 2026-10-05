@@ -3494,6 +3494,51 @@ body {
     padding: 10px;
     z-index: 90;
 }
+/* Grands ecrans (reference 1920x1080) : case d'achat des pieces plus large
+   et contenus agrandis. Le responsive mobile/tablette declare plus bas dans
+   le fichier n'est pas affecte : cette regle ne s'applique qu'a partir de
+   1500px, hors des breakpoints mobiles existants. */
+@media (min-width: 1500px) {
+    .rocket-parts-shop {
+        width: clamp(200px, 15vw, 280px);
+        padding: 14px;
+    }
+    .rocket-part-frame {
+        gap: 0.7rem;
+        padding: 1rem 1rem;
+    }
+    .rocket-part-frame-title {
+        font-size: 0.9rem;
+    }
+    .rocket-part-left {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+    .rocket-part-icon {
+        width: 4rem;
+        height: 4rem;
+    }
+    .rocket-part-icon-placeholder {
+        width: 4rem;
+        height: 4rem;
+    }
+    .rocket-part-name {
+        font-size: 1.15rem;
+    }
+    .rocket-part-cost {
+        font-size: 0.95rem;
+    }
+    .rocket-part-progress {
+        height: 22px;
+    }
+    .rocket-part-progress-label {
+        font-size: 0.85rem;
+    }
+    .rocket-part-btn {
+        padding: 0.65rem 0.9rem;
+        font-size: 1rem;
+    }
+}
 .rocket-part-frame {
     display: flex;
     flex-direction: column;
