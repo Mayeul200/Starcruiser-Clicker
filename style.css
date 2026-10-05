@@ -826,9 +826,6 @@ body {
        le compteur : decaler le HUD de contrat sous cet espace reserve
        pour eviter toute superposition. */
     margin-top: 8px;
-}
-.hud-top-row:has(.bonus-timer.bonus-below) .contract-hud {
-    margin-top: 44px;
     flex: 0 0 auto;
     min-width: min(280px, 40cqw);
     max-width: 60%;
@@ -838,6 +835,9 @@ body {
     padding: 6px 12px 8px 12px;
     font-size: 0.9rem;
     color: var(--text);
+}
+.hud-top-row:has(.bonus-timer.bonus-below) .contract-hud {
+    margin-top: 44px;
 }
 .contract-hud-text {
     display: flex;
@@ -1754,7 +1754,16 @@ body {
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid var(--primary-light);
     box-shadow: 0 0 30px rgba(30, 58, 138, 0.3);
-    width: 100%;
+    width: 92%;
+    max-width: 460px;
+    height: auto;
+    max-height: 80vh;
+}
+#launch-results-modal {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: auto;
+    max-height: 80vh;
 }
 .launch-modal .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -3504,7 +3513,7 @@ body {
     bottom: 25px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 12px 24px;
+    padding: 12px 36px;
     background: linear-gradient(135deg, #ff4444, #cc0000);
     border: none;
     border-radius: 25px;

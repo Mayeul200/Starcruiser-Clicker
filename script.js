@@ -3493,7 +3493,7 @@ function spawnRandomBonus(shower, isContract) {
     const travelY = endY - startY;
     requestAnimationFrame(() => {
         bonusElement.style.transition = `transform ${duration}ms linear`;
-        bonusElement.style.transform = `translate(${travelX}px, ${travelY}px)`;
+        bonusElement.style.transform = `translate(${goRight ? travelX : -travelX}px, ${travelY}px)`;
     });
 
     // Queue de poussiere : particules frequentes a vie longue, qui
@@ -5493,19 +5493,25 @@ function updateMiniGamesVisibility() {
     // Carte par carte : les Contrats apparaissent des 2 types de batiments,
     // la Collection des 4 (memes conditions que le deblocage des mini-jeux).
     // Avant, le joueur ne les voit pas du tout.
+    // Persistant : une fois debloquee, une carte reste visible meme apres le
+    // reset qui suit un lancement (les batiments retombent sous le seuil).
+    if (areCardsUnlocked()) localStorage.setItem('starcruiserCardsSeen', '1');
+    if (areContractsUnlocked()) localStorage.setItem('starcruiserContractsSeen', '1');
     const contractsCard = document.getElementById('contracts-mini-card');
     if (contractsCard) contractsCard.style.display = areContractsUnlocked() ? '' : 'none';
-    const cardsCard = document.querySelector('.mini-games-container .mini-game-card:not(#contracts-mini-card)');
+    const cardsCard = document.getElementById('card-collection-mini-card');
     if (cardsCard) cardsCard.style.display = areCardsUnlocked() ? '' : 'none';
     const section = document.querySelector('.mini-games-section');
     if (section) section.style.display = (areContractsUnlocked() || areCardsUnlocked()) ? '' : 'none';
 }
 
 function areCardsUnlocked() {
-    return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES;
+    return getUnlockedBuildingTypes() >= CARD_COLLECTION_UNLOCK_BUILDING_TYPES
+        || localStorage.getItem('starcruiserCardsSeen') === '1';
 }
 function areContractsUnlocked() {
-    return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES;
+    return getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES
+        || localStorage.getItem('starcruiserContractsSeen') === '1';
 }
 
 // Genere 2 a 3 offres aleatoires parmi les 5 types, difficultes variees.
