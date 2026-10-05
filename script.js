@@ -2974,7 +2974,14 @@ function updateSpaceProgress() {
     if (planetDisplay && planetText) planetDisplay.title = planetText.textContent;
     if (planetBarFill) {
         planetBarFill.style.width = pct + '%';
-        planetBarFill.style.background = (progress.nextPlanet && progress.nextPlanet.color) || '';
+        // Teinte de la planete visee en RGB pour le fond translucide
+        // (ne masque jamais le texte, contrairement a la couleur pleine).
+        const tint = (progress.nextPlanet && progress.nextPlanet.color) || '#f59e0b';
+        const m = /^#([0-9a-f]{6})$/i.exec(tint);
+        const rgb = m
+            ? [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16)].join(', ')
+            : '245, 158, 11';
+        planetBarFill.style.setProperty('--planet-tint', rgb);
     }
     // Mettre à jour la mini-carte : meme base temps reel que le pourcentage
     updateMiniSpaceMap(reachableDistance);
