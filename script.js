@@ -777,6 +777,7 @@ function saveGame() {
     lastSaveTime = Date.now();
 }
 
+let hasSaveData = true;
 function loadGame() {
     const legacySave = localStorage.getItem('starshipClickerSave');
     if (legacySave !== null && localStorage.getItem('starcruiserClickerSave') === null) {
@@ -785,7 +786,7 @@ function loadGame() {
     if (legacySave !== null) localStorage.removeItem('starshipClickerSave');
 
     const saveData = localStorage.getItem('starcruiserClickerSave');
-    if (!saveData) return;
+    if (!saveData) { hasSaveData = false; return; }
 
     try {
         const parsed = JSON.parse(saveData);
@@ -6527,7 +6528,7 @@ const BOOSTERS = {
 };
 // Timestamps (Date.now()) de disponibilite de chaque booster : le timer tourne
 // jeu ferme (timestamp absolu). Un booster pret ne s'empile pas : son cycle
-// ne redemarre qu'a la reclamation. Premiere fois : tout est pret.
+// ne redemarre qu'a la reclamation. Premiere fois : countdown complet (pose dans init).
 let boosterReadyAt = { standard: 0, premium: 0, legendary: 0 };
 function isBoosterReady(type) {
     return Date.now() >= (boosterReadyAt[type] || 0);
@@ -7114,6 +7115,15 @@ const TUTORIAL_STEPS = [
         target: '#rocket-parts-shop',
         prefer: 'below',
     },
+{
+        img: 'images/parts.png',
+        titleKey: 'Achète ta première amélioration',
+        textKey: 'La barre Améliorations en haut propose des bonus puissants : clics boostés, production accrue, prix réduits… Achète-en une pour progresser plus vite !',
+        done: () => activatedClickUpgrades.length >= 1 || Object.values(buildingUpgrades).some(list => list.length > 0),
+        target: '#upgrades-bar',
+        prefer: 'right',
+        mandatory: true,
+    },
 ];
 let tutorialStep = 0;
 let tutorialActive = false;
@@ -7265,6 +7275,9 @@ function renderTutorialStep() {
     const coach = document.getElementById('tutorial-coach');
     if (!coach) return;
     coach.classList.add('active');
+    // Etape obligatoire : le bouton fermer est masque, impossible de la passer.
+    const closeBtn = coach.querySelector('.tutorial-close-btn');
+    if (closeBtn) closeBtn.style.display = step.mandatory ? 'none' : '';
     const stepEl = coach.querySelector('.tutorial-coach-step');
     const imgEl = coach.querySelector('.tutorial-coach-visual');
     const titleEl = coach.querySelector('.tutorial-coach-title');
@@ -7313,6 +7326,8 @@ function endTutorial() {
     const coach = document.getElementById('tutorial-coach');
     if (coach) {
         coach.classList.remove('active');
+        const endCloseBtn = coach.querySelector('.tutorial-close-btn');
+        if (endCloseBtn) endCloseBtn.style.display = '';
         positionCoachNear(coach, null);
     }
     // Le coach de base est fini : les lecons contextuelles prennent le
@@ -7452,6 +7467,15 @@ function init() {
         });
     }
     loadGame();
+    // Nouvelle partie (aucune sauvegarde) : les boosters ne sont PAS dispo
+    // des le debut -- leurs countdowns demarrent pleins.
+    if (!hasSaveData) {
+        boosterReadyAt = {
+            standard: Date.now() + BOOSTERS.standard.cooldownMs * getBoosterCooldownFactor(),
+            premium: Date.now() + BOOSTERS.premium.cooldownMs * getBoosterCooldownFactor(),
+            legendary: Date.now() + BOOSTERS.legendary.cooldownMs * getBoosterCooldownFactor()
+        };
+    }
     // Refleter le multiplicateur d'achat restaure (bouton actif de la sidebar).
     if (typeof setBuyMultiplier === 'function') setBuyMultiplier(buyMultiplier);
     applyStartupBonus();
@@ -7642,10 +7666,10 @@ scheduleBonusSpawn();
 let cometShowerActive = false;
 let firstCometShower = true;
 function scheduleCometShower() {
-    // Premiere pluie rapide (~1 min) pour que le joueur la voie tot,
-    // ensuite cadence normale toutes les 4 a 6 minutes.
+    // Premiere pluie tres rapide (~20 s) des le debut du jeu, ensuite
+    // cadence normale toutes les 4 a 6 minutes.
     const delay = firstCometShower
-        ? 55000 + Math.random() * 25000
+        ? 18000 + Math.random() * 10000
         : 240000 + Math.random() * 120000;
     if (firstCometShower) {
         // Lecon comete : armee pour tomber juste apres la premiere pluie,
