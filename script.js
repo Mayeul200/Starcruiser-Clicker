@@ -351,6 +351,11 @@ let unlockedTrophies = new Set();
 let maxDistance = 0;
 let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
+// Multiplicateur de production FIGE au dernier reset : sert de base aux
+// prix des pieces de fusee. Recalcule une seule fois par expedition (au
+// reset), pour que les prix ne suivent PAS en permanence l'evolution des
+// bonus temporaires ou achats en cours de partie.
+let partCostMultiplier = 1;
 // Horodatage du dernier lancement confirme (0 = jamais lance)
 let lastLaunchAt = 0;
 let lastLaunchDistance = 0;
@@ -722,6 +727,7 @@ function saveGame() {
         gameFinished: gameFinished,
         galacticUpgrades: {...galacticUpgrades},
         rocketsLaunched: rocketsLaunched,
+        partCostMultiplier: partCostMultiplier,
         lastLaunchAt: lastLaunchAt,
         lastLaunchDistance: lastLaunchDistance,
         // Multiplicateur d'achat (x1/x5/x10/max) : confort, sinon retombe a x1.
@@ -817,6 +823,7 @@ function loadGame() {
             }
         });
         rocketsLaunched = parsed.rocketsLaunched || 0;
+        partCostMultiplier = parsed.partCostMultiplier || 1;
         lastLaunchAt = parsed.lastLaunchAt || 0;
         lastLaunchDistance = parsed.lastLaunchDistance || 0;
         if (parsed.buyMultiplier === 'max' || [1, 5, 10].includes(parsed.buyMultiplier)) {
@@ -2822,6 +2829,11 @@ function confirmPostTravelReset() {
     totalPartsEarnedThisLaunch = 0;
     naturalPartsThisLaunch = 0;
     activeRandomBonuses = [];
+    // Prix des pieces de fusee : capture du multiplicateur de production
+    // UNE fois ici, au moment du reset (les batiments sont deja retombes a
+    // zero mais tous les bonus permanents -- prestige, planetes, collection,
+    // suite infinie -- sont deja credites). Il restera fige toute l'expedition.
+    partCostMultiplier = Math.max(1, getTotalProductionMultiplier());
     rebuildAutoMultipliers();
     updateBonusTimer();
     resetContractState();
@@ -7823,12 +7835,12 @@ function initDebugMode() {
 
 function getRocketPartCost(part) {
     const discount = Math.min(0.5, getRocketPartDiscount());
-    // Les prix montent avec le multiplicateur de production general :
-    // chaque lancement rend la fusee suivante plus puissante (prestige,
-    // planetes, collection...), les pieces coutent d'autant plus cher --
-    // la progression reste exigeante au fil des expeditions.
-    const prodMult = Math.max(1, getTotalProductionMultiplier());
-    return Math.floor(part.cost * Math.pow(ROCKET_PART_COST_GROWTH, rocketsLaunched) * prodMult * (1 - discount));
+    // Les prix montent avec le multiplicateur de production general FIGE
+    // au dernier reset : chaque expedition rend la fusee suivante plus
+    // puissante (prestige, planetes, collection...), les pieces coutent
+    // d'autant plus cher -- mais le calcul se fait UNE fois par expedition,
+    // pas en continu, pour ignorer bonus temporaires et achats en cours.
+    return Math.floor(part.cost * Math.pow(ROCKET_PART_COST_GROWTH, rocketsLaunched) * partCostMultiplier * (1 - discount));
 }
 
 function buyRocketPart(partId) {
