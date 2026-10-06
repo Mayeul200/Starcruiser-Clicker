@@ -729,16 +729,28 @@ body {
    (batiment abordable, nouveaux contrats, piece de fusee achetable).
    Le JS retire la classe apres 10 s si le joueur n'a pas agi. */
 .pulse-hint {
+    position: relative;
+}
+.pulse-hint::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    box-shadow: 0 0 26px 6px rgba(251, 191, 36, 0.95), 0 0 60px 14px rgba(251, 191, 36, 0.45);
+    opacity: 0;
     animation: pulse-hint-glow 1.6s ease-in-out infinite;
+    will-change: opacity;
 }
 @keyframes pulse-hint-glow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-    50% { box-shadow: 0 0 26px 6px rgba(251, 191, 36, 0.95), 0 0 60px 14px rgba(251, 191, 36, 0.45); }
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
 }
 
 /* Bonus actif : le compteur devient arc-en-ciel et pulse */
 .counters.bonus-active {
-    animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
+    position: relative;
     background: rgba(0, 0, 0, 0.5);
 }
 .counters.bonus-active .counter span {
@@ -767,7 +779,7 @@ body {
    le clip de fond ne descendait pas dans les colonnes odomEtre et
    rendait les chiffres noirs quand il n'Etait que sur .stat-value. */
 .stat-tile.bonus-active {
-    animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
+    position: relative;
     border-color: rgba(255, 255, 255, 0.35);
 }
 .stat-tile.bonus-active .stat-value,
@@ -777,8 +789,20 @@ body {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
 @keyframes bonus-rainbow-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-    50% { box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.45); }
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+.counters.bonus-active::after,
+.stat-tile.bonus-active::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.45);
+    opacity: 0;
+    animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
+    will-change: opacity;
 }
 .bonus-timer {
     position: static;
@@ -1489,8 +1513,8 @@ body {
     animation: showerGlow 0.5s ease-in-out infinite alternate;
 }
 @keyframes showerGlow {
-    from { filter: sepia(0.5) saturate(1.6) hue-rotate(-12deg) brightness(1.15); }
-    to   { filter: sepia(0.5) saturate(1.8) hue-rotate(-12deg) brightness(1.35); }
+    from { opacity: 0.85; }
+    to   { opacity: 1; }
 }
 .random-bonus.clicked {
     opacity: 0;
@@ -2796,13 +2820,15 @@ body {
     position: absolute;
     top: 0;
     bottom: 0;
+    left: -45%;
     width: 40%;
     background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
     animation: dest-fill-shine 2.4s ease-in-out infinite;
+    will-change: transform;
 }
 @keyframes dest-fill-shine {
-    0% { left: -45%; }
-    60%, 100% { left: 110%; }
+    0% { transform: translateX(0); }
+    60%, 100% { transform: translateX(400%); }
 }
 
 /* Mini Space Map */
@@ -3678,10 +3704,11 @@ body {
     transform: skewX(-18deg);
     animation: medal-shine-sweep 5.5s ease-in-out infinite;
     filter: blur(1px);
+    will-change: transform;
 }
 @keyframes medal-shine-sweep {
-    0%, 55%  { left: -60%; }   /* longue pause hors piece : balayage ponctuel, pas un stroboscope */
-    85%, 100% { left: 130%; }
+    0%, 55%  { transform: skewX(-18deg) translateX(0); }   /* longue pause hors piece : balayage ponctuel, pas un stroboscope */
+    85%, 100% { transform: skewX(-18deg) translateX(425%); }
 }
 
 
@@ -3695,6 +3722,7 @@ body {
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;
+    will-change: opacity;
     background:
         radial-gradient(circle,
             rgba(255, 255, 255, 0.38) 48%,
@@ -3736,8 +3764,8 @@ body {
 }
 
 @keyframes medal-halo-breathe {
-    0%, 100% { transform: scale(1);    opacity: 0.85; }
-    50%      { transform: scale(1.07); opacity: 1; }
+    0%, 100% { opacity: 0.7; }
+    50%      { opacity: 1; }
 }
 
 @keyframes medal-halo-spin {

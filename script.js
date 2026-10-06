@@ -4861,7 +4861,7 @@ function getPartsRainRate() {
     // 0.08 = 0.1 reduit de 20 % : moins de pieces visibles a debit egal.
     // Plafond dur a 100 pieces/s : au-dela, la densite visuelle n'ajoute
     // rien et la lecture du panneau central en souffre.
-    return Math.min(0.08 * Math.sqrt(partsPerSecond), 100);
+    return Math.min(0.08 * Math.sqrt(partsPerSecond), 60);
 }
 function resizeRainCanvas() {
     const canvas = partsRain.canvas;
@@ -4911,12 +4911,16 @@ function ensureRainCanvas() {
     requestAnimationFrame(rainFrame);
     return true;
 }
+const RAIN_RENDER_MIN_INTERVAL_MS = 33;
 function rainFrame(now) {
     requestAnimationFrame(rainFrame);
     const canvas = partsRain.canvas;
     const ctx = partsRain.ctx;
     if (!canvas || !ctx) return;
-    const dt = Math.min((now - (partsRain.lastFrame || now)) / 1000, 0.1);
+    // Rendu borne a ~30 fps : les pieces tombent lentement, 60 fps doublerait
+    // le cout CPU (dessin + composite du canvas) pour aucun gain visuel.
+    if (now - (partsRain.lastFrame || 0) < RAIN_RENDER_MIN_INTERVAL_MS) return;
+    const dt = Math.min((now - partsRain.lastFrame) / 1000, 0.1);
     // Horloge murale distincte : les timestamps rAF comptent depuis le
     // chargement de la page, pas l'epoch — les comparer a Date.now()
     // cassait le garde-fou de tickPartsRain et purgait la pluie a chaque tick.
@@ -4977,7 +4981,7 @@ function tickPartsRain(now) {
     // ne peut vider un stock de pieces d'un seul coup au retour.
     partsRain.spawnDebt = Math.min(partsRain.spawnDebt + (rate * (now - partsRain.lastTick)) / 1000, rate * 0.5);
     partsRain.lastTick = now;
-    while (partsRain.spawnDebt >= 1) {
+    while (partsRain.spawnDebt >= 1 && partsRain.parts.length < 240) {
         partsRain.spawnDebt -= 1;
         spawnRainPart();
     }
