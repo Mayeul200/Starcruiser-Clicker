@@ -3059,13 +3059,15 @@ body {
     text-overflow: clip;
     max-width: none;
     flex-shrink: 0;
-    /* Meme style visuel que la valeur : sur une seule ligne, le contraste
-       majuscules/0.64rem vs valeur 1.05rem cassait l'impression d'un texte
-       continu. La valeur reste legerement plus lourde (800 vs 700). */
-    font-size: 0.95rem;
+    /* Meme style exact que la valeur : meme taille, meme graisse,
+       meme couleur -- deux fragments d'un seul texte sur la ligne. */
+    font-size: 1.05rem;
+    font-weight: 800;
     color: #dbeafe;
     text-transform: none;
     letter-spacing: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    font-variant-numeric: tabular-nums;
 }
 .stat-tile.stat-tile-speed .stat-value {
     flex-shrink: 1;
@@ -3076,7 +3078,9 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: baseline;
-    gap: 6px;
+    /* Espace net entre le libelle et la valeur : la tuile prend toute la
+       largeur, on peut se permettre une vraie separation visuelle. */
+    gap: 14px;
 }
 /* Hierarchie : Portee actuelle et Distance a parcourir (stats de l'expedition
    en cours) legerement mises en avant par rapport aux stats secondaires --
