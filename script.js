@@ -7315,6 +7315,12 @@ function nextTutorialStep() {
 }
 
 function skipTutorial() {
+    // Fermeture manuelle pendant une lecon contextuelle : liberer le coach
+    // pour la lecon suivante (le tuto de base etant deja vu).
+    if (featureLessonVisible) {
+        dismissFeatureLesson();
+        return;
+    }
     endTutorial();
 }
 
@@ -7341,6 +7347,7 @@ function endTutorial() {
 // declenchement et une cle d'historisation (jamais reaffichee).
 // ============================================
 let featureLessonTimer = null;
+let featureLessonVisible = false;
 
 const FEATURE_LESSONS = [
     {
@@ -7422,7 +7429,12 @@ function startFeatureLessons() {
 }
 
 function pollFeatureLessons() {
-    if (tutorialActive) return;
+    // Les lecons contextuelles ne demarrent qu'apres le coach de base
+    // (les 4 etapes : clic, Atelier, piece de fusee, amelioration).
+    if (tutorialActive || !isTutorialSeen()) return;
+    // Une seule lecon a la fois : on attend la fermeture de la lecon
+    // courante (auto apres 12 s ou clic) avant d'en montrer une autre.
+    if (featureLessonVisible) return;
     const seen = getSeenLessons();
     const next = FEATURE_LESSONS.find(l => !seen.includes(l.key) && l.trigger && l.trigger());
     if (next) showFeatureLesson(next);
@@ -7434,6 +7446,8 @@ function getSeenLessons() {
 }
 
 function showFeatureLesson(lesson) {
+    if (featureLessonVisible) return;
+    featureLessonVisible = true;
     const seen = getSeenLessons();
     if (!seen.includes(lesson.key)) {
         seen.push(lesson.key);
@@ -7457,6 +7471,7 @@ function showFeatureLesson(lesson) {
 
 function dismissFeatureLesson() {
     clearTimeout(showFeatureLesson.hideTimer);
+    featureLessonVisible = false;
     const coach = document.getElementById('tutorial-coach');
     if (coach && !tutorialActive) {
         coach.classList.remove('active');
