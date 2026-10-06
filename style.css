@@ -758,7 +758,12 @@ body {
     position: relative;
     background: rgba(0, 0, 0, 0.5);
 }
-.counters.bonus-active .counter span {
+.counters.bonus-active .counter > span {
+    /* Enfants directs UNIQUEMENT : la couleur animee est heritee par les
+       colonnes odometre (.cch/.digit, recreees a chaque changement de
+       forme du nombre). Si elles matchaient aussi ce selecteur, chaque
+       colonne nouvelle repartait a la phase 0 de l'animation -- des
+       chiffres arc-en-ciel PAS dans la meme couleur au meme moment. */
     animation: rainbow-colors 1.5s linear infinite;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
@@ -787,9 +792,9 @@ body {
     position: relative;
     border-color: rgba(255, 255, 255, 0.35);
 }
-.stat-tile.bonus-active .stat-value,
-.stat-tile.bonus-active .stat-value .cch,
-.stat-tile.bonus-active .stat-value .cch-reel .digit {
+.stat-tile.bonus-active .stat-value {
+    /* Seule la valeur anime : les colonnes odometre heritent de la couleur
+       (meme phase partout, meme quand elles sont recreees). */
     animation: rainbow-colors 1.5s linear infinite;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
@@ -4795,6 +4800,8 @@ body.night-mode .scene-background {
     max-height: calc(100dvh - var(--top-height));
 }
 #galactic-shop-modal .modal-content {
+    /* Referent du badge record en position absolute (haut-gauche). */
+    position: relative;
     background: linear-gradient(135deg, var(--bg-panel), var(--secondary-light));
     border: 2px solid #a855f7;
     box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
@@ -4806,6 +4813,64 @@ body.night-mode .scene-background {
 #galactic-shop-modal .modal-header {
     background: linear-gradient(135deg, #a855f7, #581c87);
     border-bottom: 2px solid #a855f7;
+}
+/* Fondu de transition fin de lancement -> atelier galactique : voile noir
+   qui s'opacifie, l'atelier s'ouvre dessus, puis le voile se dissipe. */
+.post-travel-veil {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 11500;
+}
+.post-travel-veil.visible {
+    opacity: 1;
+}
+/* Badge record de distance : HAUT-GAUCHE de l'atelier post-lancement,
+   toujours visible, lisible sur le degrade violet (fond sombre dedie). */
+.post-travel-record {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 6px 12px;
+    background: rgba(2, 6, 23, 0.85);
+    border: 1px solid var(--accent-light);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+.post-travel-record .ptr-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #cbd5e1;
+}
+.post-travel-record .ptr-value {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--accent-light);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+/* Petits ecrans : le badge se resserre sans jamais recouvrir le titre. */
+@media (max-width: 640px) {
+    .post-travel-record {
+        padding: 4px 8px;
+        max-width: 46vw;
+    }
+    .post-travel-record .ptr-label { font-size: 0.6rem; }
+    .post-travel-record .ptr-value {
+        font-size: 0.85rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 /* ===== Atelier galactique post-voyage : plein ecran, non fermable ===== */
 #galactic-shop-modal.modal.post-travel {
@@ -4820,6 +4885,15 @@ body.night-mode .scene-background {
 }
 #galactic-shop-modal.modal.post-travel .close-button {
     display: none;
+}
+/* Le badge record occupe le haut-gauche : le titre laisse la place. */
+#galactic-shop-modal.modal.post-travel .modal-header {
+    padding-left: 155px;
+}
+@media (max-width: 640px) {
+    #galactic-shop-modal.modal.post-travel .modal-header {
+        padding-left: 130px;
+    }
 }
 .post-travel-summary {
     flex-shrink: 0;

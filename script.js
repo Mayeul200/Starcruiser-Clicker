@@ -1672,18 +1672,12 @@ function launchRocket() {
                 gameFinished = true;
                 saveGame();
                 showGameEnding(() => {
-                    showPostTravelShop(distance);
-                    updateSpaceProgress();
-                    updateConstructionScene();
-                    isLaunching = false;
+                    transitionToPostTravelShop(distance);
                     showToast(`${t("Fus\u00e9e lanc\u00e9e ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
                 });
                 return;
             }
-            showPostTravelShop(distance);
-            updateSpaceProgress();
-            updateConstructionScene();
-            isLaunching = false;
+            transitionToPostTravelShop(distance);
             showToast(`${t("Fusée lancée ! Distance atteinte:")} ${formatNumber(distance)} ${t("km")}`);
         });
     });
@@ -2748,6 +2742,11 @@ function showPostTravelShop(distance) {
         invalidateBuildingGainsCache();
     }
     saveGame();
+    // Badge du record de distance : HAUT-GAUCHE de la modale, toujours
+    // visible pendant l'atelier post-lancement (position absolute, il ne
+    // recouvre ni le titre ni la Poussiere d'Etoiles). Pose APRES le
+    // credit du record ci-dessus pour afficher la valeur a jour.
+    updatePostTravelRecordBadge(modal);
     const summaryEl = document.getElementById('post-travel-summary');
     if (summaryEl) {
         const newlyUnlocked = checkNewPlanetsUnlocked(distance);
@@ -2781,6 +2780,8 @@ function openGalacticShopBrowse() {
     if (!modal) return;
     postTravelLock = false;
     modal.classList.remove('post-travel');
+    const oldBadge = modal.querySelector('.post-travel-record');
+    if (oldBadge) oldBadge.remove();
     const summaryEl = document.getElementById('post-travel-summary');
     if (summaryEl) summaryEl.style.display = 'none';
     const actionsEl = document.getElementById('post-travel-actions');
@@ -3323,10 +3324,14 @@ function updateSpaceProgress() {
         && PLANETS.findIndex(p => p.id === progress.nextPlanet.id) < PLANETS.length - 1) {
         const nextIdx = PLANETS.findIndex(p => p.id === progress.nextPlanet.id);
         const target = PLANETS[nextIdx + 1];
-        const prev = PLANETS[nextIdx];
+        // La nouvelle fusee repart de la TERRE : meme si les planetes
+        // precedentes sont deja debloquees, la portee actuelle se construit
+        // depuis la Terre. Le % est donc calcule sur la distance TOTAL
+        // Terre -> destination, pas depuis la derniere planete debloquee
+        // (sinon, au retour de la Terre, le % restait fige ou sautait).
         const pct = Math.min(100, Math.max(0,
-            (reachableDistance - prev.distanceRequired) / (target.distanceRequired - prev.distanceRequired) * 100));
-        progress = { currentPlanet: prev, nextPlanet: target, progressPercent: pct };
+            reachableDistance / target.distanceRequired * 100));
+        progress = { currentPlanet: PLANETS[0], nextPlanet: target, progressPercent: pct };
     }
 
     // Afficher la progression vers la PROCHAINE planète : en temps reel sur la
@@ -3766,9 +3771,10 @@ function attachTooltip(element, text) {
     if (!IS_TOUCH) {
         element.addEventListener('mouseenter', (e) => {
             const rect = e.target.getBoundingClientRect();
-            // Tooltip des upgrades ancre sous la case : la barre d'ameliorations
-            // est en haut d'ecran, au-dessus il serait colle a la top bar.
-            showTooltip(text, rect.left + rect.width / 2, rect.top, { below: true, anchorBottom: rect.bottom });
+            // Tooltip des upgrades AU-DESSUS de la case (regle par defaut) :
+            // le clamp interne le rabat sous la case seulement s'il ne tient
+            // pas entre la case et le haut de l'ecran.
+            showTooltip(text, rect.left + rect.width / 2, rect.top, { anchorBottom: rect.bottom });
         });
         element.addEventListener('mouseleave', hideTooltip);
     }
@@ -3791,7 +3797,7 @@ function attachTooltip(element, text) {
 let touchTooltipElement = null;
 function showTouchTooltip(element, text) {
     const rect = element.getBoundingClientRect();
-    showTooltip(text, rect.left + rect.width / 2, rect.top, { anchorBottom: rect.bottom, below: true });
+    showTooltip(text, rect.left + rect.width / 2, rect.top, { anchorBottom: rect.bottom });
     touchTooltipElement = element;
 }
 document.addEventListener('touchstart', (e) => {
@@ -4410,6 +4416,20 @@ function showBuyFeedback(targetEl, costText, gainText) {
         setTimeout(() => el.remove(), cfg.cls === 'buy-feedback-gain' ? 2900 : 2500);
     });
 }
+// Badge record affiche en haut a gauche de l'atelier post-lancement :
+// la plus grande distance jamais atteinte, mise a jour au moment de
+// l'ouverture (maxDistance vient d'etre credite juste avant).
+function updatePostTravelRecordBadge(modal) {
+    let badge = modal.querySelector('.post-travel-record');
+    if (!badge) {
+        badge = document.createElement('div');
+        badge.className = 'post-travel-record';
+        modal.querySelector('.modal-content').prepend(badge);
+    }
+    badge.innerHTML =
+        '<span class="ptr-label">' + t('Distance record') + '</span>' +
+        '<span class="ptr-value">' + formatNumber(maxDistance) + ' ' + t('km') + '</span>';
+}
 // Recompense audiovisuelle de fin de lancement : gros popup central avec la
 // distance atteinte en caracteres geants, fanfare majesteuse en parallele.
 function showLaunchReward(distance) {
@@ -4420,6 +4440,25 @@ function showLaunchReward(distance) {
         '<span class="launch-reward-label">' + t('Fusée lancée ! Distance atteinte:') + '</span>';
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2900);
+}
+// Fondu de transition vers l'atelier galactique apres un lancement :
+// un voile noir s'opacifie en fin de cinematique, l'atelier s'ouvre
+// DESSUS puis le voile se dissipe -- plus de decoupe seche.
+function transitionToPostTravelShop(distance) {
+    const veil = document.createElement('div');
+    veil.className = 'post-travel-veil';
+    document.body.appendChild(veil);
+    requestAnimationFrame(() => veil.classList.add('visible'));
+    setTimeout(() => {
+        showPostTravelShop(distance);
+        updateSpaceProgress();
+        updateConstructionScene();
+        isLaunching = false;
+        setTimeout(() => {
+            veil.classList.remove('visible');
+            setTimeout(() => veil.remove(), 450);
+        }, 120);
+    }, 420);
 }
 function showClickEffect(value, event) {
     const container = document.getElementById('click-effects');
