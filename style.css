@@ -3052,6 +3052,25 @@ body {
 /* Tuile Vitesse : libelle et valeur sur la MEME LIGNE (la tuile prend
    toute la largeur de la colonne, il y a la place -- empiles c'etait
    une perte de hauteur). Doit venir APRES .stat-tile pour l'emporter. */
+.stat-tile.stat-tile-speed .stat-label {
+    /* Sur la meme ligne que la valeur : pas de coupe ni de ellipse, sinon
+       le libelle est tronque au profit de la valeur et parait decalle. */
+    overflow: visible;
+    text-overflow: clip;
+    max-width: none;
+    flex-shrink: 0;
+    /* Meme style visuel que la valeur : sur une seule ligne, le contraste
+       majuscules/0.64rem vs valeur 1.05rem cassait l'impression d'un texte
+       continu. La valeur reste legerement plus lourde (800 vs 700). */
+    font-size: 0.95rem;
+    color: #dbeafe;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.stat-tile.stat-tile-speed .stat-value {
+    flex-shrink: 1;
+    overflow: hidden;
+}
 .stat-tile.stat-tile-speed {
     grid-column: 1 / -1;
     flex-direction: row;
@@ -3496,6 +3515,12 @@ body {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     z-index: 0;
+}
+/* Fond de nuit : le joueur explore de nuit (20h-6h heure locale).
+   Meme composition que le jour (meme recalage de la dalle), le ciel
+   et l'eclairage passent en version nocturne. */
+body.night-mode .scene-background {
+    background-image: url('images/backgrounds/valley-night.png');
 }
 /* Grille 100x100 (optionnelle) */
 .grid-100x100 {
@@ -4326,12 +4351,15 @@ body {
     height: 85vh;
 }
 #card-collection-modal.modal {
-    width: 50%;
-    max-width: 50%;
+    /* Largeur du panneau central +5px : le bord droit reste colle au
+       bord, le bord gauche deborde de 5px pour masquer le fond. */
+    width: calc(50% + 5px);
+    max-width: calc(50% + 5px);
     top: var(--top-height);
     left: 50%;
-    /* +5px a droite : la modale colle au bord du panneau central. */
-    transform: translateX(calc(-50% + 5px));
+    /* Bord droit inchangé (colle au bord du panneau), bord gauche
+       decale de 5px vers la gauche pour masquer le fond visible. */
+    transform: translateX(calc(-50% + 2.5px));
     height: calc(100vh - var(--top-height));
     height: calc(100dvh - var(--top-height));
     max-height: calc(100vh - var(--top-height));
@@ -4743,12 +4771,15 @@ body {
 
 /* ATELIER GALACTIQUE - Arbre d'améliorations */
 #galactic-shop-modal.modal {
-    width: 50%;
-    max-width: 50%;
+    /* Largeur du panneau central +5px : le bord droit reste colle au
+       bord, le bord gauche deborde de 5px pour masquer le fond. */
+    width: calc(50% + 5px);
+    max-width: calc(50% + 5px);
     top: var(--top-height);
     left: 50%;
-    /* +5px a droite : la modale colle au bord du panneau central. */
-    transform: translateX(calc(-50% + 5px));
+    /* Bord droit inchangé (colle au bord du panneau), bord gauche
+       decale de 5px vers la gauche pour masquer le fond visible. */
+    transform: translateX(calc(-50% + 2.5px));
     height: calc(100vh - var(--top-height));
     height: calc(100dvh - var(--top-height));
     max-height: calc(100vh - var(--top-height));

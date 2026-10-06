@@ -7030,6 +7030,16 @@ function applyUiScale() {
     const scale = Math.max(0.8, Math.min(wScale, hScale));
     document.documentElement.style.setProperty('--ui-scale', scale.toFixed(3));
 }
+// Fond de scene jour/nuit : la vallee passe en version nocturne quand le
+// joueur joue entre 20h et 6h (heure locale). Reverifie chaque minute pour
+// basculer proprement si la partie reste ouverte pendant le changement d'heure.
+function updateDayNightBackground() {
+    const hour = new Date().getHours();
+    const night = hour >= 20 || hour < 6;
+    document.body.classList.toggle('night-mode', night);
+}
+setInterval(updateDayNightBackground, 60000);
+
 function applySceneScale() {
     // Le monde scene-world (1024x744, dimensions natives du fond) contient le
     // decor ET la fusée dans le meme repere : une seule echelle uniforme,
@@ -7594,6 +7604,7 @@ function init() {
     // depend de la hauteur rendue de la scene, fausse tant que le CSS et les
     // polices ne sont pas appliques.
     applySceneScale();
+    updateDayNightBackground();
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) {
