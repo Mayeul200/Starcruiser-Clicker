@@ -273,6 +273,7 @@
                         <span class="stat-label" data-i18n="Bonus planètes:">Bonus planètes:</span>
                         <span class="stat-value" id="sidebar-bonus">x1.00</span>
                     </div>
+                </div>
                 <div class="space-progress-footer"><button class="galactic-shop-btn" onclick="toggleGalacticShop()" title="Atelier Galactique" data-i18n-title="Atelier Galactique">
                         <span class="galactic-shop-label"> <span data-i18n="Atelier">Atelier</span></span>
                         <span class="galactic-shop-stardust" title="Poussière d'Étoiles (prestige)" data-i18n-title="Poussière d'Étoiles (prestige)">✨ <span id="stardust-value">0</span></span>
@@ -281,7 +282,6 @@
                             <span class="galactic-shop-preview-text">+<span id="stardust-preview-value">0</span> ✨</span>
                         </span>
                     </button></div>
-            </div>
             </div>
 <!-- MINI-GAMES SECTION -->
             <div class="mini-games-section">
@@ -577,7 +577,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v55';
+            var APP_CACHE_VERSION = 'v56';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;
