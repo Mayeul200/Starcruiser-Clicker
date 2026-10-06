@@ -767,6 +767,19 @@ body {
     animation: rainbow-colors 1.5s linear infinite;
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
+/* La regle generique ".counter span" force la couleur ambre sur TOUS les
+   span descendants, y compris les colonnes odometre .cch/.digit : leur
+   propre couleur statique empechait l'heritage de la couleur arc-en-ciel
+   animee du parent -- les chiffres du compteur restaient ambre pendant
+   tout le bonus. On neutralise leur couleur pendant le bonus : sans
+   couleur propre, elles heritent de l'animation du parent. */
+.counters.bonus-active .counter .cch,
+.counters.bonus-active .counter .cch-reel,
+.counters.bonus-active .counter .digit,
+.counters.bonus-active .counter .cch-sep,
+.counters.bonus-active .counter .cch-group {
+    color: inherit;
+}
 @keyframes rainbow-slide {
     0% { background-position: 0% 50%; }
     100% { background-position: 200% 50%; }

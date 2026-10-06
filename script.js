@@ -6138,7 +6138,11 @@ function acceptContract(offerId) {
         return;
     }
     score -= offer.price;
-    partsSinceLaunch = Math.max(0, partsSinceLaunch - offer.price);
+    // partsSinceLaunch (le compteur qui alimente la portee de la fusee) ne
+    // doit JAMAIS diminuer : les achats de batiments, de pieces et
+    // d'ameliorations ne le retirent pas. Le retirer ici faisait reculer
+    // la portee actuelle -- le "retour en arriere du score" observe sur la
+    // progression de la prochaine destination.
     contractState.active = {
         offerId: offer.id,
         typeId: offer.typeId,
