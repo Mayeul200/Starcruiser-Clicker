@@ -3838,7 +3838,10 @@ function spawnRandomBonus(shower, isContract) {
     // La traînée part du haut et descend jusqu'en bas
     const containerTopOffset = document.getElementById('random-bonuses').getBoundingClientRect().top;
     const containerHeight = window.innerHeight - containerTopOffset;
-    const startY = -180;
+    // La comete doit entrer par le TOUT HAUT de l'ECRAN (y < 0 en coordonnees
+    // viewport), pas depuis le haut du conteneur (qui commence sous la barre
+    // du haut) -- sinon elle semble "sortir de la barre noire".
+    const startY = -containerTopOffset - 180;
     const endY = containerHeight + 180;
     const verticalTravel = endY - startY;
     // À 60°, déplacement horizontal = vertical / tan(60°) ~ 0.577

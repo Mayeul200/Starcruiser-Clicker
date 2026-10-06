@@ -1535,11 +1535,20 @@ body {
    Deux lignes : cout en rouge (montee rapide), gain de production en vert
    (apparition decalee). Position absolue dans la carte, sans decaler la mise
    en page. */
-@keyframes buyFeedbackIn {
+/* Cout et gain partent du meme ancrage mais s'ecartent en V : le cout
+   file vers la gauche, le gain vers la droite -- plus aucune
+   superposition pendant la montee. */
+@keyframes buyFeedbackInCost {
     0% { opacity: 0; transform: translate(-50%, 8px) scale(0.7); }
-    14% { opacity: 1; transform: translate(-50%, -8px) scale(1.08); }
-    75% { opacity: 1; transform: translate(-50%, -28px) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -48px) scale(0.92); }
+    14% { opacity: 1; transform: translate(-108%, -8px) scale(1.08); }
+    75% { opacity: 1; transform: translate(-115%, -28px) scale(1); }
+    100% { opacity: 0; transform: translate(-122%, -48px) scale(0.92); }
+}
+@keyframes buyFeedbackInGain {
+    0% { opacity: 0; transform: translate(-50%, 8px) scale(0.7); }
+    14% { opacity: 1; transform: translate(8%, -14px) scale(1.08); }
+    75% { opacity: 1; transform: translate(15%, -34px) scale(1); }
+    100% { opacity: 0; transform: translate(22%, -54px) scale(0.92); }
 }
 .buy-feedback {
     position: fixed;
@@ -1548,12 +1557,14 @@ body {
     white-space: nowrap;
     pointer-events: none;
     z-index: 13000;
-    animation: buyFeedbackIn 2.2s ease-out forwards;
+    animation-duration: 2.2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: forwards;
     opacity: 0;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.5);
 }
-.buy-feedback-cost { color: #ff6b6b; animation-delay: 0s; }
-.buy-feedback-gain { color: #7CFC98; animation-delay: 0.45s; }
+.buy-feedback-cost { color: #ff6b6b; animation-name: buyFeedbackInCost; animation-delay: 0s; }
+.buy-feedback-gain { color: #7CFC98; animation-name: buyFeedbackInGain; animation-delay: 0.45s; }
 /* Flash de la carte "Prochaine etape" quand une piece est construite */
 @keyframes partBuiltFlash {
     0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
@@ -4306,7 +4317,8 @@ body {
     max-width: 50%;
     top: var(--top-height);
     left: 50%;
-    transform: translateX(-50%);
+    /* +5px a droite : la modale colle au bord du panneau central. */
+    transform: translateX(calc(-50% + 5px));
     height: calc(100vh - var(--top-height));
     height: calc(100dvh - var(--top-height));
     max-height: calc(100vh - var(--top-height));
@@ -4722,7 +4734,8 @@ body {
     max-width: 50%;
     top: var(--top-height);
     left: 50%;
-    transform: translateX(-50%);
+    /* +5px a droite : la modale colle au bord du panneau central. */
+    transform: translateX(calc(-50% + 5px));
     height: calc(100vh - var(--top-height));
     height: calc(100dvh - var(--top-height));
     max-height: calc(100vh - var(--top-height));
