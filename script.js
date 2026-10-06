@@ -747,6 +747,7 @@ function saveGame() {
         planetBonuses: {...planetBonuses},
         cardCollection: {...cardCollection},
         boosterReadyAt: {...boosterReadyAt},
+        boosterTimersStarted: boosterTimersStarted,
         activeRandomBonuses: activeRandomBonuses.map(bonus => ({
             id: bonus.id,
             effect: bonus.effect,
@@ -883,6 +884,8 @@ function loadGame() {
 
         if (parsed.boosterReadyAt) {
             boosterReadyAt = { standard: parsed.boosterReadyAt.standard || 0, premium: parsed.boosterReadyAt.premium || 0, legendary: parsed.boosterReadyAt.legendary || 0 };
+            // Compat ancienne sauvegarde : des deadlines posees => timers deja demarres.
+            boosterTimersStarted = !!(parsed.boosterTimersStarted !== undefined ? parsed.boosterTimersStarted : (boosterReadyAt.standard > 0 || boosterReadyAt.premium > 0 || boosterReadyAt.legendary > 0));
         }
         if (parsed.cardCollection) {
             cardCollection = {...parsed.cardCollection};
@@ -6249,6 +6252,7 @@ function failContract() {
 
 let boosterReadyNotified = { standard: false, premium: false, legendary: false };
 function tickBoosterTimers() {
+    maybeStartBoosterTimers();
     const modalOpen = document.getElementById('card-collection-modal')?.classList.contains('active');
     if (modalOpen) updateBoosterTimers();
     for (const key in BOOSTERS) {
@@ -6541,10 +6545,31 @@ const BOOSTERS = {
 // jeu ferme (timestamp absolu). Un booster pret ne s'empile pas : son cycle
 // ne redemarre qu'a la reclamation. Premiere fois : countdown complet (pose dans init).
 let boosterReadyAt = { standard: 0, premium: 0, legendary: 0 };
+// Les countdowns des boosters ne demarrent qu'au PREMIER deblocage de la
+// collection de cartes -- pas des le debut d'une nouvelle partie : le joueur
+// qui n'a pas encore acces a la collection ne voit pas ses timers tourner.
+// false = jamais demarres (indisponibles) ; true = cycles normaux.
+let boosterTimersStarted = false;
+function maybeStartBoosterTimers() {
+    if (boosterTimersStarted || !areCardsUnlocked()) return;
+    boosterTimersStarted = true;
+    // Ne pas ecraser des deadlines deja connues d'une sauvegarde anterieure
+    // dont le flag manquait (les timers y avaient deja commence a l'init).
+    if (boosterReadyAt.standard > 0 || boosterReadyAt.premium > 0 || boosterReadyAt.legendary > 0) return;
+    boosterReadyAt = {
+        standard: Date.now() + BOOSTERS.standard.cooldownMs * getBoosterCooldownFactor(),
+        premium: Date.now() + BOOSTERS.premium.cooldownMs * getBoosterCooldownFactor(),
+        legendary: Date.now() + BOOSTERS.legendary.cooldownMs * getBoosterCooldownFactor()
+    };
+}
 function isBoosterReady(type) {
+    if (!boosterTimersStarted) return false;
     return Date.now() >= (boosterReadyAt[type] || 0);
 }
 function getBoosterRemainingMs(type) {
+    // Timers pas encore demarres (collection non debloquee) : le countdown
+    // complet est montre a titre indicatif, il ne tourne pas encore.
+    if (!boosterTimersStarted) return BOOSTERS[type].cooldownMs * getBoosterCooldownFactor();
     return Math.max(0, (boosterReadyAt[type] || 0) - Date.now());
 }
 function getBoosterCooldownFactor() {
@@ -7519,13 +7544,10 @@ function init() {
     }
     loadGame();
     // Nouvelle partie (aucune sauvegarde) : les boosters ne sont PAS dispo
-    // des le debut -- leurs countdowns demarrent pleins.
+    // des le debut -- leurs countdowns demarrent au PREMIER deblocage de
+    // la collection de cartes (voir maybeStartBoosterTimers).
     if (!hasSaveData) {
-        boosterReadyAt = {
-            standard: Date.now() + BOOSTERS.standard.cooldownMs * getBoosterCooldownFactor(),
-            premium: Date.now() + BOOSTERS.premium.cooldownMs * getBoosterCooldownFactor(),
-            legendary: Date.now() + BOOSTERS.legendary.cooldownMs * getBoosterCooldownFactor()
-        };
+        boosterTimersStarted = false;
     }
     // Refleter le multiplicateur d'achat restaure (bouton actif de la sidebar).
     if (typeof setBuyMultiplier === 'function') setBuyMultiplier(buyMultiplier);
