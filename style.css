@@ -2791,15 +2791,16 @@ body {
     overflow: hidden;
     font-size: 0.95rem;
     font-weight: 700;
-    /* Jaune d'origine restaure : fond ambre translucide + bord accent,
-       au lieu du degrade marron qui alourdissait la colonne. */
-    color: var(--accent-light);
-    background: rgba(245, 158, 11, 0.1);
+    /* Refonte bleu clair : la case est un « objectif » -- un bleu clair
+       lumineux la fait ressortir sans l'agressivite de l'ambre, et
+       l'unite visuelle avec les tuiles primaires est conservee. */
+    color: #bfdbfe;
+    background: linear-gradient(160deg, rgba(59, 130, 246, 0.14), rgba(30, 64, 175, 0.18));
     padding: 7px 12px 14px;
     border-radius: 10px;
-    border: 1px solid var(--accent);
+    border: 1px solid rgba(96, 165, 250, 0.6);
     text-align: center;
-    box-shadow: inset 0 0 18px rgba(251, 191, 36, 0.08);
+    box-shadow: inset 0 0 18px rgba(96, 165, 250, 0.10);
 }
 .current-planet-display #current-planet-text {
     position: relative;
@@ -2826,17 +2827,17 @@ body {
     pointer-events: none;
 }
 .current-planet-display .header-planet-fill {
-    --planet-tint: 245, 158, 11;
+    --planet-tint: 96, 165, 250;
     position: absolute;
     left: 0;
     bottom: 0;
     height: 11px;
     width: 0%;
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    background: linear-gradient(90deg, #3b82f6, #7dd3fc);
     border-radius: 0 3px 3px 0;
     transition: width 0.4s ease;
     pointer-events: none;
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.7);
+    box-shadow: 0 0 8px rgba(125, 211, 252, 0.7);
     overflow: hidden;
 }
 .current-planet-display .header-planet-fill::after {
@@ -2972,6 +2973,8 @@ body {
     z-index: 1500;
     min-width: 220px;
     max-width: 300px;
+    /* Petits ecrans : la bulle ne doit JAMAIS sortir de l'ecran. */
+    max-width: min(300px, calc(100vw - 16px));
     background: linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
     border: 1px solid rgba(245, 158, 11, 0.55);
     border-radius: 10px;
@@ -3033,10 +3036,11 @@ body {
     min-width: 0;
 }
 /* Hierarchie : Portee actuelle et Distance a parcourir (stats de l'expedition
-   en cours) legerement mises en avant par rapport aux stats secondaires. */
+   en cours) legerement mises en avant par rapport aux stats secondaires --
+   meme famille bleu clair que la case Prochaine destination. */
 .stat-tile.stat-tile-primary {
-    border-color: rgba(245, 158, 11, 0.55);
-    background: rgba(245, 158, 11, 0.07);
+    border-color: rgba(96, 165, 250, 0.55);
+    background: rgba(59, 130, 246, 0.10);
 }
 .stat-label {
     font-size: 0.64rem;
@@ -5896,8 +5900,12 @@ body {
 }
 @keyframes tutorialFloat {    0%, 100% { transform: translateY(0); }    50% { transform: translateY(-10px); }}
 
+/* Popups / bulles / coach : garanties anti-debordement sur petits ecrans */
+@media (max-width: 640px) {
+    .stat-tile-info { min-width: 0; width: calc(100vw - 16px); }
+}
 @media (max-width: 480px) and (pointer: coarse) {
-    .tutorial-coach { width: calc(100vw - 20px); bottom: calc(10px + var(--mobile-nav-height, 0px)); }
+    .tutorial-coach { width: calc(100vw - 20px); bottom: calc(10px + var(--mobile-nav-height, 0px)); max-height: calc(100dvh - 24px - var(--mobile-nav-height, 0px)); overflow-y: auto; }
     .tutorial-coach-title { font-size: 0.95rem; }
     .tutorial-coach-text { font-size: 0.8rem; }
     .tutorial-coach-visual { width: calc(34px * var(--mscale, 1)); height: calc(34px * var(--mscale, 1)); }

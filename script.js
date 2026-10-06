@@ -3285,6 +3285,15 @@ function toggleStatTileInfo(tile) {
     bubble.appendChild(closeBtn);
     tile.appendChild(bubble);
     statTileInfoBubble = bubble;
+    // Anti-debordement : la bulle centree sur la tuile peut sortir de
+    // l'ecran a gauche (sidebar etroite) ou a droite. On la recentre dans
+    // le viewport en ajustant left/right apres le premier rendu.
+    requestAnimationFrame(() => {
+        if (!statTileInfoBubble) return;
+        const r = statTileInfoBubble.getBoundingClientRect();
+        if (r.left < 8) statTileInfoBubble.style.left = 'calc(50% + ' + Math.round(8 - r.left) + 'px)';
+        else if (r.right > window.innerWidth - 8) statTileInfoBubble.style.left = 'calc(50% - ' + Math.round(r.right - (window.innerWidth - 8)) + 'px)';
+    });
 }
 function closeStatTileInfo() {
     if (statTileInfoBubble) {
@@ -7146,10 +7155,18 @@ const TUTORIAL_STEPS = [
     },
     {
         img: 'images/buildings/workshop.png',
-        titleKey: 'Construis ton premier Atelier',
+        titleKey: 'Achète ton premier bâtiment !',
         textKey: 'Les bâtiments produisent des Parts tout seuls. Achète un Atelier dans le panneau Bâtiments.',
         done: () => (findBuildingById('workshop')?.count || 0) >= 1,
         target: '#building-workshop',
+    },
+    {
+        img: 'images/parts.png',
+        titleKey: 'Achète ta première amélioration',
+        textKey: 'La barre Améliorations en haut propose des bonus qui te permettent de doubler ta puissance de clic et doubler la production sur chaque bâtiment. Achète-en une pour progresser plus vite !',
+        done: () => activatedClickUpgrades.length >= 1 || Object.values(buildingUpgrades).some(list => list.length > 0),
+        target: '.counters',
+        prefer: 'below',
     },
     {
         img: 'images/rocket/Fusée3.png',
@@ -7157,14 +7174,6 @@ const TUTORIAL_STEPS = [
         textKey: 'Achète les pièces de fusée une par une afin de construire la fusée entièrement et pouvoir lancer l\'expédition !',
         done: () => ROCKET_PARTS.some(p => p.purchased),
         target: '#rocket-parts-shop',
-        prefer: 'below',
-    },
-{
-        img: 'images/parts.png',
-        titleKey: 'Achète ta première amélioration',
-        textKey: 'La barre Améliorations en haut propose des bonus qui te permettent de doubler ta puissance de clic et doubler la production sur chaque bâtiment. Achète-en une pour progresser plus vite !',
-        done: () => activatedClickUpgrades.length >= 1 || Object.values(buildingUpgrades).some(list => list.length > 0),
-        target: '.counters',
         prefer: 'below',
     },
 ];
@@ -7515,8 +7524,9 @@ function showFeatureLesson(lesson) {
     if (titleEl) titleEl.textContent = t(lesson.titleKey);
     if (textEl) textEl.textContent = t(lesson.textKey);
     positionCoachNear(coach, lesson.target, lesson.prefer);
+    // Fermeture UNIQUEMENT par la croix : la lecon reste affichee tant que
+    // le joueur ne la ferme pas lui-meme (plus de disparition automatique).
     clearTimeout(showFeatureLesson.hideTimer);
-    showFeatureLesson.hideTimer = setTimeout(dismissFeatureLesson, 12000);
 }
 
 function dismissFeatureLesson() {
