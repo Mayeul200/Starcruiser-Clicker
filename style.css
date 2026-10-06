@@ -2724,60 +2724,43 @@ body {
 /* Teinte --planet-tint posee par le JS (couleur de la planete visee) :
    translucide pour ne jamais masquer le texte ; bord d'arrivee lumineux,
    reflet anime, dans le style des jauges du jeu. */
-.current-planet-display .header-planet-fill {
-    --planet-tint: 245, 158, 11;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg,
-        rgba(var(--planet-tint), 0.20) 0%,
-        rgba(var(--planet-tint), 0.34) 82%,
-        rgba(var(--planet-tint), 0.46) 100%);
-    border-right: 2px solid rgba(var(--planet-tint), 0.9);
-    border-radius: var(--radius);
-    box-shadow: inset 0 -6px 12px rgba(0, 0, 0, 0.18);
-    transition: width 0.4s;
-    pointer-events: none;
-    overflow: hidden;
-}
-.current-planet-display .header-planet-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 34%;
-    background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.16) 50%, transparent 100%);
-    animation: planet-fill-shine 2.8s ease-in-out infinite;
-}
-@keyframes planet-fill-shine {
-    0% { left: -40%; }
-    60%, 100% { left: 110%; }
-}
+/* Case Prochaine destination : version moderne et minimaliste.
+   Fond sobre, fine barre de progression discrete en bas de case,
+   teintee de la couleur de la planete visee -- pas d'effet flashy. */
 .current-planet-display {
     position: relative;
-    flex: 1 1 100%;
-    min-width: 0;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--accent-light);
-    background: rgba(245, 158, 11, 0.1);
-    padding: 6px 10px;
-    border-radius: var(--radius);
-    border: 1px solid var(--accent);
+    color: #e2e8f0;
+    background: rgba(15, 23, 42, 0.55);
+    padding: 10px 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border-light);
     text-align: center;
 }
 .current-planet-display #current-planet-text {
     position: relative;
     z-index: 1;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
     letter-spacing: 0.02em;
+    white-space: nowrap;
 }
+.current-planet-display .header-planet-fill {
+    --planet-tint: 245, 158, 11;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0%;
+    background: rgba(var(--planet-tint), 0.85);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    pointer-events: none;
+}
+
 /* Mini Space Map */
 .mini-space-map {
     height: clamp(120px, 22vh, 158px);
@@ -2878,6 +2861,10 @@ body {
 /* Space Stats */
 /* Stats spatiales : grille gaming 2x2 — un rectangle divise en 4 tuiles.
    Titre en haut de chaque tuile, valeur centree en dessous, lisible. */
+.stat-tile-speed {
+    grid-column: 1 / -1;
+}
+
 .space-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;

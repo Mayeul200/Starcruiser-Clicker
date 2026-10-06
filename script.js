@@ -3253,8 +3253,10 @@ function updateSpaceProgress() {
             : '245, 158, 11';
         planetBarFill.style.setProperty('--planet-tint', rgb);
     }
-    // Mettre à jour la mini-carte : meme base temps reel que le pourcentage
-    updateMiniSpaceMap(reachableDistance);
+    // Mettre a jour la mini-carte : elle montre le RECORD (la plus grande
+    // distance reellement parcourue), pas l'avancement de la fusee en
+    // construction -- le joueur voit ou ses expeditions passees sont allees.
+    updateMiniSpaceMap(traveledDistance);
 
     // Mettre à jour les stats
     const sidebarDistance = document.getElementById('sidebar-distance');
