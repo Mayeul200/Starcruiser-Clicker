@@ -2898,6 +2898,58 @@ body {
     grid-column: 1 / -1;
 }
 
+/* Bulle d'information au clic sur une case de la Progression Spatiale */
+.stat-tile {
+    position: relative;
+    cursor: pointer;
+}
+.stat-tile-info {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1500;
+    min-width: 220px;
+    max-width: 300px;
+    background: linear-gradient(160deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+    border: 1px solid rgba(245, 158, 11, 0.55);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 18px rgba(251, 191, 36, 0.12);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--text);
+    pointer-events: auto;
+    animation: sti-pop 0.18s ease-out;
+}
+@keyframes sti-pop {
+    from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.sti-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--accent, #fbbf24);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+}
+.sti-line {
+    color: #cbd5e1;
+    margin-bottom: 3px;
+}
+.sti-line:last-of-type { margin-bottom: 0; }
+.sti-close {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+}
+.sti-close:hover { color: #fff; }
+
 .space-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;

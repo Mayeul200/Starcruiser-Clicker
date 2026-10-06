@@ -3205,6 +3205,94 @@ function toggleGalacticShop() {
 // SPACE PROGRESS SIDEBAR UPDATE
 // ============================================
 
+// ============================================
+// INFOS CLIC SUR LA PROGRESSION SPATIALE
+// ============================================
+// Chaque case de la colonne Progression Spatiale est cliquable :
+// une petite bulle d'information explique ce que represente la valeur,
+// avec des donnees dynamiques (record, bonus, vitesse...).
+function statTileInfoText(tileId) {
+    const progress = calculatePlanetProgress(calculateDistance());
+    const target = progress.nextPlanet ? progress.nextPlanet : progress.currentPlanet;
+    switch (tileId) {
+        case 'sidebar-distance':
+            return t('Portée actuelle') + '\n' +
+                t('Distance maximale que votre fusée actuelle pourrait parcourir si vous la lanciez maintenant.') + '\n' +
+                t('Elle augmente avec chaque Part gagnée et chaque pièce de fusée achetée.');
+        case 'sidebar-distance-needed': {
+            const needed = target ? Math.max(0, target.distanceRequired - calculateDistance()) : 0;
+            return t('Distance à parcourir') + '\n' +
+                t('Distance restante pour atteindre') + ' ' + (target ? t(target.name) : '?') + ' : ' + formatNumber(needed) + ' ' + t('km') + '.\n' +
+                t('Une fois atteinte, votre fusée pourra voyager jusqu\'à cette destination.');
+        }
+        case 'sidebar-speed': {
+            const kmS = calculateTravelSpeedKmS();
+            return t('Vitesse') + '\n' +
+                t('Nombre de kilomètres de portée que votre fusée gagne chaque seconde.') + '\n' +
+                t('Actuellement') + ' : +' + formatTravelSpeed(kmS) + ' ' + t('de portée par seconde') + '.';
+        }
+        case 'sidebar-distance-max':
+            return t('Distance record') + '\n' +
+                t('Plus grande distance réellement parcourue lors d\'une expédition précédente.') + '\n' +
+                t('Cette valeur est permanente : elle survit aux nouvelles expéditions.') + '\n' +
+                t('Record actuel') + ' : ' + formatNumber(maxDistance) + ' ' + t('km');
+        case 'sidebar-bonus': {
+            const totalBonus = 1 + getTotalPlanetBonus();
+            return t('Bonus planètes') + '\n' +
+                t('Bonus de production cumulé des planètes atteintes lors de vos expéditions.') + '\n' +
+                t('Chaque nouvelle destination débloquée augmente ce bonus de façon permanente.') + '\n' +
+                t('Bonus actuel') + ' : x' + totalBonus.toFixed(2);
+        }
+        default:
+            return '';
+    }
+}
+
+// Bulle d'info partagee pour les cases de la sidebar : un seul popup a la
+// fois, fermé par un clic a l'exterieur ou sur la croix.
+let statTileInfoBubble = null;
+function toggleStatTileInfo(tile) {
+    if (!tile) return;
+    // Les IDs (sidebar-speed...) sont sur les spans internes, pas sur la tile.
+    const valueSpan = tile.querySelector('.stat-value');
+    const tileId = valueSpan ? valueSpan.id : tile.id;
+    if (statTileInfoBubble && statTileInfoBubble.dataset.forTile === tileId) {
+        closeStatTileInfo();
+        return;
+    }
+    closeStatTileInfo();
+    const text = statTileInfoText(tileId);
+    if (!text) return;
+    const bubble = document.createElement('div');
+    bubble.className = 'stat-tile-info';
+    bubble.dataset.forTile = tileId;
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'sti-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeStatTileInfo(); });
+    const lines = text.split('\n');
+    lines.forEach((line, idx) => {
+        const p = document.createElement(idx === 0 ? 'div' : 'div');
+        p.className = idx === 0 ? 'sti-title' : 'sti-line';
+        p.textContent = line;
+        bubble.appendChild(p);
+    });
+    bubble.appendChild(closeBtn);
+    tile.appendChild(bubble);
+    statTileInfoBubble = bubble;
+}
+function closeStatTileInfo() {
+    if (statTileInfoBubble) {
+        statTileInfoBubble.remove();
+        statTileInfoBubble = null;
+    }
+}
+document.addEventListener('click', (e) => {
+    if (statTileInfoBubble && !e.target.closest('.stat-tile-info') && !e.target.closest('.stat-tile')) {
+        closeStatTileInfo();
+    }
+});
+
 function updateSpaceProgress() {
     // Distance atteignable en temps reel (estimation)
     const reachableDistance = calculateDistance();
@@ -3311,6 +3399,14 @@ function updateSpaceProgress() {
         const totalBonus = 1 + getTotalPlanetBonus();
         sidebarBonus.textContent = 'x' + totalBonus.toFixed(2);
     }
+    // Infos au clic : brancher une seule fois sur chaque tile existante.
+    const allTiles = document.querySelectorAll('#space-stats-sidebar .stat-tile, #space-stats-bottom .stat-tile');
+    allTiles.forEach(tileEl => {
+        if (!tileEl.dataset.infoBound) {
+            tileEl.dataset.infoBound = '1';
+            tileEl.addEventListener('click', () => toggleStatTileInfo(tileEl));
+        }
+    });
     checkNextPlanetNotification();
 }
 
