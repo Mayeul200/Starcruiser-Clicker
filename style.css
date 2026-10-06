@@ -796,13 +796,15 @@ body {
 .stat-tile.bonus-active::after {
     content: '';
     position: absolute;
-    inset: -1px;
+    inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.45);
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    box-shadow: 0 0 22px 4px rgba(255, 255, 255, 0.55), 0 0 44px 10px rgba(255, 255, 255, 0.25);
     opacity: 0;
     animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
     will-change: opacity;
+    z-index: 1;
 }
 .bonus-timer {
     position: static;
@@ -1668,7 +1670,10 @@ body {
 }
 .toast {
     position: relative;
-    pointer-events: none;
+    /* Cliquable : le tap ferme la notification ET absorbe le clic -- il ne
+       doit PLUS passer au bouton situe derriere (ex. Lancer la fusee). */
+    pointer-events: auto;
+    cursor: pointer;
     background: var(--secondary-light);
     color: var(--text);
     padding: clamp(6px, 1vh, 10px) clamp(12px, 1.4vw, 20px);
@@ -2800,6 +2805,20 @@ body {
     letter-spacing: 0.02em;
     white-space: nowrap;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+/* Rail discret toujours visible : sans lui la barre est invisible a 0 %
+   et le joueur ne devine pas ou elle apparaitra. */
+.current-planet-display::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 5px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
 }
 .current-planet-display .header-planet-fill {
     --planet-tint: 245, 158, 11;
@@ -5695,6 +5714,12 @@ body {
     margin: 0 0 6px;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
+.intro-logo {
+    width: min(70vw, 420px);
+    margin: 6px auto 4px;
+    display: block;
+    filter: drop-shadow(0 0 24px rgba(255, 215, 0, 0.35));
+}
 .intro-title {
     font-size: clamp(1.5rem, 4vw, 2.4rem);
     font-weight: 900;
@@ -5702,6 +5727,16 @@ body {
     color: #ffd700;
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.8);
     margin: 0 0 22px;
+}
+/* Titre remplace par le logotype : garde le h1 pour l'accessibilite/SEO
+   mais il sort du flux visuel. */
+.intro-title-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    margin: -1px;
 }
 .intro-steps {
     display: flex;

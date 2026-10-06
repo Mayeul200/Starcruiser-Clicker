@@ -674,28 +674,38 @@ function dismissToast(toast) {
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
     setTimeout(() => { if (toast.isConnected) toast.remove(); }, 400);
 }
-// Les toasts sont en pointer-events: none : ils ne doivent jamais
-// intercepter les gestes (scroll tactile) derriere eux.
-// Un tap (sans glissement) sur une notification la ferme quand meme :
-// on teste geometriquement la position du doigt/curseur contre les toasts.
+// Les notifications sont cliquables : le tap ferme le toast ET absorbe
+// le clic (stopPropagation) pour ne JAMAIS declencher l'element situe
+// derriere -- avant, un tap sur "Booster pret !" cliquait aussi le
+// bouton Lancer la fusee au meme endroit.
+// Le container reste pointer-events: none : seuls les toasts captent.
 let toastTapCandidate = null;
 document.addEventListener('pointerdown', (e) => {
-    toastTapCandidate = { x: e.clientX, y: e.clientY, id: e.pointerId };
-});
+    toastTapCandidate = { x: e.clientX, y: e.clientY, id: e.pointerId, toast: e.target.closest ? e.target.closest('.toast.active') : null };
+}, true);
 document.addEventListener('pointerup', (e) => {
     const start = toastTapCandidate;
     toastTapCandidate = null;
     if (!start || start.id !== e.pointerId) return;
+    if (!start.toast || !start.toast.isConnected) return;
     if (Math.abs(e.clientX - start.x) > 10 || Math.abs(e.clientY - start.y) > 10) return;
-    const toasts = document.querySelectorAll('.toast.active');
-    for (const toast of toasts) {
-        const r = toast.getBoundingClientRect();
-        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
-            dismissToast(toast);
-            return;
-        }
+    if (e.target.closest && e.target.closest('.toast.active')) {
+        e.stopPropagation();
+        dismissToast(start.toast);
     }
-});
+}, true);
+// Ceinture anti-click-through : le clic genere apres le pointerup est
+// annule quand il vient d'un toast (le navigateur emet click sur
+// l'element le plus haut, ici le toast, mais un rest de l'ancien
+// comportement pouvait laisser passer l'evenement).
+document.addEventListener('click', (e) => {
+    const toast = e.target.closest ? e.target.closest('.toast') : null;
+    if (toast) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (toast.classList.contains('active')) dismissToast(toast);
+    }
+}, true);
 
 // ============================================
 // SAVE / LOAD
@@ -3903,7 +3913,13 @@ function spawnRandomBonus(shower, isContract) {
     // ~20 elements persistants au lieu de creer/detruire 1500 par seconde.
     const TRAIL_INTERVAL_MS = 60;
     const TRAIL_LIFE_MS = 900;
-    const dirX = goRight ? 1 : -1;
+    // Direction REELLE du vol (normalisee) : la derive de la trainee doit
+    // etre colineaire a la trajectoire, pas a un angle 60 deg fixe -- la
+    // bande centrale resserree la diagonale et les cometes de contrat
+    // volent plus vite, si bien que la trainee derivait HORS de l'axe.
+    const flightLen = Math.hypot(travelX, travelY0) || 1;
+    const dirVX = (goRight ? 1 : -1) * travelX / flightLen;
+    const dirVY = travelY0 / flightLen;
     // Fraction du noyau dans le conteneur (identique aux variables CSS --nx/--ny)
 
     const trailPool = [];
@@ -3938,7 +3954,7 @@ function spawnRandomBonus(shower, isContract) {
         trail.style.transition = '';
         requestAnimationFrame(() => {
             trail.style.opacity = '0';
-            trail.style.transform = `translate(-50%, -50%) translate(${-dirX * drift * 0.5 + spread * 0.4}px, ${-drift * 0.866 + spread * 0.6}px) scale(0.2)`;
+            trail.style.transform = `translate(-50%, -50%) translate(${(-dirVX * drift + -dirVY * spread * 0.55).toFixed(1)}px, ${(-dirVY * drift + dirVX * spread * 0.55).toFixed(1)}px) scale(0.2)`;
         });
         trailInUse.push(trail);
         // Recyclage : les particules expirees retournent au pool (cache)
@@ -7115,8 +7131,8 @@ const TUTORIAL_STEPS = [
         titleKey: 'Achète ta première amélioration',
         textKey: 'La barre Améliorations en haut propose des bonus puissants : clics boostés, production accrue, prix réduits… Achète-en une pour progresser plus vite !',
         done: () => activatedClickUpgrades.length >= 1 || Object.values(buildingUpgrades).some(list => list.length > 0),
-        target: '#upgrades-bar',
-        prefer: 'right',
+        target: '.counters',
+        prefer: 'below',
         mandatory: true,
     },
 ];
@@ -7226,12 +7242,19 @@ function positionCoachNear(coach, selector, prefer) {
     // la piece ni ne sort de l'ecran ; sinon le moins penalise.
     const candidates = [
         { x: rect.left + rect.width / 2 - cw / 2, y: rect.bottom + margin },
+        // Variante 'below' decalee : si le centrage sous la cible couvre
+        // la piece, un petit decalage lateral suffit souvent a la liberer
+        // tout en restant sous la cible -- mieux qu'un rebasculement
+        // au-dessus qui cache le contexte.
+        { x: rect.left + rect.width / 2 - cw / 2 - Math.min(160, cw * 0.5), y: rect.bottom + margin },
         { x: rect.left + rect.width / 2 - cw / 2, y: rect.top - margin - ch },
         { x: rect.right + margin, y: rect.top + rect.height / 2 - ch / 2 },
         { x: rect.left - margin - cw, y: rect.top + rect.height / 2 - ch / 2 },
     ];
     // Preference de placement demandee par la lecon : ce cote est teste en
     // premier, les autres restent en repli si jamais il couvre la piece.
+    // 'below' est le sens par defaut : la cible reste visible AU-DESSUS du
+    // coach, ce qui se lit mieux (fleche du contexte vers l'explication).
     if (prefer === 'above') {
         const above = candidates.splice(1, 1)[0];
         candidates.unshift(above);
