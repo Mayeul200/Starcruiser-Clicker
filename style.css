@@ -2967,9 +2967,7 @@ body {
 /* Space Stats */
 /* Stats spatiales : grille gaming 2x2 — un rectangle divise en 4 tuiles.
    Titre en haut de chaque tuile, valeur centree en dessous, lisible. */
-.stat-tile-speed {
-    grid-column: 1 / -1;
-}
+
 
 /* Bulle d'information au clic sur une case de la Progression Spatiale */
 .stat-tile {
@@ -3045,6 +3043,16 @@ body {
     border: 1px solid rgba(71, 85, 105, 0.4);
     border-radius: 6px;
     min-width: 0;
+}
+/* Tuile Vitesse : libelle et valeur sur la MEME LIGNE (la tuile prend
+   toute la largeur de la colonne, il y a la place -- empiles c'etait
+   une perte de hauteur). Doit venir APRES .stat-tile pour l'emporter. */
+.stat-tile.stat-tile-speed {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
+    gap: 6px;
 }
 /* Hierarchie : Portee actuelle et Distance a parcourir (stats de l'expedition
    en cours) legerement mises en avant par rapport aux stats secondaires --
