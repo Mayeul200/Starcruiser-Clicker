@@ -432,6 +432,18 @@ body {
 #contracts-modal .modal-body {
     overflow-y: auto;
 }
+/* Hauteur des modales Stats et Parametres : auto -- elles s'arretent
+   juste apres leur contenu au lieu d'aller jusqu'en bas de l'ecran. */
+#stats-modal.modal,
+#settings-modal.modal {
+    height: auto;
+    max-height: calc(100dvh - var(--top-height));
+}
+#stats-modal .modal-body,
+#settings-modal .modal-body {
+    overflow-y: auto;
+    max-height: 70dvh;
+}
 
 #contracts-modal .modal-header {
     flex-wrap: nowrap;
@@ -1930,29 +1942,21 @@ body {
     8% { transform: translate3d(0, 0, 0) scale(1); }
     100% { transform: translate3d(0, -110vh, 0) scale(1.05); opacity: 0; }
 }
-/* Astronaute : place a DROITE du pas de tir ; des le clic sur Lancer,
-   il court vers le bord DROIT de l'image du panneau central (monde 1024px).
-   Deplacement en px (le % serait relatif a sa propre largeur de 25px).
-   Il part de x=73% du monde (747px) et doit sortir du cadre droit. */
-.astronaut-running {
-    animation: astronautRunOut 1.5s linear forwards !important;
+/* Astronaute : place a GAUCHE du pas de tir ; des le clic sur Lancer,
+   il saute et entre dans le cockpit de la fusée (monde 1024px).
+   Trajectoire : petit elan vers la fusée, arc de saut vers le cockpit
+   (x=50%, y~314), puis disparition douce dans le cockpit. */
+.astronaut-jumping {
+    animation: astronautJumpToCockpit 1.4s cubic-bezier(0.45, 0, 0.55, 1) forwards !important;
 }
-@keyframes astronautRunOut {
-    0% { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
-    8% { transform: translate(calc(-50% + 36px), 0) rotate(-3deg); }
-    16% { transform: translate(calc(-50% + 72px), 0) rotate(3deg); }
-    24% { transform: translate(calc(-50% + 108px), 0) rotate(-3deg); }
-    32% { transform: translate(calc(-50% + 144px), 0) rotate(3deg); }
-    40% { transform: translate(calc(-50% + 180px), 0) rotate(-3deg); }
-    48% { transform: translate(calc(-50% + 216px), 0) rotate(3deg); }
-    56% { transform: translate(calc(-50% + 252px), 0) rotate(-3deg); }
-    64% { transform: translate(calc(-50% + 288px), 0) rotate(3deg); }
-    72% { transform: translate(calc(-50% + 324px), 0) rotate(-3deg); }
-    80% { transform: translate(calc(-50% + 360px), 0) rotate(3deg); }
-    88% { transform: translate(calc(-50% + 396px), 0) rotate(-2deg); }
-    96% { transform: translate(calc(-50% + 420px), 0) rotate(2deg); }
-    99% { transform: translate(calc(-50% + 425px), 0) rotate(0deg); opacity: 1; }
-    100% { transform: translate(calc(-50% + 430px), 0) rotate(0deg); opacity: 0; }
+@keyframes astronautJumpToCockpit {
+    0%   { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
+    20%  { transform: translate(calc(-50% + 22px), -14px) rotate(-6deg); }
+    40%  { transform: translate(calc(-50% + 52px), -110px) rotate(-10deg); }
+    60%  { transform: translate(calc(-50% + 78px), -240px) rotate(-8deg); }
+    78%  { transform: translate(calc(-50% + 96px), -308px) rotate(-4deg); opacity: 1; }
+    90%  { transform: translate(calc(-50% + 102px), -321px) rotate(0deg); opacity: 0.85; }
+    100% { transform: translate(calc(-50% + 104px), -321px) rotate(0deg); opacity: 0; }
 }
 /* Flammes sous les moteurs : jets coniques orangés vacillants.
    Ancrées au bas des tuyères (y=666) : le HAUT des jets affleure les
@@ -3818,7 +3822,7 @@ body {
     top: var(--top-height);
     left: 0;
     bottom: 0;
-    width: clamp(132px, 24cqw, 185px);
+    width: clamp(119px, 21.6cqw, 166px);
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -3844,7 +3848,7 @@ body {
     }
     .building-image { max-height: 20cqw; }
     .rocket-parts-shop {
-        width: clamp(200px, 15vw, 280px);
+        width: clamp(180px, 13.5vw, 252px);
         padding: 14px;
     }
     .rocket-part-frame {
@@ -3988,14 +3992,14 @@ body {
 }
 .rocket-part-btn {
     width: 100%;
-    padding: 0.5rem 0.7rem;
+    padding: 0.75rem 0.7rem;
     background: var(--primary);
     color: white;
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
-    font-size: 0.88rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     transition: all 0.2s;
 }
 .rocket-part-btn:hover:not(:disabled) {
@@ -4012,13 +4016,13 @@ body {
 }
 .rocket-part-btn {
     margin-top: 2px;
-    padding: 3px 8px;
+    padding: 7px 8px;
     border: none;
     border-radius: 6px;
     background: var(--primary);
     color: white;
-    font-size: 0.65rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
     /* Plus de nowrap : sur petit ecran "Construire — 250 Parts"
        debordait du cadre. Le texte passe a la ligne dans la largeur

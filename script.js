@@ -150,7 +150,7 @@ const ROCKET_PARTS = [
     { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
     { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
     { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
-    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "", imgPath: "images/rocket/astronaut.png",     x: 60,    y: 635, width: 25,  height: 60,  order: 10, purchased: false }
+    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "", imgPath: "images/rocket/astronaut.png",     x: 39.8,  y: 635, width: 25,  height: 60,  order: 10, purchased: false }
 ];
 
 
@@ -1724,7 +1724,7 @@ function playLaunchSequence(onDone) {
         if (smoke) smoke.remove();
         const astronaut = container.querySelector('.rocket-piece.astronaut');
         if (astronaut) {
-            astronaut.classList.remove('astronaut-running');
+            astronaut.classList.remove('astronaut-jumping');
             astronaut.style.opacity = '';
         }
         if (medal) medal.style.pointerEvents = '';
@@ -1733,13 +1733,13 @@ function playLaunchSequence(onDone) {
     };
 
     // Étape 1 : compte à rebours 3..2..1. Seule la fusée tremble ;
-    // l'astronaute, lui, court hors du pas de tir dès le clic.
+    // l'astronaute, lui, saute dans le cockpit dès le clic.
     const steps = ['3', '2', '1'];
     let stepIndex = 0;
     const stepMs = 700;
     rocketWrap.classList.add('launch-shaking');
     const astronaut = container.querySelector('.rocket-piece.astronaut');
-    if (astronaut) astronaut.classList.add('astronaut-running');
+    if (astronaut) astronaut.classList.add('astronaut-jumping');
     countdown.textContent = steps[0];
     countdown.classList.add('pulsing');
     const stepTimer = setInterval(() => {
