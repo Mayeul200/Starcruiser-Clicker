@@ -508,10 +508,10 @@ body {
     pointer-events: none;
 }
 .modal-parts-counter .modal-parts-value {
-    color: #ffd700;
+    color: var(--accent-light);
 }
 .modal-parts-counter .modal-parts-gain {
-    color: #ffd700;
+    color: var(--accent-light);
 }
 .close-button {
     font-size: calc(1.25rem * var(--ui-scale, 1));
@@ -859,7 +859,7 @@ body {
     height: 42px;
     border-radius: 50%;
     border: 4px solid rgba(255, 255, 255, 0.15);
-    border-top-color: #ffd700;
+    border-top-color: var(--accent-light);
     animation: loading-spin 0.9s linear infinite;
 }
 .loading-text {
@@ -1606,7 +1606,7 @@ body {
     display: block;
     font-size: 2.6rem;
     font-weight: 900;
-    color: #ffd700;
+    color: var(--accent-light);
     text-shadow: 0 0 18px rgba(255, 215, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.9);
     white-space: nowrap;
 }
@@ -1621,7 +1621,7 @@ body {
 
 .click-effect {
     position: absolute;
-    color: #ffd700;
+    color: var(--accent-light);
     font-size: 1.9rem;
     font-weight: 800;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 14px rgba(255, 215, 0, 0.45);
@@ -1650,7 +1650,7 @@ body {
     text-shadow: 0 3px 14px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 0, 0, 0.5);
 }
 .bonus-pop-instant {
-    color: #ffd700;
+    color: var(--accent-light);
     filter: drop-shadow(0 0 18px rgba(255, 190, 40, 0.55));
 }
 .bonus-pop-mult {
@@ -2566,7 +2566,7 @@ body {
     text-shadow: 0 0 24px rgba(59, 130, 246, 0.9), 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 .travel-distance span {
-    color: var(--accent-light, #93c5fd);
+    color: var(--blue-soft);
 }
 .travel-distance #travel-distance-value {
     display: inline-flex;
@@ -2849,7 +2849,7 @@ body {
     bottom: 0;
     height: 11px;
     width: 0%;
-    background: linear-gradient(90deg, var(--blue-soft), #93c5fd);
+    background: linear-gradient(90deg, var(--blue-soft), #bfdbfe);
     border-radius: 0 3px 3px 0;
     transition: width 0.4s ease;
     pointer-events: none;
@@ -3386,8 +3386,8 @@ body {
 }
 
 /* Labels de difficulte des contrats */
-.diff-easy { color: #4ade80; font-weight: 700; }
-.diff-normal { color: #93c5fd; font-weight: 700; }
+.diff-easy { color: #34d399; font-weight: 700; }
+.diff-normal { color: var(--blue-soft); font-weight: 700; }
 .diff-hard { color: #f87171; font-weight: 700; }
 .contract-sub {
     font-size: 0.78rem;
@@ -3411,7 +3411,7 @@ body {
 
 .contract-progress div {
     height: 100%;
-    background: linear-gradient(90deg, #22c55e, #4ade80);
+    background: linear-gradient(90deg, #10b981, #34d399);
     border-radius: 6px;
     transition: width 0.3s;
 }
@@ -3513,7 +3513,12 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    /* Calage horizontal (regle du pas de tir) : le bord droit de la tour
+       du pas de tir (x monde 678.5) doit tomber sur le point central de la
+       dalle de beton, a 35 % de son bord droit (x image ~670.6). L'image
+       entiere reste visible : le div est legerement elargi (~1.2 %, distorsion
+       invisible) et l'excedent deborde a droite, masque par le bord de scene. */
+    width: calc(100% + 12px);
     height: 100%;
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
@@ -3898,7 +3903,7 @@ body.night-mode .scene-background {
     left: 50%;
     transform: translateX(-50%);
     padding: 12px 64px;
-    background: linear-gradient(135deg, #ff4444, #cc0000);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     border: none;
     border-radius: 25px;
     color: white;
@@ -4263,7 +4268,7 @@ body.night-mode .scene-background {
     justify-content: flex-end;
 }
 .counter span {
-    color: #ffd700;
+    color: var(--accent-light);
     display: inline-block;
     min-width: 1ch;
 }
@@ -4455,7 +4460,7 @@ body.night-mode .scene-background {
 }
 .ccb-mult {
     font-size: 1em;
-    color: #ffd700;
+    color: var(--accent-light);
     font-variant-numeric: tabular-nums;
 }
 .cc-booster-btn {
@@ -4799,7 +4804,7 @@ body.night-mode .scene-background {
     flex-direction: column;
 }
 #galactic-shop-modal .modal-header {
-    background: linear-gradient(135deg, #7c3aed, #581c87);
+    background: linear-gradient(135deg, #a855f7, #581c87);
     border-bottom: 2px solid #a855f7;
 }
 /* ===== Atelier galactique post-voyage : plein ecran, non fermable ===== */
@@ -5084,7 +5089,7 @@ body.night-mode .scene-background {
     transition: background 0.2s;
 }
 .galactic-btn:hover:not(:disabled) {
-    background: #9333ea;
+    background: #a855f7;
     transform: scale(1.05);
 }
 .galactic-btn:disabled {
@@ -5712,7 +5717,7 @@ body.night-mode .scene-background {
     font-size: 1.2rem;
     font-weight: bold;
     color: white;
-    background: linear-gradient(135deg, #ff4444, #cc0000);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     border: none;
     border-radius: 30px;
     cursor: pointer;
@@ -5785,7 +5790,7 @@ body.night-mode .scene-background {
     font-weight: 600;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: #93c5fd;
+    color: var(--blue-soft);
     margin: 0 0 6px;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
@@ -5799,7 +5804,7 @@ body.night-mode .scene-background {
     font-size: clamp(1.5rem, 4vw, 2.4rem);
     font-weight: 900;
     letter-spacing: 2px;
-    color: #ffd700;
+    color: var(--accent-light);
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.8);
     margin: 0 0 22px;
 }
@@ -5842,7 +5847,7 @@ body.night-mode .scene-background {
 .intro-step-title {
     font-weight: 900;
     font-size: clamp(0.95rem, 1.6vw, 1.25rem);
-    color: #ffd700;
+    color: var(--accent-light);
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 .intro-step-text {
@@ -5863,7 +5868,7 @@ body.night-mode .scene-background {
     50% { opacity: 1; transform: translateX(4px); }
 }
 .intro-btn {
-    background: linear-gradient(160deg, #ffd700, #f59e0b);
+    background: linear-gradient(160deg, var(--accent-light), var(--accent));
     color: #1a1200;
     border: none;
     border-radius: 12px;
