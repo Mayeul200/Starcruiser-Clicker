@@ -6822,15 +6822,12 @@ function renderRevealCards(cards) {
     container.style.setProperty('--card-count', cards.length);
     document.getElementById('cc-reveal-shop-btn').style.display = 'none';
     document.getElementById('cc-reveal-album-btn').style.display = 'none';
-    const revealAllBtn = document.getElementById('cc-reveal-all-btn');
-    if (revealAllBtn) revealAllBtn.style.display = '';
     const total = cards.length;
     let revealed = 0;
     const checkAllRevealed = function () {
         if (revealed >= total) {
             document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
             document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
-            if (revealAllBtn) revealAllBtn.style.display = 'none';
         }
     };
 
@@ -6896,26 +6893,6 @@ function renderRevealCards(cards) {
         container.appendChild(el);
     };
     showCard();
-}
-
-function revealAllCards() {
-    // Paquet sequential : retourner la carte courante puis l'envoler,
-    // en chaine, jusqu'au recap final.
-    const el = document.querySelector('#cc-reveal-cards .cc-reveal-card.pack:not(.pack-out)');
-    if (el) {
-        el.click();
-        if (el.classList.contains('flipped')) {
-            setTimeout(function () {
-                if (el.isConnected) el.click();
-            }, 750);
-        }
-        setTimeout(function () { revealAllCards(); }, 1200);
-    } else {
-        document.getElementById('cc-reveal-shop-btn').style.display = 'inline-flex';
-        document.getElementById('cc-reveal-album-btn').style.display = 'inline-flex';
-        const revealAllBtn = document.getElementById('cc-reveal-all-btn');
-        if (revealAllBtn) revealAllBtn.style.display = 'none';
-    }
 }
 
 function renderCardAlbum() {

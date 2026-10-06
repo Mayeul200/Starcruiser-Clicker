@@ -4520,12 +4520,17 @@ body {
 .cc-reveal-card.pack {
     width: min(78cqw, 420px, 72cqh);
 }
-/* Recap final : toutes les cartes retournees cote a cote */
+/* Recap final : toutes les cartes retournees cote a cote, bien plus
+   grandes -- avec 1 carte par booster le recap est la derniere chose
+   que le joueur voit, elle doit etre lisible. Meme base que le paquet
+   sequential (78cqw / 420px), mais le plafond de HAUTEUR est 55cqh :
+   la carte est en aspect-ratio 2/3 (hauteur = 1,5 x largeur), le
+   cap 72cqh du paquet laissait la hauteur deborder du conteneur. */
 .cc-reveal-card.summary {
     width: min(
-        calc((100cqw - (var(--card-count, 3) - 1) * 14px) / var(--card-count, 3)),
-        240px,
-        calc(50cqh)
+        calc((78cqw - (var(--card-count, 1) - 1) * 14px) / var(--card-count, 1)),
+        420px,
+        55cqh
     );
     cursor: default;
 }
