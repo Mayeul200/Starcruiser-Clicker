@@ -5873,9 +5873,9 @@ function getContractTypes() {
             objective: 'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)',
             track: 'comets',
             diffs: [
-                { target: 4, price: Math.max(12, pps * 8),  rewardMult: 2, rewardType: 'instant', instantSec: 22 },
-                { target: 7, price: Math.max(100, pps * 20), rewardMult: 3, rewardType: 'instant', instantSec: 45 },
-                { target: 11, price: Math.max(375, pps * 45), rewardMult: 5, rewardType: 'instant', instantSec: 60 }
+                { target: 4, price: Math.max(6, pps * 4),  rewardMult: 2, rewardType: 'instant', instantSec: 22 },
+                { target: 7, price: Math.max(50, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 45 },
+                { target: 11, price: Math.max(190, pps * 22), rewardMult: 5, rewardType: 'instant', instantSec: 60 }
             ]
         },
         {
@@ -7385,6 +7385,24 @@ const FEATURE_LESSONS = [
         target: '#launch-button',
     },
     {
+        key: 'space-stats',
+        titleKey: 'Progression Spatiale',
+        textKey: 'La colonne de gauche résume ton expédition : Portée actuelle (jusqu’où ta fusée peut aller si tu la lancerais maintenant), Vitesse (km de portée gagnés par seconde), Distance record (permanente) et Bonus planètes. Clique sur chaque case pour une explication détaillée !',
+        img: 'images/planets/moon.png',
+        trigger: () => totalPartsFromClicks >= 25 || findBuildingById('workshop')?.count >= 3,
+        target: '#space-stats-sidebar',
+        prefer: 'right',
+    },
+    {
+        key: 'galactic-shop',
+        titleKey: 'Atelier Galactique',
+        textKey: 'L’Atelier Galactique (bouton violet sous la mini-carte) propose des améliorations PERMANENTES achetées avec la Poussière d’Étoiles gagnée à chaque lancement : production, fusée, collection, clics… Elles survivent aux nouvelles expéditions. Ouvre-le quand tu as des PE !',
+        img: 'images/rocket/astronaut.png',
+        trigger: () => starDust >= 2,
+        target: '.galactic-shop-btn',
+        prefer: 'right',
+    },
+    {
         key: 'first-launch',
         titleKey: 'Bon voyage !',
         textKey: 'Chaque lancement termine une expédition : ta nouvelle fusée repart de la Terre, mais tes destinations débloquées, ta distance record et tes bonus permanents sont conservés. Vise de plus en plus loin !',
@@ -7660,7 +7678,7 @@ scheduleBonusSpawn();
 // ============================================
 // PLUIE DE COMÈTES (événement régulier)
 // ============================================
-// Toutes les 4 à 6 minutes, une cascade de comètes dorées traverse
+// Toutes les 7 à 10 minutes, une cascade de comètes dorées traverse
 // l'écran : chacune ne donne que du bonus instantané (jamais de flare),
 // pour éviter tout cumul de multiplicateurs.
 let cometShowerActive = false;
@@ -7669,8 +7687,8 @@ function scheduleCometShower() {
     // Premiere pluie tres rapide (~20 s) des le debut du jeu, ensuite
     // cadence normale toutes les 4 a 6 minutes.
     const delay = firstCometShower
-        ? 18000 + Math.random() * 10000
-        : 240000 + Math.random() * 120000;
+        ? 45000 + Math.random() * 20000
+        : 420000 + Math.random() * 180000;
     if (firstCometShower) {
         // Lecon comete : armee pour tomber juste apres la premiere pluie,
         // quand le joueur a vraiment vu une comete a l'ecran.
