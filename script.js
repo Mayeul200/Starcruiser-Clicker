@@ -2123,6 +2123,8 @@ function playTravelAnimation(distance, onDone) {
             img.alt = '';
             img.draggable = false;
             el.appendChild(img);
+            el.style.width = '100px';
+            el.style.height = (100 / model.ar).toFixed(2) + 'px';
             el.style.display = 'none';
             deepEl.appendChild(el);
             oortField.push({
@@ -2312,9 +2314,7 @@ function playTravelAnimation(distance, onDone) {
             const swayX = Math.sin(ph * 0.9 + 0.4) * 28 + Math.sin(ph * 1.7) * 12;
             const swayY = Math.sin(ph * 0.6) * 20;
             const breathe = 1 + Math.sin(ph * 0.6 + 1.2) * 0.024;
-            rocketEl.style.left = (rocketX + swayX) + 'px';
-            rocketEl.style.top = (rocketY + swayY) + 'px';
-            rocketEl.style.transform = 'translate(-50%, -50%) scale(' + breathe.toFixed(4) + ')';
+            rocketEl.style.transform = 'translate3d(' + (rocketX + swayX).toFixed(1) + 'px, ' + (rocketY + swayY).toFixed(1) + 'px, 0) translate(-50%, -50%) scale(' + breathe.toFixed(4) + ')';
         }
 
         // ---- Compteur de km : distances reelles, synchronisees au
@@ -2339,12 +2339,9 @@ function playTravelAnimation(distance, onDone) {
             const inv = 1 / st.rel;
             const x = W / 2 + st.ox * 0.5 * W * inv;
             const y = horizonY + pitchK * inv + st.oy * H * 0.85 * inv;
-            st.el.style.left = x.toFixed(1) + 'px';
-            st.el.style.top = y.toFixed(1) + 'px';
-            // Grossit en s'approchant, scintillement conserve.
+            // Grossit en s'approche : scale sur une base 1px, compositE GPU.
             const sz = Math.min(5, st.size * (0.6 + inv * 0.55));
-            st.el.style.width = sz.toFixed(1) + 'px';
-            st.el.style.height = sz.toFixed(1) + 'px';
+            st.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0) translate(-50%, -50%) scale(' + sz.toFixed(2) + ')';
             // Sorties d'ecran masquees (l'etoile reapparaitra au recyclage).
             if (x < -6 || x > W + 6 || y < -6 || y > H + 6) {
                 st.el.style.opacity = '0';
@@ -2375,10 +2372,7 @@ function playTravelAnimation(distance, onDone) {
             const ang = Math.atan2(dy, dx) * 180 / Math.PI + 90;
             // Longueur : croit avec la vitesse et la proximite.
             const streakLen = (16 + speedNorm * 150) * (0.35 + inv * 0.5);
-            s.el.style.left = x.toFixed(1) + 'px';
-            s.el.style.top = y.toFixed(1) + 'px';
-            s.el.style.height = streakLen.toFixed(1) + 'px';
-            s.el.style.transform = 'translate(-50%, -50%) rotate(' + ang.toFixed(1) + 'deg)';
+            s.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0) translate(-50%, -50%) rotate(' + ang.toFixed(1) + 'deg) scaleY(' + streakLen.toFixed(1) + ')';
             // Opacite : visible des les premieres planetes, LINEAIRE
             // sur la position absolue, pleine a haute vitesse.
             const op = Math.min(1, 0.32 + 0.68 * speedNorm) * (0.3 + s.depth * 0.7) * Math.min(1, inv * 0.9);
@@ -2411,16 +2405,16 @@ function playTravelAnimation(distance, onDone) {
                 b.el.style.opacity = '0';
                 return;
             }
-            b.el.style.left = pr.x.toFixed(1) + 'px';
-            b.el.style.top = pr.y.toFixed(1) + 'px';
             // Entree en douceur generalisee : fondu d'opacite au moment
             // ou la planete entre dans sa fenetre de visibilite, taille
             // de depart reduite pour la planete post-Oort.
             const rel = b.z - cameraZ;
             const fadeIn = Math.max(0, Math.min(1, (lookahead - rel) / 2.5));
             b.el.style.opacity = (fadeIn * fadeIn * (3 - 2 * fadeIn)).toFixed(2);
-            b.el.style.width = Math.max(6, pr.size * (b.scale || 1) * (b.distant ? 0.85 : 1)).toFixed(1) + 'px';
-            b.el.style.transform = 'translate(-50%, -50%)';
+            // Perspective par scale compositE : la planete a une largeur de
+            // base 100px posee une fois, on ne fait plus que la scaler.
+            const px = Math.max(0.02, pr.size * (b.scale || 1) * (b.distant ? 0.85 : 1) / 300);
+            b.el.style.transform = 'translate3d(' + pr.x.toFixed(1) + 'px, ' + pr.y.toFixed(1) + 'px, 0) translate(-50%, -50%) scale(' + px.toFixed(3) + ')';
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
             // derriere la camera gardent leur ordre naturel.
@@ -2470,12 +2464,8 @@ function playTravelAnimation(distance, onDone) {
                 const size = Math.max(1.5, o.size * inv);
                 const op = o.op * appear * Math.min(1, rel * 2.2);
                 if (!o.on) { o.el.style.display = ''; o.on = true; }
-                o.el.style.left = sx.toFixed(1) + 'px';
-                o.el.style.top = sy.toFixed(1) + 'px';
-                o.el.style.width = size.toFixed(1) + 'px';
-                o.el.style.height = (size / o.ar).toFixed(1) + 'px';
                 o.el.style.opacity = op.toFixed(2);
-                o.el.style.transform = 'translate(-50%, -50%) rotate(' + (o.rot + o.spin * (o.layer === 2 ? 2.2 : 0.5)) + 'deg)';
+                o.el.style.transform = 'translate3d(' + sx.toFixed(1) + 'px, ' + sy.toFixed(1) + 'px, 0) translate(-50%, -50%) rotate(' + (o.rot + o.spin * (o.layer === 2 ? 2.2 : 0.5)) + 'deg) scale(' + (size / 100).toFixed(3) + ')';
                 // Ordre de peinture identique aux planetes : plus c'est
                 // proche, plus c'est peint au-dessus. Les fly-by proches
                 // passent devant la fusee (z-index 12+).
@@ -2499,9 +2489,9 @@ function playTravelAnimation(distance, onDone) {
 
     // Initialisation
     if (rocketEl) {
-        rocketEl.style.left = rocketX + 'px';
-        rocketEl.style.top = rocketY + 'px';
-        rocketEl.style.transform = 'translate(-50%, -50%)';
+        rocketEl.style.left = '0px';
+        rocketEl.style.top = '0px';
+        rocketEl.style.transform = 'translate3d(' + rocketX + 'px, ' + rocketY + 'px, 0) translate(-50%, -50%)';
     }
     if (distanceEl) rollCounterText(distanceEl, '0');
     fillTravelStars(overlay);
@@ -2551,8 +2541,8 @@ function fillTravelStars(overlay) {
         star.className = 'travel-star';
         if (Math.random() < 0.5) star.classList.add('twinkle');
         const size = Math.random() * 2.2 + 1;
-        star.style.width = size + 'px';
-        star.style.height = size + 'px';
+        star.style.width = '1px';
+        star.style.height = '1px';
         star.style.animationDelay = (Math.random() * 1.6) + 's';
         starsEl.appendChild(star);
         // Champ 3D radial : chaque etoile vit dans le volume devant la

@@ -660,8 +660,8 @@ body {
     display: block;
 }
 @keyframes pulse {
-    0%, 100% { box-shadow: var(--shadow-lg), var(--glow); }
-    50% { box-shadow: 0 0 20px rgba(30, 58, 138, 0.8), var(--shadow-lg); }
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; }
 }
 .counter span {
     color: var(--accent-light);
@@ -1315,8 +1315,8 @@ body {
     transform: rotate(var(--comet-rot, 120deg));
 }
 @keyframes cometPlasma {
-    from { opacity: 0.75; filter: blur(3px) saturate(1); }
-    to   { opacity: 1; filter: blur(4px) saturate(1.25); }
+    from { opacity: 0.75; }
+    to   { opacity: 1; }
 }
 /* Queue de poussiere : panache plus large, teinte dorée, courbe vers
    le haut-arriere (la queue de poussiere est inclinee par rapport a
@@ -2501,7 +2501,7 @@ body {
    radial des fly-by. */
 .travel-oort {
     position: absolute;
-    will-change: transform, opacity, width;
+    will-change: transform, opacity;
     pointer-events: none;
     filter: blur(0.3px);
     --streak: 0;
@@ -4772,11 +4772,22 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: var(--shadow-lg);
+    position: relative;
+}
+.post-travel-continue::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+    opacity: 1;
     animation: ptsPulse 1.6s ease-in-out infinite;
+    will-change: opacity;
 }
 @keyframes ptsPulse {
-    0%, 100% { box-shadow: var(--shadow-lg), 0 0 0 0 rgba(16, 185, 129, 0.55); }
-    50%      { box-shadow: var(--shadow-lg), 0 0 0 10px rgba(16, 185, 129, 0); }
+    0%, 100% { opacity: 0; }
+    50%      { opacity: 1; }
 }
 .post-travel-continue:hover {
     transform: translateY(-2px);
