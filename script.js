@@ -5009,6 +5009,11 @@ function rainFrame(now) {
     // (il l'a deja EtE au dernier passage) — la boucle RAF devient no-op.
     if (partsRain.suspended || partsRain.parts.length === 0) {
         if (!partsRain.canvasClean) {
+            // Reinitialiser la matrice avant le clear : la derniere piece
+            // dessinee laisse un setTransform(cos(angle), ...) en place ; si
+            // ce cos est proche de zero, clearRect ne nettoie qu'une bande
+            // infime et les pieces restaient peintes, figees jusqu'au reload.
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             partsRain.canvasClean = true;
         }

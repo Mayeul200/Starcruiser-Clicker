@@ -1993,20 +1993,24 @@ body {
     100% { transform: translate3d(0, -110vh, 0) scale(1.05); opacity: 0; }
 }
 /* Astronaute : place a GAUCHE du pas de tir ; des le clic sur Lancer,
-   il saute et entre dans le cockpit de la fusée (monde 1024px).
-   Trajectoire : petit elan vers la fusée, arc de saut vers le cockpit
-   (x=50%, y~314), puis disparition douce dans le cockpit. */
+   il effectue un SALTO ARRIERE complet pour entrer dans le cockpit de
+   la fusée (monde 1024px) : petite flexion d'anticipation vers l'arriere,
+   impulsion, rotation 360 degres sur l'apex de l'arc de saut, puis
+   reception dans le cockpit (x=50%, y~314) et disparition douce.
+   Uniquement transform + opacity : anime sur le compositeur GPU. */
 .astronaut-jumping {
-    animation: astronautJumpToCockpit 1.4s cubic-bezier(0.45, 0, 0.55, 1) forwards !important;
+    animation: astronautBackflipToCockpit 1.4s cubic-bezier(0.33, 0, 0.25, 1) forwards !important;
+    will-change: transform, opacity;
 }
-@keyframes astronautJumpToCockpit {
+@keyframes astronautBackflipToCockpit {
     0%   { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
-    20%  { transform: translate(calc(-50% + 22px), -14px) rotate(-6deg); }
-    40%  { transform: translate(calc(-50% + 52px), -110px) rotate(-10deg); }
-    60%  { transform: translate(calc(-50% + 78px), -240px) rotate(-8deg); }
-    78%  { transform: translate(calc(-50% + 96px), -308px) rotate(-4deg); opacity: 1; }
-    90%  { transform: translate(calc(-50% + 102px), -321px) rotate(0deg); opacity: 0.85; }
-    100% { transform: translate(calc(-50% + 104px), -321px) rotate(0deg); opacity: 0; }
+    10%  { transform: translate(calc(-50% - 6px), 10px) rotate(10deg); opacity: 1; }
+    22%  { transform: translate(calc(-50% + 18px), -30px) rotate(24deg); opacity: 1; }
+    40%  { transform: translate(calc(-50% + 52px), -150px) rotate(-160deg); opacity: 1; }
+    58%  { transform: translate(calc(-50% + 80px), -245px) rotate(-310deg); opacity: 1; }
+    75%  { transform: translate(calc(-50% + 96px), -305px) rotate(-360deg); opacity: 1; }
+    88%  { transform: translate(calc(-50% + 102px), -318px) rotate(-360deg); opacity: 0.85; }
+    100% { transform: translate(calc(-50% + 104px), -321px) rotate(-360deg); opacity: 0; }
 }
 /* Flammes sous les moteurs : jets coniques orangés vacillants.
    Ancrées au bas des tuyères (y=666) : le HAUT des jets affleure les
@@ -3516,15 +3520,14 @@ body {
 }
 .scene-background {
     position: absolute;
-    top: 0;
-    left: 0;
-    /* Calage horizontal (regle du pas de tir) : le bord droit de la tour
-       du pas de tir (x monde 678.5) doit tomber sur le point central de la
-       dalle de beton, a 35 % de son bord droit (x image ~670.6). L'image
-       entiere reste visible : le div est legerement elargi (~1.2 %, distorsion
-       invisible) et l'excedent deborde a droite, masque par le bord de scene. */
-    width: calc(100% + 12px);
-    height: 100%;
+    /* Decalage doux demande : ~24px vers la gauche et ~24px vers le bas.
+       Gauche : le div deborde a gauche (image entiere conservee, l'excedent
+       est clippe par la scene). Bas : le div depasse sous la ligne de sol,
+       clippe par la scene -- aucun rognage de l'image visible. */
+    top: 24px;
+    left: -24px;
+    width: calc(100% + 36px);
+    height: calc(100% + 24px);
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
