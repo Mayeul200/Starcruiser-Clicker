@@ -7154,7 +7154,7 @@ const TUTORIAL_STEPS = [
     {
         img: 'images/rocket/Fusée3.png',
         titleKey: 'Construis ta première pièce de fusée',
-        textKey: 'La carte Prochaine étape indique ta progression. Construis la première pièce !',
+        textKey: 'Achète les pièces de fusée une par une afin de construire la fusée entièrement et pouvoir lancer l\'expédition !',
         done: () => ROCKET_PARTS.some(p => p.purchased),
         target: '#rocket-parts-shop',
         prefer: 'below',
@@ -7162,11 +7162,10 @@ const TUTORIAL_STEPS = [
 {
         img: 'images/parts.png',
         titleKey: 'Achète ta première amélioration',
-        textKey: 'La barre Améliorations en haut propose des bonus puissants : clics boostés, production accrue, prix réduits… Achète-en une pour progresser plus vite !',
+        textKey: 'La barre Améliorations en haut propose des bonus qui te permettent de doubler ta puissance de clic et doubler la production sur chaque bâtiment. Achète-en une pour progresser plus vite !',
         done: () => activatedClickUpgrades.length >= 1 || Object.values(buildingUpgrades).some(list => list.length > 0),
         target: '.counters',
         prefer: 'below',
-        mandatory: true,
     },
 ];
 let tutorialStep = 0;
@@ -7404,7 +7403,7 @@ const FEATURE_LESSONS = [
     {
         key: 'building-factory',
         titleKey: 'Nouveau bâtiment : Usine',
-        textKey: 'L\'Usine est disponible ! Elle produit bien plus qu\'un Atelier. Achète-en pour accélérer ta production.',
+        textKey: 'L\'Usine est disponible ! Elle produit bien plus qu\'un Atelier. Achète-en une pour accélérer ta production.',
         img: 'images/buildings/factory.png',
         trigger: () => isBuildingUnlocked(findBuildingById('factory')),
         target: '#building-factory',
@@ -7420,7 +7419,7 @@ const FEATURE_LESSONS = [
     {
         key: 'contracts-unlocked',
         titleKey: 'Les Contrats sont disponibles',
-        textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses. Ouvre le panneau Espace !',
+        textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses.',
         img: 'images/effects/comete.png',
         trigger: () => getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES,
         target: '#contracts-mini-card',
@@ -7437,7 +7436,7 @@ const FEATURE_LESSONS = [
     {
         key: 'rocket-complete',
         titleKey: 'Fusée prête !',
-        textKey: 'Toutes les pièces sont construites. Appuie sur LANCER LA FUSÉE : ton expédition est terminée, tes acquis permanents seront conservés !',
+        textKey: 'Toutes les pièces sont construites ! Appuie sur LANCER LA FUSÉE lorsque tu voudras lancer l\'expédition ! Petit conseil, lance une expédition quand tu es sûr d\'atteindre une nouvelle planète ou de gagner de nouvelles poussières d\'étoiles !',
         img: 'images/rocket/Fusée3.png',
         trigger: () => ROCKET_PARTS.every(p => p.purchased),
         target: '#launch-button',
@@ -7463,7 +7462,7 @@ const FEATURE_LESSONS = [
     {
         key: 'first-launch',
         titleKey: 'Bon voyage !',
-        textKey: 'Chaque lancement termine une expédition : ta nouvelle fusée repart de la Terre, mais tes destinations débloquées, ta distance record et tes bonus permanents sont conservés. Vise de plus en plus loin !',
+        textKey: 'Chaque lancement termine une expédition : ta nouvelle fusée repart de la Terre, mais tes planètes débloquées, ta distance record et tes bonus permanents sont conservés. Vas de plus en plus loin !',
         img: 'images/planets/moon.png',
         trigger: () => rocketsLaunched >= 1,
     },
