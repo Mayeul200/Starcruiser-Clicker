@@ -812,7 +812,7 @@ body {
     border: 2px solid rgba(255, 255, 255, 0.55);
     box-shadow: 0 0 22px 4px rgba(255, 255, 255, 0.55), 0 0 44px 10px rgba(255, 255, 255, 0.25);
     opacity: 0;
-    animation: bonus-rainbow-pulse 1.2s ease-in-out infinite;
+    animation: bonus-rainbow-pulse 1.5s ease-in-out infinite;
     will-change: opacity;
     z-index: 1;
 }
@@ -3090,6 +3090,9 @@ body {
     /* Espace net entre le libelle et la valeur : la tuile prend toute la
        largeur, on peut se permettre une vraie separation visuelle. */
     gap: 14px;
+    /* Un peu plus de hauteur que les autres tuiles : libelle et valeur
+       sur une seule ligne, la tuile paraissait ecrasee. */
+    padding: 11px 6px;
 }
 /* Hierarchie : Portee actuelle et Distance a parcourir (stats de l'expedition
    en cours) legerement mises en avant par rapport aux stats secondaires --
@@ -3520,14 +3523,10 @@ body {
 }
 .scene-background {
     position: absolute;
-    /* Decalage doux demande : ~24px vers la gauche et ~24px vers le bas.
-       Gauche : le div deborde a gauche (image entiere conservee, l'excedent
-       est clippe par la scene). Bas : le div depasse sous la ligne de sol,
-       clippe par la scene -- aucun rognage de l'image visible. */
-    top: 24px;
-    left: -24px;
-    width: calc(100% + 36px);
-    height: calc(100% + 24px);
+    top: 0;
+    left: 0;
+    width: calc(100% + 12px);
+    height: 100%;
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
