@@ -94,6 +94,7 @@ const BUILDING_PRICE_GROWTH_RATE = 1.15;
 const GAME_LOOP_FPS = 10;
 const GAME_LOOP_INTERVAL_MS = 100;
 const BONUS_SPAWN_INTERVAL_MS = 30000;
+const COMET_SHOWER_INTERVAL_MS = 6 * 60 * 1000;
 const SAVE_INTERVAL_MS = 30000;
 const DISPLAY_UPDATE_INTERVAL_MS = 250;
 const SLOW_UPDATE_INTERVAL_MS = 1000;
@@ -7693,17 +7694,17 @@ scheduleBonusSpawn();
 // ============================================
 // PLUIE DE COMÈTES (événement régulier)
 // ============================================
-// Toutes les 7 à 10 minutes, une cascade de comètes dorées traverse
-// l'écran : chacune ne donne que du bonus instantané (jamais de flare),
-// pour éviter tout cumul de multiplicateurs.
+// Toutes les 6 minutes PILE (délai fixe, pas d'aléatoire), une cascade
+// de comètes dorées traverse l'écran : chacune ne donne que du bonus
+// instantané (jamais de flare), pour éviter tout cumul de multiplicateurs.
+// Le décompte commence des le premier chargement du jeu : la premiere
+// pluie tombe donc elle aussi a 6 minutes, jamais avant.
 let cometShowerActive = false;
 let firstCometShower = true;
 function scheduleCometShower() {
-    // Premiere pluie tres rapide (~20 s) des le debut du jeu, ensuite
-    // cadence normale toutes les 4 a 6 minutes.
-    const delay = firstCometShower
-        ? 45000 + Math.random() * 20000
-        : 420000 + Math.random() * 180000;
+    // Delai FIXE de 6 minutes, identique pour la premiere pluie et les
+    // suivantes : le timer tourne des le chargement du jeu.
+    const delay = COMET_SHOWER_INTERVAL_MS;
     if (firstCometShower) {
         // Lecon comete : armee pour tomber juste apres la premiere pluie,
         // quand le joueur a vraiment vu une comete a l'ecran.
