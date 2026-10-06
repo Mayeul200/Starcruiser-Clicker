@@ -3933,14 +3933,20 @@ function spawnRandomBonus(shower, isContract) {
         const cx = rect.left + rect.width * nucX;
         const cy = rect.top + rect.height * nucY;
         const tsc = Math.max(0.6, Math.min(1, rect.width / 180));
-        // UNE particule par tick, alternee coeur/poussiere pour garder le
-        // melange des deux textures sans doubler le travail.
-        const isCore = (trailInUse.length % 2) === 0;
+        // Deux particules par tick (coeur + poussiere) : la trainee reste
+        // dense sur toute la trajectoire. Le pool recycle, le cout DOM est
+        // borne (~2 particules x TRAIL_LIFE_MS / TRAIL_INTERVAL_MS).
+        for (let pi = 0; pi < 2; pi++) {
+        const isCore = (pi === 0);
         let trail = trailPool.pop();
         if (!trail) {
             trail = document.createElement('div');
-            document.body.appendChild(trail);
         }
+        // Une particule recyclee a ete DETACHEE du DOM au moment de son
+        // recyclage (old.remove()) : sans reattachement ici, elle restait
+        // invisible pour toujours -- la trainee ne restait visible que
+        // pendant la premiere generation (~TRAIL_LIFE_MS), puis plus rien.
+        if (!trail.isConnected) document.body.appendChild(trail);
         trail.className = 'comet-trail' + (isCore ? ' core' : ' dust');
         trail.style.width = ((isCore ? 20 : 11) * tsc).toFixed(1) + 'px';
         trail.style.height = ((isCore ? 20 : 11) * tsc).toFixed(1) + 'px';
@@ -3960,9 +3966,21 @@ function spawnRandomBonus(shower, isContract) {
             trail.style.transform = `translate(-50%, -50%) translate(${(-dirVX * drift + -dirVY * spread * 0.55).toFixed(1)}px, ${(-dirVY * drift + dirVX * spread * 0.55).toFixed(1)}px) scale(0.2)`;
         });
         trailInUse.push(trail);
-        // Recyclage : les particules expirees retournent au pool (cache)
-        while (trailInUse.length > 0 && trailInUse[0].style.opacity === '0') {
+        // Recyclage par AGE REEL : l'ancien test sur style.opacity === '0'
+        // etait vrai DES le lancement de la transition (la cible etant 0),
+        // si bien que chaque particule etait recyclee au tick suivant --
+        // la trainee ne faisait jamais plus de 1-2 particules de long et
+        // les "particules derriere la comete" n'apparaissaient que tres
+        // brievement. Une particule vit TRAIL_LIFE_MS, point.
+        const now = performance.now();
+        trail.dataset.born = String(now);
+        while (trailInUse.length > 0) {
+            const old = trailInUse[0];
+            const born = parseFloat(old.dataset.born || '0');
+            if (now - born < TRAIL_LIFE_MS) break;
+            if (old.isConnected) old.remove();
             trailPool.push(trailInUse.shift());
+        }
         }
     }, TRAIL_INTERVAL_MS);
 
@@ -5828,11 +5846,24 @@ function updateBonusTimer() {
     const countersEl = document.querySelector('.counters');
     if (!countersEl) return;
     const hasBonus = activeRandomBonuses.some(b => b.effect === 'multiplier' || b.id === 'flare');
-    countersEl.classList.toggle('bonus-active', hasBonus);
-    // Le boost temporaire multiplie aussi la vitesse (partsPerSecond inclus
-    // autoMultiplier) : meme effet rainbow sur la tuile Vitesse.
-    const speedTile = document.getElementById('sidebar-speed');
-    if (speedTile) speedTile.closest('.stat-tile')?.classList.toggle('bonus-active', hasBonus);
+    // Synchronisation des pulses blancs : si l'une des deux cases a deja
+    // la classe et pas l'autre (element recre'e, bonus prolonge, ordre
+    // d'update imprevisible), les animations ::after partaient decalees.
+    // On retire puis repose la classe sur les DEUX dans la meme frame pour
+    // que les keyframes bonus-rainbow-pulse demarrent exactement ensemble.
+    const speedTileEl = document.getElementById('sidebar-speed');
+    const speedTile = speedTileEl ? speedTileEl.closest('.stat-tile') : null;
+    const hadCounters = countersEl.classList.contains('bonus-active');
+    const hadSpeed = speedTile ? speedTile.classList.contains('bonus-active') : false;
+    if (hadCounters !== hasBonus || hadSpeed !== hasBonus || (hasBonus && hadCounters !== hadSpeed)) {
+        countersEl.classList.remove('bonus-active');
+        if (speedTile) speedTile.classList.remove('bonus-active');
+        void countersEl.offsetWidth;
+        if (hasBonus) {
+            countersEl.classList.add('bonus-active');
+            if (speedTile) speedTile.classList.add('bonus-active');
+        }
+    }
 }
 
 // ============================================

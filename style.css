@@ -1320,9 +1320,9 @@ body {
     from { opacity: 0.75; }
     to   { opacity: 1; }
 }
-/* Queue de poussiere : panache plus large, teinte dorée, courbe vers
-   le haut-arriere (la queue de poussiere est inclinee par rapport a
-   celle de plasma, comme sur les vraies cometes) */
+/* Queue de poussiere : panache plus large, teinte dorée. Alignee sur le
+   MEME axe que la queue de plasma (l'ancien decalage -15deg etait lu
+   comme un defaut d'alignement avec la direction du vol). */
 .comet-tail-dust {
     position: absolute;
     left: calc(var(--nx) - 144.44%);
@@ -1330,7 +1330,7 @@ body {
     width: 144.44%;
     height: 36.67%;
     transform-origin: 100% 50%;
-    transform: rotate(calc(var(--comet-rot, 60deg) - 15deg));
+    transform: rotate(var(--comet-rot, 60deg));
     border-radius: 50% 45% 45% 50% / 65% 50% 50% 65%;
     background: linear-gradient(270deg,
         rgba(255, 235, 190, 0.42) 0%,
@@ -1342,7 +1342,7 @@ body {
     animation: cometDust 0.7s ease-in-out infinite alternate;
 }
 .random-bonus.comet.reverse .comet-tail-dust {
-    transform: rotate(calc(var(--comet-rot, 120deg) + 15deg));
+    transform: rotate(var(--comet-rot, 120deg));
 }
 @keyframes cometDust {
     from { opacity: 0.7; }
@@ -2812,14 +2812,17 @@ body {
    et le joueur ne devine pas ou elle apparaitra. */
 .current-planet-display::after {
     content: '';
+    /* Rail EXACTEMENT aux dimensions de la barre reelle (header-planet-fill :
+    left 0, bottom 0, height 11px) : la piste devinee correspond au remplissage
+    qui viendra par-dessus, au pixel pres. */
     position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: 5px;
-    height: 5px;
-    border-radius: 3px;
-    background: rgba(0, 0, 0, 0.35);
-    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.6);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 11px;
+    border-radius: 0 0 10px 10px;
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.55);
     pointer-events: none;
 }
 .current-planet-display .header-planet-fill {
