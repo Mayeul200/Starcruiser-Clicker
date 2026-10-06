@@ -150,7 +150,7 @@ const ROCKET_PARTS = [
     { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire", cost: 11000,        image: "",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
     { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
     { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
-    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "",       imgPath: "images/rocket/launch-pad.png",    x: 60.2,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
+    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "",       imgPath: "images/rocket/launch-pad.png",    x: 50,    y: 218, width: 190, height: 481, order: 9,  purchased: false },
     { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "", imgPath: "images/rocket/astronaut.png",     x: 39.8,  y: 635, width: 25,  height: 60,  order: 10, purchased: false }
 ];
 
