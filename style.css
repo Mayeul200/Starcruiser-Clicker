@@ -742,18 +742,24 @@ body {
     background: rgba(0, 0, 0, 0.5);
 }
 .counters.bonus-active .counter span {
-    color: #fff;
-    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffee00, #00e676, #00b0ff, #b388ff, #ff0080);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rainbow-slide 1.5s linear infinite;
-    text-shadow: none;
+    animation: rainbow-colors 1.5s linear infinite;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
 @keyframes rainbow-slide {
     0% { background-position: 0% 50%; }
     100% { background-position: 200% 50%; }
+}
+/* Couleurs arc-en-ciel par keyframes de color (pas de background-clip) :
+   le gradient clippé cassait le rendu des colonnes odomètre (.cch) quand
+   leur transform translateY animait les chiffres pendant un bonus. */
+@keyframes rainbow-colors {
+    0%   { color: #ff0080; }
+    17%  { color: #ff8c00; }
+    33%  { color: #ffee00; }
+    50%  { color: #00e676; }
+    67%  { color: #00b0ff; }
+    83%  { color: #b388ff; }
+    100% { color: #ff0080; }
 }
 /* Boost actif sur la tuile Vitesse : EXACTEMENT le meme effet que le
    compteur principal — meme pulse, meme gradient arc-en-ciel coulissant.
@@ -767,14 +773,8 @@ body {
 .stat-tile.bonus-active .stat-value,
 .stat-tile.bonus-active .stat-value .cch,
 .stat-tile.bonus-active .stat-value .cch-reel .digit {
-    color: #fff;
-    background: linear-gradient(90deg, #ff0080, #ff8c00, #ffee00, #00e676, #00b0ff, #b388ff, #ff0080);
-    background-size: 200% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: rainbow-slide 1.5s linear infinite;
-    text-shadow: none;
+    animation: rainbow-colors 1.5s linear infinite;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
 }
 @keyframes bonus-rainbow-pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
@@ -5646,6 +5646,15 @@ body {
     padding: clamp(18px, 3.5vw, 32px);
     box-shadow: 0 0 60px rgba(168, 85, 247, 0.4), 0 12px 40px rgba(0, 0, 0, 0.6);
     text-align: center;
+}
+.intro-welcome {
+    font-size: clamp(0.85rem, 2vw, 1.1rem);
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #93c5fd;
+    margin: 0 0 6px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 .intro-title {
     font-size: clamp(1.5rem, 4vw, 2.4rem);
