@@ -3101,6 +3101,13 @@ body {
     border-color: var(--blue-soft-glow);
     background: rgba(96, 165, 250, 0.10);
 }
+/* Toutes les autres tuiles de stats de la progression spatiale (Vitesse,
+   Distance record, Bonus planetes) : meme famille bleu clair unifiee que
+   les tuiles primaires -- meme bord, meme fond, DA homogene. */
+.stat-tile:not(.stat-tile-primary) {
+    border-color: var(--blue-soft-glow);
+    background: rgba(96, 165, 250, 0.06);
+}
 .stat-label {
     font-size: 0.64rem;
     color: #cbd5e1;
@@ -4231,7 +4238,12 @@ body.night-mode .scene-background {
     font-size: 1.6rem;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    flex: 0 1 auto;
+    /* Largeur FIXE et egale pour les deux compteurs : en 0 1 auto, le
+       compteur Parts grossissait a chaque chiffre ajoute et poussait le
+       compteur /s -- le cadre entier semblait respirer. Chaque compteur
+       occupe exactement la moitie du cadre, le nombre grandit vers la
+       gauche sans jamais deplacer l'autre compteur. */
+    flex: 1 1 0;
     min-width: 0;
     display: flex;
     align-items: baseline;
