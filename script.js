@@ -3218,7 +3218,7 @@ function statTileInfoText(tileId) {
         case 'sidebar-distance':
             return t('Portée actuelle') + '\n' +
                 t('Distance maximale que votre fusée actuelle pourrait parcourir si vous la lanciez maintenant.') + '\n' +
-                t('Elle augmente avec chaque Part gagnée et chaque pièce de fusée achetée.');
+                t('Elle augmente avec chaque Part gagnée.');
         case 'sidebar-distance-needed': {
             const needed = target ? Math.max(0, target.distanceRequired - calculateDistance()) : 0;
             return t('Distance à parcourir') + '\n' +
@@ -3229,7 +3229,7 @@ function statTileInfoText(tileId) {
             const kmS = calculateTravelSpeedKmS();
             return t('Vitesse') + '\n' +
                 t('Nombre de kilomètres de portée que votre fusée gagne chaque seconde.') + '\n' +
-                t('Actuellement') + ' : +' + formatTravelSpeed(kmS) + ' ' + t('de portée par seconde') + '.';
+                t('Actuellement') + ' : +' + formatTravelSpeed(kmS).replace(' km/s', ' ' + t('km')) + ' ' + t('de portée par seconde') + '.';
         }
         case 'sidebar-distance-max':
             return t('Distance record') + '\n' +
