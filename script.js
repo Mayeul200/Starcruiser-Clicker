@@ -1257,9 +1257,16 @@ function calculateTotalBuildingCost(building, count) {
 
 // Feedback d'achat : pop flottant "\u00d72" au-dessus de la case amelioration
 // concernee, aux couleurs de la case, pour confirmer visuellement le gain.
-function showUpgradeBoughtFeedback(hostEl, color) {
+function showUpgradeBoughtFeedback(hostEl, color, buildingId) {
     const container = document.getElementById('upgrades-container');
-    const host = hostEl || (container ? container.querySelector('.upgrade-icon') : null);
+    let host = hostEl || (container ? container.querySelector('.upgrade-icon') : null);
+    // Amelioration de BATIMENT : le pop ×2 s'affiche a cote de la case du
+    // batiment concernee dans le panneau droit (demande explicite), pas
+    // sur la case d'amelioration de la barre du haut.
+    if (buildingId) {
+        const buildingCard = document.getElementById('building-' + buildingId);
+        if (buildingCard) host = buildingCard;
+    }
     if (!host) return;
     // Position capturee AVANT le re-render (renderUpgrades vide le conteneur :
     // un pop attache a la case etait detruit instantanement, d'ou l'absence
@@ -1321,7 +1328,7 @@ function buyBuildingUpgrade(buildingId, threshold, sourceEl) {
     
     buildingUpgrades[buildingId].push(threshold);
     Sounds.upgrade();
-    showUpgradeBoughtFeedback(sourceEl, getUpgradeTierColor(BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold)));
+    showUpgradeBoughtFeedback(sourceEl, getUpgradeTierColor(BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold)), buildingId);
     invalidateBuildingGainsCache();
     updateDisplay();
     saveGame();
@@ -3054,10 +3061,10 @@ function getStartupAteliers() {
     return getUpgradeEffect('rock1');
 }
 function getCometFrequencyBonus() {
-    return 0;
+    return 0.25 * getGalacticUpgradeLevel('rock2');
 }
 function getStardustGainBonus() {
-    return 1;
+    return 1 + 0.20 * getGalacticUpgradeLevel('rock4');
 }
 function calculateStardustGainExact(distanceKm) {
     const safeDistance = (isNaN(distanceKm) || distanceKm < 0) ? 0 : distanceKm;
@@ -3072,10 +3079,7 @@ function calculateStardustGain(distanceKm) {
     return Math.floor(calculateStardustGainExact(distanceKm));
 }
 function getDistanceBonus() {
-    let mult = 1;
-    if (getGalacticUpgradeLevel('rock2') > 0) mult *= 1.20;
-    if (getGalacticUpgradeLevel('rock4') > 0) mult *= 1.30;
-    return mult;
+    return 1;
 }
 function getClickPowerBonus() {
     let mult = 1;
@@ -6721,9 +6725,9 @@ const GALACTIC_UPGRADES = [
 
     // === BRANCHE FUS\u00c9E (5) - upgrades uniques ===
     { id: 'rock1',  branch: 'rocket', tier: 1, name: 'D\u00e9marrage assist\u00e9',        desc: '+5 Ateliers gratuits au d\u00e9but de chaque run.', baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5 },
-    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Propulsion am\u00e9lior\u00e9e',      desc: '+20% distance de lancement.',       baseCost: 3,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['rock1'] },
+    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Balayage radar',           desc: '+25% fr\u00e9quence des com\u00e8tes.',      baseCost: 3,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.25, requires: ['rock1'] },
     { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Cha\u00eene de production',     desc: '+1 Usine gratuite au d\u00e9but de chaque run.',  baseCost: 10,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['rock2'] },
-    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Propulsion quantique',      desc: '+30% distance de lancement.',       baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.30, requires: ['rock3'] },
+    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Capteur \u00e0 \u00e9toiles',           desc: '+20% Poussi\u00e8re d\u2019\u00c9toiles au lancement.',   baseCost: 40,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['rock3'] },
 
     // === BRANCHE COLLECTION (5) - upgrades uniques ===
     { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% temps d\'attente des boosters.', baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
