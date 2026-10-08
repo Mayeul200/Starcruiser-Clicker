@@ -2170,15 +2170,17 @@ body {
        de 50px), on pose la fumée juste dessous, sur la ligne de sol */
     bottom: 96px;
     left: 50%;
-    width: 300px;
-    height: 150px;
+    width: 420px;
+    height: 210px;
     transform: translateX(-50%);
     background:
-        radial-gradient(ellipse 42% 30% at 50% 92%, rgba(235, 238, 244, 0.95) 0%, rgba(210, 215, 224, 0.6) 50%, rgba(190, 195, 205, 0) 78%),
-        radial-gradient(ellipse 65% 40% at 50% 96%, rgba(205, 210, 220, 0.85) 0%, rgba(175, 180, 192, 0.5) 55%, rgba(160, 165, 178, 0) 80%),
-        radial-gradient(ellipse 90% 34% at 50% 100%, rgba(185, 190, 200, 0.55) 0%, rgba(170, 175, 188, 0) 75%);
+        radial-gradient(ellipse 42% 30% at 50% 92%, rgba(240, 243, 248, 0.98) 0%, rgba(210, 215, 224, 0.6) 50%, rgba(190, 195, 205, 0) 78%),
+        radial-gradient(ellipse 65% 40% at 50% 96%, rgba(215, 220, 230, 0.9) 0%, rgba(175, 180, 192, 0.55) 55%, rgba(160, 165, 178, 0) 80%),
+        radial-gradient(ellipse 90% 34% at 50% 100%, rgba(195, 200, 212, 0.65) 0%, rgba(170, 175, 188, 0) 75%),
+        radial-gradient(ellipse 30% 22% at 42% 88%, rgba(245, 247, 251, 0.9) 0%, rgba(205, 210, 220, 0.4) 60%, rgba(190, 195, 205, 0) 80%),
+        radial-gradient(ellipse 28% 20% at 60% 90%, rgba(245, 247, 251, 0.85) 0%, rgba(205, 210, 220, 0.4) 60%, rgba(190, 195, 205, 0) 80%);
     border-radius: 50%;
-    filter: blur(10px);
+    filter: blur(12px);
     pointer-events: none;
     z-index: 4;
     animation: launchSmokeSpread 3.4s ease-out forwards;
@@ -2189,8 +2191,8 @@ body {
     content: '';
     position: absolute;
     bottom: 6%;
-    width: 55%;
-    height: 62%;
+    width: 75%;
+    height: 78%;
     background: radial-gradient(ellipse at center, rgba(225, 228, 236, 0.9) 0%, rgba(200, 205, 215, 0.55) 50%, rgba(190, 195, 208, 0) 75%);
     border-radius: 50%;
     filter: blur(8px);
@@ -5195,7 +5197,7 @@ body.night-mode .scene-background {
     gap: 8px;
 }
 .galactic-node-name {
-    font-size: 1.08rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--text);
 }
@@ -5208,7 +5210,7 @@ body.night-mode .scene-background {
     border-radius: 10px;
 }
 .galactic-node-desc {
-    font-size: 0.92rem;
+    font-size: 1.05rem;
     color: var(--text-light);
     line-height: 1.4;
     min-height: 2.4em;
