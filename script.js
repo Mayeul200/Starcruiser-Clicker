@@ -2954,19 +2954,18 @@ function buyGalacticUpgrade(upgradeId) {
         updateBoosterTimers();
     }
 
-    // rock1 donne des ateliers gratuits: les ajouter immediatement en cours de run
-    if (upgradeId === 'rock1') {
-        const extra = getUpgradeEffect('rock1') - (level * (GALACTIC_UPGRADES.find(u => u.id === 'rock1').effectPerLevel));
-        if (extra > 0) {
-            const atelier = BUILDINGS.find(b => b.id === 'workshop');
-            if (atelier) {
-                atelier.count += extra;
-                unlockedBuildings.add(atelier.id);
-                invalidateBuildingGainsCache();
-                startupBonusApplied = true;
-                renderBuildings();
-                updateDisplay();
-            }
+    // Upgrades de la branche Batiment : le batiment offert est credite
+    // immediatement en cours de run (pas seulement au prochain demarrage).
+    const boughtUpgrade = GALACTIC_UPGRADES.find(u => u.id === upgradeId);
+    if (boughtUpgrade && boughtUpgrade.branch === 'rocket' && boughtUpgrade.effectBuilding) {
+        const b = BUILDINGS.find(x => x.id === boughtUpgrade.effectBuilding);
+        if (b) {
+            b.count += boughtUpgrade.effectPerLevel;
+            unlockedBuildings.add(b.id);
+            invalidateBuildingGainsCache();
+            startupBonusApplied = true;
+            renderBuildings();
+            updateDisplay();
         }
     }
 
@@ -3066,8 +3065,19 @@ function getBuildingCostReduction() {
 function getRocketPartDiscount() {
     return 0;
 }
-function getStartupAteliers() {
-    return getUpgradeEffect('rock1');
+// Batiments gratuits au demarrage : un par upgrade de la branche Batiment,
+// chacun cible un batiment DIFFERENT de la chaine de production.
+function getStartupFreeBuildings() {
+    const free = [];
+    GALACTIC_UPGRADES.forEach(u => {
+        if (u.branch === 'rocket' && u.effectBuilding) {
+            const lvl = getGalacticUpgradeLevel(u.id);
+            for (let i = 0; i < lvl * u.effectPerLevel; i++) {
+                free.push(u.effectBuilding);
+            }
+        }
+    });
+    return free;
 }
 function getCometFrequencyBonus() {
     return 0;
@@ -3115,14 +3125,16 @@ function getRarityBoost() {
 }
 
 function applyStartupBonus() {
-    const freeAteliers = getStartupAteliers();
-    if (startupBonusApplied || freeAteliers <= 0) return;
-    const atelier = BUILDINGS.find(b => b.id === 'workshop');
-    if (atelier) {
-        atelier.count += freeAteliers;
-        unlockedBuildings.add(atelier.id);
-        startupBonusApplied = true;
-    }
+    const freeBuildings = getStartupFreeBuildings();
+    if (startupBonusApplied || freeBuildings.length === 0) return;
+    freeBuildings.forEach(bId => {
+        const b = BUILDINGS.find(x => x.id === bId);
+        if (b) {
+            b.count += 1;
+            unlockedBuildings.add(b.id);
+        }
+    });
+    startupBonusApplied = true;
     invalidateBuildingGainsCache();
 }
 
@@ -6767,17 +6779,19 @@ const GALACTIC_UPGRADES = [
     { id: 'prod7',  branch: 'production', tier: 7, name: 'Singularit\u00e9 technologique', desc: '+85% production globale.',      baseCost: 800, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.85, requires: ['prod6'] },
     { id: 'prod8',  branch: 'production', tier: 8, name: 'Forge stellaire',          desc: '+100% production globale.',       baseCost: 2200, costMult: 1.0, maxLevel: 1, effectPerLevel: 1.0, requires: ['prod7'] },
 
-    // === BRANCHE BÂTIMENT (8) - ateliers gratuits au demarrage ===
-    // 8 paliers progressifs : +5 Ateliers chacun, couts graduels.
-    { id: 'rock1',  branch: 'rocket', tier: 1, name: 'Premiers ateliers',     desc: '+5 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 5 },
-    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Plans d\u2019ateliers',        desc: '+10 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 4,    costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock1'] },
-    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Cha\u00eene de production',     desc: '+15 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 12,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock2'] },
-    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Pr\u00e9fabrication',          desc: '+20 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 35,   costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock3'] },
-    { id: 'rock5',  branch: 'rocket', tier: 5, name: 'Syndicat des ateliers',  desc: '+25 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 100,  costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock4'] },
-    { id: 'rock6',  branch: 'rocket', tier: 6, name: 'Usines satellites',     desc: '+30 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 300,  costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock5'] },
-    { id: 'rock7',  branch: 'rocket', tier: 7, name: 'Orbites ouvri\u00e8res',     desc: '+35 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 900,  costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock6'] },
-    { id: 'rock8',  branch: 'rocket', tier: 8, name: 'F\u00e9d\u00e9ration des ateliers', desc: '+40 Ateliers gratuits au d\u00e9but de chaque run.',  baseCost: 2500, costMult: 1.0, maxLevel: 1, effectPerLevel: 5, requires: ['rock7'] },
-    // === BRANCHE COLLECTION (5) - upgrades uniques ===
+    // === BRANCHE BÂTIMENT (8) - batiments gratuits au demarrage ===
+    // Un batiment DIFFERENT a chaque palier : la chaine complete se construit
+    // au fil des achats (Atelier, Usine, Mine, Centrale, Autofab, Sondes,
+    // Nanoforge, Imprimeur), 1 exemplaire de chaque.
+    { id: 'rock1',  branch: 'rocket', tier: 1, name: 'Premier atelier',          desc: '+1 Atelier gratuit au d\u00e9but de chaque run.',              baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'workshop' },
+    { id: 'rock2',  branch: 'rocket', tier: 2, name: 'Plans d\u2019usine',           desc: '+1 Usine gratuite au d\u00e9but de chaque run.',                baseCost: 4,    costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'factory', requires: ['rock1'] },
+    { id: 'rock3',  branch: 'rocket', tier: 3, name: 'Concession mini\u00e8re',      desc: '+1 Mine stellaire gratuite au d\u00e9but de chaque run.',      baseCost: 12,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'mine', requires: ['rock2'] },
+    { id: 'rock4',  branch: 'rocket', tier: 4, name: 'Contrat solaire',          desc: '+1 Centrale solaire gratuite au d\u00e9but de chaque run.',    baseCost: 35,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'solar', requires: ['rock3'] },
+    { id: 'rock5',  branch: 'rocket', tier: 5, name: ' Autofab pr\u00e9fabriqu\u00e9e', desc: '+1 Autofab orbitale gratuite au d\u00e9but de chaque run.',   baseCost: 100,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'foundry', requires: ['rock4'] },
+    { id: 'rock6',  branch: 'rocket', tier: 6, name: 'Sondes de reconnaissance', desc: '+1 Essaim de sondes gratuit au d\u00e9but de chaque run.',     baseCost: 300,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'station', requires: ['rock5'] },
+    { id: 'rock7',  branch: 'rocket', tier: 7, name: 'Nanoforge de parade',     desc: '+1 Nanoforge gratuite au d\u00e9but de chaque run.',           baseCost: 900,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'nanoforge', requires: ['rock6'] },
+    { id: 'rock8',  branch: 'rocket', tier: 8, name: 'Imprimeur de secours',     desc: '+1 Imprimeur quantique gratuit au d\u00e9but de chaque run.',  baseCost: 2500, costMult: 1.0, maxLevel: 1, effectPerLevel: 1, effectBuilding: 'synth', requires: ['rock7'] },
+    // === BRANCHE COLLECTION    // === BRANCHE COLLECTION (5) - upgrades uniques ===
     { id: 'coll1',  branch: 'collection', tier: 1, name: 'Carte de commerçant',     desc: '-10% temps d\'attente des boosters.', baseCost: 1,    costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10 },
     { id: 'coll2',  branch: 'collection', tier: 2, name: 'Chance de collection',   desc: '+15% chance de rareté supérieure dans le booster Standard.',  baseCost: 8,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll1'] },
     { id: 'coll3',  branch: 'collection', tier: 3, name: 'Marché noir',           desc: '-10% temps d\'attente des boosters.', baseCost: 30,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['coll2'] },
