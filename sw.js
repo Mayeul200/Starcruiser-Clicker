@@ -1,7 +1,7 @@
 // Service worker Starcruiser Clicker : cache-first sur les ressources
 // statiques pour un chargement quasi instantane en relecture, et un
 // fallback hors-ligne. Les mises a jour passent par un bump de version.
-const CACHE_NAME = 'starcruiser-clicker-v96';
+const CACHE_NAME = 'starcruiser-clicker-v97';
 const ASSETS = [
     './',
     './index.html',

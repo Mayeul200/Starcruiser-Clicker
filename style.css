@@ -3595,10 +3595,10 @@ body {
        50 px cumulees). Largeur etendue a droite et hauteur vers le BAS
        pour que le panneau central reste entierement couvert (l'excedent
        est clippe par la scene). */
-    top: 20px;
+    top: -10px;
     left: -150px;
     width: calc(100% + 162px);
-    height: calc(100% + 20px);
+    height: calc(100% + 10px);
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
