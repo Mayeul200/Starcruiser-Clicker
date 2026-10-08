@@ -3580,10 +3580,10 @@ body {
        50 px cumulees). Largeur etendue a droite et hauteur vers le BAS
        pour que le panneau central reste entierement couvert (l'excedent
        est clippe par la scene). */
-    top: -80px;
+    top: -30px;
     left: -150px;
     width: calc(100% + 162px);
-    height: calc(100% + 80px);
+    height: calc(100% + 30px);
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -4279,7 +4279,7 @@ body.night-mode .scene-background {
     height: clamp(50px, 6.5vh, 66px);
     flex: 0 1 auto;
     min-width: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.8);
     padding: 6px clamp(8px, 1vw, 16px);
     border-radius: 10px;
 }

@@ -6807,7 +6807,7 @@ function updateBoosterTimers() {
         if (!el) continue;
         const btn = el.closest('.cc-booster-btn');
         if (isBoosterReady(key)) {
-            el.textContent = '\u2705 ' + t('Prêt !');
+            el.textContent = t('Prêt !');
             if (btn) btn.disabled = false;
         } else {
             el.textContent = '\u23f3 ' + formatContractTime(getBoosterRemainingMs(key));
