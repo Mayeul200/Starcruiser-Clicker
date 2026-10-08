@@ -4037,15 +4037,16 @@ function spawnRandomBonus(shower, isContract) {
             c.failed = true;
             failContract();
         }
-        // Contrat "Survie a la pluie" : cette comete vient de finir sa course.
-        // Si toutes les cometes prevues sont passees (plus en vol, plus a venir)
-        // et que la cible n'est plus atteignable, le contrat est DEJA perdu :
-        // inutile d'attendre les dernieres secondes du chrono, on arrete net.
+        // Contrat "Survie a la pluie" : cette comete vient de finir sa course
+        // sans etre attrapee. Des que la cible n'est plus atteignable --
+        // progression + cometes encore rattrapables (en vol + a venir) --
+        // le contrat est perdu : on n'attend PAS la fin des 30 secondes du
+        // chrono, on arrete net des la premiere comete decisive ratee.
         if (shower && c && c.typeId === 'shower') {
             c.showerInFlight = Math.max(0, (c.showerInFlight || 0) - 1);
-            if (c.showerLaunched >= (c.showerTotal || 0)
-                && c.showerInFlight === 0
-                && c.progress < c.target) {
+            const stillCatchable = c.showerInFlight
+                + Math.max(0, (c.showerTotal || 0) - (c.showerLaunched || 0));
+            if (c.progress + stillCatchable < c.target) {
                 c.failed = true;
                 failContract();
             }
