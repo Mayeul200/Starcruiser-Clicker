@@ -3576,10 +3576,11 @@ body {
 }
 .scene-background {
     position: absolute;
-    /* Decalage demande : -50 px en X, -20 px en Y par rapport a la fusee.
-       Largeur/hauteur etendues d'autant pour que le panneau central reste
-       entierement couvert (le debordement est clippe par la scene). */
-    top: -20px;
+    /* Decalage demande : -50 px en X, +20 px en Y par rapport a la fusee.
+       Largeur etendue a droite et hauteur vers le HAUT pour que le panneau
+       central reste entierement couvert malgre le decalage vers le bas
+       (l'excedent est clippe par la scene). */
+    top: 20px;
     left: -50px;
     width: calc(100% + 62px);
     height: calc(100% + 20px);
