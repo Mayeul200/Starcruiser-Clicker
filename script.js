@@ -5169,10 +5169,25 @@ function getBuildingGainsSnapshot() {
     return buildingGainsCache;
 }
 
+// Purge des bonus temporaires expires : un bonus restaure depuis la
+// sauvegarde (rechargement pendant un bonus) n'a PLUS son setTimeout
+// d'expiration -- il restait dans activeRandomBonuses pour toujours et
+// l'arc-en-ciel .bonus-active ne s'eteignait jamais apres le timer.
+function expireRandomBonuses() {
+    const now = Date.now();
+    const before = activeRandomBonuses.length;
+    activeRandomBonuses = activeRandomBonuses.filter(b => b.endTime > now);
+    if (activeRandomBonuses.length !== before) {
+        rebuildAutoMultipliers();
+        updateDisplay();
+    }
+}
+
 function gameLoop() {
     if (gameplayPaused) { lastGameTick = Date.now(); return; }
     getBuildingGainsSnapshot();
     tickPartsRain(Date.now());
+    expireRandomBonuses();
     const now = Date.now();
     const dtSeconds = (now - lastGameTick) / 1000;
     lastGameTick = now;
@@ -5476,8 +5491,8 @@ function refreshStatsLive() {
 function updateStatsDynamicValues(container) {
     const values = [
         formatNumber(score, true),
-        formatNumber(totalPartsEarnedAllTime),
         formatNumber(totalPartsEarnedThisLaunch),
+        formatNumber(totalPartsEarnedAllTime),
         formatNumber(partsPerSecond),
         'x' + getTotalProductionMultiplier().toFixed(2),
         formatNumber(getClickPower()),
@@ -5500,8 +5515,8 @@ function renderStats() {
     container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.3rem;">' + t('Statistiques Globales') + '</h4>';
     const globalStats = [
         { label: t("Parts actuelles"), value: formatNumber(score, true) },
-        { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
         { label: t("Parts g\u00e9n\u00e9r\u00e9s pour ce lancement"), value: formatNumber(totalPartsEarnedThisLaunch) },
+        { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
         { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
         { label: t("Multiplicateur de production"), value: 'x' + getTotalProductionMultiplier().toFixed(2) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
