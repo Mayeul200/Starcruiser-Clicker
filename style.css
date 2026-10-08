@@ -189,6 +189,21 @@ body {
     z-index: 12000;
     animation: upgrade-bought-pop-rise 0.9s ease-out forwards;
 }
+/* Variante batiment : deux fois plus gros, ancree a GAUCHE de la case du
+   batiment (translate -100 % place le bord droit du pop sur le bord
+   gauche de la case), animee sur place en grossissant puis en fondu. */
+.upgrade-bought-pop-xl {
+    font-size: 2.2rem;
+    padding: 4px 14px;
+    border-radius: 12px;
+    animation-name: upgrade-bought-pop-xl-in;
+}
+@keyframes upgrade-bought-pop-xl-in {
+    0%   { opacity: 0; transform: translate(-100%, -50%) scale(0.5); }
+    25%  { opacity: 1; transform: translate(-100%, -50%) scale(1.2); }
+    60%  { opacity: 1; transform: translate(-100%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-100%, -60%) scale(1); }
+}
 @keyframes upgrade-bought-pop-rise {
     0%   { opacity: 0; transform: translate(-50%, 4px) scale(0.6); }
     25%  { opacity: 1; transform: translate(-50%, -14px) scale(1.15); }

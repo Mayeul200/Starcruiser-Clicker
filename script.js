@@ -1273,11 +1273,19 @@ function showUpgradeBoughtFeedback(hostEl, color, buildingId) {
     // totale de feedback). Le pop vit dans le body, hors de tout re-render.
     const rect = host.getBoundingClientRect();
     const pop = document.createElement('span');
-    pop.className = 'upgrade-bought-pop';
+    // Amelioration de batiment : pop XXL ancre a GAUCHE de la case du
+    // batiment (demande explicite), les autres restent au-dessus de la
+    // case d'amelioration, taille normale.
+    if (buildingId) pop.classList.add('upgrade-bought-pop-xl');
     pop.textContent = '\u00d72';
     if (color) { pop.style.color = color; pop.style.borderColor = color; }
-    pop.style.left = (rect.left + rect.width / 2) + 'px';
-    pop.style.top = rect.top + 'px';
+    if (buildingId) {
+        pop.style.left = rect.left + 'px';
+        pop.style.top = (rect.top + rect.height / 2) + 'px';
+    } else {
+        pop.style.left = (rect.left + rect.width / 2) + 'px';
+        pop.style.top = rect.top + 'px';
+    }
     document.body.appendChild(pop);
     setTimeout(() => pop.remove(), 900);
 }
