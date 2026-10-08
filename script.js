@@ -209,7 +209,7 @@ const SAVE_VERSION = "2.2.0";
 // ============================================
 const TROPHY_COLORS = {
     pps: ['#88c9ee', '#4499ff', '#1177ff', '#0066ff', '#6622ff', '#aa00dd', '#ff0055'],
-    planets: ['#94a3b8', '#ef4444', '#06b6d4', '#8b5cf6', '#10b981', '#3b82f6', '#f59e0b', '#fbbf24', '#ec4899', '#a855f7'],
+    planets: ['#94a3b8', '#ef4444', '#06b6d4', '#8b5cf6', '#10b981', '#3b82f6', '#f59e0b', '#fbbf24', '#ec4899', '#a78bfa'],
     launches: ['#66b2ff', '#2288ff', '#8800ff', '#ff8800'],
     stardust: ['#6622ff', '#cc00bb', '#ffcc00'],
     'building-upgrade': ['#88c9ee', '#2288ff', '#aa00dd', '#ff4411'],
@@ -217,8 +217,8 @@ const TROPHY_COLORS = {
     building: ['#88c9ee', '#0066ff', '#ff6600', '#ffcc00', '#ffee00', '#ffff00'],
     score: ['#ffcc00', '#ff8800', '#ffee00'],
     bonus: ['#f59e0b', '#ff2233'],
-    'building-types': ['#a855f7'],
-    cards: ['#94a3b8', '#a855f7']
+    'building-types': ['#a78bfa'],
+    cards: ['#94a3b8', '#a78bfa']
 };
 const TROPHIES = [
     // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
@@ -1255,7 +1255,20 @@ function calculateTotalBuildingCost(building, count) {
     return totalCost;
 }
 
-function buyClickUpgrade(threshold) {
+// Feedback d'achat : pop flottant "\u00d72" au-dessus de la case amelioration
+// concernee, aux couleurs de la case, pour confirmer visuellement le gain.
+function showUpgradeBoughtFeedback(hostEl, color) {
+    const container = document.getElementById('upgrades-container');
+    const host = hostEl || (container ? container.querySelector('.upgrade-icon') : null);
+    if (!host) return;
+    const pop = document.createElement('span');
+    pop.className = 'upgrade-bought-pop';
+    pop.textContent = '\u00d72';
+    if (color) { pop.style.color = color; pop.style.borderColor = color; }
+    host.appendChild(pop);
+    setTimeout(() => pop.remove(), 900);
+}
+function buyClickUpgrade(threshold, sourceEl) {
     const upgrade = CLICK_UPGRADES.find(u => u.threshold === threshold);
     if (!upgrade) return;
     
@@ -1273,6 +1286,7 @@ function buyClickUpgrade(threshold) {
     score -= upgrade.cost;
     activatedClickUpgrades.push(threshold);
     Sounds.upgrade();
+    showUpgradeBoughtFeedback(sourceEl, UPGRADE_COLORS[CLICK_UPGRADES.indexOf(upgrade) % UPGRADE_COLORS.length]);
     updateDisplay();
     saveGame();
     hideTooltip();
@@ -1281,7 +1295,7 @@ function buyClickUpgrade(threshold) {
     showToast(`\u2705 ${t(upgrade.name)} ${t("activated")}`);
 }
 
-function buyBuildingUpgrade(buildingId, threshold) {
+function buyBuildingUpgrade(buildingId, threshold, sourceEl) {
     const building = findBuildingById(buildingId);
     if (!building || !isBuildingUpgradeAvailable(buildingId, threshold)) return;
     
@@ -1301,6 +1315,7 @@ function buyBuildingUpgrade(buildingId, threshold) {
     
     buildingUpgrades[buildingId].push(threshold);
     Sounds.upgrade();
+    showUpgradeBoughtFeedback(sourceEl, getUpgradeTierColor(BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold)));
     invalidateBuildingGainsCache();
     updateDisplay();
     saveGame();
@@ -3638,7 +3653,7 @@ function renderUpgrades() {
                         t('+1% de production par clic') + '\n' + formatNumber(upgrade.cost) + ' ' + t('Parts')
                     ];
                     attachTooltip(el, lines.join('\n'));
-                    el.onclick = () => buyClickUpgrade(upgrade.threshold);
+                    el.onclick = () => buyClickUpgrade(upgrade.threshold, el);
                     return el;
                 }
             });
@@ -3657,7 +3672,7 @@ function renderUpgrades() {
                     render: () => {
                         const el = createUpgradeElement(color, building.imgPath || '', building.name, thresholdIndex + 1);
                         attachTooltip(el, `${t(building.name)} — ${t('niveau')} ${thresholdIndex + 1} — ×2 ${t('production')} — ${formatNumber(cost)} ${t('Parts')}`);
-                        el.onclick = () => buyBuildingUpgrade(building.id, threshold);
+                        el.onclick = () => buyBuildingUpgrade(building.id, threshold, el);
                         return el;
                     }
                 });
@@ -4722,6 +4737,11 @@ const Sounds = {
         soundTone(1568, 1568, 0.2, 'sine', 0.24, 0.2);
     },
     // Contrat : accepté / rempli / échoué
+    // Nouveau contrat disponible : carillon d'annonce, deux notes claires
+    contractNew() {
+        soundTone(880, 880, 0.09, 'sine', 0.32);
+        soundTone(1175, 1175, 0.16, 'sine', 0.3, 0.1);
+    },
     contractAccept() {
         soundTone(440, 440, 0.1, 'sine', 0.3);
         soundTone(587, 587, 0.14, 'sine', 0.3, 0.09);
@@ -4989,7 +5009,7 @@ function ensureRainCanvas() {
     requestAnimationFrame(rainFrame);
     return true;
 }
-const RAIN_RENDER_MIN_INTERVAL_MS = 33;
+const RAIN_RENDER_MIN_INTERVAL_MS = 16;
 function rainFrame(now) {
     requestAnimationFrame(rainFrame);
     const canvas = partsRain.canvas;
@@ -5457,7 +5477,7 @@ function updateStatsDynamicValues(container) {
 function renderStats() {
     const container = document.getElementById('stats-body');
     container.innerHTML = '';
-    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Statistiques Globales') + '</h4>';
+    container.innerHTML += '<h4 style="margin: 0 0 8px; color: #2563eb; font-size: 1.3rem;">' + t('Statistiques Globales') + '</h4>';
     const globalStats = [
         { label: t("Parts actuelles"), value: formatNumber(score, true) },
         { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
@@ -5478,14 +5498,14 @@ function renderStats() {
         statElement.style.padding = '8px 0';
         statElement.style.borderBottom = '1px solid #e2e8f0';
         statElement.innerHTML = `
-            <span style="color: #64748b; font-size: 0.9rem;">${stat.label}</span>
-            <span style="color: #2563eb; font-weight: 600;" data-stat-value="${globalStats.indexOf(stat)}">${stat.value}</span>
+            <span style="color: #64748b; font-size: 1.05rem;">${stat.label}</span>
+            <span style="color: #2563eb; font-weight: 600; font-size: 1.1rem;" data-stat-value="${globalStats.indexOf(stat)}">${stat.value}</span>
         `;
         container.appendChild(statElement);
     });
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Upgrades') + '</h4>';
-    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 0.9rem;">' + t('Améliorations de Clic:') + '</h5>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.3rem;">' + t('Upgrades') + '</h4>';
+    container.innerHTML += '<h5 style="margin: 8px 0 4px; color: #64748b; font-size: 1.05rem;">' + t('Améliorations de Clic:') + '</h5>';
     
     if (activatedClickUpgrades.length > 0) {
         const line = document.createElement('div');
@@ -5508,7 +5528,7 @@ function renderStats() {
                 badge.style.border = '1px solid ' + color;
                 badge.style.background = 'rgba(255, 255, 255, 0.6)';
                 badge.style.color = '#64748b';
-                badge.style.fontSize = '0.8rem';
+                badge.style.fontSize = '0.95rem';
                 badge.innerHTML = `<img src="images/cursor.svg" alt="" style="width: 14px; height: 14px;"> ${t(upgrade.name)}`;
                 line.appendChild(badge);
             }
@@ -5517,13 +5537,13 @@ function renderStats() {
     } else {
         const statElement = document.createElement('div');
         statElement.style.padding = '4px 0';
-        statElement.style.fontSize = '0.85rem';
+        statElement.style.fontSize = '1rem';
         statElement.style.color = '#94a3b8';
         statElement.textContent = t('Aucune am\u00e9lioration de clic');
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 0.9rem;">' + t('Am\u00e9liorations de B\u00e2timents:') + '</h5>';
+    container.innerHTML += '<h5 style="margin: 12px 0 4px; color: #64748b; font-size: 1.05rem;">' + t('Am\u00e9liorations de B\u00e2timents:') + '</h5>';
     
     let hasBuildingUpgrades = false;
     BUILDINGS.forEach(building => {
@@ -5534,7 +5554,7 @@ function renderStats() {
             statElement.style.display = 'flex';
             statElement.style.justifyContent = 'space-between';
             statElement.style.padding = '4px 0';
-            statElement.style.fontSize = '0.85rem';
+            statElement.style.fontSize = '1rem';
             statElement.style.color = '#64748b';
             const levelColor = getUpgradeTierColor(upgrades.length - 1);
             statElement.innerHTML = `<span>${t(building.name)}: <span style="color: ${levelColor}; font-weight: 700;">${upgrades.length}</span> ${t('niveau(x)')}</span>`;
@@ -5545,13 +5565,13 @@ function renderStats() {
     if (!hasBuildingUpgrades) {
         const statElement = document.createElement('div');
         statElement.style.padding = '4px 0';
-        statElement.style.fontSize = '0.85rem';
+        statElement.style.fontSize = '1rem';
         statElement.style.color = '#94a3b8';
         statElement.textContent = t('Aucune am\u00e9lioration de b\u00e2timent');
         container.appendChild(statElement);
     }
 
-    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.1rem;">' + t('Troph\u00e9es') + ' <span style="color: #16a34a;" data-trophies-bonus>(+' + (unlockedTrophies.size * 1) + '%)</span>' + '</h4>';
+    container.innerHTML += '<h4 style="margin: 16px 0 8px; color: #2563eb; font-size: 1.3rem;">' + t('Troph\u00e9es') + ' <span style="color: #16a34a;" data-trophies-bonus>(+' + (unlockedTrophies.size * 1) + '%)</span>' + '</h4>';
     const trophiesSection = renderTrophies();
     container.appendChild(trophiesSection);
     container.dataset.structureKey = statsStructureKey();
@@ -6471,6 +6491,8 @@ function renderContractsCardStatus() {
         if (hasNew) {
             contractState.offersSeenIds = contractState.offers.map(o => o.id);
             pulseHint(statusEl.closest('.mini-game-card'));
+            showToast('\ud83d\udcc4 ' + t('Nouveau contrat disponible !'));
+            Sounds.contractNew();
         }
     } else {
         // Permanence : meme sans offre active, la case affiche TOUJOURS
@@ -6620,7 +6642,7 @@ function resetContractState() {
 const CARD_RARITIES = {
     common:     { name: 'Commune',     color: '#94a3b8', glow: 'rgba(148,163,184,0.4)', bonusMult: 0.01 },
     rare:       { name: 'Rare',        color: '#3b82f6', glow: 'rgba(59,130,246,0.5)',  bonusMult: 0.03 },
-    epic:       { name: 'Épique',     color: '#a855f7', glow: 'rgba(168,85,247,0.6)',  bonusMult: 0.08 },
+    epic:       { name: 'Épique',     color: '#a78bfa', glow: 'rgba(167,139,250,0.6)',  bonusMult: 0.08 },
     legendary:  { name: 'Légendaire',  color: '#fbbf24', glow: 'rgba(251,191,36,0.7)', bonusMult: 0.20 },
     alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
 };
