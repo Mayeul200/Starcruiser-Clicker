@@ -3679,8 +3679,11 @@ body.night-mode .scene-background {
 
 /* Ombre au sol sous les tuyeres : la fusee repose sur son pas de tir,
    une ombre douce elliptique juste sous la base ajoute du realisme.
-   Positionnee en bas de la piece (elle-meme posee sur la dalle), diffuse
-   et semi-transparente pour rester discrete sur le decor. */
+   ATTENTION pas de z-index negatif : la piece porte un z-index inline 3
+   pose par le JS, un z-index -1 sur le ::after le renvoyait DERRIERE
+   .scene-background (z-index 0) et l'ombre etait totalement invisible.
+   L'ombre vit au fond du contenu de la piece (z-index 0), l'img de la
+   tuyere reste au-dessus par ordre de source. */
 .rocket-piece.nozzles::after {
     content: '';
     position: absolute;
@@ -3696,7 +3699,11 @@ body.night-mode .scene-background {
     border-radius: 50%;
     filter: blur(3px);
     pointer-events: none;
-    z-index: -1;
+    z-index: 0;
+}
+.rocket-piece.nozzles img {
+    position: relative;
+    z-index: 1;
 }
 /* Animation de chute pour les pièces nouvelles */
 @keyframes fallFromTop {
