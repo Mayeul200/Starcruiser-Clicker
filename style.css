@@ -2062,14 +2062,14 @@ body {
     will-change: transform, opacity;
 }
 @keyframes astronautBackflipToCockpit {
-    0%   { transform: translate(-50%, 0) rotate(0deg); opacity: 1; }
-    10%  { transform: translate(calc(-50% - 6px), 10px) rotate(10deg); opacity: 1; }
-    22%  { transform: translate(calc(-50% + 18px), -30px) rotate(24deg); opacity: 1; }
-    40%  { transform: translate(calc(-50% + 52px), -150px) rotate(-160deg); opacity: 1; }
-    58%  { transform: translate(calc(-50% + 80px), -245px) rotate(-310deg); opacity: 1; }
-    75%  { transform: translate(calc(-50% + 96px), -305px) rotate(-360deg); opacity: 1; }
-    88%  { transform: translate(calc(-50% + 102px), -318px) rotate(-360deg); opacity: 0.85; }
-    100% { transform: translate(calc(-50% + 104px), -321px) rotate(-360deg); opacity: 0; }
+    0%   { transform: translate(-50%, 0) rotate(0deg) scale(1); opacity: 1; }
+    8%   { transform: translate(calc(-50% - 8px), 14px) rotate(6deg) scale(0.96, 1.04); opacity: 1; }
+    16%  { transform: translate(calc(-50% + 14px), -46px) rotate(-30deg) scale(1); opacity: 1; }
+    38%  { transform: translate(calc(-50% + 58px), -168px) rotate(-175deg) scale(1); opacity: 1; }
+    58%  { transform: translate(calc(-50% + 88px), -252px) rotate(-300deg) scale(1); opacity: 1; }
+    74%  { transform: translate(calc(-50% + 100px), -300px) rotate(-360deg) scale(1); opacity: 1; }
+    86%  { transform: translate(calc(-50% + 104px), -312px) rotate(-360deg) scale(1); opacity: 0.9; }
+    100% { transform: translate(calc(-50% + 106px), -318px) rotate(-360deg) scale(1); opacity: 0; }
 }
 /* Flammes sous les moteurs : jets coniques orangés vacillants.
    Ancrées au bas des tuyères (y=666) : le HAUT des jets affleure les
@@ -3595,10 +3595,10 @@ body {
        50 px cumulees). Largeur etendue a droite et hauteur vers le BAS
        pour que le panneau central reste entierement couvert (l'excedent
        est clippe par la scene). */
-    top: 10px;
+    top: 15px;
     left: -150px;
     width: calc(100% + 162px);
-    height: calc(100% + 10px);
+    height: calc(100% + 15px);
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
