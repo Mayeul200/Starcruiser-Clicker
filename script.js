@@ -4783,19 +4783,47 @@ const Sounds = {
     },
     // Booster de cartes : ouverture mystique
     booster() {
-        // Ouverture de booster refaite : un swell mystErieux qui monte depuis
-        // le grave (deux sinus glissants qui s'elevent ensemble), un voile de
-        // bruit EthErE au sommet facon interstice magique, puis un accord
-        // cristallin qui s'illumine et s'Eteint doucement — la sensation
-        // d'ouvrir un coffre spatial, pas d'un paquet terrestre.
+        // Ouverture du booster : UNIQUEMENT le swell mysterieux qui monte depuis
+        // le grave -- l'accord cristallin de revelation n'est plus joue ici mais
+        // au retournement de la carte (Sounds.cardFlip), adapte a sa rarete.
         soundTone(110, 440, 0.35, 'sine', 0.26);
         soundTone(165, 660, 0.35, 'sine', 0.14);
         soundNoise(0.25, 0.18, 3000, 7000, 0.3);
-        soundTone(880, 880, 0.4, 'sine', 0.3, 0.38);
-        soundTone(1109, 1109, 0.4, 'sine', 0.24, 0.38);
-        soundTone(1319, 1319, 0.45, 'sine', 0.28, 0.38);
-        soundTone(1760, 1760, 0.35, 'sine', 0.1, 0.5);
-        soundTone(440, 440, 0.3, 'sine', 0.12, 0.55);
+    },
+    // Retournement d'une carte de booster : accord cristallin dont la
+    // couleur ET la richesse dependent de la rarete -- la commune reste
+    // sobre (deux notes), chaque palier ajoute des notes plus lumineuses,
+    // jusqu'a la fanfare complete de l'alternative.
+    cardFlip(rarity) {
+        const d = 0.05;
+        if (rarity === 'rare') {
+            soundTone(880, 880, 0.25, 'sine', 0.26, d);
+            soundTone(1109, 1109, 0.25, 'sine', 0.2, d + 0.05);
+            soundTone(1319, 1319, 0.4, 'sine', 0.24, d + 0.1);
+        } else if (rarity === 'epic') {
+            soundTone(784, 784, 0.2, 'triangle', 0.26, d);
+            soundTone(988, 988, 0.2, 'triangle', 0.24, d + 0.06);
+            soundTone(1175, 1175, 0.25, 'triangle', 0.24, d + 0.12);
+            soundTone(1568, 1568, 0.45, 'sine', 0.26, d + 0.18);
+        } else if (rarity === 'legendary') {
+            soundTone(659, 659, 0.16, 'triangle', 0.3, d);
+            soundTone(880, 880, 0.16, 'triangle', 0.3, d + 0.08);
+            soundTone(1109, 1109, 0.16, 'triangle', 0.3, d + 0.16);
+            soundTone(1319, 1319, 0.2, 'triangle', 0.32, d + 0.24);
+            soundTone(1760, 1760, 0.55, 'sine', 0.3, d + 0.36);
+            soundTone(2217, 2217, 0.5, 'sine', 0.14, d + 0.4);
+        } else if (rarity === 'alternative') {
+            soundTone(523, 523, 0.18, 'triangle', 0.3, d);
+            soundTone(784, 784, 0.18, 'triangle', 0.3, d + 0.09);
+            soundTone(1047, 1047, 0.18, 'triangle', 0.3, d + 0.18);
+            soundTone(1319, 1319, 0.22, 'triangle', 0.32, d + 0.27);
+            soundTone(1568, 1568, 0.22, 'triangle', 0.28, d + 0.36);
+            soundTone(2093, 2093, 0.6, 'sine', 0.3, d + 0.45);
+            soundTone(2637, 2637, 0.5, 'sine', 0.12, d + 0.5);
+        } else {
+            soundTone(880, 880, 0.3, 'sine', 0.26, d);
+            soundTone(1109, 1109, 0.35, 'sine', 0.18, d + 0.05);
+        }
     },
     // Booster pret a etre ouvert : annonce claire et festive, deux notes
     // cristallines montees puis accord lumineux tenu — un "fanfare courte"
@@ -6988,9 +7016,14 @@ function renderRevealCards(cards) {
         let discovered = false;
         el.addEventListener('click', function () {
             if (!discovered) {
-                // Premier clic : retourner (ou decouvrir) la carte, elle reste affichee
+                // Premier clic : retourner (ou decouvrir) la carte, elle reste affichee.
+                // L'accord de revelation est joue ICI, uniquement si la carte
+                // vient d'etre retournee (pas si elle est arrivee deja visible),
+                // et sa couleur depend de la rarete de la carte.
                 discovered = true;
-                if (!el.classList.contains('flipped')) el.classList.add('flipped');
+                const wasFlipped = el.classList.contains('flipped');
+                if (!wasFlipped) Sounds.cardFlip(card.rarity);
+                if (!wasFlipped) el.classList.add('flipped');
                 revealed++;
                 revealedCards.push({ card, isNew });
                 return;
