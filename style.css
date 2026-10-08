@@ -3677,33 +3677,13 @@ body.night-mode .scene-background {
     object-fit: contain; /* Garde les proportions sans déformation */
 }
 
-/* Ombre au sol sous les tuyeres : la fusee repose sur son pas de tir,
-   une ombre douce elliptique juste sous la base ajoute du realisme.
-   ATTENTION pas de z-index negatif : la piece porte un z-index inline 3
-   pose par le JS, un z-index -1 sur le ::after le renvoyait DERRIERE
-   .scene-background (z-index 0) et l'ombre etait totalement invisible.
-   L'ombre vit au fond du contenu de la piece (z-index 0), l'img de la
-   tuyere reste au-dessus par ordre de source. */
-.rocket-piece.nozzles::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -6%;
-    width: 120%;
-    height: 14%;
-    transform: translateX(-50%);
-    background: radial-gradient(ellipse at center,
-        rgba(0, 0, 0, 0.45) 0%,
-        rgba(0, 0, 0, 0.28) 45%,
-        rgba(0, 0, 0, 0) 75%);
-    border-radius: 50%;
-    filter: blur(3px);
-    pointer-events: none;
-    z-index: 0;
-}
+/* Ombre portee directement sur l'image des tuyeres : un drop-shadow
+   decale vers le bas. Oppose au pseudo-element absolument positionne
+   qui ne s'affichait pas : le filter drop-shadow suit l'alpha reel du
+   PNG, il ne peut pas etre rogne par la boite de la piece ni se retrouver
+   derriere le fond de scene. */
 .rocket-piece.nozzles img {
-    position: relative;
-    z-index: 1;
+    filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.55));
 }
 /* Animation de chute pour les pièces nouvelles */
 @keyframes fallFromTop {
