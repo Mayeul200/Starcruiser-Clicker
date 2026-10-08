@@ -3677,6 +3677,27 @@ body.night-mode .scene-background {
     object-fit: contain; /* Garde les proportions sans déformation */
 }
 
+/* Ombre au sol sous les tuyeres : la fusee repose sur son pas de tir,
+   une ombre douce elliptique juste sous la base ajoute du realisme.
+   Positionnee en bas de la piece (elle-meme posee sur la dalle), diffuse
+   et semi-transparente pour rester discrete sur le decor. */
+.rocket-piece.nozzles::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6%;
+    width: 120%;
+    height: 14%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center,
+        rgba(0, 0, 0, 0.45) 0%,
+        rgba(0, 0, 0, 0.28) 45%,
+        rgba(0, 0, 0, 0) 75%);
+    border-radius: 50%;
+    filter: blur(3px);
+    pointer-events: none;
+    z-index: -1;
+}
 /* Animation de chute pour les pièces nouvelles */
 @keyframes fallFromTop {
     0% { 
