@@ -3576,13 +3576,12 @@ body {
 }
 .scene-background {
     position: absolute;
-    /* Decalage demande : -50 px en X, +20 px en Y par rapport a la fusee.
-       Largeur etendue a droite et hauteur vers le HAUT pour que le panneau
-       central reste entierement couvert malgre le decalage vers le bas
-       (l'excedent est clippe par la scene). */
+    /* Decalage demande : -150 px en X cumules (50 + 100), +20 px en Y.
+       Largeur etendue d'autant pour que le panneau central reste
+       entierement couvert (l'excedent est clippe par la scene). */
     top: 20px;
-    left: -50px;
-    width: calc(100% + 62px);
+    left: -150px;
+    width: calc(100% + 162px);
     height: calc(100% + 20px);
     background-image: url('images/backgrounds/valley-day.png');
     background-size: 100% 100%;
