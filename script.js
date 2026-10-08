@@ -3768,6 +3768,14 @@ function buyAllUpgrades() {
             if (!buildingUpgrades[item.buildingId]) buildingUpgrades[item.buildingId] = [];
             buildingUpgrades[item.buildingId].push(item.threshold);
             bought++;
+            // Feedback visuel identique a l'achat unitaire : pop x2 XXL a
+            // gauche de la case du batiment (les cases existent encore ici,
+            // le re-render vient plus tard).
+            showUpgradeBoughtFeedback(
+                null,
+                getUpgradeTierColor(BUILDING_UPGRADE_THRESHOLDS.indexOf(item.threshold)),
+                item.buildingId
+            );
         }
     }
     if (bought === 0) {

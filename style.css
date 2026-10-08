@@ -5081,7 +5081,7 @@ body.night-mode .scene-background {
 .galactic-intro {
     text-align: center;
     color: var(--text-light);
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     margin-bottom: 16px;
     padding: 10px;
     background: rgba(167, 139, 250, 0.08);
@@ -5170,10 +5170,10 @@ body.night-mode .scene-background {
     flex-shrink: 0;
 }
 .galactic-branch-icon {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 }
 .galactic-branch-name {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--branch-color);
     text-transform: uppercase;
@@ -5218,12 +5218,12 @@ body.night-mode .scene-background {
     gap: 8px;
 }
 .galactic-node-name {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text);
 }
 .galactic-node-max {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 800;
     color: #fbbf24;
     background: rgba(251, 191, 36, 0.2);
@@ -5231,7 +5231,7 @@ body.night-mode .scene-background {
     border-radius: 10px;
 }
 .galactic-node-desc {
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     color: var(--text-light);
     line-height: 1.4;
     min-height: 2.4em;
@@ -5243,25 +5243,25 @@ body.night-mode .scene-background {
     gap: 6px;
 }
 .galactic-node-level {
-    font-size: 0.88rem;
+    font-size: 0.78rem;
     color: #a78bfa;
     font-weight: 600;
     white-space: nowrap;
 }
 .galactic-req {
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     color: var(--text-dark);
     font-style: italic;
     text-align: right;
 }
 .galactic-btn {
-    padding: 8px 14px;
+    padding: 6px 12px;
     border: none;
     border-radius: var(--radius);
     background: #a78bfa;
     color: white;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.2s;
