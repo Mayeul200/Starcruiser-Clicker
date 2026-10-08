@@ -1261,11 +1261,17 @@ function showUpgradeBoughtFeedback(hostEl, color) {
     const container = document.getElementById('upgrades-container');
     const host = hostEl || (container ? container.querySelector('.upgrade-icon') : null);
     if (!host) return;
+    // Position capturee AVANT le re-render (renderUpgrades vide le conteneur :
+    // un pop attache a la case etait detruit instantanement, d'ou l'absence
+    // totale de feedback). Le pop vit dans le body, hors de tout re-render.
+    const rect = host.getBoundingClientRect();
     const pop = document.createElement('span');
     pop.className = 'upgrade-bought-pop';
     pop.textContent = '\u00d72';
     if (color) { pop.style.color = color; pop.style.borderColor = color; }
-    host.appendChild(pop);
+    pop.style.left = (rect.left + rect.width / 2) + 'px';
+    pop.style.top = rect.top + 'px';
+    document.body.appendChild(pop);
     setTimeout(() => pop.remove(), 900);
 }
 function buyClickUpgrade(threshold, sourceEl) {

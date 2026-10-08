@@ -172,12 +172,12 @@ body {
     text-shadow: none;
 }
 /* Pop \u00d72 flottant : confirme visuellement l'achat d'une amelioration
-   au-dessus de la case cliquee (montee + fondu, 0.9 s). */
+   au-dessus de la case cliquee (montee + fondu, 0.9 s). Vit dans le body
+   en position fixed (coordonnees viewport capturees avant le re-render) :
+   la case achetee est detruite par renderUpgrades et clippee par
+   .upgrade-icon { overflow: hidden }, le pop y serait invisible. */
 .upgrade-bought-pop {
-    position: absolute;
-    left: 50%;
-    top: -6px;
-    transform: translate(-50%, 0);
+    position: fixed;
     font-size: 1.1rem;
     font-weight: 800;
     padding: 2px 7px;
@@ -186,13 +186,13 @@ body {
     border: 1px solid currentColor;
     pointer-events: none;
     white-space: nowrap;
-    z-index: 3200;
+    z-index: 12000;
     animation: upgrade-bought-pop-rise 0.9s ease-out forwards;
 }
 @keyframes upgrade-bought-pop-rise {
     0%   { opacity: 0; transform: translate(-50%, 4px) scale(0.6); }
-    25%  { opacity: 1; transform: translate(-50%, -6px) scale(1.15); }
-    100% { opacity: 0; transform: translate(-50%, -26px) scale(1); }
+    25%  { opacity: 1; transform: translate(-50%, -14px) scale(1.15); }
+    100% { opacity: 0; transform: translate(-50%, -34px) scale(1); }
 }
 /* Tooltip for upgrades */
 .upgrade-tooltip .tooltip-line {
@@ -5043,7 +5043,7 @@ body.night-mode .scene-background {
 .galactic-intro {
     text-align: center;
     color: var(--text-light);
-    font-size: 0.85rem;
+    font-size: 1.05rem;
     margin-bottom: 16px;
     padding: 10px;
     background: rgba(167, 139, 250, 0.08);
@@ -5132,10 +5132,10 @@ body.night-mode .scene-background {
     flex-shrink: 0;
 }
 .galactic-branch-icon {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
 }
 .galactic-branch-name {
-    font-size: 0.95rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--branch-color);
     text-transform: uppercase;
@@ -5180,12 +5180,12 @@ body.night-mode .scene-background {
     gap: 8px;
 }
 .galactic-node-name {
-    font-size: 0.88rem;
+    font-size: 1.08rem;
     font-weight: 700;
     color: var(--text);
 }
 .galactic-node-max {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     font-weight: 800;
     color: #fbbf24;
     background: rgba(251, 191, 36, 0.2);
@@ -5193,7 +5193,7 @@ body.night-mode .scene-background {
     border-radius: 10px;
 }
 .galactic-node-desc {
-    font-size: 0.72rem;
+    font-size: 0.92rem;
     color: var(--text-light);
     line-height: 1.4;
     min-height: 2.4em;
@@ -5205,25 +5205,25 @@ body.night-mode .scene-background {
     gap: 6px;
 }
 .galactic-node-level {
-    font-size: 0.7rem;
+    font-size: 0.88rem;
     color: #a78bfa;
     font-weight: 600;
     white-space: nowrap;
 }
 .galactic-req {
-    font-size: 0.65rem;
+    font-size: 0.82rem;
     color: var(--text-dark);
     font-style: italic;
     text-align: right;
 }
 .galactic-btn {
-    padding: 6px 12px;
+    padding: 8px 14px;
     border: none;
     border-radius: var(--radius);
     background: #a78bfa;
     color: white;
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: 0.95rem;
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.2s;
