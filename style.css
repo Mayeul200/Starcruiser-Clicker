@@ -3684,7 +3684,7 @@ body.night-mode .scene-background {
 .rocket-piece.nozzles img,
 .rocket-piece.boosters-left img,
 .rocket-piece.boosters-right img {
-    filter: drop-shadow(0 10px 9px rgba(0, 0, 0, 0.65));
+    filter: drop-shadow(0 13px 10px rgba(0, 0, 0, 0.9));
 }
 /* Animation de chute pour les pièces nouvelles */
 @keyframes fallFromTop {
