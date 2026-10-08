@@ -8228,7 +8228,7 @@ function buyRocketPart(partId) {
     if (!part || part.purchased) return;
     const cost = getRocketPartCost(part);
     if (score < cost) {
-        showToast("\u274c " + t("Pas assez de Parts pour") + " " + t(part.name));
+        showToast(t("Pas assez de Parts pour") + " " + t(part.name));
         return;
     }
     score -= cost;
@@ -8246,7 +8246,7 @@ function buyRocketPart(partId) {
     renderRocketPartsShop();
     checkBuildingUnlocks();
     saveGame();
-    showToast("\u2705 " + t(part.name) + " " + t("construit !"));
+    showToast(t(part.name) + " " + t("construit !"));
     checkTrophies();
 }
 
