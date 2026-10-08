@@ -2783,7 +2783,7 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    padding: 2px 6px;
+    padding: 10px 6px;
     background: rgba(167, 139, 250, 0.06);
     color: #c4b5fd;
     border: 1px solid rgba(167, 139, 250, 0.55);
@@ -3677,13 +3677,14 @@ body.night-mode .scene-background {
     object-fit: contain; /* Garde les proportions sans déformation */
 }
 
-/* Ombre portee directement sur l'image des tuyeres : un drop-shadow
-   decale vers le bas. Oppose au pseudo-element absolument positionne
-   qui ne s'affichait pas : le filter drop-shadow suit l'alpha reel du
-   PNG, il ne peut pas etre rogne par la boite de la piece ni se retrouver
-   derriere le fond de scene. */
-.rocket-piece.nozzles img {
-    filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.55));
+/* Ombres portees directement sur les images (drop-shadow suit l'alpha
+   reel du PNG : impossible a rogner par la boite de la piece). Tuyeres
+   principales ET tuyeres des boosters, ombre plus marquee et plus
+   decalee vers le bas pour asseoir la fusee sur son pas de tir. */
+.rocket-piece.nozzles img,
+.rocket-piece.boosters-left img,
+.rocket-piece.boosters-right img {
+    filter: drop-shadow(0 10px 9px rgba(0, 0, 0, 0.65));
 }
 /* Animation de chute pour les pièces nouvelles */
 @keyframes fallFromTop {
