@@ -6047,7 +6047,7 @@ function getContractTypes() {
             diffs: [
                 { target: 60,  price: Math.max(5, pps * 5),  rewardMult: 2,   rewardType: 'instant', instantSec: 15 },
                 { target: 90, price: Math.max(50, pps * 12), rewardMult: 3,   rewardType: 'instant', instantSec: 30 },
-                { target: 180, price: Math.max(200, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 40 }
+                { target: 180, price: Math.max(200, pps * 30), rewardMult: 5,   rewardType: 'instant', instantSec: 45 }
             ]
         },
         {
@@ -6069,9 +6069,9 @@ function getContractTypes() {
             objective: 'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)',
             track: 'comets',
             diffs: [
-                { target: 4, price: Math.max(6, pps * 4),  rewardMult: 2, rewardType: 'instant', instantSec: 22 },
-                { target: 7, price: Math.max(50, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 45 },
-                { target: 11, price: Math.max(190, pps * 22), rewardMult: 5, rewardType: 'instant', instantSec: 60 }
+                { target: 4, price: Math.max(6, pps * 4),  rewardMult: 2, rewardType: 'instant', instantSec: 15 },
+                { target: 7, price: Math.max(50, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 30 },
+                { target: 11, price: Math.max(190, pps * 22), rewardMult: 5, rewardType: 'instant', instantSec: 45 }
             ]
         },
         {
@@ -6086,9 +6086,9 @@ function getContractTypes() {
                 // En 30 s de contrat la production passive vaut pps*30 —
                 // pps*22 laisse ~27% d'apport actif (clics, boost), pps*40
                 // sur 45 s demande ~33% d'apport actif.
-                { target: pps * 22,  price: pps * 5,  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 12 },
-                { target: pps * 40, price: pps * 12, rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 16 },
-                { target: pps * 40, price: pps * 28, rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 20 }
+                { target: pps * 30,  price: pps * 5,  rewardMult: 2, rewardType: 'click', clickMult: 2, duration: 12 },
+                { target: pps * 35, price: pps * 12, rewardMult: 3, rewardType: 'click', clickMult: 3, duration: 16 },
+                { target: pps * 40, price: pps * 25, rewardMult: 5, rewardType: 'click', clickMult: 4, duration: 20 }
             ]
         },
         {
@@ -6098,9 +6098,9 @@ function getContractTypes() {
             objective: 'Survivez a la pluie : attrapez {target} cometes',
             track: 'comets',
             diffs: [
-                { target: 5, price: Math.max(20, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 30, shower: 6 },
-                { target: 8, price: Math.max(150, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 60, shower: 9 },
-                { target: 12, price: Math.max(500, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 75, shower: 14 }
+                { target: 5, price: Math.max(20, pps * 10), rewardMult: 3, rewardType: 'instant', instantSec: 20, shower: 6 },
+                { target: 8, price: Math.max(150, pps * 25), rewardMult: 4, rewardType: 'instant', instantSec: 40, shower: 9 },
+                { target: 12, price: Math.max(500, pps * 55), rewardMult: 6, rewardType: 'instant', instantSec: 60, shower: 14 }
             ]
         }
     ];
