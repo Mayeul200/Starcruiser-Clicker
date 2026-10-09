@@ -1000,7 +1000,7 @@ body {
 .right-panel {
     background: var(--bg-panel);
     border-left: 1px solid var(--border);
-    padding: 15px 16px 16px 16px;
+    padding: 0 16px 16px 16px;
     overflow-y: auto;
     height: 100%;
     color: var(--text);
@@ -1192,16 +1192,17 @@ body {
     align-items: center;
     min-height: 1.3em;
     margin: 0;
-    padding: 0 0 10px 0;
+    padding: 15px 0 10px 0;
     border-bottom: 2px solid var(--primary-light);
     box-sizing: border-box;
     /* Titre (et multiplicateurs x1/x5/x50/Max) figé en haut du panneau :
-       seul la liste des bâtiments défile dessous. */
+       seul la liste des bâtiments défile dessous. Le padding-top du panel
+       est reporté ici : le header couvre tout le bord haut, aucune case
+       ne peut défiler derrière lui. */
     position: sticky;
     top: 0;
     z-index: 5;
     background: var(--bg-panel);
-    padding-top: 15px;
     margin-bottom: 10px;
 }
 
@@ -2771,7 +2772,7 @@ body {
 .left-panel {
     background: linear-gradient(180deg, var(--bg-panel), var(--secondary-light));
     border-right: 1px solid var(--border);
-    padding: 15px;
+    padding: 0 15px 15px 15px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -2786,6 +2787,9 @@ body {
     top: 0;
     z-index: 5;
     background: var(--bg-panel);
+    /* Le padding-top du panel est reporte ici : le titre couvre tout le
+       bord haut, aucun contenu ne defile visible derriere lui. */
+    padding-top: 15px;
 }
 
 .galactic-shop-btn {
@@ -5446,7 +5450,8 @@ body.night-mode .scene-background {
     .launch-button-text { display: block; font-size: 0.85rem; letter-spacing: calc(0.5px * var(--mscale, 1)); }
 
     /* --- Panneau gauche (Espace) --- */
-    .left-panel { padding: calc(12px * var(--mscale, 1)); }
+    .left-panel { padding: 0 calc(12px * var(--mscale, 1)) calc(12px * var(--mscale, 1)); }
+    .left-panel > h3 { padding-top: calc(12px * var(--mscale, 1)); }
     /* Titre jamais ecrase : il garde sa hauteur dans le flex-column */
     .left-panel h3 { flex-shrink: 0; }
     .mini-space-map { height: clamp(calc(140px * var(--mscale, 1)), calc(24vh * var(--mscale, 1)), calc(200px * var(--mscale, 1))); flex-shrink: 0; }
