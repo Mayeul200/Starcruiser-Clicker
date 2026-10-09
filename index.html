@@ -245,6 +245,7 @@
         <!-- LEFT PANEL (20%) - Space Progress -->
         <div class="left-panel">
             <h3 data-i18n="Progression Spatiale">Progression Spatiale</h3>
+            <div class="left-panel-scroll">
             <div class="space-progress-container" id="space-progress-sidebar">
                 
                 <div class="current-planet-display" id="current-planet-display" title="Prochaine destination de l'expédition actuelle"><span id="current-planet-text">Prochaine destination : Lune — 0.0%</span><span class="header-planet-fill" id="header-planet-fill"></span></div>
@@ -378,6 +379,7 @@
                     </div>
                 </div>
             </div>
+            </div><!-- /.left-panel-scroll -->
         </div>
 
         <!-- RIGHT PANEL (20%) - Buildings -->
@@ -578,7 +580,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v35502c92';
+            var APP_CACHE_VERSION = 'va8b1eac1';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;

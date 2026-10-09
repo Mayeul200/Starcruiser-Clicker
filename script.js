@@ -957,14 +957,17 @@ function loadGame() {
                 endTime: bonus.endTime
             }));
 
+            // Chaque bonus actif ajoute son multiplicateur : les bonus
+            // temporaires se cumulent (produit), memes apres rechargement
+            // de la page -- un doublon de flare = x4 * x4, comme en jeu.
             activeRandomBonuses.forEach(bonus => {
                 if (bonus.effect === "auto" || bonus.effect === "both" || bonus.effect === "multiplier") {
-                    if (bonus.multiplier && !autoMultipliers.includes(bonus.multiplier)) {
+                    if (bonus.multiplier) {
                         autoMultipliers.push(bonus.multiplier);
                     }
                 }
                 if (bonus.effect === "click" || bonus.effect === "both") {
-                    if (bonus.multiplier && !clickMultipliers.includes(bonus.multiplier)) {
+                    if (bonus.multiplier) {
                         clickMultipliers.push(bonus.multiplier);
                     }
                 }
@@ -1478,7 +1481,8 @@ function renderBuildings() {
     const container = document.getElementById('buildings-list');
     // Preserver la position de scroll : un rerendu (ex. deblocage d'un
     // batiment pendant que le score monte) ne doit jamais remonter la liste.
-    const scrollPanel = container.closest('.right-panel');
+    // La liste elle-meme est le conteneur scrollable (header fige au-dessus).
+    const scrollPanel = container.classList.contains('buildings-list') ? container : container.closest('.right-panel');
     const savedScroll = scrollPanel ? scrollPanel.scrollTop : 0;
     container.innerHTML = '';
 
@@ -3879,12 +3883,8 @@ function spawnRandomBonus(shower, isContract) {
     let bonus = shower
         ? { id: "meteor", symbol: "\ud83c\udf20", name: "Pluie de météores", effect: "instant", type: "meteor", colorClass: "meteor" }
         : RANDOM_BONUSES[Math.floor(Math.random() * RANDOM_BONUSES.length)];
-    // Si ce bonus est déjà actif, prendre l'autre pour ne pas bloquer le spawn
-    if (!shower && activeRandomBonuses.some(b => b.id === bonus.id)) {
-        const other = RANDOM_BONUSES.find(b => b.id !== bonus.id);
-        if (activeRandomBonuses.some(b => b.id === other.id)) return;
-        bonus = other;
-    }
+    // Les bonus temporaires se cumulent : un flare peut apparaitre meme si
+    // un autre est deja actif (multiplicateurs multiplies entre eux).
 
     // La comète traverse l'écran en diagonale de haut en bas
     // La traînée part du haut et descend jusqu'en bas
@@ -5966,12 +5966,20 @@ function updateBonusTimer() {
         };
         // Affiche le multiplicateur temporaire actif et le temps restant
         // (ex: "×4 · 12 s") a cote du compteur tant que le bonus dure.
-        const active = activeRandomBonuses.find(b => (b.effect === 'multiplier' || b.effect === 'click' || b.id === 'flare') && b.endTime > Date.now());
-        if (active && active.multiplier) {
-            const secLeft = Math.ceil((active.endTime - Date.now()) / 1000);
-            const label = active.effect === 'click'
-                ? t('Clic') + ' ×' + active.multiplier
-                : '×' + active.multiplier;
+        // Tous les bonus temporaires actifs se cumulent : le badge montre
+        // le multiplicateur TOTAL (produit) et le temps restant le plus long.
+        const now = Date.now();
+        const prodActive = activeRandomBonuses.filter(b => (b.effect === 'multiplier' || b.effect === 'both' || b.id === 'flare') && b.endTime > now);
+        const clickActive = activeRandomBonuses.filter(b => (b.effect === 'click' || b.effect === 'both') && b.endTime > now);
+        const prodMult = prodActive.reduce((acc, b) => acc * (b.multiplier || 1), 1);
+        const clickMult = clickActive.reduce((acc, b) => acc * (b.multiplier || 1), 1);
+        const latestEnd = Math.max(0, ...prodActive.map(b => b.endTime), ...clickActive.map(b => b.endTime));
+        if ((prodActive.length || clickActive.length) && (prodMult > 1 || clickMult > 1)) {
+            const secLeft = Math.ceil((latestEnd - now) / 1000);
+            const parts = [];
+            if (prodMult > 1) parts.push('×' + prodMult);
+            if (clickMult > 1) parts.push(t('Clic') + ' ×' + clickMult);
+            const label = parts.join(' + ');
             const text = label + ' · ' + secLeft + ' s';
             // 'block' explicite : le CSS de .bonus-timer est display:none,
             // style.display='' retirerait le style inline et le cacherait.
