@@ -483,10 +483,16 @@ function getPrestigeProductionBoost() {
 function getPlanetProductionBonus() {
     return 1 + getTotalPlanetBonus() + unlockedTrophies.size * 0.01;
 }
-// Suite infinie : chaque Poussiere d'Etoiles gagne au-dela de l'Amas de
-// Virgo ajoute +1% de production permanent (cumulatif, jamais reset).
+// Suite infinie : les PE gagnees au-dela de l'Amas de Virgo donnent un
+// bonus de production permanent a rendements DECROISSANTS -- le total en %
+// suit une racine carree du nombre de PE converties (100 PE = +10%,
+// 400 = +20%, 1 600 = +40%). L'ancienne formule lineaire (+1% par PE)
+// explosait la production des centaines de PE converties d'un seul coup.
+function getInfiniteProductionPercent(total) {
+    return Math.sqrt(total) * 1.0;
+}
 function getInfiniteStardustBonus() {
-    return 1 + postVirgoStardust * 0.01;
+    return 1 + getInfiniteProductionPercent(postVirgoStardust) / 100;
 }
 function getRocketPartProductionBonus() {
     return 1 + 0.04 * ROCKET_PARTS.filter(p => p.purchased).length;
@@ -1148,6 +1154,8 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.value = '';
     });
 });
+let saveDisabled = false;
+
 function confirmDeleteSave() {
     if (confirm("\u26a0\ufe0f " + t("Supprimer la sauvegarde ? Tous vos progrès seront PERDUS !"))) {
         deleteSave();
@@ -1155,6 +1163,10 @@ function confirmDeleteSave() {
 }
 
 function deleteSave() {
+    // Neutraliser la sauvegarde avant suppression : le hook beforeunload
+    // re-sauvegardait la partie au moment du reload et ressuscitait la
+    // sauvegarde juste effacee.
+    saveDisabled = true;
     clearTimeout(bonusSpawnTimer);
     bonusSpawnTimer = null;
     localStorage.removeItem('starcruiserClickerSave');
@@ -2815,7 +2827,7 @@ function showPostTravelShop(distance) {
                 t(planet.name) + ' +' + planet.bonusPercent + '%</span>').join('') + '</div>';
         }
         const infiniteHtml = postVirgoStardust > 0
-            ? '<div class="pts-line pts-infinite">\u2728 ' + t('Suite infinie') + ' : +' + postVirgoStardust + '% ' + t('production permanente') + '</div>'
+            ? '<div class="pts-line pts-infinite">\u2728 ' + t('Suite infinie') + ' : +' + getInfiniteProductionPercent(postVirgoStardust).toFixed(1) + '% ' + t('production permanente') + '</div>'
             : '';
         summaryEl.innerHTML =
             '<div class="pts-line">' + t('Distance parcourue') + ' <strong>' + formatNumber(isNaN(distance) ? 0 : distance) + ' km</strong></div>' +
@@ -3232,6 +3244,7 @@ function buyInfiniteProduction() {
         showToast('\u274c ' + t('Pas assez de Poussiere d\'Etoiles'));
         return;
     }
+    const gainPct = getInfiniteProductionPercent(postVirgoStardust + amount) - getInfiniteProductionPercent(postVirgoStardust);
     starDust -= amount;
     postVirgoStardust += amount;
     invalidateBuildingGainsCache();
@@ -3239,7 +3252,7 @@ function buyInfiniteProduction() {
     updateStardustDisplay();
     renderGalacticShop();
     updateSpaceProgress();
-    showToast('\u2728 +' + formatNumber(amount) + '% ' + t('production permanente'));
+    showToast('\u2728 +' + gainPct.toFixed(1) + '% ' + t('production permanente'));
 }
 
 function updateInfiniteBuyButton() {
@@ -3249,11 +3262,14 @@ function updateInfiniteBuyButton() {
     if (!gameFinished) { wrap.style.display = 'none'; return; }
     wrap.style.display = '';
     const amount = Math.floor(starDust);
+    const currentPct = getInfiniteProductionPercent(postVirgoStardust);
+    const nextPct = getInfiniteProductionPercent(postVirgoStardust + amount);
+    const gainPct = nextPct - currentPct;
     btn.innerHTML =
         '<span class="ibb-icon">\u2728</span>' +
-        '<span class="ibb-title">' + t('Suite infinie') + ' : +' + formatNumber(postVirgoStardust) + '%</span>' +
-        '<span class="ibb-desc">' + t('Depenser {n} PE pour +{n}% de production permanente').split('{n}').join(formatNumber(amount)) + '</span>' +
-        '<span class="ibb-cta' + (amount < 1 ? ' disabled' : '') + '">' + t('Convertir') + ' ' + formatNumber(amount) + ' \u2728 \u2192 +' + formatNumber(amount) + '%</span>';
+        '<span class="ibb-title">' + t('Suite infinie') + ' : +' + currentPct.toFixed(1) + '%</span>' +
+        '<span class="ibb-desc">' + t('Depenser {n} PE pour un bonus decroissant de production permanente').split('{n}').join(formatNumber(amount)) + '</span>' +
+        '<span class="ibb-cta' + (amount < 1 ? ' disabled' : '') + '">' + t('Convertir') + ' ' + formatNumber(amount) + ' \u2728 \u2192 +' + gainPct.toFixed(1) + '%</span>';
     btn.disabled = amount < 1;
 }
 
@@ -3446,21 +3462,15 @@ function updateSpaceProgress() {
     // difference entre la distance exigee par la planete visee et la portee
     // de la fusee en construction (jamais negative).
     if (sidebarDistanceNeeded) {
-        const target = progress.nextPlanet ? progress.nextPlanet : progress.currentPlanet;
-        const needed = target ? Math.max(0, target.distanceRequired - reachableDistance) : 0;
-        rollCounterText(sidebarDistanceNeeded, formatNumber(needed) + ' ' + t('km'));
-        // Suite infinie debloquee : plus de destination finale, l'objectif
-        // n'a plus de borne -- sigle infini affiche sous la valeur.
-        let infMark = sidebarDistanceNeeded.parentElement.querySelector('.stat-infinite-mark');
+        // Suite infinie debloquee : plus de destination finale -- la valeur
+        // de la case est remplacee par le sigle infini, comme les autres
+        // valeurs elle est centree par le CSS existant (.stat-value).
         if (gameFinished) {
-            if (!infMark) {
-                infMark = document.createElement('span');
-                infMark.className = 'stat-infinite-mark';
-                sidebarDistanceNeeded.parentElement.appendChild(infMark);
-            }
-            infMark.textContent = '\u221E';
-        } else if (infMark) {
-            infMark.remove();
+            rollCounterText(sidebarDistanceNeeded, '\u221E');
+        } else {
+            const target = progress.nextPlanet ? progress.nextPlanet : progress.currentPlanet;
+            const needed = target ? Math.max(0, target.distanceRequired - reachableDistance) : 0;
+            rollCounterText(sidebarDistanceNeeded, formatNumber(needed) + ' ' + t('km'));
         }
     }
 
@@ -7995,7 +8005,7 @@ let lastGameTick = Date.now();
 setInterval(gameLoop, GAME_LOOP_INTERVAL_MS);
 setInterval(tickContracts, 500);
 setInterval(() => {
-    if (Date.now() - lastSaveTime > SAVE_INTERVAL_MS) {
+    if (!saveDisabled && Date.now() - lastSaveTime > SAVE_INTERVAL_MS) {
         saveGame();
     }
 }, 10000);
@@ -8004,11 +8014,12 @@ setInterval(() => {
 // l'autosave tourne toutes les 30s, sans ce hook le joueur pouvait
 // perdre jusqu'a SAVE_INTERVAL_MS de progression en fermant vite.
 window.addEventListener('beforeunload', () => {
+    if (saveDisabled) return;
     try { saveGame(); } catch (e) { /* dernier recours : ne pas bloquer la fermeture */ }
 });
 // Idem sur mobile : l'onglet passe en arriere-plan sans beforeunload fiable.
 document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
+    if (document.hidden && !saveDisabled) {
         try { saveGame(); } catch (e) {}
     }
 });

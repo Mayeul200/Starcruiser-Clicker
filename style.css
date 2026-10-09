@@ -1015,9 +1015,11 @@ body {
     flex-direction: column;
     gap: 8px;
     margin-top: 8px;
-    container-type: inline-size;
     /* SEULE la liste defile : le header au-dessus est hors de ce
-       conteneur et reste fige, aucune case visible au-dessus du titre. */
+       conteneur et reste fige, aucune case visible au-dessus du titre.
+       container-type RETIRE : combine a overflow-y auto il faussait le
+       calcul des cqw des cases (rendu des images trop grandes). Les
+       .building-item ont leur propre container-type inline-size. */
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
@@ -5106,19 +5108,6 @@ body.night-mode .scene-background {
     border-radius: var(--radius);
     flex-shrink: 0;
 }
-/* Sigle infini sous la case Distance a parcourir (suite infinie) */
-.stat-infinite-mark {
-    display: block;
-    width: 100%;
-    text-align: center;
-    font-size: 1.3rem;
-    font-weight: 800;
-    line-height: 1;
-    color: var(--accent, #fbbf24);
-    text-shadow: 0 0 10px rgba(251, 191, 36, 0.55);
-    pointer-events: none;
-}
-
 /* Gros bouton Suite infinie de l'atelier galactique :
    convertit toutes les PE disponibles en +1% de production chacune. */
 .infinite-buy-button-wrap {

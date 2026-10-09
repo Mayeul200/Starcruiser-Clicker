@@ -689,6 +689,7 @@ const TRANSLATIONS = {
         'Atteindre 1 000 000 km/s de vitesse de voyage': 'Reach a travel speed of 1,000,000 km/s',
         'Atteindre 10 000 000 km/s de vitesse de voyage': 'Reach a travel speed of 10,000,000 km/s',
         'Sillage Cosmique': 'Cosmic Wake',
+        'Depenser {n} PE pour un bonus decroissant de production permanente': 'Spend {n} Stardust for a diminishing permanent production bonus',
 },
     es: {
         'Stats': 'Stats',
@@ -1349,6 +1350,7 @@ const TRANSLATIONS = {
         'Atteindre 1 000 000 km/s de vitesse de voyage': 'Alcanzar una velocidad de viaje de 1.000.000 km/s',
         'Atteindre 10 000 000 km/s de vitesse de voyage': 'Alcanzar una velocidad de viaje de 10.000.000 km/s',
         'Sillage Cosmique': 'Estela Cósmica',
+        'Depenser {n} PE pour un bonus decroissant de production permanente': 'Gastar {n} Polvo de Estrellas por una bonificación decreciente de producción permanente',
 },
     de: {
         'Stats': 'Stats',
@@ -2008,6 +2010,7 @@ const TRANSLATIONS = {
         'Atteindre 1 000 000 km/s de vitesse de voyage': 'Eine Reisegeschwindigkeit von 1.000.000 km/s erreichen',
         'Atteindre 10 000 000 km/s de vitesse de voyage': 'Eine Reisegeschwindigkeit von 10.000.000 km/s erreichen',
         'Sillage Cosmique': 'Kosmische Spur',
+        'Depenser {n} PE pour un bonus decroissant de production permanente': '{n} Sternenstaub für einen abnehmenden permanenten Produktionsbonus ausgeben',
 },
     it: {
         'Stats': 'Stat.',
@@ -2668,6 +2671,7 @@ const TRANSLATIONS = {
         'Atteindre 1 000 000 km/s de vitesse de voyage': 'Raggiungere una velocità di viaggio di 1.000.000 km/s',
         'Atteindre 10 000 000 km/s de vitesse de voyage': 'Raggiungere una velocità di viaggio di 10.000.000 km/s',
         'Sillage Cosmique': 'Scia Cosmica',
+        'Depenser {n} PE pour un bonus decroissant de production permanente': 'Spendi {n} Polvere di Stelle per un bonus di produzione permanente decrescente',
 },
     pt: {
         'Stats': 'Stats',
@@ -3301,6 +3305,7 @@ const TRANSLATIONS = {
         'Atteindre 1 000 000 km/s de vitesse de voyage': 'Alcançar uma velocidade de viagem de 1.000.000 km/s',
         'Atteindre 10 000 000 km/s de vitesse de voyage': 'Alcançar uma velocidade de viagem de 10.000.000 km/s',
         'Sillage Cosmique': 'Rastro Cósmico',
+        'Depenser {n} PE pour un bonus decroissant de production permanente': 'Gastar {n} Pó de Estrelas por um bónus decrescente de produção permanente',
     },
     nl: {
         'Stats': 'Stats',
@@ -3962,6 +3967,7 @@ const TRANSLATIONS = {
         'Atteindre 1 000 000 km/s de vitesse de voyage': 'Een reissnelheid van 1.000.000 km/s bereiken',
         'Atteindre 10 000 000 km/s de vitesse de voyage': 'Een reissnelheid van 10.000.000 km/s bereiken',
         'Sillage Cosmique': 'Kosmisch Spoor',
+        'Depenser {n} PE pour un bonus decroissant de production permanente': 'Geef {n} Sterrenstof uit voor een afnemende permanente productiebonus',
 },
 };
 if (localStorage.getItem('starcruiser-language') === null && localStorage.getItem('starship-language') !== null) {
