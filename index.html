@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Starcruiser Clicker — Construisez votre fusée, explorez l'espace</title>
     <meta name="description" content="Construisez votre fusée pièce par pièce, lancez-la vers d'autres planètes et exploitez l'espace dans ce clicker spatial. Jeu gratuit, 6 langues, jouable sur PC et mobile.">
-    <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="icon" type="image/png" href="images/icon.webp">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="images/icon.png">
+    <link rel="apple-touch-icon" href="images/icon.webp">
     <meta name="theme-color" content="#0b1030">
     <!-- Open Graph : aperçu riche lors du partage (Discord, Twitter/X, Reddit, WhatsApp) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Starcruiser Clicker">
     <meta property="og:description" content="Construisez votre fusée pièce par pièce et partez explorer l'espace. Clicker spatial gratuit, 6 langues, PC et mobile.">
-    <meta property="og:image" content="images/logo2.png">
+    <meta property="og:image" content="images/logo2.webp">
     <meta property="og:locale" content="fr_FR">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Starcruiser Clicker">
     <meta name="twitter:description" content="Construisez votre fusée et explorez l'espace. Clicker spatial gratuit, PC et mobile.">
-    <meta name="twitter:image" content="images/logo2.png">
+    <meta name="twitter:image" content="images/logo2.webp">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -27,14 +27,14 @@
          le jeu initialise (init() dans script.js). Les scripts etant en fin
          de body, l'overlay couvre le temps de parse + init. -->
     <div id="loading-screen" role="status" aria-label="Chargement">
-        <img src="images/logo2.png" alt="Starcruiser Clicker" class="loading-logo">
+        <img src="images/logo2.webp" alt="Starcruiser Clicker" class="loading-logo">
         <div class="loading-spinner" aria-hidden="true"></div>
         <div class="loading-text" data-i18n="Chargement...">Chargement...</div>
     </div>
     <!-- TOP BAR (10% height max) -->
     <div class="top-bar">
         <div class="top-bar-logo">
-            <img src="images/logo2.png" class="top-logo-text-img" alt="Starcruiser Clicker">
+            <img src="images/logo2.webp" class="top-logo-text-img" alt="Starcruiser Clicker">
         </div>
         <div class="top-bar-controls">
             <div class="launch-timer" id="launch-timer" data-i18n-title="Temps écoulé depuis le dernier lancement"></div>
@@ -81,7 +81,7 @@
             </div>
             <div class="modal-body new-building-body">
                 <div class="nb-reveal">
-                    <img id="wb-image" src="images/parts.png" alt="Parts">
+                    <img id="wb-image" src="images/parts.webp" alt="Parts">
                 </div>
                 <h3 id="wb-title" data-i18n="Pendant ton absence...">Pendant ton absence...</h3>
                 <div class="nb-stats">
@@ -149,7 +149,7 @@
     <div class="modal" id="contracts-modal">
         <div class="modal-content contracts-modal">
             <div class="modal-header">
-                <h2><img src="images/effects/contract.png" class="modal-title-icon" alt=""> <span data-i18n="Contrats">Contrats</span></h2>
+                <h2><img src="images/effects/contract.webp" class="modal-title-icon" alt=""> <span data-i18n="Contrats">Contrats</span></h2>
                 <div class="modal-parts-counter"><span class="modal-parts-value">0</span> <span data-i18n="Parts">Parts</span> · +<span class="modal-parts-gain">0</span>/s</div>
                 <span class="close-button" onclick="closeContracts()">&times;</span>
             </div>
@@ -177,22 +177,22 @@
                     <div class="cc-intro" id="cc-intro" data-i18n="Achète des boosters pour récolter des cartes. Chaque carte possédée donne un bonus passif. Complète une série pour un bonus supplémentaire !">Achète des boosters pour récolter des cartes. Chaque carte possédée donne un bonus passif. Complète une série pour un bonus supplémentaire !</div>
                     <div class="cc-booster-options">
                         <button class="cc-booster-btn" data-booster="standard" onclick="buyBooster('standard')">
-                            <img class="cc-booster-img" src="images/cards/collection/booster1.png" alt="Booster Standard">
+                            <img class="cc-booster-img" src="images/cards/collection/booster1.webp" alt="Booster Standard">
                             <div class="cc-booster-name" data-i18n="Booster Standard">Booster Standard</div>
                             <div class="cc-booster-info" data-i18n-booster="standard">1 carte — 80% commune / 18% rare / 2% épique</div>
-                            <div class="cc-booster-cost" id="cc-cost-standard"><img src="images/parts.png" class="coin-icon" alt=""> —</div>
+                            <div class="cc-booster-cost" id="cc-cost-standard"><img src="images/parts.webp" class="coin-icon" alt=""> —</div>
                         </button>
                         <button class="cc-booster-btn" data-booster="premium" onclick="buyBooster('premium')">
-                            <img class="cc-booster-img" src="images/cards/collection/booster2.png" alt="Booster Premium">
+                            <img class="cc-booster-img" src="images/cards/collection/booster2.webp" alt="Booster Premium">
                             <div class="cc-booster-name" data-i18n="Booster Premium">Booster Premium</div>
                             <div class="cc-booster-info" data-i18n-booster="premium">1 carte — 50% commune / 30% rare / 15% épique / 5% légendaire</div>
-                            <div class="cc-booster-cost" id="cc-cost-premium"><img src="images/parts.png" class="coin-icon" alt=""> —</div>
+                            <div class="cc-booster-cost" id="cc-cost-premium"><img src="images/parts.webp" class="coin-icon" alt=""> —</div>
                         </button>
                         <button class="cc-booster-btn" data-booster="legendary" onclick="buyBooster('legendary')">
-                            <img class="cc-booster-img" src="images/cards/collection/booster3.png" alt="Booster Légendaire">
+                            <img class="cc-booster-img" src="images/cards/collection/booster3.webp" alt="Booster Légendaire">
                             <div class="cc-booster-name" data-i18n="Booster Légendaire">Booster Légendaire</div>
                             <div class="cc-booster-info" data-i18n-booster="legendary">1 carte — 20% commune / 35% rare / 25% épique / 15% légendaire / 5% alternative</div>
-                            <div class="cc-booster-cost" id="cc-cost-legendary"><img src="images/parts.png" class="coin-icon" alt=""> —</div>
+                            <div class="cc-booster-cost" id="cc-cost-legendary"><img src="images/parts.webp" class="coin-icon" alt=""> —</div>
                         </button>
                     </div>
                     <button class="cc-view-album-btn" onclick="showCardAlbum()" data-i18n="Voir mon album">Voir mon album</button>
@@ -287,20 +287,20 @@
                 <h4 data-i18n="Mini-Jeux">Mini-Jeux</h4>
                 <div class="mini-games-container" id="mini-games-container">
                     <div class="mini-game-card" id="contracts-mini-card" onclick="openContracts()">
-                        <div class="game-icon"><img src="images/effects/contract.png" alt=""></div>
+                        <div class="game-icon"><img src="images/effects/contract.webp" alt=""></div>
                         <div class="game-info">
                             <div class="game-name" data-i18n="Contrats">Contrats</div>
                             <div class="game-description" data-i18n="Remplis des commandes pour booster tes batiments !">Remplis des commandes pour booster tes batiments !</div>
-                            <div class="game-cost"><img src="images/parts.png" class="coin-icon" alt=""> <span data-i18n="Contrats payants">Contrats payants</span></div>
+                            <div class="game-cost"><img src="images/parts.webp" class="coin-icon" alt=""> <span data-i18n="Contrats payants">Contrats payants</span></div>
                             <div class="game-status" id="contracts-card-status"></div>
                         </div>
                     </div>
                     <div class="mini-game-card" id="card-collection-mini-card" onclick="openCardCollection()">
-                        <div class="game-icon"><img src="images/cards/collection/booster1.png" alt=""></div>
+                        <div class="game-icon"><img src="images/cards/collection/booster1.webp" alt=""></div>
                         <div class="game-info">
                             <div class="game-name" data-i18n="Collection de Cartes">Collection de Cartes</div>
                             <div class="game-description" data-i18n="Ouvre des boosters et complète ton album !">Ouvre des boosters et complète ton album !</div>
-                            <div class="game-cost"><img src="images/parts.png" class="coin-icon" alt=""> <span data-i18n="Boosters gratuits">Boosters gratuits</span><div class="cc-collection-badge" id="cc-collection-badge" title="Cartes obtenues / total · Bonus de production de la collection"><span class="ccb-count"><span id="ccb-owned">0</span><span class="ccb-sep">/</span><span id="ccb-total">20</span></span><span class="ccb-divider"></span><span class="ccb-mult" id="ccb-bonus">×1.00</span></div></div>
+                            <div class="game-cost"><img src="images/parts.webp" class="coin-icon" alt=""> <span data-i18n="Boosters gratuits">Boosters gratuits</span><div class="cc-collection-badge" id="cc-collection-badge" title="Cartes obtenues / total · Bonus de production de la collection"><span class="ccb-count"><span id="ccb-owned">0</span><span class="ccb-sep">/</span><span id="ccb-total">20</span></span><span class="ccb-divider"></span><span class="ccb-mult" id="ccb-bonus">×1.00</span></div></div>
                             <div class="game-status" id="collection-card-status"></div>
                         </div>
                     </div>
@@ -355,7 +355,7 @@
                 <div class="medal" id="medal" onclick="addScore(1, event)" style="position: absolute; right: 5%; top: calc(25% + 50px);">
                     <div class="medal-halo" aria-hidden="true"></div>
                     <div class="medal-anim">
-                        <img class="medal-img" src="images/parts.png" alt="Pièce à cliquer" draggable="false">
+                        <img class="medal-img" src="images/parts.webp" alt="Pièce à cliquer" draggable="false">
                         <div class="medal-shine" aria-hidden="true"></div>
                     </div>
                 </div>
@@ -476,7 +476,7 @@
     <!-- CHOIX DE LA LANGUE (premiere visite) -->
     <div class="lang-picker-overlay" id="lang-picker-overlay">
         <div class="lang-picker-box">
-            <div class="lang-picker-rocket"><img src="images/icon.png" alt="Starcruiser Clicker"></div>
+            <div class="lang-picker-rocket"><img src="images/icon.webp" alt="Starcruiser Clicker"></div>
             <h2 class="lang-picker-title">Choose your language</h2>
             <div class="lang-picker-buttons">
                 <button class="lang-picker-btn" onclick="chooseGameLanguage('fr')">
@@ -515,34 +515,34 @@
         <div class="intro-panel">
             <div class="intro-welcome" data-i18n="Bienvenue dans">Bienvenue dans</div>
             <h1 class="intro-title intro-title-sr">STARCRUISER CLICKER</h1>
-            <img class="intro-logo" src="images/logo2.png" alt="Starcruiser Clicker">
+            <img class="intro-logo" src="images/logo2.webp" alt="Starcruiser Clicker">
             <div class="intro-steps">
                 <div class="intro-step">
-                    <img class="intro-step-img" src="images/parts.png" alt="">
+                    <img class="intro-step-img" src="images/parts.webp" alt="">
                     <span class="intro-step-title" data-i18n="Cliquer">Cliquer</span>
                     <span class="intro-step-text" data-i18n="Clique sur la pièce pour gagner des Parts manuellement.">Clique sur la pièce pour gagner des Parts manuellement.</span>
                 </div>
                 <span class="intro-arrow">➜</span>
                 <div class="intro-step">
-                    <img class="intro-step-img" src="images/buildings/workshop.png" alt="">
+                    <img class="intro-step-img" src="images/buildings/workshop.webp" alt="">
                     <span class="intro-step-title" data-i18n="Acheter des bâtiments">Acheter des bâtiments</span>
                     <span class="intro-step-text" data-i18n="Ils produisent des Parts tout seuls chaque seconde !">Ils produisent des Parts tout seuls chaque seconde !</span>
                 </div>
                 <span class="intro-arrow">➜</span>
                 <div class="intro-step">
-                    <img class="intro-step-img" src="images/rocket/Fusée3.png" alt="">
+                    <img class="intro-step-img" src="images/rocket/Fusée3.webp" alt="">
                     <span class="intro-step-title" data-i18n="Construire sa fusée">Construire sa fusée</span>
                     <span class="intro-step-text" data-i18n="Pièce par pièce, avec tes Parts.">Pièce par pièce, avec tes Parts.</span>
                 </div>
                 <span class="intro-arrow">➜</span>
                 <div class="intro-step">
-                    <img class="intro-step-img" src="images/rocket/Fusee-travel.png" alt="">
+                    <img class="intro-step-img" src="images/rocket/Fusee-travel.webp" alt="">
                     <span class="intro-step-title" data-i18n="Lancer sa fusée">Lancer sa fusée</span>
                     <span class="intro-step-text" data-i18n="Envoie ta fusée en expédition afin d'explorer l'espace et de gagner des bonus permanents !">Envoie ta fusée en expédition afin d'explorer l'espace et de gagner des bonus permanents !</span>
                 </div>
                 <span class="intro-arrow">➜</span>
                 <div class="intro-step">
-                    <img class="intro-step-img" src="images/planets/moon.png" alt="">
+                    <img class="intro-step-img" src="images/planets/moon.webp" alt="">
                     <span class="intro-step-title" data-i18n="Nouvelle expédition">Nouvelle expédition</span>
                     <span class="intro-step-text" data-i18n="Prépare la suivante avec tes bonus permanents pour aller encore plus loin !">Prépare la suivante avec tes bonus permanents pour aller encore plus loin !</span>
                 </div>
@@ -553,7 +553,7 @@
     <div class="tutorial-coach" id="tutorial-coach">
         <button class="tutorial-close-btn" onclick="skipTutorial()" title="Fermer">&times;</button>
         <div class="tutorial-coach-head">
-            <img class="tutorial-coach-visual" src="images/parts.png" alt="">
+            <img class="tutorial-coach-visual" src="images/parts.webp" alt="">
             <div class="tutorial-coach-head-text">
                 <span class="tutorial-coach-step">1/3</span>
                 <h2 class="tutorial-coach-title"></h2>
@@ -563,9 +563,9 @@
     </div>
 
     <nav class="mobile-nav" id="mobile-nav">
-        <button data-view="left"><span class="nav-icon"><img src="images/planets/earth.png" alt="" class="nav-img"></span><span data-i18n="Espace">Espace</span></button>
-        <button data-view="center"><span class="nav-icon"><img src="images/rocket/Fusée3.png" alt="" class="nav-img nav-rocket"></span><span data-i18n="Fusée">Fusée</span></button>
-        <button data-view="right"><span class="nav-icon"><img src="images/buildings/workshop.png" alt="" class="nav-img"></span><span data-i18n="Bâtiments">Bâtiments</span></button>
+        <button data-view="left"><span class="nav-icon"><img src="images/planets/earth.webp" alt="" class="nav-img"></span><span data-i18n="Espace">Espace</span></button>
+        <button data-view="center"><span class="nav-icon"><img src="images/rocket/Fusée3.webp" alt="" class="nav-img nav-rocket"></span><span data-i18n="Fusée">Fusée</span></button>
+        <button data-view="right"><span class="nav-icon"><img src="images/buildings/workshop.webp" alt="" class="nav-img"></span><span data-i18n="Bâtiments">Bâtiments</span></button>
     </nav>
 
     <script>
@@ -578,7 +578,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v64';
+            var APP_CACHE_VERSION = 'v40edfe24';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;
@@ -610,9 +610,9 @@
                 // ancienne, proposer le rechargement.
                 navigator.serviceWorker.addEventListener('message', (event) => {
                     if (event.data && event.data.type === 'SW_VERSION') {
-                        var m = /-v(\d+)$/.exec(event.data.version || '');
-                        var n = /-v(\d+)$/.exec('starcruiser-clicker-' + APP_CACHE_VERSION);
-                        if (m && n && parseInt(m[1], 10) > parseInt(n[1], 10)) showUpdateToast();
+                        // La version est un hash du contenu : comparaison par
+                        // difference de chaine (plus de numero croissant).
+                        if (event.data.version !== 'starcruiser-clicker-' + APP_CACHE_VERSION) showUpdateToast();
                     }
                 });
             });

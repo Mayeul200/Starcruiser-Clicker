@@ -2313,7 +2313,7 @@ body {
     will-change: transform, opacity;
 }
 /* Fusee : vole vers le HAUT, meme image que la scene de construction.
-   L'image body.png pointe vers le haut, aucune rotation necessaire. */
+   L'image body.webp pointe vers le haut, aucune rotation necessaire. */
 /* Voile lumineux de la plongee galactique : quand la destination est le
    Centre Voie lactee, Andromede ou l'Amas de Virgo, la camera traverse le
    corps -- un voile radial chaud enveloppe l'ecran (pilote en JS).
@@ -2463,7 +2463,7 @@ body {
 /* Flammes des TROIS moteurs pendant le voyage : structure dediee
    injectee en JS (buildTravelRocketInto), proportionnelle au conteneur
    fusee. Chaque .travel-jet est ancre au centre d'une tuyere (20.8%,
-   50.3%, 79.8% de la largeur -- mesures sur Fusee-travel.png, sortie
+   50.3%, 79.8% de la largeur -- mesures sur Fusee-travel.webp, sortie
    des tuyeres a ~86% de la hauteur). Chaque jet contient :
    .travel-flame-glow = lueur externe large et diffuse,
    .travel-flame-core = flamme principale (coeur blanc-jaune + colonne
@@ -3601,7 +3601,7 @@ body {
     left: -150px;
     width: calc(100% + 162px);
     height: calc(100% + 5px);
-    background-image: url('images/backgrounds/valley-day.png');
+    background-image: url('images/backgrounds/valley-day.webp');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     z-index: 0;
@@ -3610,7 +3610,7 @@ body {
    Meme composition que le jour (meme recalage de la dalle), le ciel
    et l'eclairage passent en version nocturne. */
 body.night-mode .scene-background {
-    background-image: url('images/backgrounds/valley-night.png');
+    background-image: url('images/backgrounds/valley-night.webp');
 }
 /* Grille 100x100 (optionnelle) */
 .grid-100x100 {

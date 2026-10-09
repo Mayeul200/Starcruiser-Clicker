@@ -1,7 +1,7 @@
 // Service worker Starcruiser Clicker : cache-first sur les ressources
 // statiques pour un chargement quasi instantane en relecture, et un
 // fallback hors-ligne. Les mises a jour passent par un bump de version.
-const CACHE_NAME = 'starcruiser-clicker-v111';
+const CACHE_NAME = 'starcruiser-clicker-v40edfe24';
 const ASSETS = [
     './',
     './index.html',
@@ -9,11 +9,11 @@ const ASSETS = [
     './script.js',
     './i18n.js',
     './manifest.json',
-    './images/icon.png',
-    './images/logo2.png',
-    './images/parts.png',
-    './images/backgrounds/valley-day.png',
-    './images/backgrounds/valley-night.png'
+    './images/icon.webp',
+    './images/logo2.webp',
+    './images/parts.webp',
+    './images/backgrounds/valley-day.webp',
+    './images/backgrounds/valley-night.webp'
 ];
 
 self.addEventListener('install', (event) => {

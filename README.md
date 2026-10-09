@@ -2,7 +2,7 @@
 
 > Construisez votre fusée pièce par pièce, lancez-la vers les étoiles et exploitez l'espace dans ce clicker spatial gratuit.
 
-![Starcruiser Clicker](images/logo2.png)
+![Starcruiser Clicker](images/logo2.webp)
 
 ## Jouer
 
@@ -41,6 +41,20 @@ Jeu 100 % vanilla (HTML/CSS/JS, aucune dépendance, aucun framework) :
 - i18n maison (~900 traductions × 6 langues)
 - PWA : installable, service worker, reprise hors-ligne
 - Sauvegarde localStorage versionnée avec migration
+- Images optimisées WebP (qualité 82, sprites plafonnés à 900px de large)
+
+### Mise à jour du cache PWA
+
+La version du cache du service worker est générée automatiquement depuis le
+contenu des fichiers. Après toute modification du jeu, lancer puis committer :
+
+```bash
+node tools/bump-cache-version.mjs
+```
+
+Le script réécrit `CACHE_NAME` (sw.js) et `APP_CACHE_VERSION` (index.html)
+avec le hash du contenu : tout changement de fichier force un nouveau cache,
+les joueurs récupèrent la mise à jour au rechargement suivant.
 
 ## Licence
 

@@ -118,20 +118,20 @@ const SPACE_UPDATE_INTERVAL_MS = 500;
 // ============================================
 // Les noms/descriptions sont en FR (cles i18n) : affiches via t()/tf().
 const PRODUCTION_BUILDINGS = [
-    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici", baseCost: 15,            gain: 0.1,      count: 0, image: "", imgPath: "images/buildings/workshop.png",  unlockCondition: () => true,            totalGenerated: 0 },
-    { id: "factory",       name: "Usine",                    description: "Construit les ateliers", baseCost: 100,           gain: 1,         count: 0, image: "",       imgPath: "images/buildings/factory.png",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
-    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines", baseCost: 1100,          gain: 8,        count: 0, image: "",       imgPath: "images/buildings/stellar-mine.png", unlockCondition: () => score >= 500,      totalGenerated: 0 },
-    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe", baseCost: 12000,         gain: 47,       count: 0, image: "",       imgPath: "images/buildings/solar-central.png", unlockCondition: () => score >= 6000,     totalGenerated: 0 },
-    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules", baseCost: 130000,       gain: 260,     count: 0, image: "", imgPath: "images/buildings/orbital-autofab.png", unlockCondition: () => score >= 65000,   totalGenerated: 0 },
-    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes", baseCost: 1400000,      gain: 1400,    count: 0, image: "", imgPath: "images/buildings/essaim-sonde.png", unlockCondition: () => score >= 700000, totalGenerated: 0 },
-    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première", baseCost: 20000000,     gain: 7800,   count: 0, image: "", imgPath: "images/buildings/nanoforge.png", unlockCondition: () => score >= 10000000, totalGenerated: 0 },
-    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure", baseCost: 330000000,    gain: 44000,  count: 0, image: "", imgPath: "images/buildings/quantic-printer.png", unlockCondition: () => score >= 150000000, totalGenerated: 0 },
-    { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime", baseCost: 5100000000,   gain: 260000, count: 0, image: "", imgPath: "images/buildings/antimatter_collector.png", unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
-    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique", baseCost: 75000000000,          gain: 1600000,      count: 0, image: "",       imgPath: "images/buildings/voidforge.png", unlockCondition: () => score >= 35000000000,       totalGenerated: 0 },
-    { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar", baseCost: 1000000000000,        gain: 10000000,    count: 0, image: "",       imgPath: "images/buildings/quasar-motor.png", unlockCondition: () => score >= 500000000000,    totalGenerated: 0 },
-    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières", baseCost: 14000000000000,          gain: 65000000,      count: 0, image: "",       imgPath: "images/buildings/stellar-fundry.png", unlockCondition: () => score >= 7500000000000,      totalGenerated: 0 },
-    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers", baseCost: 170000000000000,          gain: 430000000,      count: 0, image: "",       imgPath: "images/buildings/pulsar-clock.png", unlockCondition: () => score >= 100000000000000,    totalGenerated: 0 },
-    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur", baseCost: 2100000000000000,          gain: 2900000000,      count: 0, image: "",       imgPath: "images/buildings/black-hole-factory.png", unlockCondition: () => score >= 1500000000000000,    totalGenerated: 0 },
+    { id: "workshop",      name: "Atelier",                  description: "Tout commence ici", baseCost: 15,            gain: 0.1,      count: 0, image: "", imgPath: "images/buildings/workshop.webp",  unlockCondition: () => true,            totalGenerated: 0 },
+    { id: "factory",       name: "Usine",                    description: "Construit les ateliers", baseCost: 100,           gain: 1,         count: 0, image: "",       imgPath: "images/buildings/factory.webp",  unlockCondition: () => score >= 50,       totalGenerated: 0 },
+    { id: "mine",          name: "Mine stellaire",           description: "Nourrit les usines", baseCost: 1100,          gain: 8,        count: 0, image: "",       imgPath: "images/buildings/stellar-mine.webp", unlockCondition: () => score >= 500,      totalGenerated: 0 },
+    { id: "solar",         name: "Centrale solaire",         description: "Alimente le complexe", baseCost: 12000,         gain: 47,       count: 0, image: "",       imgPath: "images/buildings/solar-central.webp", unlockCondition: () => score >= 6000,     totalGenerated: 0 },
+    { id: "foundry",       name: "Autofab orbitale",        description: "Usines qui s'assemblent seules", baseCost: 130000,       gain: 260,     count: 0, image: "", imgPath: "images/buildings/orbital-autofab.webp", unlockCondition: () => score >= 65000,   totalGenerated: 0 },
+    { id: "station",       name: "Essaim de sondes",         description: "Sondes auto-réplicantes", baseCost: 1400000,      gain: 1400,    count: 0, image: "", imgPath: "images/buildings/essaim-sonde.webp", unlockCondition: () => score >= 700000, totalGenerated: 0 },
+    { id: "nanoforge",     name: "Nanoforge",                description: "L'atome devient matière première", baseCost: 20000000,     gain: 7800,   count: 0, image: "", imgPath: "images/buildings/nanoforge.webp", unlockCondition: () => score >= 10000000, totalGenerated: 0 },
+    { id: "synth",         name: "Imprimeur quantique",  description: "La matière sur mesure", baseCost: 330000000,    gain: 44000,  count: 0, image: "", imgPath: "images/buildings/quantic-printer.webp", unlockCondition: () => score >= 150000000, totalGenerated: 0 },
+    { id: "antimatter",   name: "Collecteur d'antimatière",  description: "Ressource ultime", baseCost: 5100000000,   gain: 260000, count: 0, image: "", imgPath: "images/buildings/antimatter_collector.webp", unlockCondition: () => score >= 2500000000, totalGenerated: 0 },
+    { id: "voidrig",       name: "Forge de vide",           description: "Extrait l'énergie du vide quantique", baseCost: 75000000000,          gain: 1600000,      count: 0, image: "",       imgPath: "images/buildings/voidforge.webp", unlockCondition: () => score >= 35000000000,       totalGenerated: 0 },
+    { id: "quasar",        name: "Moteur à quasar",           description: "Énergie de quasar", baseCost: 1000000000000,        gain: 10000000,    count: 0, image: "",       imgPath: "images/buildings/quasar-motor.webp", unlockCondition: () => score >= 500000000000,    totalGenerated: 0 },
+    { id: "nebula",        name: "Fonderie stellaire",   description: "Coule des étoiles entières", baseCost: 14000000000000,          gain: 65000000,      count: 0, image: "",       imgPath: "images/buildings/stellar-fundry.webp", unlockCondition: () => score >= 7500000000000,      totalGenerated: 0 },
+    { id: "pulsar",        name: "Horloger de pulsar",          description: "Règle les battements de l'univers", baseCost: 170000000000000,          gain: 430000000,      count: 0, image: "",       imgPath: "images/buildings/pulsar-clock.webp", unlockCondition: () => score >= 100000000000000,    totalGenerated: 0 },
+    { id: "blackhole",     name: "Trou noir industriel",     description: "L'ultime moteur", baseCost: 2100000000000000,          gain: 2900000000,      count: 0, image: "",       imgPath: "images/buildings/black-hole-factory.webp", unlockCondition: () => score >= 1500000000000000,    totalGenerated: 0 },
 ];
 
 // Bâtiments de production = liste utilisée par la boucle clicker (achat en masse, gain Parts/s)
@@ -142,16 +142,16 @@ const BUILDINGS = PRODUCTION_BUILDINGS;
 // Achats uniques par run (payés en Parts). Compléter les 10 = lancement.
 // ============================================
 const ROCKET_PARTS = [
-    { id: "nozzles",       name: "Tuyères",        description: "Propulsion", cost: 50,           image: "",       imgPath: "images/rocket/nozzles.PNG",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
-    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux", cost: 150,          image: "",       imgPath: "images/rocket/engines.png",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
-    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant", cost: 450,          image: "",       imgPath: "images/rocket/fuel-tank.png",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
-    { id: "rocket-body",   name: "Corps",          description: "Structure", cost: 1300,         image: "",       imgPath: "images/rocket/body.png",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
-    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire", cost: 3800,         image: "",       imgPath: "images/rocket/boosters-left.png", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
-    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire", cost: 11000,        image: "",       imgPath: "images/rocket/boosters-right.png",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
-    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "", imgPath: "images/rocket/cockpit.png",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
-    { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "",       imgPath: "images/rocket/shield.png",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
-    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "",       imgPath: "images/rocket/launch-pad.png",    x: 60.7,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
-    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "", imgPath: "images/rocket/astronaut.png",     x: 39.8,  y: 635, width: 25,  height: 60,  order: 10, purchased: false }
+    { id: "nozzles",       name: "Tuyères",        description: "Propulsion", cost: 50,           image: "",       imgPath: "images/rocket/nozzles.webp",       x: 50,    y: 646, width: 40,  height: 20,  order: 2,  purchased: false },
+    { id: "engines",       name: "Moteurs",        description: "Moteurs principaux", cost: 150,          image: "",       imgPath: "images/rocket/engines.webp",       x: 50,    y: 595, width: 40,  height: 51,  order: 3,  purchased: false },
+    { id: "fuel-tank",     name: "Réservoir",     description: "Carburant", cost: 450,          image: "",       imgPath: "images/rocket/fuel-tank.webp",     x: 50,    y: 537, width: 40,  height: 58,  order: 4,  purchased: false },
+    { id: "rocket-body",   name: "Corps",          description: "Structure", cost: 1300,         image: "",       imgPath: "images/rocket/body.webp",          x: 50,    y: 337, width: 40,  height: 200, order: 5,  purchased: false },
+    { id: "boosters-left", name: "Boosters Gauche", description: "Propulsion supplémentaire", cost: 3800,         image: "",       imgPath: "images/rocket/boosters-left.webp", x: 45.8,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "boosters-right",name: "Boosters Droit",  description: "Propulsion supplémentaire", cost: 11000,        image: "",       imgPath: "images/rocket/boosters-right.webp",x: 54.2,  y: 373, width: 50,  height: 300, order: 6,  purchased: false },
+    { id: "cockpit",       name: "Cockpit",        description: "Poste de pilotage", cost: 32000,        image: "", imgPath: "images/rocket/cockpit.webp",        x: 50,    y: 292, width: 45,  height: 45,  order: 7,  purchased: false },
+    { id: "shield",        name: "Bouclier",       description: "Protection", cost: 93000,        image: "",       imgPath: "images/rocket/shield.webp",        x: 50,    y: 233, width: 45,  height: 59,  order: 8,  purchased: false },
+    { id: "launch-pad",    name: "Pas de tir",     description: "Lancement", cost: 270000,       image: "",       imgPath: "images/rocket/launch-pad.webp",    x: 60.7,  y: 205, width: 190, height: 481, order: 9,  purchased: false },
+    { id: "astronaut",     name: "Astronaute",    description: "Pilote", cost: 638000,       image: "", imgPath: "images/rocket/astronaut.webp",     x: 39.8,  y: 635, width: 25,  height: 60,  order: 10, purchased: false }
 ];
 
 
@@ -222,94 +222,94 @@ const TROPHY_COLORS = {
 };
 const TROPHIES = [
     // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
-    { id: "pps-1", name: "First Parts", description: "Atteindre 1 Parts par seconde", icon: "images/parts.png", threshold: 1, type: "pps" },
-    { id: "pps-10", name: "Liftoff", description: "Atteindre 10 Parts par seconde", icon: "images/parts.png", threshold: 10, type: "pps" },
-    { id: "pps-100", name: "Orbit Achieved", description: "Atteindre 100 Parts par seconde", icon: "images/parts.png", threshold: 100, type: "pps" },
-    { id: "pps-1000", name: "Space Speed", description: "Atteindre 1 000 Parts par seconde", icon: "images/parts.png", threshold: 1000, type: "pps" },
-    { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.png", threshold: 10000, type: "pps" },
-    { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.png", threshold: 100000, type: "pps" },
-    { id: "pps-1000000", name: "Vitesse Nébulaire", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000, type: "pps" },
-    { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 000 000 Parts par seconde", icon: "images/parts.png", threshold: 10000000, type: "pps" },
-    { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 000 000 Parts par seconde", icon: "images/parts.png", threshold: 100000000, type: "pps" },
-    { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 1000000000, type: "pps" },
-    { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 000 000 000 Parts par seconde", icon: "images/parts.png", threshold: 10000000000, type: "pps" },
+    { id: "pps-1", name: "First Parts", description: "Atteindre 1 Parts par seconde", icon: "images/parts.webp", threshold: 1, type: "pps" },
+    { id: "pps-10", name: "Liftoff", description: "Atteindre 10 Parts par seconde", icon: "images/parts.webp", threshold: 10, type: "pps" },
+    { id: "pps-100", name: "Orbit Achieved", description: "Atteindre 100 Parts par seconde", icon: "images/parts.webp", threshold: 100, type: "pps" },
+    { id: "pps-1000", name: "Space Speed", description: "Atteindre 1 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000, type: "pps" },
+    { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000, type: "pps" },
+    { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.webp", threshold: 100000, type: "pps" },
+    { id: "pps-1000000", name: "Vitesse Nébulaire", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000000, type: "pps" },
+    { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000000, type: "pps" },
+    { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 100000000, type: "pps" },
+    { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000000000, type: "pps" },
+    { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000000000, type: "pps" },
 
     // Vitesse de voyage (icône: missile) — vitesse REELLE de la stat
     // "Vitesse", c'est-a-dire les km/s gagnes par la distance atteignable.
-    { id: "speed-100", name: "Première Accélération", description: "Atteindre 100 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100, type: "speed" },
-    { id: "speed-1000", name: "Propulsion Ionique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000, type: "speed" },
-    { id: "speed-10000", name: "Vitesse Stellaire", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000, type: "speed" },
-    { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 100000, type: "speed" },
-    { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.png", threshold: 299792, type: "speed" },
-    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 1000000, type: "speed" },
-    { id: "speed-10000000", name: "Sillage Cosmique", description: "Atteindre 10 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.png", threshold: 10000000, type: "speed" },
+    { id: "speed-100", name: "Première Accélération", description: "Atteindre 100 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 100, type: "speed" },
+    { id: "speed-1000", name: "Propulsion Ionique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1000, type: "speed" },
+    { id: "speed-10000", name: "Vitesse Stellaire", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000, type: "speed" },
+    { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 100000, type: "speed" },
+    { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.webp", threshold: 299792, type: "speed" },
+    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1000000, type: "speed" },
+    { id: "speed-10000000", name: "Sillage Cosmique", description: "Atteindre 10 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000000, type: "speed" },
 
     // Progression spatiale (icônes: images des planètes)
-    { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.png", threshold: 1, type: "planets" },
-    { id: "planet-mars", name: "Explorateur Martien", description: "Atteindre Mars", icon: "images/planets/mars.png", threshold: 2, type: "planets" },
-    { id: "planet-neptune", name: "Lointaine Neptune", description: "Atteindre Neptune", icon: "images/planets/neptune.png", threshold: 3, type: "planets" },
-    { id: "planet-pluto", name: "Aux Confins du Système", description: "Atteindre Pluton", icon: "images/planets/pluto.png", threshold: 4, type: "planets" },
-    { id: "planet-proxima", name: "Voyageur Interstellaire", description: "Atteindre Proxima Centauri", icon: "images/planets/proxima-centauri.png", threshold: 5, type: "planets" },
-    { id: "planet-sirius", name: "Éclat de Sirius", description: "Atteindre Sirius", icon: "images/planets/sirius.png", threshold: 6, type: "planets" },
-    { id: "planet-oort", name: "Le Grand Nuage", description: "Atteindre le Nuage d'Oort", icon: "images/planets/oort-cloud.png", threshold: 7, type: "planets" },
-    { id: "planet-milky", name: "Cœur de la Galaxie", description: "Atteindre le Centre de la Voie lactée", icon: "images/planets/milky-way-center.png", threshold: 8, type: "planets" },
-    { id: "planet-andromeda", name: "Galaxie Voisine", description: "Atteindre Andromède", icon: "images/planets/andromeda.png", threshold: 9, type: "planets" },
-    { id: "planet-virgo", name: "Conquérant de l'Univers", description: "Atteindre l'Amas de Virgo", icon: "images/planets/virgo-cluster.png", threshold: 10, type: "planets" },
+    { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.webp", threshold: 1, type: "planets" },
+    { id: "planet-mars", name: "Explorateur Martien", description: "Atteindre Mars", icon: "images/planets/mars.webp", threshold: 2, type: "planets" },
+    { id: "planet-neptune", name: "Lointaine Neptune", description: "Atteindre Neptune", icon: "images/planets/neptune.webp", threshold: 3, type: "planets" },
+    { id: "planet-pluto", name: "Aux Confins du Système", description: "Atteindre Pluton", icon: "images/planets/pluto.webp", threshold: 4, type: "planets" },
+    { id: "planet-proxima", name: "Voyageur Interstellaire", description: "Atteindre Proxima Centauri", icon: "images/planets/proxima-centauri.webp", threshold: 5, type: "planets" },
+    { id: "planet-sirius", name: "Éclat de Sirius", description: "Atteindre Sirius", icon: "images/planets/sirius.webp", threshold: 6, type: "planets" },
+    { id: "planet-oort", name: "Le Grand Nuage", description: "Atteindre le Nuage d'Oort", icon: "images/planets/oort-cloud.webp", threshold: 7, type: "planets" },
+    { id: "planet-milky", name: "Cœur de la Galaxie", description: "Atteindre le Centre de la Voie lactée", icon: "images/planets/milky-way-center.webp", threshold: 8, type: "planets" },
+    { id: "planet-andromeda", name: "Galaxie Voisine", description: "Atteindre Andromède", icon: "images/planets/andromeda.webp", threshold: 9, type: "planets" },
+    { id: "planet-virgo", name: "Conquérant de l'Univers", description: "Atteindre l'Amas de Virgo", icon: "images/planets/virgo-cluster.webp", threshold: 10, type: "planets" },
 
     // Lancements de fusée (icônes: pièces de fusée)
-    { id: "launch-1", name: "Décollage !", description: "Réaliser votre premier lancement", icon: "images/rocket/engines.png", threshold: 1, type: "launches" },
-    { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 5 lancements", icon: "images/rocket/cockpit.png", threshold: 5, type: "launches" },
-    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 8 lancements", icon: "images/rocket/boosters-left.png", threshold: 8, type: "launches" },
-    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 12 lancements", icon: "images/rocket/astronaut.png", threshold: 12, type: "launches" },
-    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 20 lancements", icon: "images/rocket/astronaut.png", threshold: 20, type: "launches" },
-    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.png", threshold: 30, type: "launches" },
+    { id: "launch-1", name: "Décollage !", description: "Réaliser votre premier lancement", icon: "images/rocket/engines.webp", threshold: 1, type: "launches" },
+    { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 5 lancements", icon: "images/rocket/cockpit.webp", threshold: 5, type: "launches" },
+    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 8 lancements", icon: "images/rocket/boosters-left.webp", threshold: 8, type: "launches" },
+    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 12 lancements", icon: "images/rocket/astronaut.webp", threshold: 12, type: "launches" },
+    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 20 lancements", icon: "images/rocket/astronaut.webp", threshold: 20, type: "launches" },
+    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.webp", threshold: 30, type: "launches" },
 
     // Poussière d'étoiles (icônes: cartes du jeu)
-    { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.png", threshold: 1, type: "stardust" },
-    { id: "dust-100", name: "Collectionneur Cosmique", description: "Gagner 100 Poussière d'Étoiles au total", icon: "images/cards/collection/milky-way-center-card.png", threshold: 100, type: "stardust" },
-    { id: "dust-1000", name: "Maître de la Poussière", description: "Gagner 1 000 Poussière d'Étoiles au total", icon: "images/cards/collection/sirius-card.png", threshold: 1000, type: "stardust" },
-    { id: "dust-10000", name: "Semeur d'Étoiles", description: "Gagner 10 000 Poussière d'Étoiles au total", icon: "images/cards/collection/comet-card.png", threshold: 10000, type: "stardust" },
-    { id: "dust-100000", name: "Architecte Céleste", description: "Gagner 100 000 Poussière d'Étoiles au total", icon: "images/cards/collection/oort-cloud-card.png", threshold: 100000, type: "stardust" },
+    { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.webp", threshold: 1, type: "stardust" },
+    { id: "dust-100", name: "Collectionneur Cosmique", description: "Gagner 100 Poussière d'Étoiles au total", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 100, type: "stardust" },
+    { id: "dust-1000", name: "Maître de la Poussière", description: "Gagner 1 000 Poussière d'Étoiles au total", icon: "images/cards/collection/sirius-card.webp", threshold: 1000, type: "stardust" },
+    { id: "dust-10000", name: "Semeur d'Étoiles", description: "Gagner 10 000 Poussière d'Étoiles au total", icon: "images/cards/collection/comet-card.webp", threshold: 10000, type: "stardust" },
+    { id: "dust-100000", name: "Architecte Céleste", description: "Gagner 100 000 Poussière d'Étoiles au total", icon: "images/cards/collection/oort-cloud-card.webp", threshold: 100000, type: "stardust" },
 
     // Améliorations de bâtiments (icônes: bâtiments)
-    { id: "first-upgrade", name: "First Upgrade", description: "Acheter votre première amélioration de bâtiment", icon: "images/buildings/workshop.png", threshold: 1, type: "building-upgrade" },
-    { id: "five-upgrades", name: "Upgrade Master", description: "Avoir 5 améliorations de bâtiment", icon: "images/buildings/factory.png", threshold: 5, type: "building-upgrade" },
-    { id: "ten-upgrades", name: "Engineering Genius", description: "Avoir 10 améliorations de bâtiment", icon: "images/buildings/essaim-sonde.png", threshold: 10, type: "building-upgrade" },
-    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Avoir 20 améliorations de bâtiment", icon: "images/buildings/antimatter_collector.png", threshold: 20, type: "building-upgrade" },
-    { id: "fifty-upgrades", name: "Génie de l'Ingénierie", description: "Avoir 50 améliorations de bâtiment", icon: "images/buildings/nanoforge.png", threshold: 50, type: "building-upgrade" },
-    { id: "hundred-upgrades", name: "Ingénieur Cosmique", description: "Avoir 100 améliorations de bâtiment", icon: "images/buildings/quantic-printer.png", threshold: 100, type: "building-upgrade" },
+    { id: "first-upgrade", name: "First Upgrade", description: "Acheter votre première amélioration de bâtiment", icon: "images/buildings/workshop.webp", threshold: 1, type: "building-upgrade" },
+    { id: "five-upgrades", name: "Upgrade Master", description: "Avoir 5 améliorations de bâtiment", icon: "images/buildings/factory.webp", threshold: 5, type: "building-upgrade" },
+    { id: "ten-upgrades", name: "Engineering Genius", description: "Avoir 10 améliorations de bâtiment", icon: "images/buildings/essaim-sonde.webp", threshold: 10, type: "building-upgrade" },
+    { id: "twenty-upgrades", name: "Upgrade Legend", description: "Avoir 20 améliorations de bâtiment", icon: "images/buildings/antimatter_collector.webp", threshold: 20, type: "building-upgrade" },
+    { id: "fifty-upgrades", name: "Génie de l'Ingénierie", description: "Avoir 50 améliorations de bâtiment", icon: "images/buildings/nanoforge.webp", threshold: 50, type: "building-upgrade" },
+    { id: "hundred-upgrades", name: "Ingénieur Cosmique", description: "Avoir 100 améliorations de bâtiment", icon: "images/buildings/quantic-printer.webp", threshold: 100, type: "building-upgrade" },
 
     // Améliorations de clic (icônes: pièce fusée + astronaute)
-    { id: "first-click-upgrade", name: "First Launch", description: "Acheter votre première amélioration de clic", icon: "images/rocket/nozzles.PNG", threshold: 1, type: "click-upgrade" },
-    { id: "all-click-upgrades", name: "Launch Master", description: "Débloquer toutes les améliorations de clic", icon: "images/rocket/astronaut.png", threshold: CLICK_UPGRADES.length, type: "click-upgrade" },
+    { id: "first-click-upgrade", name: "First Launch", description: "Acheter votre première amélioration de clic", icon: "images/rocket/nozzles.webp", threshold: 1, type: "click-upgrade" },
+    { id: "all-click-upgrades", name: "Launch Master", description: "Débloquer toutes les améliorations de clic", icon: "images/rocket/astronaut.webp", threshold: CLICK_UPGRADES.length, type: "click-upgrade" },
 
     // Bâtiments possédés (icônes: bâtiments)
-    { id: "first-building", name: "First Component", description: "Acheter votre premier bâtiment", icon: "images/buildings/workshop.png", threshold: 1, type: "building" },
-    { id: "ten-buildings", name: "Space Builder", description: "Posséder 10 bâtiments au total", icon: "images/buildings/factory.png", threshold: 10, type: "building" },
-    { id: "hundred-buildings", name: "Space Architect", description: "Posséder 100 bâtiments au total", icon: "images/buildings/stellar-mine.png", threshold: 100, type: "building" },
-    { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 250 bâtiments au total", icon: "images/buildings/nanoforge.png", threshold: 250, type: "building" },
-    { id: "five-thousand-buildings", name: "Bâtisseur Stellaire", description: "Posséder 500 bâtiments au total", icon: "images/buildings/antimatter_collector.png", threshold: 500, type: "building" },
-    { id: "ten-thousand-buildings", name: "Empereur du Vide", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/essaim-sonde.png", threshold: 1000, type: "building" },
+    { id: "first-building", name: "First Component", description: "Acheter votre premier bâtiment", icon: "images/buildings/workshop.webp", threshold: 1, type: "building" },
+    { id: "ten-buildings", name: "Space Builder", description: "Posséder 10 bâtiments au total", icon: "images/buildings/factory.webp", threshold: 10, type: "building" },
+    { id: "hundred-buildings", name: "Space Architect", description: "Posséder 100 bâtiments au total", icon: "images/buildings/stellar-mine.webp", threshold: 100, type: "building" },
+    { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 250 bâtiments au total", icon: "images/buildings/nanoforge.webp", threshold: 250, type: "building" },
+    { id: "five-thousand-buildings", name: "Bâtisseur Stellaire", description: "Posséder 500 bâtiments au total", icon: "images/buildings/antimatter_collector.webp", threshold: 500, type: "building" },
+    { id: "ten-thousand-buildings", name: "Empereur du Vide", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/essaim-sonde.webp", threshold: 1000, type: "building" },
 
     // Score total (icônes: parts et cartes)
-    { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.png", threshold: 1000, type: "score" },
-    { id: "score-1000000", name: "Millionaire", description: "Atteindre 1 000 000 Parts", icon: "images/cards/collection/earth-card.png", threshold: 1000000, type: "score" },
-    { id: "score-1000000000", name: "Billionaire", description: "Atteindre 1 000 000 000 Parts", icon: "images/cards/collection/sirius-card.png", threshold: 1000000000, type: "score" },
-    { id: "score-1000000000000", name: "Trillionaire", description: "Atteindre 1 000 000 000 000 Parts", icon: "images/cards/collection/oort-cloud-card.png", threshold: 1000000000000, type: "score" },
-    { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 000 000 000 000 000 Parts", icon: "images/cards/collection/milky-way-center-card.png", threshold: 1000000000000000, type: "score" },
-    { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 000 000 000 000 000 Parts", icon: "images/cards/collection/missile-card.png", threshold: 10000000000000000, type: "score" },
-    { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.png", threshold: 100000000000000000, type: "score" },
+    { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.webp", threshold: 1000, type: "score" },
+    { id: "score-1000000", name: "Millionaire", description: "Atteindre 1 000 000 Parts", icon: "images/cards/collection/earth-card.webp", threshold: 1000000, type: "score" },
+    { id: "score-1000000000", name: "Billionaire", description: "Atteindre 1 000 000 000 Parts", icon: "images/cards/collection/sirius-card.webp", threshold: 1000000000, type: "score" },
+    { id: "score-1000000000000", name: "Trillionaire", description: "Atteindre 1 000 000 000 000 Parts", icon: "images/cards/collection/oort-cloud-card.webp", threshold: 1000000000000, type: "score" },
+    { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 000 000 000 000 000 Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1000000000000000, type: "score" },
+    { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 000 000 000 000 000 Parts", icon: "images/cards/collection/missile-card.webp", threshold: 10000000000000000, type: "score" },
+    { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.webp", threshold: 100000000000000000, type: "score" },
 
     // Bonus cliqués (icônes: comète)
-    { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comete.png", threshold: 1, type: "bonus" },
-    { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/comet-card.png", threshold: 10, type: "bonus" },
-    { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comete.png", threshold: 50, type: "bonus" },
-    { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comete.png", threshold: 100, type: "bonus" },
+    { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comete.webp", threshold: 1, type: "bonus" },
+    { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/comet-card.webp", threshold: 10, type: "bonus" },
+    { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 50, type: "bonus" },
+    { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 100, type: "bonus" },
 
     // Collection (icône: carte trou noir)
-    { id: "all-buildings", name: "Space Collector", description: "Débloquer tous les types de bâtiments", icon: "images/cards/collection/milky-way-center-card.png", threshold: BUILDINGS.length, type: "building-types" },
-    { id: "cards-10", name: "Cartothécaire", description: "Posséder 10 cartes de collection", icon: "images/cards/collection/moon-card.png", threshold: 10, type: "cards" },
-    { id: "cards-20", name: "Collection Complète", description: "Posséder toutes les cartes de collection", icon: "images/cards/collection/oort-cloud-card.png", threshold: 20, type: "cards" },
+    { id: "all-buildings", name: "Space Collector", description: "Débloquer tous les types de bâtiments", icon: "images/cards/collection/milky-way-center-card.webp", threshold: BUILDINGS.length, type: "building-types" },
+    { id: "cards-10", name: "Cartothécaire", description: "Posséder 10 cartes de collection", icon: "images/cards/collection/moon-card.webp", threshold: 10, type: "cards" },
+    { id: "cards-20", name: "Collection Complète", description: "Posséder toutes les cartes de collection", icon: "images/cards/collection/oort-cloud-card.webp", threshold: 20, type: "cards" },
 ];
 
 // ============================================
@@ -416,17 +416,17 @@ let nextPlanetNotified = false;
 // SPACE MAP SYSTEM (Planets & Bonuses)
 // ============================================
 const PLANETS = [
-    { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#4a90d9', imgPath: 'images/planets/earth.png' },
-    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 25, color: '#9aa0a6', imgPath: 'images/planets/moon.png' },
-    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 30, color: '#d97b4a', imgPath: 'images/planets/mars.png' },
-    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 35, color: '#4878f8', imgPath: 'images/planets/neptune.png' },
-    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 40, color: '#c8a878', imgPath: 'images/planets/pluto.png' },
-    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 45, color: '#b8c4d0', imgPath: 'images/planets/oort-cloud.png' },
-    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 50, color: '#f87828', imgPath: 'images/planets/proxima-centauri.png' },
-    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#a8c8e8', imgPath: 'images/planets/sirius.png' },
-    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#e8c898', imgPath: 'images/planets/milky-way-center.png' },
-    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#b89a9a', imgPath: 'images/planets/andromeda.png' },
-    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/virgo-cluster.png' }
+    { id: 'earth', name: 'Terre', emoji: '\uD83C\uDF0D', distanceRequired: 0, bonusPercent: 0, color: '#4a90d9', imgPath: 'images/planets/earth.webp' },
+    { id: 'moon', name: 'Lune', emoji: '\uD83D\uDD11', distanceRequired: 384400, bonusPercent: 25, color: '#9aa0a6', imgPath: 'images/planets/moon.webp' },
+    { id: 'mars', name: 'Mars', emoji: '\u2642', distanceRequired: 4120000, bonusPercent: 30, color: '#d97b4a', imgPath: 'images/planets/mars.webp' },
+    { id: 'neptune', name: 'Neptune', emoji: '\u2645', distanceRequired: 47800000, bonusPercent: 35, color: '#4878f8', imgPath: 'images/planets/neptune.webp' },
+    { id: 'pluto', name: 'Pluton', emoji: '\u2646', distanceRequired: 563000000, bonusPercent: 40, color: '#c8a878', imgPath: 'images/planets/pluto.webp' },
+    { id: 'oort-cloud', name: "Nuage d'Oort", emoji: '\u2728', distanceRequired: 6100000000, bonusPercent: 45, color: '#b8c4d0', imgPath: 'images/planets/oort-cloud.webp' },
+    { id: 'proxima-centauri', name: 'Proxima Centauri', emoji: '\u2609', distanceRequired: 72500000000, bonusPercent: 50, color: '#f87828', imgPath: 'images/planets/proxima-centauri.webp' },
+    { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#a8c8e8', imgPath: 'images/planets/sirius.webp' },
+    { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#e8c898', imgPath: 'images/planets/milky-way-center.webp' },
+    { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#b89a9a', imgPath: 'images/planets/andromeda.webp' },
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/virgo-cluster.webp' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -1916,9 +1916,9 @@ let travelStarsData = [];
 
 // Construit la fusee COMPLETE dans le holder, a l'echelle cible.
 function buildTravelRocketInto(holder, targetH) {
-    // Fusee du voyage : image dediee (Fusee-travel.png, 768x1376),
+    // Fusee du voyage : image dediee (Fusee-travel.webp, 768x1376),
     // verticale et droite. Largeur deduite du ratio de l'image.
-    const ROCKET_TRAVEL_IMG = 'images/rocket/Fusee-travel.png';
+    const ROCKET_TRAVEL_IMG = 'images/rocket/Fusee-travel.webp';
     const ROCKET_TRAVEL_RATIO = 768 / 1376;
     holder.innerHTML = '';
     const h = Math.max(1, targetH);
@@ -1935,7 +1935,7 @@ function buildTravelRocketInto(holder, targetH) {
     img.style.objectFit = 'contain';
     holder.appendChild(img);
     // Flammes des TROIS moteurs : structure dediee proportionnelle a la
-    // fusee. Positions mesurees sur Fusee-travel.png (tuyeres a 20.8%,
+    // fusee. Positions mesurees sur Fusee-travel.webp (tuyeres a 20.8%,
     // 50.3% et 79.8% de la largeur, sortie a ~86% de la hauteur). Chaque
     // jet = lueur externe + flamme principale (coeur blanc-jaune, colonne
     // orange) + base bleue + pointe fumeuse, animees independamment.
@@ -2153,11 +2153,11 @@ function playTravelAnimation(distance, onDone) {
         // Les 5 modeles d'objets du nuage (images dediees, tailles
         // natives heterogenes -- les tailles ecran sont fixees par couche).
         const OORT_MODELS = [
-            { cls: 'oort-ice', img: 'images/effects/Small irregular icy nucleus.png', ar: 197 / 184 },
-            { cls: 'oort-comet', img: 'images/effects/Small comet nucleus.png', ar: 182 / 165 },
-            { cls: 'oort-fragment', img: 'images/effects/Ice-rock fragment.png', ar: 218 / 244 },
-            { cls: 'oort-asteroid', img: 'images/effects/Dark rocky asteroid.png', ar: 159 / 156 },
-            { cls: 'oort-large', img: 'images/effects/Large rare Oort Cloud body.png', ar: 289 / 281 }
+            { cls: 'oort-ice', img: 'images/effects/Small irregular icy nucleus.webp', ar: 197 / 184 },
+            { cls: 'oort-comet', img: 'images/effects/Small comet nucleus.webp', ar: 182 / 165 },
+            { cls: 'oort-fragment', img: 'images/effects/Ice-rock fragment.webp', ar: 218 / 244 },
+            { cls: 'oort-asteroid', img: 'images/effects/Dark rocky asteroid.webp', ar: 159 / 156 },
+            { cls: 'oort-large', img: 'images/effects/Large rare Oort Cloud body.webp', ar: 289 / 281 }
         ];
         const addObj = (layer, model, size, op, ox, oy, z) => {
             const el = document.createElement('div');
@@ -3595,7 +3595,7 @@ function updateMiniSpaceMap(distance) {
         if (!spaceship) {
             spaceship = document.createElement('div');
             spaceship.className = 'spaceship';
-            spaceship.innerHTML = '<img src="images/rocket/Fusée3.png" alt="Fusée" class="spaceship-img">';
+            spaceship.innerHTML = '<img src="images/rocket/Fusée3.webp" alt="Fusée" class="spaceship-img">';
             container.appendChild(spaceship);
         }
         spaceship.style.left = `${shipPosition}%`;
@@ -3948,7 +3948,7 @@ function spawnRandomBonus(shower, isContract) {
     // - queue de plasma continue attachee derriere le noyau, orientee
     //   dans l'axe oppose au vol
     // - queue de poussiere : particules qui derivent vers l'arriere
-    bonusElement.innerHTML = '<img src="images/effects/comete.png" class="comet-img" alt="Comete">'
+    bonusElement.innerHTML = '<img src="images/effects/comete.webp" class="comet-img" alt="Comete">'
         + '<div class="comet-coma"></div>'
         + '<div class="comet-tail-plasma"></div>'
         + '<div class="comet-tail-dust"></div>';
@@ -4232,7 +4232,7 @@ function interceptCometWithMissile(cometEl, onDestroy, opts) {
     const angle = Math.atan2(ty - launchY, tx - launchXadj);
     const missile = document.createElement('div');
     missile.className = 'comet-missile';
-    missile.innerHTML = '<img src="images/effects/missile.png" alt="">';
+    missile.innerHTML = '<img src="images/effects/missile.webp" alt="">';
     document.body.appendChild(missile);
     const mRect = missile.getBoundingClientRect();
     const mW = mRect.width || 46;
@@ -4566,7 +4566,7 @@ function spawnFallingCoin(event) {
     coin.className = 'falling-coin';
 
     const img = document.createElement('img');
-    img.src = 'images/parts.png';
+    img.src = 'images/parts.webp';
     img.alt = '';
     img.draggable = false;
     coin.appendChild(img);
@@ -5058,7 +5058,7 @@ function ensureRainCanvas() {
     partsRain.canvas = canvas;
     partsRain.ctx = canvas.getContext('2d');
     const img = new Image();
-    img.src = 'images/parts.png';
+    img.src = 'images/parts.webp';
     img.onload = buildRainSprite;
     partsRain.coinImg = img;
     window.addEventListener('resize', resizeRainCanvas);
@@ -5455,7 +5455,7 @@ function renderTrophies() {
         }
         
         const imgSize = (trophy.id === 'launch-1' || trophy.id === 'launch-5' || trophy.id === 'first-click-upgrade') ? '80%'
-            : trophy.icon === 'images/parts.png' ? '100%'
+            : trophy.icon === 'images/parts.webp' ? '100%'
             : '100%';
         // Trophée non débloqué : contenu masqué par un point d'interrogation.
         if (unlockedTrophies.has(trophy.id)) {
@@ -6040,7 +6040,7 @@ function getContractTypes() {
     return [
         {
             id: 'clicks',
-            icon: 'images/parts.png',
+            icon: 'images/parts.webp',
             // Objectif : nombre de clics sur la piece pendant 30 s
             objective: 'Cliquez {target} fois sur la piece',
             track: 'clicks',
@@ -6064,7 +6064,7 @@ function getContractTypes() {
         },
         {
             id: 'comets',
-            icon: 'images/effects/missile.png',
+            icon: 'images/effects/missile.webp',
             // Objectif : intercepter des cometes pour proteger la fusee
             objective: 'Defense parfaite : aucune comete ne doit toucher la fusee ({target} cometes)',
             track: 'comets',
@@ -6076,7 +6076,7 @@ function getContractTypes() {
         },
         {
             id: 'production',
-            icon: 'images/buildings/factory.png',
+            icon: 'images/buildings/factory.webp',
             // Objectif : produire un quota de Parts (toute production confondue)
             objective: 'Produisez {target} Parts (toutes sources)',
             track: 'parts',
@@ -6093,7 +6093,7 @@ function getContractTypes() {
         },
         {
             id: 'shower',
-            icon: 'images/effects/comete.png',
+            icon: 'images/effects/comete.webp',
             // Objectif : attraper les cometes d'une pluie provoquee pour le contrat
             objective: 'Survivez a la pluie : attrapez {target} cometes',
             track: 'comets',
@@ -6361,7 +6361,7 @@ function completeContract() {
         partsSinceLaunch += gain;
         trackPartsEarned(gain);
         showBonusPopup('+' + formatNumber(gain) + ' ' + t('Parts'), 'instant');
-        showToast(tf('Contrat rempli ! +{parts} Parts', { parts: formatNumber(gain) }), 'images/parts.png');
+        showToast(tf('Contrat rempli ! +{parts} Parts', { parts: formatNumber(gain) }), 'images/parts.webp');
     } else if (c.rewardType === 'mult') {
         activateContractTempMultiplier(c.mult, c.duration * 1000);
         showToast(tf('Contrat rempli ! Production x{mult} pendant {sec} s', { mult: c.mult, sec: c.duration }), null);
@@ -6661,7 +6661,7 @@ function buildContractsHtml() {
                 + '<div class="contract-sub">' + t('30 secondes') + ' \u00b7 <span class="' + contractDifficultyClass(offer.diffIdx) + '">' + contractDifficultyLabel(offer.diffIdx) + '</span></div></div></div>'
                 + '<div class="contract-reward">' + contractRewardText(offer) + '</div>'
                 + '<button class="contract-buy-btn" data-offer-id="' + offer.id + '" onclick="acceptContract(\'' + offer.id + '\')">'
-                + '<img src="images/parts.png" class="coin-icon" alt=""> ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
+                + '<img src="images/parts.webp" class="coin-icon" alt=""> ' + formatNumber(offer.price) + ' ' + t('Parts') + '</button>'
                 + '</div>';
         });
     }
@@ -6722,7 +6722,7 @@ const CARD_RARITIES = {
     alternative:{ name: 'Alternative', color: '#f43f5e', glow: 'rgba(244,63,94,0.8)',  bonusMult: 0.50 }
 };
 
-const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/earth-card.png' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/moon-card.png' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/mars-card.png' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '', imgPath: 'images/cards/collection/workshop-card.png' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/factory-card.png' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '', imgPath: 'images/cards/collection/stellar-mine-card.png' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '', imgPath: 'images/cards/collection/solar-factory-card.png' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '', imgPath: 'images/cards/collection/comet-card.png' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/neptune-card.png' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/pluto-card.png' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/proxima-centauri-card.png' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/orbital-autofab-card.png' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/probe-swarm-card.png' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/quasar-engine-card.png' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/sirius-card.png' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/oort-cloud-card.png' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/pulsar-clock-card.png' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/milky-way-center-card.png' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/missile-card.png' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '', imgPath: 'images/cards/collection/andromeda-card.png' }];
+const COLLECTIBLE_CARDS = [    { id: 'earth-card',     name: 'Terre',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/earth-card.webp' },    { id: 'moon-card',      name: 'Lune',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/moon-card.webp' },    { id: 'mars-card',      name: 'Mars',                  rarity: 'common',     icon: '', imgPath: 'images/cards/collection/mars-card.webp' },    { id: 'wrench-card',    name: 'Atelier',               rarity: 'common',     icon: '', imgPath: 'images/cards/collection/workshop-card.webp' },    { id: 'factory-card',   name: 'Usine',                 rarity: 'common',     icon: '', imgPath: 'images/cards/collection/factory-card.webp' },    { id: 'mining-card',    name: 'Mine stellaire',        rarity: 'common',     icon: '', imgPath: 'images/cards/collection/stellar-mine-card.webp' },    { id: 'solar-card',     name: 'Centrale solaire',      rarity: 'common',     icon: '', imgPath: 'images/cards/collection/solar-factory-card.webp' },    { id: 'comet-card',     name: 'Comète',                rarity: 'common',     icon: '', imgPath: 'images/cards/collection/comet-card.webp' },    { id: 'neptune-card',   name: 'Neptune',               rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/neptune-card.webp' },    { id: 'pluto-card',     name: 'Pluton',                rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/pluto-card.webp' },    { id: 'proxima-card',   name: 'Proxima Centauri',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/proxima-centauri-card.webp' },    { id: 'foundry-card',   name: 'Autofab orbitale',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/orbital-autofab-card.webp' },    { id: 'station-card',   name: 'Essaim de sondes',      rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/probe-swarm-card.webp' },    { id: 'quasar-card',    name: 'Moteur à quasar',       rarity: 'rare',       icon: '', imgPath: 'images/cards/collection/quasar-engine-card.webp' },    { id: 'sirius-card',    name: 'Sirius',                rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/sirius-card.webp' },    { id: 'oort-card',      name: "Nuage d'Oort",           rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/oort-cloud-card.webp' },    { id: 'pulsar-card',    name: 'Horloger de pulsar',    rarity: 'epic',       icon: '', imgPath: 'images/cards/collection/pulsar-clock-card.webp' },    { id: 'milkyway-card',  name: 'Centre Voie lactée',  rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/milky-way-center-card.webp' },    { id: 'missile-card', name: 'Missile',               rarity: 'legendary',  icon: '', imgPath: 'images/cards/collection/missile-card.webp' },    { id: 'andromeda-card', name: 'Andromède',            rarity: 'alternative', icon: '', imgPath: 'images/cards/collection/andromeda-card.webp' }];
 
 const BOOSTERS = {
     standard:  { name: 'Standard',   cardCount: 1, cooldownMs: 5 * 60 * 1000,      rarities: { common: 0.80, rare: 0.18, epic: 0.02 } },
@@ -7009,7 +7009,7 @@ function renderRevealCards(cards) {
             el.style.animationDelay = (i * 0.08) + 's';
             el.innerHTML =
                 '<div class="cc-reveal-inner flipped">' +
-                    '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
+                    '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.webp" class="cc-card-img" alt="Dos de carte"></div>' +
                     '<div class="cc-reveal-back">' +
                         '<img src="' + rc.card.imgPath + '" class="cc-card-img" alt="' + rc.card.name + '">' +
                         (rc.isNew ? '<div class="cc-card-new">' + t('NOUVELLE !') + '</div>' : '') +
@@ -7029,7 +7029,7 @@ function renderRevealCards(cards) {
         el.className = 'cc-reveal-card pack rarity-' + card.rarity + (idx > 0 ? ' flipped' : '');
         el.innerHTML =
             '<div class="cc-reveal-inner">' +
-                '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.png" class="cc-card-img" alt="Dos de carte"></div>' +
+                '<div class="cc-reveal-front"><img src="images/cards/backs/card-back.webp" class="cc-card-img" alt="Dos de carte"></div>' +
                 '<div class="cc-reveal-back">' +
                     '<img src="' + card.imgPath + '" class="cc-card-img" alt="' + card.name + '">' +
                     (isNew ? '<div class="cc-card-new">' + t('NOUVELLE !') + '</div>' : '') +
@@ -7316,21 +7316,21 @@ function setTextIfChanged(el, text) {
 // ============================================
 const TUTORIAL_STEPS = [
     {
-        img: 'images/parts.png',
+        img: 'images/parts.webp',
         titleKey: 'Clique sur la pièce',
         textKey: 'Chaque clic te rapporte des Parts. Clique pour en gagner !',
         done: () => totalPartsFromClicks >= 1,
         target: '#medal',
     },
     {
-        img: 'images/buildings/workshop.png',
+        img: 'images/buildings/workshop.webp',
         titleKey: 'Achète ton premier bâtiment !',
         textKey: 'Les bâtiments produisent des Parts tout seuls. Achète un Atelier dans le panneau Bâtiments.',
         done: () => (findBuildingById('workshop')?.count || 0) >= 1,
         target: '#building-workshop',
     },
     {
-        img: 'images/parts.png',
+        img: 'images/parts.webp',
         titleKey: 'Achète ta première amélioration',
         textKey: 'La barre Améliorations en haut propose des bonus qui te permettent de doubler ta puissance de clic et doubler la production sur chaque bâtiment. Achète-en une pour progresser plus vite !',
         done: () => activatedClickUpgrades.length >= 1 || Object.values(buildingUpgrades).some(list => list.length > 0),
@@ -7338,7 +7338,7 @@ const TUTORIAL_STEPS = [
         prefer: 'below',
     },
     {
-        img: 'images/rocket/Fusée3.png',
+        img: 'images/rocket/Fusée3.webp',
         titleKey: 'Construis ta première pièce de fusée',
         textKey: 'Achète les pièces de fusée une par une afin de construire la fusée entièrement et pouvoir lancer l\'expédition !',
         done: () => ROCKET_PARTS.some(p => p.purchased),
@@ -7582,7 +7582,7 @@ const FEATURE_LESSONS = [
         key: 'building-factory',
         titleKey: 'Nouveau bâtiment : Usine',
         textKey: 'L\'Usine est disponible ! Elle produit bien plus qu\'un Atelier. Achète-en une pour accélérer ta production.',
-        img: 'images/buildings/factory.png',
+        img: 'images/buildings/factory.webp',
         trigger: () => isBuildingUnlocked(findBuildingById('factory')),
         target: '#building-factory',
     },
@@ -7590,7 +7590,7 @@ const FEATURE_LESSONS = [
         key: 'card-collection-unlocked',
         titleKey: 'La Collection de Cartes est disponible',
         textKey: 'Ouvre des boosters, complète ton album : chaque carte améliore ta production de Parts pour toujours !',
-        img: 'images/cards/collection/booster1.png',
+        img: 'images/cards/collection/booster1.webp',
         trigger: () => areCardsUnlocked(),
         target: '#card-collection-mini-card',
     },
@@ -7598,7 +7598,7 @@ const FEATURE_LESSONS = [
         key: 'contracts-unlocked',
         titleKey: 'Les Contrats sont disponibles',
         textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses.',
-        img: 'images/effects/comete.png',
+        img: 'images/effects/comete.webp',
         trigger: () => getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES,
         target: '#contracts-mini-card',
     },
@@ -7606,7 +7606,7 @@ const FEATURE_LESSONS = [
         key: 'click-upgrades',
         titleKey: 'Améliorations',
         textKey: 'La barre du haut propose des améliorations : clics boostés, production des bâtiments, prix réduits… Améliore ta fusée à chaque occasion !',
-        img: 'images/parts.png',
+        img: 'images/parts.webp',
         trigger: () => CLICK_UPGRADES.some(u => totalPartsFromClicks >= u.threshold),
         target: '#upgrades-bar',
         prefer: 'right',
@@ -7615,7 +7615,7 @@ const FEATURE_LESSONS = [
         key: 'rocket-complete',
         titleKey: 'Fusée prête !',
         textKey: 'Toutes les pièces sont construites ! Appuie sur LANCER LA FUSÉE lorsque tu voudras lancer l\'expédition ! Petit conseil, lance une expédition quand tu es sûr d\'atteindre une nouvelle planète ou de gagner de nouvelles poussières d\'étoiles !',
-        img: 'images/rocket/Fusée3.png',
+        img: 'images/rocket/Fusée3.webp',
         trigger: () => ROCKET_PARTS.every(p => p.purchased),
         target: '#launch-button',
     },
@@ -7623,7 +7623,7 @@ const FEATURE_LESSONS = [
         key: 'space-stats',
         titleKey: 'Progression Spatiale',
         textKey: 'La colonne de gauche résume ton expédition : Portée actuelle (jusqu’où ta fusée peut aller si tu la lancerais maintenant), Vitesse (km de portée gagnés par seconde), Distance record (permanente) et Bonus planètes. Clique sur chaque case pour une explication détaillée !',
-        img: 'images/planets/moon.png',
+        img: 'images/planets/moon.webp',
         trigger: () => totalPartsFromClicks >= 25 || findBuildingById('workshop')?.count >= 3,
         target: '#space-stats-sidebar',
         prefer: 'right',
@@ -7632,7 +7632,7 @@ const FEATURE_LESSONS = [
         key: 'galactic-shop',
         titleKey: 'Atelier Galactique',
         textKey: 'L’Atelier Galactique (bouton violet sous la mini-carte) propose des améliorations PERMANENTES achetées avec la Poussière d’Étoiles gagnée à chaque lancement : production, fusée, collection, clics… Elles survivent aux nouvelles expéditions. Ouvre-le quand tu as des PE !',
-        img: 'images/rocket/astronaut.png',
+        img: 'images/rocket/astronaut.webp',
         trigger: () => starDust >= 2,
         target: '.galactic-shop-btn',
         prefer: 'right',
@@ -7641,7 +7641,7 @@ const FEATURE_LESSONS = [
         key: 'first-launch',
         titleKey: 'Bon voyage !',
         textKey: 'Chaque lancement termine une expédition : ta nouvelle fusée repart de la Terre, mais tes planètes débloquées, ta distance record et tes bonus permanents sont conservés. Vas de plus en plus loin !',
-        img: 'images/planets/moon.png',
+        img: 'images/planets/moon.webp',
         trigger: () => rocketsLaunched >= 1,
     },
 ];
@@ -7915,7 +7915,7 @@ scheduleBonusSpawn();
 // Prechargement du sprite du missile : il n'est insere dans le DOM qu'au
 // premier tir, sans ce prechargement le premier missile vole sans image
 // le temps du premier telechargement.
-(() => { const preload = new Image(); preload.src = 'images/effects/missile.png'; })();
+(() => { const preload = new Image(); preload.src = 'images/effects/missile.webp'; })();
 
 // ============================================
 // PLUIE DE COMÈTES (événement régulier)
@@ -7966,6 +7966,47 @@ setInterval(() => {
         saveGame();
     }
 }, 10000);
+
+// Sauvegarde immédiate à la fermeture de l'onglet / navigation :
+// l'autosave tourne toutes les 30s, sans ce hook le joueur pouvait
+// perdre jusqu'a SAVE_INTERVAL_MS de progression en fermant vite.
+window.addEventListener('beforeunload', () => {
+    try { saveGame(); } catch (e) { /* dernier recours : ne pas bloquer la fermeture */ }
+});
+// Idem sur mobile : l'onglet passe en arriere-plan sans beforeunload fiable.
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        try { saveGame(); } catch (e) {}
+    }
+});
+
+// ============================================
+// GESTION D'ERREURS GLOBALE
+// ============================================
+// Objectif : un joueur qui rencontre un bug doit (1) garder sa
+// sauvegarde (save avant tout), (2) voir un message plutot qu'un jeu
+// fige en silence. Les erreurs de chargement des ressources non
+// critiques (images) sont ignorees.
+let errorToastShown = false;
+window.addEventListener('error', (event) => {
+    if (event.target && event.target.tagName === 'IMG') return;
+    try { saveGame(); } catch (e) {}
+    if (!errorToastShown) {
+        errorToastShown = true;
+        if (typeof showToast === 'function' && typeof t === 'function') {
+            showToast('\u26a0\ufe0f ' + t("Une erreur inattendue est survenue. Votre progression est sauvegard\u00e9e."));
+        }
+    }
+});
+window.addEventListener('unhandledrejection', (event) => {
+    try { saveGame(); } catch (e) {}
+    if (!errorToastShown) {
+        errorToastShown = true;
+        if (typeof showToast === 'function' && typeof t === 'function') {
+            showToast('\u26a0\ufe0f ' + t("Une erreur inattendue est survenue. Votre progression est sauvegard\u00e9e."));
+        }
+    }
+});
 
 // Initialisation des que le script s'execute (il est charge en fin de body,
 // le DOM est deja parse) : NE PAS attendre window.onload — il ne se declenche
@@ -8522,7 +8563,7 @@ function showNextPlanetNotification() {
         nameEl.textContent = t(planet.name);
         distEl.textContent = formatNumber(planet.distanceRequired) + ' km';
     } else {
-        imgEl.src = 'images/rocket/Fusée3.png';
+        imgEl.src = 'images/rocket/Fusée3.webp';
         nameEl.textContent = t('Dernière destination atteinte !');
         distEl.textContent = '';
     }
@@ -8532,12 +8573,3 @@ function closeNextPlanetNotification() {
     const notif = document.getElementById('next-planet-notification');
     if (notif) notif.classList.remove('active');
 }
-
-// Call in buyBuilding
-// (À intégrer dans la fonction existante)
-
-// Call in gameLoop
-// (À intégrer dans la fonction existante)
-
-// Initialize on start
-// (À intégrer dans initGame)
