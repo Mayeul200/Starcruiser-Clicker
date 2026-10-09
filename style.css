@@ -1191,10 +1191,18 @@ body {
     justify-content: space-between;
     align-items: center;
     min-height: 1.3em;
-    margin: 0 0 10px 0;
+    margin: 0;
     padding: 0 0 10px 0;
     border-bottom: 2px solid var(--primary-light);
     box-sizing: border-box;
+    /* Titre (et multiplicateurs x1/x5/x50/Max) figé en haut du panneau :
+       seul la liste des bâtiments défile dessous. */
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg-panel);
+    padding-top: 15px;
+    margin-bottom: 10px;
 }
 
 .multiplier-buttons {
@@ -2769,6 +2777,15 @@ body {
     flex-direction: column;
     height: 100%;
     color: var(--text);
+}
+/* Titre "Progression Spatiale" figé en haut : seul le contenu (stats,
+   carte, mini-jeux) défile sous lui. Fond opaque pour masquer le
+   contenu qui passe dessous, padding-top pour compenser celui du panel. */
+.left-panel > h3 {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--bg-panel);
 }
 
 .galactic-shop-btn {
@@ -5452,6 +5469,8 @@ body.night-mode .scene-background {
         gap: calc(6px * var(--mscale, 1));
         height: calc(44px * var(--mscale, 1));
         padding: 0 calc(4px * var(--mscale, 1));
+        /* Sticky mobile : padding-top du panel nul ici, pas de compensation */
+        padding-top: 0;
     }
     .buildings-header h3 { font-size: 0.9rem; margin: 0; white-space: nowrap; }
     .multiplier-buttons { gap: calc(3px * var(--mscale, 1)); }
