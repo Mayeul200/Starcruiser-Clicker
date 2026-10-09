@@ -233,6 +233,10 @@ const TROPHIES = [
     { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 100000000, type: "pps" },
     { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000000000, type: "pps" },
     { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000000000, type: "pps" },
+    { id: "pps-1e11", name: "Moteur Galactique", description: "Atteindre 100 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e11, type: "pps" },
+    { id: "pps-1e12", name: "Cœur d'Étoile à Neutrons", description: "Atteindre 1 000 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e12, type: "pps" },
+    { id: "pps-1e14", name: "Puits de Gravité", description: "Atteindre 100 000 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e14, type: "pps" },
+    { id: "pps-1e16", name: "Usine à Univers", description: "Atteindre 10 000 000 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e16, type: "pps" },
 
     // Vitesse de voyage (icône: missile) — vitesse REELLE de la stat
     // "Vitesse", c'est-a-dire les km/s gagnes par la distance atteignable.
@@ -263,6 +267,8 @@ const TROPHIES = [
     { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 12 lancements", icon: "images/rocket/astronaut.webp", threshold: 12, type: "launches" },
     { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 20 lancements", icon: "images/rocket/astronaut.webp", threshold: 20, type: "launches" },
     { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.webp", threshold: 30, type: "launches" },
+    { id: "launch-50real", name: "Commandant de Flotte", description: "Réaliser 50 lancements", icon: "images/rocket/launch-pad.webp", threshold: 50, type: "launches" },
+    { id: "launch-100real", name: "Amiral de l'Infini", description: "Réaliser 100 lancements", icon: "images/rocket/astronaut.webp", threshold: 100, type: "launches" },
 
     // Poussière d'étoiles (icônes: cartes du jeu)
     { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.webp", threshold: 1, type: "stardust" },
@@ -270,6 +276,8 @@ const TROPHIES = [
     { id: "dust-1000", name: "Maître de la Poussière", description: "Gagner 1 000 Poussière d'Étoiles au total", icon: "images/cards/collection/sirius-card.webp", threshold: 1000, type: "stardust" },
     { id: "dust-10000", name: "Semeur d'Étoiles", description: "Gagner 10 000 Poussière d'Étoiles au total", icon: "images/cards/collection/comet-card.webp", threshold: 10000, type: "stardust" },
     { id: "dust-100000", name: "Architecte Céleste", description: "Gagner 100 000 Poussière d'Étoiles au total", icon: "images/cards/collection/oort-cloud-card.webp", threshold: 100000, type: "stardust" },
+    { id: "dust-500000", name: "Alchimiste Stellaire", description: "Gagner 500 000 Poussière d'Étoiles au total", icon: "images/cards/collection/comet-card.webp", threshold: 500000, type: "stardust" },
+    { id: "dust-1000000", name: "Façonneur de Cosmos", description: "Gagner 1 000 000 Poussière d'Étoiles au total", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1000000, type: "stardust" },
 
     // Améliorations de bâtiments (icônes: bâtiments)
     { id: "first-upgrade", name: "First Upgrade", description: "Acheter votre première amélioration de bâtiment", icon: "images/buildings/workshop.webp", threshold: 1, type: "building-upgrade" },
@@ -290,6 +298,8 @@ const TROPHIES = [
     { id: "thousand-buildings", name: "Galactic Builder", description: "Posséder 250 bâtiments au total", icon: "images/buildings/nanoforge.webp", threshold: 250, type: "building" },
     { id: "five-thousand-buildings", name: "Bâtisseur Stellaire", description: "Posséder 500 bâtiments au total", icon: "images/buildings/antimatter_collector.webp", threshold: 500, type: "building" },
     { id: "ten-thousand-buildings", name: "Empereur du Vide", description: "Posséder 1 000 bâtiments au total", icon: "images/buildings/essaim-sonde.webp", threshold: 1000, type: "building" },
+    { id: "buildings-2000", name: "Souverain des Mégastructures", description: "Posséder 2 000 bâtiments au total", icon: "images/buildings/black-hole-factory.webp", threshold: 2000, type: "building" },
+    { id: "buildings-5000", name: "Demiurge Orbital", description: "Posséder 5 000 bâtiments au total", icon: "images/buildings/voidforge.webp", threshold: 5000, type: "building" },
 
     // Score total (icônes: parts et cartes)
     { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.webp", threshold: 1000, type: "score" },
@@ -299,12 +309,19 @@ const TROPHIES = [
     { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 000 000 000 000 000 Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1000000000000000, type: "score" },
     { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 000 000 000 000 000 Parts", icon: "images/cards/collection/missile-card.webp", threshold: 10000000000000000, type: "score" },
     { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.webp", threshold: 100000000000000000, type: "score" },
+    { id: "score-1e18", name: "Forgeron de Réalités", description: "Atteindre 1 000 000 000 000 000 000 Parts", icon: "images/planets/virgo-cluster.webp", threshold: 1e18, type: "score" },
+    { id: "score-1e19", name: "Bâtisseur de Multivers", description: "Atteindre 10 000 000 000 000 000 000 Parts", icon: "images/planets/andromeda.webp", threshold: 1e19, type: "score" },
+    { id: "score-1e20", name: "Architecte Cosmique Suprême", description: "Atteindre 100 000 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.webp", threshold: 1e20, type: "score" },
+    { id: "score-1e21", name: "Au-delà de l'Infini", description: "Atteindre 1 000 000 000 000 000 000 000 Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1e21, type: "score" },
 
     // Bonus cliqués (icônes: comète)
     { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comete.webp", threshold: 1, type: "bonus" },
     { id: "ten-bonuses", name: "Bonus Hunter", description: "Cliquer 10 bonus aléatoires", icon: "images/cards/collection/comet-card.webp", threshold: 10, type: "bonus" },
     { id: "fifty-bonuses", name: "Chasseur de Comètes", description: "Cliquer 50 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 50, type: "bonus" },
     { id: "hundred-bonuses", name: "Cerveau Cosmique", description: "Cliquer 100 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 100, type: "bonus" },
+    { id: "bonuses-250", name: "As de l'Interception", description: "Cliquer 250 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 250, type: "bonus" },
+    { id: "bonuses-500", name: "Œil du Cosmos", description: "Cliquer 500 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 500, type: "bonus" },
+    { id: "bonuses-1000", name: "Surfeur de Comètes", description: "Cliquer 1 000 bonus aléatoires", icon: "images/effects/comete.webp", threshold: 1000, type: "bonus" },
 
     // Collection (icône: carte trou noir)
     { id: "all-buildings", name: "Space Collector", description: "Débloquer tous les types de bâtiments", icon: "images/cards/collection/milky-way-center-card.webp", threshold: BUILDINGS.length, type: "building-types" },
@@ -7044,12 +7061,20 @@ function renderRevealCards(cards) {
                 '</div>' +
             '</div>';
         let discovered = false;
+        // Les cartes suivantes (idx > 0) arrivent deja retournees : leur
+        // accord de revelation est joue des l'arrivee, pas au clic -- sinon
+        // seule la premiere carte du booster avait un son.
+        if (idx > 0) {
+            Sounds.cardFlip(card.rarity);
+            discovered = true;
+            revealed++;
+            revealedCards.push({ card, isNew });
+        }
         el.addEventListener('click', function () {
             if (!discovered) {
-                // Premier clic : retourner (ou decouvrir) la carte, elle reste affichee.
-                // L'accord de revelation est joue ICI, uniquement si la carte
-                // vient d'etre retournee (pas si elle est arrivee deja visible),
-                // et sa couleur depend de la rarete de la carte.
+                // Premier clic : retourner la carte, elle reste affichee.
+                // L'accord de revelation est joue ICI et sa couleur depend
+                // de la rarete de la carte.
                 discovered = true;
                 const wasFlipped = el.classList.contains('flipped');
                 if (!wasFlipped) Sounds.cardFlip(card.rarity);
