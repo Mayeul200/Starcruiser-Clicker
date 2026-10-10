@@ -4703,6 +4703,17 @@ function spawnFallingCoin(event) {
 // Muert par défaut jusqu'à la première interaction (politique navigateurs),
 // réglage sauvegardé, coupé quand l'onglet est masqué.
 // ============================================
+// Son du clic sur la piece : activable/desactivable separement des SFX
+// (parametres) -- le "coin" repete peut agacer sur les longues sessions.
+const ClickSound = { enabled: (localStorage.getItem('starcruiserClickSound') !== '0') };
+
+function toggleClickSound() {
+    ClickSound.enabled = !ClickSound.enabled;
+    localStorage.setItem('starcruiserClickSound', ClickSound.enabled ? '1' : '0');
+    const btn = document.getElementById('clicksound-toggle-btn');
+    if (btn) btn.textContent = ClickSound.enabled ? t('Désactiver le son du clic') : t('Activer le son du clic');
+}
+
 const Sound = {
     ctx: null,
     master: null,
@@ -4825,7 +4836,7 @@ function musicInit() {
     soundResume();
     if (!Sound.ctx) return;
     Music.bus = Sound.ctx.createGain();
-    Music.bus.gain.value = 0.85;
+    Music.bus.gain.value = 0.55;
     // Compresseur cote : pompe disco, la basse et le kick restent
     // ronds sans ecraser les aigus.
     const comp = Sound.ctx.createDynamicsCompressor();
@@ -5148,7 +5159,7 @@ function startMusic() {
     // remet au niveau nominal AVANT de planifier la moindre note.
     try {
         Music.bus.gain.cancelScheduledValues(Sound.ctx.currentTime);
-        Music.bus.gain.setValueAtTime(0.85, Sound.ctx.currentTime);
+        Music.bus.gain.setValueAtTime(0.55, Sound.ctx.currentTime);
     } catch (e) {}
     Music.playing = true;
     Music.step = 0;
@@ -5209,6 +5220,7 @@ function stopMusic() {
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
+        if (!ClickSound.enabled) return;
         // Vrai son de piece de monnaie, bien audible : le classique "coin
         // collect" (piece Zelda / rupee) — deux notes metalliques cristallines
         // en intervalle de quarte ascendante (Si grave puis Mi aigu), chaque
@@ -6119,7 +6131,7 @@ function renderStats() {
         { label: t("Parts g\u00e9n\u00e9r\u00e9s pour ce lancement"), value: formatNumber(totalPartsEarnedThisLaunch) },
         { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
         { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
-        { label: t("Multiplicateur de production"), value: 'x' + getTotalProductionMultiplier().toFixed(2) },
+        { label: t("Multiplicateur de production"), value: 'x' + groupThousands(getTotalProductionMultiplier().toFixed(2)) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
         { label: t("Vitesse de voyage"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },
@@ -8365,6 +8377,8 @@ function init() {
     // Bouton musique des parametres : refleter l'etat persiste.
     const musicBtn0 = document.getElementById('music-toggle-btn');
     if (musicBtn0) musicBtn0.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond');
+    const clickSndBtn0 = document.getElementById('clicksound-toggle-btn');
+    if (clickSndBtn0) clickSndBtn0.textContent = ClickSound.enabled ? t('Désactiver le son du clic') : t('Activer le son du clic');
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) {
