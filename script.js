@@ -8384,22 +8384,14 @@ function renderRocketPartsShop() {
     updateLaunchButtonVisibility();
     const nextPart = ROCKET_PARTS.find(p => !p.purchased);
     if (!nextPart) {
-        // Toutes les pieces sont achetees : eteindre tout pulse residuel
-        // (carte courante ou conteneur) pour ne pas briller une fois complet.
+        // Toutes les pieces sont achetees : la boutique est masquee par la
+        // classe .shop-done (posee par updateLaunchButtonVisibility) -- la
+        // carte "Pieces completes" n'existe plus, seul le bouton LANCER,
+        // agrandi, occupe le bas du panneau central. On vide juste le DOM.
         clearPulseHint(container);
-        clearPulseHint(container.querySelector('.rocket-part-frame'));
         if (container.dataset.partId !== '__complete__') {
             container.dataset.partId = '__complete__';
-            container.innerHTML =
-                '<div class="rocket-part-frame complete">' +
-                    '<div class="rocket-part-frame-title">' + t('Pi\u00e8ces compl\u00e8tes') + '</div>' +
-                    '<div class="rocket-part-frame-complete">\u2713 ' + t('Fus\u00e9e pr\u00eate \u00e0 lancer') + '</div>' +
-                '</div>';
-        } else {
-            const titleEl = container.querySelector('.rocket-part-frame-title');
-            if (titleEl) titleEl.textContent = t('Pièces complètes');
-            const completeEl = container.querySelector('.rocket-part-frame-complete');
-            if (completeEl) completeEl.textContent = '✓ ' + t('Fusée prête à lancer');
+            container.innerHTML = '';
         }
         return;
     }
@@ -8408,8 +8400,8 @@ function renderRocketPartsShop() {
     // Calcule au niveau de la fonction : la branche de mise a jour (else)
     // en a besoin aussi, sinon ReferenceError au changement de langue.
     const purchasedCount = ROCKET_PARTS.filter(p => p.purchased).length;
-    // Ne recrerer le DOM que si la piece affichee change. Sinon, mettre a jour
-    // uniquement le cout et l'etat du bouton pour eviter le clignotement du hover.
+    // Ne recreer le DOM que si la piece affichee change. Sinon, mettre a jour
+    // uniquement la barre et les textes pour eviter le clignotement du hover.
     if (container.dataset.partId !== nextPart.id) {
         container.dataset.partId = nextPart.id;
         const imageUrl = nextPart.imgPath || '';
@@ -8439,7 +8431,7 @@ function renderRocketPartsShop() {
         const nameEl = container.querySelector('.rocket-part-name');
         if (nameEl) nameEl.textContent = t(nextPart.name);
         const multEl = container.querySelector('.rocket-part-mult');
-        if (multEl) multEl.textContent = '×' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production');
+        if (multEl) multEl.textContent = '\u00d7' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production');
         const frame = container.querySelector('.rocket-part-frame');
         if (frame) {
             if (isAffordable) frame.classList.remove('locked');
@@ -8447,8 +8439,6 @@ function renderRocketPartsShop() {
         }
     }
     // Piece de fusee abordable : pulse pour attirer l'oeil (10 s max).
-    // Cible la carte de la piece, pas le conteneur : celui-ci est une colonne
-    // laterale haute comme la page et la lueur s'etalerait sur toute sa longueur.
     const fillEl0 = container.querySelector('.rocket-part-progress-fill');
     const labelEl0 = container.querySelector('.rocket-part-progress-label');
     if (fillEl0) fillEl0.style.width = Math.min(100, (score / cost) * 100) + '%';

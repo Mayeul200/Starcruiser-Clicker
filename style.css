@@ -4168,12 +4168,16 @@ body.night-mode .scene-background {
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 12px 64px;
+    /* Fusee complete : le bouton est la SEULE action du bas du panneau,
+       il la remplace largement (agrandi vs la case d'achat). */
+    padding: 18px 90px;
     background: linear-gradient(135deg, #ef4444, #dc2626);
     border: none;
-    border-radius: 25px;
+    border-radius: 18px;
     color: white;
-    font-size: 1rem;
+    font-size: 1.35rem;
+    font-family: var(--font-display);
+    letter-spacing: 0.06em;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
@@ -4211,6 +4215,9 @@ body.night-mode .scene-background {
     padding: 4px 6px;
     z-index: 90;
 }
+/* Fusee complete : la boutique disparait TOTALEMENT (plus de carte
+   "Pieces completes") -- seul le bouton LANCER, agrandi, reste en bas. */
+.rocket-parts-shop.shop-done { display: none; }
 /* Case piece de fusee : DEUX parties, comme les cases batiments --
    DA du jeu : fond var(--secondary), bordure var(--border), hover
    var(--secondary-light) + glow primaire. A gauche l'image, a droite
