@@ -5052,7 +5052,7 @@ function musicStep(t0) {
     // --- Batterie ---
     if (sec !== 3) {
         if (s % 4 === 0) musicKick(t0);
-        if (s === 6 || s === 14) musicKick(t0 + sec16 * 0.5);
+        if (s === 6 || s === 14) musicKick(t0);
         if (s % 2 === 1) musicHat(t0, s === 15);
         if (s === 4 || s === 12) musicSnare(t0);
         if (sec === 2 && s % 2 === 0) musicRide(t0);
@@ -5163,7 +5163,11 @@ function startMusic() {
     // etat suspendu (politique autoplay), currentTime reste a ~0 -- on
     // attend sa reprise effective pour demarrer le scheduler, sinon la
     // boucle rattraperait un temps fictif et planifierait dans le passe.
-    Music.nextTime = Math.max(Sound.ctx.currentTime, 0) + 0.15;
+    // Depart ALIGNe sur la grille : le premier pas tombe exactement sur
+            // un multiple entier de la duree de pas -- sinon tout le
+            // morceau herite d'un decalage constant perceptible.
+            const step0 = (60 / Music.bpm) / 4;
+            Music.nextTime = Sound.ctx.currentTime + step0 * Math.ceil((Sound.ctx.currentTime + 0.1) / step0 - Sound.ctx.currentTime / step0);
     let scheduledSteps = 0;
     Music.timer = setInterval(function () {
         if (!Sound.ctx || !Music.playing) return;
