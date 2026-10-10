@@ -580,7 +580,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v3f4ced1b';
+            var APP_CACHE_VERSION = 'v59edc8a5';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;
@@ -601,7 +601,7 @@
                     // Verifie un nouveau SW des le chargement, puis toutes les heures.
                     function checkUpdate() { reg.update().catch(() => {}); }
                     checkUpdate();
-                    setInterval(checkUpdate, 60 * 60 * 1000);
+                    setInterval(checkUpdate, 60 * 1000);
                     reg.addEventListener('updatefound', () => {
                         if (reg.installing) reg.installing.addEventListener('statechange', () => {
                             if (reg.waiting) showUpdateToast();
