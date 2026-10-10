@@ -5482,7 +5482,10 @@ function renderTrophies() {
         // paliers 10+ sur la derniere couleur (jaune).
         const family = trophiesByFamily[trophy.type] || [];
         const familyIndex = family.indexOf(trophy);
-        const tierColor = getUpgradeTierColor(familyIndex, family.length);
+        // Meme echelle que les niveaux d'amelioration (15 paliers) : le
+        // rang N d'une famille a EXACTEMENT la couleur du niveau N d'upgrade.
+        // Les familles font toutes <= 15 trophees, la correspondance est directe.
+        const tierColor = getUpgradeTierColor(familyIndex);
         if (unlockedTrophies.has(trophy.id)) {
             trophyElement.style.border = '2px solid ' + tierColor;
             trophyElement.style.background = 'var(--secondary-light)';
