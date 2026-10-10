@@ -3770,7 +3770,7 @@ body {
    transform translateX(-50%) d'applySceneScale s'applique par-dessus. */
 .scene-world {
     position: absolute;
-    left: calc(50% - 50px);
+    left: calc(50% - 100px);
     bottom: 0;
     width: 1024px;
     height: 744px;
@@ -3995,8 +3995,8 @@ body.night-mode .scene-background::after {
     /* Agrandie : la zone cliquable principale du jeu doit etre
        generreuse. Le right: 10% garde une distance similaire au bord
        droit, proportionnellement conservee. */
-    width: 280px;
-    height: 280px;
+    width: 266px;
+    height: 266px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -4020,12 +4020,12 @@ body.night-mode .scene-background::after {
 @supports (width: 1cqh) {
     .center-content { container-type: size; }
     .medal {
-        width: 30cqh;
-        height: 30cqh;
+        width: 28.5cqh;
+        height: 28.5cqh;
         min-width: 150px;
         min-height: 150px;
-        max-width: 340px;
-        max-height: 340px;
+        max-width: 323px;
+        max-height: 323px;
     }
 }
 /* Wrapper : agrandissement de la pièce + squash & stretch au clic.
@@ -5714,7 +5714,7 @@ body.night-mode .scene-background::after {
     /* Fusee et decor : la case d'achat vit desormais en bas (barre pleine
        largeur), plus besoin de degager la colonne droite -- retour au
        centrage naturel. Le translateX(-50%) d'applySceneScale s'applique. */
-    .scene-world { left: calc(50% - 50px) !important; }
+    .scene-world { left: calc(50% - 100px) !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));
