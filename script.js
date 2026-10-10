@@ -8425,20 +8425,23 @@ function renderRocketPartsShop() {
         const imageHtml = imageUrl
             ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + nextPart.name + '">'
             : '<span class="rocket-part-icon-placeholder"></span>';
+        // Agencement horizontal : image + nom + bonus a gauche, centre =
+        // titre "Prochaine piece" + cout dont la barre d'avancement est le
+        // fond. La carte entiere est cliquable (plus de bouton dedans).
         container.innerHTML =
-            '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '">' +
-                '<div class="rocket-part-frame-title">' + t('Prochaine \u00e9tape') + '</div>' +
+            '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '" onclick="buyRocketPart(' + String.fromCharCode(39) + nextPart.id + String.fromCharCode(39) + ')">' +
                 '<div class="rocket-part-left">' + imageHtml + '</div>' +
-                '<div class="rocket-part-info">' +
+                '<div class="rocket-part-idcard">' +
                     '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
-                    '<span class="rocket-part-cost">' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +
-                    '<span class="rocket-part-mult">×' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production') + '</span>' +
+                    '<span class="rocket-part-mult">\u00d7' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production') + '</span>' +
+                '</div>' +
+                '<div class="rocket-part-buybox">' +
+                    '<span class="rocket-part-frame-title">' + t('Prochaine pi\u00e8ce') + '</span>' +
                     '<div class="rocket-part-progress">' +
                         '<div class="rocket-part-progress-fill"></div>' +
-                        '<span class="rocket-part-progress-label"></span>' +
+                        '<span class="rocket-part-progress-label">' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +
                     '</div>' +
                 '</div>' +
-                '<button class="rocket-part-btn" onclick="buyRocketPart(\'' + nextPart.id + '\')"' + (!isAffordable ? ' disabled' : '') + '>' + t('Construire') + ' \u2014 ' + formatNumber(cost) + ' ' + t('Parts') + '</button>' +
             '</div>';
     } else {
         const costEl = container.querySelector('.rocket-part-cost');
@@ -8446,21 +8449,15 @@ function renderRocketPartsShop() {
         const fillEl = container.querySelector('.rocket-part-progress-fill');
         const labelEl = container.querySelector('.rocket-part-progress-label');
         if (fillEl) fillEl.style.width = Math.min(100, (score / cost) * 100) + '%';
-        if (labelEl) labelEl.textContent = Math.min(100, Math.floor((score / cost) * 100)) + ' %';
+        if (labelEl) labelEl.textContent = formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
         // Textes traduits rafraichis aussi sans re-creation du DOM : sinon un
         // changement de langue n'etait pris en compte qu'apres rechargement.
         const titleEl = container.querySelector('.rocket-part-frame-title');
-        if (titleEl) titleEl.textContent = t('Prochaine étape');
+        if (titleEl) titleEl.textContent = t('Prochaine pièce');
         const nameEl = container.querySelector('.rocket-part-name');
         if (nameEl) nameEl.textContent = t(nextPart.name);
         const multEl = container.querySelector('.rocket-part-mult');
         if (multEl) multEl.textContent = '×' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production');
-        const btn = container.querySelector('.rocket-part-btn');
-        if (btn) {
-            btn.disabled = !isAffordable;
-            const btnLabel = t('Construire') + ' — ' + formatNumber(cost) + ' ' + t('Parts');
-            if (btn.textContent !== btnLabel) btn.textContent = btnLabel;
-        }
         const frame = container.querySelector('.rocket-part-frame');
         if (frame) {
             if (isAffordable) frame.classList.remove('locked');
@@ -8473,7 +8470,7 @@ function renderRocketPartsShop() {
     const fillEl0 = container.querySelector('.rocket-part-progress-fill');
     const labelEl0 = container.querySelector('.rocket-part-progress-label');
     if (fillEl0) fillEl0.style.width = Math.min(100, (score / cost) * 100) + '%';
-    if (labelEl0) labelEl0.textContent = Math.min(100, Math.floor((score / cost) * 100)) + ' %';
+    if (labelEl0) labelEl0.textContent = formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
     const partCard = container.querySelector('.rocket-part-frame');
     if (partCard) {
         if (isAffordable) pulseHint(partCard);

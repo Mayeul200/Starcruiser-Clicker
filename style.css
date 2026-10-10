@@ -4203,61 +4203,23 @@ body.night-mode .scene-background {
     padding: 4px 6px;
     z-index: 90;
 }
-.rocket-parts-shop .rocket-part-frame {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.45rem 0.9rem;
-    padding: 0.45rem 0.7rem;
-}
-.rocket-parts-shop .rocket-part-left { flex: 0 0 auto; width: 2.8rem; height: 2.8rem; }
+/* Agencement horizontal UX : [icone | nom + bonus] a gauche, [titre
+   "Prochaine piece" + cout sur barre d'avancement de fond] a droite.
+   La carte entiere est cliquable (hover + pointer). */
+.rocket-parts-shop .rocket-part-frame { flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 0.9rem; padding: 0.55rem 0.9rem; cursor: pointer; }
+.rocket-parts-shop .rocket-part-frame:hover { border-color: var(--primary-light); box-shadow: var(--glow); }
+.rocket-parts-shop .rocket-part-frame.locked { cursor: not-allowed; }
+.rocket-parts-shop .rocket-part-left { flex: 0 0 auto; width: 3.2rem; height: 3.2rem; }
 .rocket-parts-shop .rocket-part-icon,
-.rocket-parts-shop .rocket-part-icon-placeholder { width: 2.7rem; height: 2.7rem; }
-.rocket-parts-shop .rocket-part-info {
-    align-items: flex-start;
-    text-align: left;
-    flex: 1 1 210px;
-    min-width: 0;
-    gap: 0.08rem;
-}
-.rocket-parts-shop .rocket-part-name { font-size: 0.95rem; }
-.rocket-parts-shop .rocket-part-cost { font-size: 0.82rem; }
-.rocket-parts-shop .rocket-part-mult { font-size: 0.78rem; }
-.rocket-parts-shop .rocket-part-name,
-.rocket-parts-shop .rocket-part-cost,
-.rocket-parts-shop .rocket-part-mult {
-    text-align: left;
-}
-.rocket-parts-shop .rocket-part-progress { width: auto; min-width: 130px; flex: 1 1 130px; height: 15px; }
-.rocket-parts-shop .rocket-part-btn { flex: 0 0 auto; padding: 0.45rem 0.85rem; font-size: 0.88rem; }
-.rocket-parts-shop .rocket-part-frame.complete { flex-direction: row; }
-/* Fusee complete : la boutique disparait, le bouton LANCER LA FUSEE
-   prend sa place en bas du panneau central. */
-.rocket-parts-shop.shop-done { display: none; }
-/* Grands ecrans (reference 1920x1080) : case d'achat des pieces plus large
-   et contenus agrandis. Le responsive mobile/tablette declare plus bas dans
-   le fichier n'est pas affecte : cette regle ne s'applique qu'a partir de
-   1500px, hors des breakpoints mobiles existants. */
-@media (min-width: 1500px) {
-    /* Case d'achat des batiments : elements internes agrandis pour exploiter
-       la largeur gagnee par les colonnes laterales a 25%. */
-    .building-item {
-        min-height: 21cqw;
-        max-height: 29cqw;
-    }
-    /* Polices de reference PC baissees de ~10% (4.6->4.1, 4.2->3.8) */
-    .building-name { font-size: 4.1cqw; }
-    .building-production { font-size: 3.8cqw; }
-    .building-item button {
-        font-size: 3.8cqw;
-        padding: 2.2cqw 3cqw;
-    }
-    .building-image { max-height: 20cqw; }
-    .rocket-parts-shop {
-        width: clamp(180px, 13.5vw, 252px);
-        padding: 14px;
-    }
+.rocket-parts-shop .rocket-part-icon-placeholder { width: 3.1rem; height: 3.1rem; }
+.rocket-parts-shop .rocket-part-idcard { display: flex; flex-direction: column; align-items: flex-start; text-align: left; flex: 0 1 auto; min-width: 0; gap: 0.15rem; }
+.rocket-parts-shop .rocket-part-name { font-size: 1.05rem; font-weight: 700; text-align: left; }
+.rocket-parts-shop .rocket-part-mult { font-size: 0.82rem; text-align: left; }
+.rocket-parts-shop .rocket-part-buybox { display: flex; flex-direction: column; align-items: stretch; flex: 1 1 auto; min-width: 0; gap: 0.25rem; margin-left: auto; }
+.rocket-parts-shop .rocket-part-buybox .rocket-part-frame-title { text-align: left; }
+.rocket-parts-shop .rocket-part-progress { width: 100%; height: 30px; }
+.rocket-parts-shop .rocket-part-progress-label { font-size: 0.95rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.rocket-parts-shop .rocket-part-frame.complete { flex-direction: row; }    }
     .rocket-part-frame {
         gap: 0.7rem;
         padding: 1rem 1rem;
