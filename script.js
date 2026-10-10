@@ -6831,6 +6831,13 @@ function updateMiniGamesVisibility() {
     if (cardsCard) cardsCard.style.display = areCardsUnlocked() ? '' : 'none';
     const section = document.querySelector('.mini-games-section');
     if (section) section.style.display = (areContractsUnlocked() || areCardsUnlocked()) ? '' : 'none';
+    // Premier mini-jeu debloque : l'attenuation du tuto sur la colonne
+    // gauche (Progression Spatiale) se leve -- le panneau redevient net
+    // et cliquable des qu'une vraie mecanique y vit.
+    if (areContractsUnlocked() || areCardsUnlocked()) {
+        const lp = document.querySelector('.left-panel');
+        if (lp) lp.classList.remove('tutorial-muted');
+    }
 }
 
 function areCardsUnlocked() {
