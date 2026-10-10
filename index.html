@@ -569,18 +569,20 @@
     </nav>
 
     <script>
-        // Enregistrement du service worker : PWA installable + relecture instantanee.
+        // Enregistrement du service worker : PWA installable + fallback hors-ligne.
         // HTTPS uniquement (GitHub Pages le fournit) : silencieux en local file://.
+        // Le SW est NETWORK-FIRST : un F5 recupere toujours la derniere version.
+        // Ce bloc ne gere que la MISE A JOUR DU SW LUI-MEME :
+        //   1. verification au chargement puis toutes les 60 s (reg.update)
+        //   2. nouveau SW detecte -> il reste "waiting" -> bouton Recharger
+        //   3. clic -> SKIP_WAITING -> le SW s'active -> controllerchange
+        //      -> la page se recharge sur la nouvelle version.
         if ('serviceWorker' in navigator && location.protocol === 'https:') {
-            // Mise a jour automatique du cache : la version embarquee ci-dessous
-            // doit suivre le CACHE_NAME de sw.js. Au chargement puis toutes les
-            // heures, on demande au navigateur de verifier un nouveau SW ; le SW
-            // actif annonce aussi sa version. Si la page est derriere (ancien
-            // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
-            // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v0090c3e6';
-            var updateToastShown = false;
+            var APP_CACHE_VERSION = 'v0091d4f7';
             var swReg = null;
+            var updateToastShown = false;
+            var reloadingViaUpdate = false;
+
             function showUpdateToast() {
                 if (updateToastShown) return;
                 updateToastShown = true;
@@ -588,53 +590,49 @@
                 var fr = 'Nouvelle version disponible ! Recharge pour la recuperer.';
                 var msg = '\u{1F501} ' + (typeof t === 'function' ? (t(fr) || fr) : fr);
                 showToast(msg, null, 60000);
-                // Bouton de rechargement persistant cliqueable par-dessus le toast
                 var btn = document.createElement('button');
                 btn.textContent = '\u21BB Recharger';
                 btn.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:11500;background:var(--primary);color:#fff;border:1px solid var(--primary-light);border-radius:10px;padding:10px 22px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,0.4);pointer-events:all;';
-                btn.onclick = function () {
-                    // Active le SW en attente (SKIP_WAITING), puis recharge
-                    // la page QUAND il prend le controle (controllerchange) :
-                    // le rechargement est garanti sur la nouvelle version.
-                    var nav = navigator.serviceWorker;
-                    if (nav.controller) {
-                        var reloading = false;
-                        nav.addEventListener('controllerchange', function () {
-                            if (reloading) return;
-                            reloading = true;
-                            window.location.reload();
-                        });
-                    }
-                    if (swReg && swReg.waiting) {
-                        swReg.waiting.postMessage('SKIP_WAITING');
-                        // Filet de securite : si controllerchange ne survient
-                        // pas en 2 s, recharger quand meme.
-                        setTimeout(function () { if (!reloading) { reloading = true; window.location.reload(); } }, 2000);
-                    } else {
-                        window.location.reload();
-                    }
-                };
+                btn.onclick = function () { activateWaitingWorker(); };
                 document.body.appendChild(btn);
             }
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
-                    swReg = reg;
-                    // Verifie un nouveau SW des le chargement, puis toutes les heures.
-                    function checkUpdate() { reg.update().catch(() => {}); }
-                    checkUpdate();
-                    setInterval(checkUpdate, 60 * 1000);
-                    reg.addEventListener('updatefound', () => {
-                        if (reg.installing) reg.installing.addEventListener('statechange', () => {
-                            if (reg.waiting) showUpdateToast();
+
+            function activateWaitingWorker() {
+                if (!swReg || !swReg.waiting) { window.location.reload(); return; }
+                // Recharge UNE SEULE fois, quand le nouveau SW prend le
+                // controle. Filet de securite 3 s si l'evenement ne vient pas.
+                navigator.serviceWorker.addEventListener('controllerchange', function () {
+                    if (reloadingViaUpdate) return;
+                    reloadingViaUpdate = true;
+                    window.location.reload();
+                });
+                swReg.waiting.postMessage('SKIP_WAITING');
+                setTimeout(function () {
+                    if (!reloadingViaUpdate) { reloadingViaUpdate = true; window.location.reload(); }
+                }, 3000);
+            }
+
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                    .then(function (reg) {
+                        swReg = reg;
+                        // Un SW attend deja (charge avant ce script) ?
+                        if (reg.waiting) showUpdateToast();
+                        // Verifie un nouveau SW au chargement puis toutes les 60 s.
+                        setInterval(function () { reg.update().catch(function () {}); }, 60000);
+                        reg.addEventListener('updatefound', function () {
+                            var worker = reg.installing;
+                            if (!worker) return;
+                            worker.addEventListener('statechange', function () {
+                                if (worker.state === 'installed' && reg.waiting) showUpdateToast();
+                            });
                         });
-                    });
-                }).catch(() => {});
-                // Le SW actif annonce sa version : si la page embarquee est plus
-                // ancienne, proposer le rechargement.
-                navigator.serviceWorker.addEventListener('message', (event) => {
+                    })
+                    .catch(function () {});
+                // Le SW actif annonce sa version : si la page embarquee est
+                // derriere (ancien cache), proposer le rechargement aussi.
+                navigator.serviceWorker.addEventListener('message', function (event) {
                     if (event.data && event.data.type === 'SW_VERSION') {
-                        // La version est un hash du contenu : comparaison par
-                        // difference de chaine (plus de numero croissant).
                         if (event.data.version !== 'starcruiser-clicker-' + APP_CACHE_VERSION) showUpdateToast();
                     }
                 });
