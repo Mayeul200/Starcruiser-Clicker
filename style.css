@@ -1994,6 +1994,14 @@ body {
     transform: translateX(-50%) translateY(1px);
     background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
+.launch-button.ready {
+    display: flex;
+    animation: launch-btn-appear 0.45s cubic-bezier(0.22, 1.2, 0.36, 1);
+}
+@keyframes launch-btn-appear {
+    from { opacity: 0; transform: translateX(-50%) translateY(18px) scale(0.9); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
 .launch-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -4142,6 +4150,10 @@ body.night-mode .scene-background {
 }
 /* Bouton de lancement */
 .launch-button {
+    /* Cache tant que la fusee n'est pas complete : la case d'achat des
+       pieces occupe le bas du panneau central a sa place (voir
+       .rocket-parts-shop). La classe .ready le fait reapparaitre. */
+    display: none;
     position: absolute;
     bottom: 25px;
     left: 50%;
@@ -4175,17 +4187,47 @@ body.night-mode .scene-background {
     box-shadow: none;
 }
 /* Cadre unique de la prochaine pièce de fusée à acheter */
+/* Case d'achat des pieces : BARRE HORIZONTALE EN BAS du panneau central
+   (pleine largeur), a la place du bouton de lancement tant que la fusee
+   est incomplete. Sur petit ecran PC comme en mobile, la carte a enfin
+   la place de s'etaler en largeur au lieu d'etre etroite et empilee. */
 .rocket-parts-shop {
     position: absolute;
-    top: var(--top-height);
-    left: 0;
-    bottom: 0;
-    width: clamp(119px, 21.6cqw, 166px);
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(94%, 720px);
     display: flex;
     flex-direction: column;
     padding: 10px;
     z-index: 90;
 }
+.rocket-parts-shop .rocket-part-frame {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    column-gap: 1rem;
+    row-gap: 0.45rem;
+}
+.rocket-parts-shop .rocket-part-left { flex: 0 0 auto; }
+.rocket-parts-shop .rocket-part-info {
+    align-items: flex-start;
+    text-align: left;
+    flex: 1 1 200px;
+    min-width: 0;
+}
+.rocket-parts-shop .rocket-part-name,
+.rocket-parts-shop .rocket-part-cost,
+.rocket-parts-shop .rocket-part-mult {
+    text-align: left;
+}
+.rocket-parts-shop .rocket-part-progress { width: 100%; }
+.rocket-parts-shop .rocket-part-btn { flex: 0 0 auto; }
+.rocket-parts-shop .rocket-part-frame.complete { flex-direction: row; }
+/* Fusee complete : la boutique disparait, le bouton LANCER LA FUSEE
+   prend sa place en bas du panneau central. */
+.rocket-parts-shop.shop-done { display: none; }
 /* Grands ecrans (reference 1920x1080) : case d'achat des pieces plus large
    et contenus agrandis. Le responsive mobile/tablette declare plus bas dans
    le fichier n'est pas affecte : cette regle ne s'applique qu'a partir de
@@ -5529,21 +5571,21 @@ body.night-mode .scene-background {
     /* --- Scène de construction : zoom adaptatif --- */
     .center-content { height: calc(100% - calc(44px * var(--mscale, 1))) !important; }
     .construction-scene-100x100 { min-height: 0; }
-    /* Fusee et decor degages vers la gauche : la colonne droite (medaille +
-       case d'achat) reste libre. Le translateX(-50%) pose par applySceneScale
-       s'applique toujours, l'ancrage left passe simplement de 50% a 38%. */
-    .scene-world { left: 30% !important; }
+    /* Fusee et decor : la case d'achat vit desormais en bas (barre pleine
+       largeur), plus besoin de degager la colonne droite -- retour au
+       centrage naturel. Le translateX(-50%) d'applySceneScale s'applique. */
+    .scene-world { left: 50% !important; }
     .rocket-parts-shop {
         position: fixed;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(78px * var(--mscale, 1)));
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));
+        left: calc(8px * var(--mscale, 1));
         right: calc(8px * var(--mscale, 1));
-        left: auto;
-        top: auto;
-        width: calc(170px * var(--mscale, 1));
-        max-height: calc(60vh - var(--mobile-nav-height));
+        transform: none;
+        width: auto;
+        max-height: calc(46vh - var(--mobile-nav-height));
         overflow-y: auto;
         z-index: 58;
-    }
+}
     .rocket-part-left { width: calc(44px * var(--mscale, 1)); height: calc(44px * var(--mscale, 1)); }
     .rocket-part-icon, .rocket-part-icon-placeholder { width: calc(40px * var(--mscale, 1)); height: calc(40px * var(--mscale, 1)); }
 
@@ -5817,7 +5859,7 @@ body.night-mode .scene-background {
 /* Petits écrans (<calc(480px * var(--mscale, 1))) : resserrage supplémentaire */
 @media (max-width: 480px) and (pointer: coarse) {
     .medal { top: 30% !important; }
-    .rocket-parts-shop { width: calc(150px * var(--mscale, 1)); }
+    .rocket-parts-shop { width: auto; }
     /* Cartes album plus grandes : une seule colonne pleine largeur sur petits ecrans */
     .cc-album-grid { grid-template-columns: repeat(3, 1fr); }
     .cc-album-card { width: 100%; max-width: calc(340px * var(--mscale, 1)); margin: 0 auto; }
@@ -5840,9 +5882,9 @@ body.night-mode .scene-background {
     .building-left { overflow: visible; }
 }
 
-/* Desktop : case d'achat de la pièce de fusée descendue de 50px */
+/* Desktop : la case d'achat vit desormais en bas du panneau central. */
 @media (min-width: 1025px) {
-    .rocket-parts-shop { top: calc(var(--top-height) + 50px); }
+    .rocket-parts-shop { bottom: 25px; }
 }
 
 /* Écrans larges (>=1920px) : carte d'ouverture de booster 10% plus petite */

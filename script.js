@@ -1613,6 +1613,22 @@ function checkRocketReady() {
     // Vérifier si toutes les pièces de fusée sont achetées
     return ROCKET_PARTS.every(part => part.purchased);
 }
+// Visibilite du bouton Lancer la fusee : il n'apparait QUE quand la fusee
+// est complete. Avant, la case d'achat des pieces occupe le bas du panneau
+// central a sa place -- plus de bouton inutilisable des le debut du jeu.
+function updateLaunchButtonVisibility() {
+    const btn = document.getElementById('launch-button');
+    const shop = document.getElementById('rocket-parts-shop');
+    const ready = checkRocketReady();
+    if (btn && btn.classList.contains('ready') !== ready) {
+        btn.classList.toggle('ready', ready);
+    }
+    // Fusee complete : le bouton LANCER reprend le bas du panneau, la carte
+    // de la boutique laisse sa place (elle etait informative seulement).
+    if (shop && shop.classList.contains('shop-done') !== ready) {
+        shop.classList.toggle('shop-done', ready);
+    }
+}
 
 const PIECE_DISTANCE_MULT = 1.0;
 const MOON_DISTANCE = 384400;
@@ -8359,6 +8375,7 @@ function buyRocketPart(partId) {
 function renderRocketPartsShop() {
     const container = document.getElementById('rocket-parts-shop');
     if (!container) return;
+    updateLaunchButtonVisibility();
     const nextPart = ROCKET_PARTS.find(p => !p.purchased);
     if (!nextPart) {
         // Toutes les pieces sont achetees : eteindre tout pulse residuel
