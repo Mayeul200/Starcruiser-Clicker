@@ -2949,7 +2949,10 @@ body {
     font-size: 0.9rem;
     font-weight: 600;
     color: #e9d5ff;
-    min-width: 0;
+    /* Flex-shrink 0 : le compteur de poussiere d'etoiles ne se fait plus
+       couper par le badge preview a droite -- si la place manque, c'est
+       le preview (informatif, secondaire) qui cede. */
+    flex: 0 0 auto;
     white-space: nowrap;
 }
 .galactic-shop-stardust span {
@@ -2964,6 +2967,7 @@ body {
     border-radius: 6px;
     overflow: hidden;
     min-width: 0;
+    flex: 0 1 auto;
     white-space: nowrap;
     text-align: center;
     background: rgba(34, 211, 238, 0.08);
