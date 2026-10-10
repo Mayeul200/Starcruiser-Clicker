@@ -5903,6 +5903,10 @@ function gameLoop() {
     const now = Date.now();
     const dtSeconds = (now - lastGameTick) / 1000;
     lastGameTick = now;
+    // Records de la partie : captures a CHAQUE tick sur les valeurs
+    // reelles (boosts temporaires inclus) -- le pps record echappait
+    // avant aux pics de flare car seul le cache recalculait le record.
+    if (partsPerSecond > maxPartsPerSecond) maxPartsPerSecond = partsPerSecond;
     const tickGain = partsPerSecond * dtSeconds;
     const naturalTickGain = getBasePartsPerSecond() * dtSeconds;
     score += tickGain;
@@ -6236,12 +6240,12 @@ function renderStats() {
         { label: t("Parts g\u00e9n\u00e9r\u00e9s pour ce lancement"), value: formatNumber(totalPartsEarnedThisLaunch) },
         { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
         { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
+        { label: t("Record de parts par seconde"), value: formatNumber(maxPartsPerSecond) },
         { label: t("Multiplicateur de production"), value: 'x' + groupThousands(getTotalProductionMultiplier().toFixed(2)) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
         { label: t("Vitesse de voyage"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },
         { label: t("Vitesse record"), value: formatTravelSpeed(maxTravelSpeed) },
-        { label: t("Record de parts par seconde"), value: formatNumber(maxPartsPerSecond) },
         { label: t("Partie commenc\u00e9e"), value: getGameDuration() },
         { label: t("Com\u00e8tes D\u00e9truites"), value: clickedBonusesCount }
     ];
