@@ -3297,7 +3297,7 @@ function updateInfiniteBuyButton() {
     btn.innerHTML =
         '<span class="ibb-icon">\u2728</span>' +
         '<span class="ibb-title">' + t('Suite infinie') + ' : +' + currentPct.toFixed(1) + '%</span>' +
-        '<span class="ibb-desc">' + t('Depenser {n} PE pour un bonus decroissant de production permanente').split('{n}').join(formatNumber(amount)) + '</span>' +
+        '<span class="ibb-desc">' + t('Echange tes PE contre un bonus de production permanente a l\u2019infini !').split('{n}').join(formatNumber(amount)) + '</span>' +
         '<span class="ibb-cta' + (amount < 1 ? ' disabled' : '') + '">' + t('Convertir') + ' ' + formatNumber(amount) + ' \u2728 \u2192 +' + gainPct.toFixed(1) + '%</span>';
     btn.disabled = amount < 1;
 }
