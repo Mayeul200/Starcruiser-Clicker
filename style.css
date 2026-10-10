@@ -1094,11 +1094,14 @@ body {
 }
 
 .building-image {
-    /* Image a PLEINE LARGEUR de sa colonne (28.6cqw), hauteur contrainte
-       par le plafond de la case -- object-fit: contain evite toute
-       deformation si le ratio de l'image depasse la hauteur dispo. */
-    width: 100%;
+    /* RETOUR a la regle d'origine qui rendait l'image a la largeur de sa
+       colonne : le width:100% force cassait la grille de la case (les
+       colonnes texte et bouton etaient ecrasees selon le ratio du sprite).
+       width auto + max-width 100% + max-height 17cqw : l'image prend
+       naturellement toute la largeur disponible sans deborder. */
     height: auto;
+    width: auto;
+    max-width: 100%;
     max-height: 17cqw;
     object-fit: contain;
     margin: 0 auto;
