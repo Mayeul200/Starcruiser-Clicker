@@ -4842,35 +4842,23 @@ const Music = {
     // en croches, une phrase par mesure : A (question) / B (r\u00e9ponse),
     // puis A' (variance) / C (r\u00e9solution descendante). Joyeux et
     // chantant, facon Oh Joy.
-    // Phrases lead en INDICES DE GAMME MAJEURE (0=tonique, 7=octave) :
-    // elles sont TRANSPOSEES sur la fondamentale de l'accord en cours ->
-    // justes sur les 8 accords de la progression (avant : demi-tons
-    // absolus depuis D5, faux sur tous les accords sauf Dmaj7).
-    // A : montee riante 1-2-3-5-6-5-3-2 (motif disco chantant)
-    // B : reponse qui culmine 5-3-6-5-8-7-6-5
-    // A': variante 1-3-5-6-8-7-6-5 puis retombee
-    // C : resolution descendante 8-7-6-5-4-3-2-1 douce
+    // Gamme D majeur ETENDUE en demi-tons depuis D4 : indices 0-14.
+    // idx: 0=D 1=E 2=F# 3=G 4=A 5=B 6=C# 7=D5 8=E5 9=F#5 10=G5 11=A5 12=B5 13=C#6 14=D6
+    dMajorScale: [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24],
+    // Phrases lead COMPOSEES par accord (0-7) : 8 notes chacune, en
+    // INDICES DIRECTS de dMajorScale. Chaque phrase demarre sur la
+    // fondamentale de son accord (Dmaj7->0, Bm7->5, Gmaj7->3, A7->4,
+    // Em7->1) et y retourne : diatonique a D majeur ET harmonique,
+    // verifie note par note. Call & response : question/reponse.
     leadPhrases: [
-        [0, 1, 2, 4, 5, 4, 2, 1],
-        [4, 2, 5, 4, 7, 6, 5, 4],
-        [0, 2, 4, 5, 7, 6, 5, 4],
-        [7, 6, 5, 4, 3, 2, 1, 0]
-    ],
-    // Gammes par accord (demi-tons depuis la fondamentale) -- la melodie
-    // reste DIATONIQUE a D majeur sur tous les accords :
-    // - accords mineurs (Bm7, Em7) : gamme mineure 0 2 3 5 7 8 10 12
-    // - accords majeurs (Dmaj7, Gmaj7) : gamme majeure 0 2 4 5 7 9 11 12
-    // - A7 (dominante) : mixolydien 0 2 4 5 7 9 10 12 (7e mineure)
-    // Table indexee par la position dans la progression (0-7).
-    chordScales: [
-        [0, 2, 4, 5, 7, 9, 11, 12],   // 0 Dmaj7 : majeur
-        [0, 2, 3, 5, 7, 8, 10, 12],   // 1 Bm7 : mineur
-        [0, 2, 4, 5, 7, 9, 11, 12],   // 2 Gmaj7 : majeur
-        [0, 2, 4, 5, 7, 9, 10, 12],   // 3 A7 : mixolydien
-        [0, 2, 3, 5, 7, 8, 10, 12],   // 4 Em7 : mineur
-        [0, 2, 3, 5, 7, 8, 10, 12],   // 5 Bm7 : mineur
-        [0, 2, 4, 5, 7, 9, 11, 12],   // 6 Gmaj7 : majeur
-        [0, 2, 4, 5, 7, 9, 10, 12]    // 7 A7 : mixolydien
+        [0, 2, 4, 2, 5, 4, 2, 0],      // Dmaj7 : D-F#-A... montee riante
+        [5, 4, 2, 4, 7, 6, 4, 5],      // Bm7 : B-A-F#... reponse sombre-claire
+        [3, 5, 7, 5, 4, 2, 0, 3],      // Gmaj7 : G-B-D... pont lumineux
+        [4, 2, 0, 2, 4, 6, 4, 4],      // A7 : A-F#-D... tension de dominante
+        [1, 2, 4, 5, 4, 2, 1, 1],      // Em7 : E-F#-A... berceuse
+        [5, 7, 6, 4, 2, 4, 5, 5],      // Bm7 : reponse elevee
+        [3, 2, 0, 2, 3, 5, 3, 3],      // Gmaj7 : retour paisible
+        [4, 6, 7, 6, 4, 2, 0, 4]       // A7 : culmine puis resolution vers D
     ],
     bus: null,
     delaySend: null,
@@ -5188,17 +5176,18 @@ function musicStep(t0) {
     // --- LEAD : les m\u00e9lodies compos\u00e9es, une phrase par mesure.
     //     Call & response : A / B / A' / C sur 4 mesures (2 par accord).
     if (sec === 2 || sec === 3) {
-        const phraseIdx = Math.floor(Music.bar / 2) % 4;   // une phrase / 2 mesures
-        const phrase = Music.leadPhrases[phraseIdx];
+        // La phrase est celle de l'ACCORD courant (change toutes les 2 mesures).
         const noteIdx = Math.floor(s / 2);                 // une note / croche
         if (noteIdx < 8 && s % 2 === 0) {
             // Note = fondamentale de l'ACCORD (une octave au-dessus de
             // sa racine) + le degre de gamme de la phrase : la melodie
             // suit l'harmonie, juste sur chaque accord.
-            const scaleDeg = phrase[noteIdx];
-            const scale = Music.chordScales[Music.chordIndexForBar(Music.bar)];
-            const semis = scale[scaleDeg];
-            const base = ch.root * 4 * Math.pow(2, semis / 12);
+            // Note = indice DIRECT dans la gamme D majeur : diatonique
+            // garanti, et la phrase est composee pour sonner sur son accord.
+            const ci = Music.chordIndexForBar(Music.bar);
+            const chordPhrase = Music.leadPhrases[ci];
+            const semis = Music.dMajorScale[chordPhrase[noteIdx]];
+            const base = 293.66 * Math.pow(2, semis / 12);   // D4
             // Phrase A : les notes longues chantent avec vibrato.
             const isLong = (noteIdx === 0 || noteIdx === 4 || noteIdx === 7);
             if (isLong) {
