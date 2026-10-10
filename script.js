@@ -617,6 +617,17 @@ function calculateBuildingCost(building) {
 }
 
 // Fonction de formatage optimisée
+// Multiplicateur : espaces de milliers jusqua 1 M, puis notation
+// scientifique (x1.23 x 10^6) -- lisible a toutes les echelles.
+function formatMultiplier(m) {
+    if (m >= 1e6) {
+        const exp = Math.floor(Math.log10(m));
+        const mant = m / Math.pow(10, exp);
+        return 'x' + mant.toFixed(2) + ' x 10^' + exp;
+    }
+    return 'x' + groupThousands(m.toFixed(2));
+}
+
 function groupThousands(n) {
     return Math.round(n).toLocaleString('fr-FR').replace(/[\u202F\u00A0]/g, ' ');
 }
@@ -6241,7 +6252,7 @@ function renderStats() {
         { label: t("Total Parts g\u00e9n\u00e9r\u00e9s"), value: formatNumber(totalPartsEarnedAllTime) },
         { label: t("Parts par seconde"), value: formatNumber(partsPerSecond) },
         { label: t("Record de parts par seconde"), value: formatNumber(maxPartsPerSecond) },
-        { label: t("Multiplicateur de production"), value: 'x' + groupThousands(getTotalProductionMultiplier().toFixed(2)) },
+        { label: t("Multiplicateur de production"), value: formatMultiplier(getTotalProductionMultiplier()) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
         { label: t("Vitesse de voyage"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },

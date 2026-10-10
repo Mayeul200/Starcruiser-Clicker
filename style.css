@@ -3822,16 +3822,17 @@ body {
 }
 .scene-background {
     position: absolute;
-    /* Decalage demande : -150 px en X, -80 px en Y (deux remontees de
-       50 px cumulees). Largeur etendue a droite et hauteur vers le BAS
-       pour que le panneau central reste entierement couvert (l'excedent
-       est clippe par la scene). */
-    top: 5px;
+    /* Ancré au BAS de la scène (jusqu'à sa limite), décalé à GAUCHE
+       de 150 px. background-size: cover : l'image garde son ratio natif
+       SANS étirement -- l'ancien 100% 100% l'écrasait sur ~150 px de
+       large d'où la perte de qualité ; le débordement est clippé. */
+    bottom: 0;
     left: -150px;
-    width: calc(100% + 162px);
-    height: calc(100% + 5px);
+    right: -12px;
+    top: 0;
     background-image: url('images/backgrounds/valley-day.webp');
-    background-size: 100% 100%;
+    background-size: cover;
+    background-position: center bottom;
     background-repeat: no-repeat;
     z-index: 0;
 }
@@ -3849,7 +3850,8 @@ body.night-mode .scene-background {
     position: absolute;
     inset: 0;
     background-image: url('images/backgrounds/valley-night.webp');
-    background-size: 100% 100%;
+    background-size: cover;
+    background-position: center bottom;
     background-repeat: no-repeat;
     opacity: 0;
     transition: opacity 3s ease-in-out;
