@@ -1744,6 +1744,8 @@ function formatTravelSpeed(kmS) {
 }
 
 function launchRocket() {
+    // Tuto etape fusête prête : le joueur a cliqué LANCER -> valider.
+    try { markLessonSeen('tutorial-launch-clicked'); } catch (e) {}
     if (!checkRocketReady()) {
         showToast(t("Fusée pas encore prête ! Il manque des pièces."));
         return;
@@ -6893,6 +6895,8 @@ function contractRewardText(offer) {
 }
 
 function openContracts() {
+    // Tuto etape contrats : le joueur les a ouverts -> valider l'etape.
+    try { markLessonSeen('tutorial-contracts-opened'); } catch (e) {}
     if (!areContractsUnlocked()) {
         showToast('\uD83D\uDD12 ' + tf('Debloque {count} types de batiments pour les contrats', { count: CONTRACT_UNLOCK_BUILDING_TYPES }));
         return;
@@ -8106,6 +8110,35 @@ const TUTORIAL_STEPS = [
         target: '#rocket-parts-shop',
         prefer: 'below',
     },
+    {
+        img: 'images/buildings/factory.webp',
+        titleKey: 'Nouveau bâtiment : Usine',
+        textKey: 'L’Usine est disponible ! Elle produit bien plus qu’un Atelier. Achète-en une pour accélérer ta production.',
+        done: () => (findBuildingById('factory')?.count || 0) >= 1,
+        target: '#building-factory',
+    },
+    {
+        img: 'images/effects/comete.webp',
+        titleKey: 'Les Contrats sont disponibles',
+        textKey: 'Les contrats sont des mini-défis de 30 secondes : cliquer, intercepter des comètes, produire… contre des récompenses.',
+        done: () => getSeenLessons().includes('tutorial-contracts-opened'),
+        target: '#contracts-mini-card',
+    },
+    {
+        img: 'images/planets/moon.webp',
+        titleKey: 'Progression Spatiale',
+        textKey: 'La colonne de gauche résume ton expédition : Portée actuelle (jusqu’où ta fusée peut aller maintenant), Vitesse (km de portée gagnés par seconde), Distance record et Bonus planètes. Clique sur chaque case pour une explication détaillée !',
+        done: () => getSeenLessons().includes('tutorial-space-stats-seen'),
+        target: '#space-stats-sidebar',
+        prefer: 'right',
+    },
+    {
+        img: 'images/rocket/Fusée3.webp',
+        titleKey: 'Fusée prête !',
+        textKey: 'Toutes les pièces sont construites ! Appuie sur LANCER LA FUSÉE pour partir à l’expédition. Conseil : lance quand tu es sûr d’atteindre une nouvelle planète ou de gagner des Poussières d’Étoiles !',
+        done: () => ROCKET_PARTS.every(p => p.purchased) && getSeenLessons().includes('tutorial-launch-clicked'),
+        target: '#launch-button',
+    },
 ];
 let tutorialStep = 0;
 let tutorialActive = false;
@@ -8260,6 +8293,14 @@ function positionCoachNear(coach, selector, prefer) {
 }
 function renderTutorialStep() {
     const step = TUTORIAL_STEPS[tutorialStep];
+    // Panneau gauche (Progression Spatiale) CACHE tant que l'etape 7
+    // n'est pas passee : le joueur ne voit pas des stats qu'on ne lui
+    // a pas encore expliquees.
+    const leftPanel = document.querySelector('.left-panel');
+    if (leftPanel) {
+        const spaceStatsUnlocked = !tutorialActive || tutorialStep > 6;
+        leftPanel.classList.toggle('tutorial-hidden', !spaceStatsUnlocked);
+    }
     if (!step) { endTutorial(); return; }
     const coach = document.getElementById('tutorial-coach');
     if (!coach) return;
@@ -8284,6 +8325,11 @@ function pollTutorialProgress() {
     if (!tutorialActive) return;
     const step = TUTORIAL_STEPS[tutorialStep];
     if (!step) { endTutorial(); return; }
+    // Etapes a condition : attendre que la mecanique existe vraiment
+    // (contrats debloques par l'Usine, fusête completee) -- sinon le
+    // coach sauterait des etapes sans que le joueur voie quoi que ce soit.
+    if (tutorialStep === 5 && !isBuildingUnlocked(findBuildingById('factory'))) return;
+    if (tutorialStep === 7 && !ROCKET_PARTS.every(pr => pr.purchased)) return;
     if (step.done && step.done()) {
         tutorialStep++;
         if (tutorialStep >= TUTORIAL_STEPS.length) {
@@ -8314,6 +8360,8 @@ function skipTutorial() {
 }
 
 function endTutorial() {
+    const lp = document.querySelector('.left-panel');
+    if (lp) lp.classList.remove('tutorial-hidden');
     tutorialActive = false;
     tutorialSeen = true;
     if (tutorialPollTimer) { clearInterval(tutorialPollTimer); tutorialPollTimer = null; }
@@ -8335,6 +8383,14 @@ function endTutorial() {
 // le joueur la debloque, pas avant. Chaque lecon a une condition de
 // declenchement et une cle d'historisation (jamais reaffichee).
 // ============================================
+function markLessonSeen(key) {
+    const seen = getSeenLessons();
+    if (!seen.includes(key)) {
+        seen.push(key);
+        localStorage.setItem('starcruiser-lessons-seen', JSON.stringify(seen));
+    }
+}
+
 let featureLessonTimer = null;
 let featureLessonVisible = false;
 
@@ -8362,15 +8418,6 @@ const FEATURE_LESSONS = [
         img: 'images/effects/comete.webp',
         trigger: () => getUnlockedBuildingTypes() >= CONTRACT_UNLOCK_BUILDING_TYPES,
         target: '#contracts-mini-card',
-    },
-    {
-        key: 'click-upgrades',
-        titleKey: 'Améliorations',
-        textKey: 'La barre du haut propose des améliorations : clics boostés, production des bâtiments, prix réduits… Améliore ta fusée à chaque occasion !',
-        img: 'images/parts.webp',
-        trigger: () => CLICK_UPGRADES.some(u => totalPartsFromClicks >= u.threshold),
-        target: '#upgrades-bar',
-        prefer: 'right',
     },
     {
         key: 'rocket-complete',
@@ -8460,6 +8507,8 @@ function showFeatureLesson(lesson) {
 }
 
 function dismissFeatureLesson() {
+    // Tuto etape Progression Spatiale : fermer le coach la valide.
+    try { markLessonSeen('tutorial-space-stats-seen'); } catch (e) {}
     clearTimeout(showFeatureLesson.hideTimer);
     featureLessonVisible = false;
     const coach = document.getElementById('tutorial-coach');

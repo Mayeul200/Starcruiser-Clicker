@@ -4316,7 +4316,7 @@ body.night-mode .scene-background::after {
    la place de s'etaler en largeur au lieu d'etre etroite et empilee. */
 .rocket-parts-shop {
     position: absolute;
-    bottom: 6px;
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
     width: min(96%, 458px);
@@ -5756,7 +5756,7 @@ body.night-mode .scene-background::after {
     .scene-world { left: calc(50% + 300px) !important; }
     .rocket-parts-shop {
         position: fixed;
-        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));
+        bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + 5px);
         left: calc(8px * var(--mscale, 1));
         right: calc(8px * var(--mscale, 1));
         transform: none;
@@ -6614,3 +6614,6 @@ body.night-mode .scene-background::after {
     border-radius: 3px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
+
+/* Panneau gauche masqué pendant le tuto (avant l'étape Progression Spatiale) : le joueur ne voit pas des stats non expliquées. */
+.left-panel.tutorial-hidden { visibility: hidden; }
