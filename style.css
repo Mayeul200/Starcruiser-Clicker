@@ -3894,15 +3894,19 @@ body.night-mode .scene-background::after {
 .rocket-piece.astronaut::before {
     content: '';
     position: absolute;
-    /* Ancree sous les pieds, poussee vers la gauche */
+    /* Ancree DIRECTEMENT sous les pieds : centree sur l'astronaute,
+       juste decalee de quelques px vers la gauche (lumiere de la vallee
+       venant de la droite, legere inclinaison pour la perspective). */
     bottom: 2px;
-    left: -26px;
-    width: 70%;
+    left: -6px;
+    right: 0;
+    margin: auto;
+    width: 90%;
     height: 14px;
     background: rgba(0, 0, 0, 0.45);
     border-radius: 50%;
     filter: blur(4px);
-    transform: rotate(-4deg) scaleY(0.9);
+    transform: rotate(-2deg) scaleY(0.9);
     z-index: -1;
     pointer-events: none;
 }
