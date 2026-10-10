@@ -3798,10 +3798,12 @@ body {
    transform translateX(-50%) d'applySceneScale s'applique par-dessus. */
 .scene-world {
     position: absolute;
-    /* Pas de tir (~centre du monde) a ~200 px du bord droit :
-       left = largeur - 200px - demi-monde. */
+    /* Réaligné sur le nouveau fond (cover, ancré bas) : le calque de
+       fond a glissé de ~5 px vers le bas en passant de top:5px/étendu
+       à top:0/bottom:0 -- le monde suit pour que la fusée repose sur
+       la même ligne de sol qu'avant. */
     left: calc(50% + 100px);
-    bottom: 0;
+    bottom: -5px;
     width: 1024px;
     height: 744px;
     transform-origin: 50% 100%;
