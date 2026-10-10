@@ -8421,8 +8421,10 @@ function renderRocketPartsShop() {
             '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '" onclick="buyRocketPart(' + String.fromCharCode(39) + nextPart.id + String.fromCharCode(39) + ')">' +
                 '<div class="rocket-part-img">' + imageHtml + '</div>' +
                 '<div class="rocket-part-info">' +
-                    '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
-                    '<span class="rocket-part-mult">\u00d7' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production') + '</span>' +
+                    '<div class="rocket-part-headline">' +
+                        '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
+                        '<span class="rocket-part-mult">\u00d7' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production') + '</span>' +
+                    '</div>' +
                     '<div class="rocket-part-progress">' +
                         '<div class="rocket-part-progress-fill"></div>' +
                         '<span class="rocket-part-progress-label">' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts') + '</span>' +

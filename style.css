@@ -4240,18 +4240,30 @@ body.night-mode .scene-background {
 }
 .rocket-parts-shop .rocket-part-img .rocket-part-icon,
 .rocket-parts-shop .rocket-part-img .rocket-part-icon-placeholder { width: 100%; height: 100%; opacity: 0.95; }
-/* Partie droite : les informations */
+/* Partie droite : les informations. La ligne titre+bonus et la barre de
+   cout partagent exactement la meme largeur (align-items: stretch). */
 .rocket-parts-shop .rocket-part-info {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     text-align: left;
     flex: 1 1 auto;
     min-width: 0;
-    gap: 0.15rem;
+    gap: 0.3rem;
 }
-.rocket-parts-shop .rocket-part-name { font-size: 1.05rem; font-weight: 600; color: var(--text); }
-.rocket-parts-shop .rocket-part-mult { font-size: 0.85rem; font-weight: 600; color: #86efac; }
+/* Titre et bonus sur la MEME ligne : nom a gauche, bonus pousse a droite. */
+.rocket-parts-shop .rocket-part-headline {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    min-width: 0;
+}
+.rocket-parts-shop .rocket-part-name { font-size: 1.05rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rocket-parts-shop .rocket-part-mult { font-size: 0.85rem; font-weight: 600; color: #86efac; white-space: nowrap; }
+.rocket-parts-shop .rocket-part-progress { width: 100%; height: 26px; margin-top: 0; }
 .rocket-parts-shop .rocket-part-progress { width: 100%; height: 26px; margin-top: 0.25rem; }
 .rocket-parts-shop .rocket-part-progress-label { font-size: 0.88rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 .rocket-parts-shop .rocket-part-frame.complete { flex-direction: row; }    }
@@ -4290,6 +4302,18 @@ body.night-mode .scene-background {
         padding: 0.65rem 0.9rem;
         font-size: 1rem;
     }
+}
+/* Base HORS shop (modales etc.) : colonne centree. Dans la barre du bas,
+   les regles .rocket-parts-shop .rocket-part-frame plus specifiques
+   imposent le layout horizontal -- mais celle-ci arrive APRES dans le
+   source, on la borne donc pour ne jamais s'appliquer a la barre. */
+.rocket-parts-shop .rocket-part-frame {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 .rocket-part-frame {
     display: flex;
