@@ -4958,8 +4958,12 @@ body.night-mode .scene-background {
 .cc-reveal-card.pack {
     width: min(78cqw, 520px, 68cqh);
 }
-/* Titre du recap de booster : "Carte obtenue" / "Cartes obtenues (n)" */
+/* Titre du recap de booster : AU-DESSUS des cartes, celles-ci centrees
+   en dessous dans .cc-reveal-cards (le titre vit hors du conteneur flex,
+   insere juste avant par le JS). */
 .cc-reveal-summary-title {
+    flex: 0 0 auto;
+    margin-bottom: 0.4rem;
     width: 100%;
     text-align: center;
     font-family: var(--font-display);

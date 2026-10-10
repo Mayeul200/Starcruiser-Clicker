@@ -7054,6 +7054,10 @@ function drawCard(rarities) {
 function renderRevealCards(cards) {
     const container = document.getElementById('cc-reveal-cards');
     container.innerHTML = '';
+    // Masquer le titre du recap pendant la revelation sequentielle :
+    // il n'apparait qu'avec le bilan final.
+    const prevTitle = document.getElementById('cc-reveal-summary-title');
+    if (prevTitle) prevTitle.style.display = 'none';
     const intro = document.getElementById('cc-reveal-intro');
     if (intro) intro.style.display = '';
     container.style.setProperty('--card-count', cards.length);
@@ -7075,16 +7079,21 @@ function renderRevealCards(cards) {
     const revealedCards = [];
     const showSummary = function () {
         container.innerHTML = '';
-        // Titre du recap : distingue clairement le RESUME de la carte
-        // retournee juste avant -- c'etait la confusion "2 cartes ?" :
-        // la meme carte reaparaissait sans explication. Avec le titre,
-        // le joueur comprend qu'il s'agit du bilan de son booster.
-        const title = document.createElement('div');
-        title.className = 'cc-reveal-summary-title';
+        // Titre du recap AU-DESSUS des cartes : insere avant le
+        // conteneur flex (frere precedent), les cartes centrees
+        // en dessous. Distingue le bilan de la carte retournee
+        // juste avant -- c'etait la confusion "2 cartes ?".
+        let title = document.getElementById('cc-reveal-summary-title');
+        if (!title) {
+            title = document.createElement('div');
+            title.id = 'cc-reveal-summary-title';
+            title.className = 'cc-reveal-summary-title';
+            container.parentElement.insertBefore(title, container);
+        }
         title.textContent = cards.length > 1
             ? tf('Cartes obtenues ({n})', { n: cards.length })
             : t('Carte obtenue');
-        container.appendChild(title);
+        title.style.display = '';
         revealedCards.forEach(function (rc, i) {
             const el = document.createElement('div');
             el.className = 'cc-reveal-card summary rarity-' + rc.card.rarity;
