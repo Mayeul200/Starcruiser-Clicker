@@ -212,7 +212,10 @@ body {
 /* Tooltip for upgrades */
 .upgrade-tooltip .tooltip-line {
     display: block;
-    white-space: nowrap;
+    /* En ecran etroit : la ligne passe a la ligne suivante au lieu de
+       deborder du popup (le bloc est borde par max-width). */
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 .upgrade-tooltip {
@@ -3107,7 +3110,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     z-index: 1500;
-    min-width: 220px;
+    min-width: min(220px, calc(100vw - 16px));
     max-width: 300px;
     /* Petits ecrans : la bulle ne doit JAMAIS sortir de l'ecran. */
     max-width: min(300px, calc(100vw - 16px));
@@ -5665,7 +5668,7 @@ body.night-mode .scene-background {
     /* Tooltip : plus lisible au doigt, reste au-dessus du clavier virtuel */
     .upgrade-tooltip .tooltip-line {
     display: block;
-    white-space: nowrap;
+    white-space: normal;    overflow-wrap: break-word;
 }
 
 .upgrade-tooltip { font-size: 0.8rem; max-width: 88vw; white-space: pre-line; border-left-width: calc(3px * var(--mscale, 1)); }
