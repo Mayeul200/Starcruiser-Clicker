@@ -4430,7 +4430,9 @@ function getClickComponents() {
 
 function addScore(points, event) {
     Sounds.click();
-    if (Sound.enabled && !Music.playing) startMusic();
+    // Bande-son : lancee au premier clic, mais JAMAIS au prix du jeu --
+    // toute erreur audio est absorbee silencieusement.
+    if (Sound.enabled && !Music.playing) { try { startMusic(); } catch (e) {} }
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const isCrit = Math.random() < getCritChance();
@@ -4857,7 +4859,8 @@ function musicTone(freq, freqEnd, dur, type, vol, filter, opts) {
     if (!Sound.ctx || !Music.bus) return;
     opts = opts || {};
     // opts.at = temps AUDIO ABSOLU (scheduler) ; sinon delay relatif au now.
-    const t0 = opts.at !== undefined ? opts.at + (opts.delay || 0) : Sound.ctx.currentTime + (opts.delay || 0);
+    let t0 = opts.at !== undefined ? opts.at + (opts.delay || 0) : Sound.ctx.currentTime + (opts.delay || 0);
+    if (t0 < Sound.ctx.currentTime) t0 = Sound.ctx.currentTime;
     const atk = opts.attack !== undefined ? opts.attack : 0.008;
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
@@ -4898,7 +4901,8 @@ function musicTone(freq, freqEnd, dur, type, vol, filter, opts) {
 function musicVibrato(freq, dur, type, vol, filter, opts) {
     if (!Sound.ctx || !Music.bus) return;
     opts = opts || {};
-    const t0 = opts.at !== undefined ? opts.at + (opts.delay || 0) : Sound.ctx.currentTime + (opts.delay || 0);
+    let t0 = opts.at !== undefined ? opts.at + (opts.delay || 0) : Sound.ctx.currentTime + (opts.delay || 0);
+    if (t0 < Sound.ctx.currentTime) t0 = Sound.ctx.currentTime;
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
     const lfo = Sound.ctx.createOscillator();
@@ -4940,6 +4944,7 @@ function musicKick(delay) {
     if (!Sound.ctx || !Music.bus) return;
     // delay peut etre un temps ABSOLU (>= 1000 s) ou un offset relatif.
     // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
+    const t0 = delay || 0;
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
     osc.type = 'sine';
@@ -4966,6 +4971,7 @@ function musicKick(delay) {
 function musicHat(delay, open) {
     if (!Sound.ctx || !Music.bus) return;
     // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
+    const t0 = delay || 0;
     const dur = open ? 0.22 : 0.045;
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * dur), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
@@ -4984,6 +4990,7 @@ function musicHat(delay, open) {
 function musicRide(delay) {
     if (!Sound.ctx || !Music.bus) return;
     // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
+    const t0 = delay || 0;
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.3), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
@@ -5001,6 +5008,7 @@ function musicRide(delay) {
 function musicSnare(delay) {
     if (!Sound.ctx || !Music.bus) return;
     // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
+    const t0 = delay || 0;
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.18), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 1.4);
@@ -5151,12 +5159,29 @@ function startMusic() {
     // AudioContext.currentTime + n * stepDur. La derive de setInterval
     // n'a plus AUCUN effet sur le timing -- le groove est au sample pres.
     const stepDur = (60 / Music.bpm) / 4;
-    Music.nextTime = Sound.ctx.currentTime + 0.1;
+    // Partir de l'horloge REELLE : si le contexte vient d'etre cree en
+    // etat suspendu (politique autoplay), currentTime reste a ~0 -- on
+    // attend sa reprise effective pour demarrer le scheduler, sinon la
+    // boucle rattraperait un temps fictif et planifierait dans le passe.
+    Music.nextTime = Math.max(Sound.ctx.currentTime, 0) + 0.15;
+    let scheduledSteps = 0;
     Music.timer = setInterval(function () {
-        if (!Sound.ctx) return;
-        while (Music.nextTime < Sound.ctx.currentTime + 0.2) {
-            musicStep(Music.nextTime);
-            Music.nextTime += stepDur;
+        if (!Sound.ctx || !Music.playing) return;
+        try {
+            let guard = 0;
+            while (Music.nextTime < Sound.ctx.currentTime + 0.2 && guard++ < 8) {
+                musicStep(Music.nextTime);
+                Music.nextTime += stepDur;
+                scheduledSteps++;
+            }
+            // Rattrapage anormal (horloge figee puis reprise) : recaler.
+            if (Music.nextTime < Sound.ctx.currentTime - 0.5) {
+                Music.nextTime = Sound.ctx.currentTime + 0.15;
+            }
+        } catch (e) {
+            // Erreur audio (contexte coupe, quota de noeuds...) : stop
+            // propre, le jeu continue sans musique.
+            stopMusic();
         }
     }, 50);
 }
