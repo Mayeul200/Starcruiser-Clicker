@@ -619,6 +619,17 @@ function calculateBuildingCost(building) {
 // Fonction de formatage optimisée
 // Multiplicateur : espaces de milliers jusqua 1 M, puis notation
 // scientifique (x1.23 x 10^6) -- lisible a toutes les echelles.
+// Pourcentage de la suite infinie : lisible a toute echelle --
+// espaces de milliers, puis notation scientifique au-dela d'un million.
+function formatInfinitePct(pct) {
+    if (pct >= 1e6) {
+        const exp = Math.floor(Math.log10(pct));
+        const mant = pct / Math.pow(10, exp);
+        return mant.toFixed(2) + ' x 10^' + exp;
+    }
+    return groupThousands(pct.toFixed(1));
+}
+
 function formatMultiplier(m) {
     if (m >= 1e6) {
         const exp = Math.floor(Math.log10(m));
@@ -2875,7 +2886,7 @@ function showPostTravelShop(distance) {
                 t(planet.name) + ' +' + planet.bonusPercent + '%</span>').join('') + '</div>';
         }
         const infiniteHtml = postVirgoStardust > 0
-            ? '<div class="pts-line pts-infinite">\u2728 ' + t('Suite infinie') + ' : +' + getInfiniteProductionPercent(postVirgoStardust).toFixed(1) + '% ' + t('production permanente') + '</div>'
+            ? '<div class="pts-line pts-infinite">\u2728 ' + t('Suite infinie') + ' : +' + formatInfinitePct(getInfiniteProductionPercent(postVirgoStardust)) + '% ' + t('production permanente') + '</div>'
             : '';
         summaryEl.innerHTML =
             '<div class="pts-line">' + t('Distance parcourue') + ' <strong>' + formatNumber(isNaN(distance) ? 0 : distance) + ' km</strong></div>' +
@@ -3305,7 +3316,7 @@ function buyInfiniteProduction() {
     updateStardustDisplay();
     renderGalacticShop();
     updateSpaceProgress();
-    showToast('\u2728 +' + gainPct.toFixed(1) + '% ' + t('production permanente'));
+    showToast('\u2728 +' + formatInfinitePct(gainPct) + '% ' + t('production permanente'));
 }
 
 function updateInfiniteBuyButton() {
@@ -3320,9 +3331,9 @@ function updateInfiniteBuyButton() {
     const gainPct = nextPct - currentPct;
     btn.innerHTML =
         '<span class="ibb-icon">\u2728</span>' +
-        '<span class="ibb-title">' + t('Suite infinie') + ' : +' + currentPct.toFixed(1) + '%</span>' +
+        '<span class="ibb-title">' + t('Suite infinie') + ' : +' + formatInfinitePct(currentPct) + '%</span>' +
         '<span class="ibb-desc">' + t('Echange tes PE contre un bonus de production permanente a l\u2019infini !').split('{n}').join(formatNumber(amount)) + '</span>' +
-        '<span class="ibb-cta' + (amount < 1 ? ' disabled' : '') + '">' + t('Convertir') + ' ' + formatNumber(amount) + ' \u2728 \u2192 +' + gainPct.toFixed(1) + '%</span>';
+        '<span class="ibb-cta' + (amount < 1 ? ' disabled' : '') + '">' + t('Convertir') + ' ' + formatNumber(amount) + ' \u2728 \u2192 +' + formatInfinitePct(gainPct) + '%</span>';
     btn.disabled = amount < 1;
 }
 
@@ -6149,7 +6160,7 @@ function renderStats() {
         { label: t("Multiplicateur de production"), value: formatMultiplier(getTotalProductionMultiplier()) },
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
-        { label: t("Vitesse de voyage"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },
+        { label: t("Vitesse actuelle"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },
         { label: t("Vitesse record"), value: formatTravelSpeed(maxTravelSpeed) },
         { label: t("Partie commenc\u00e9e"), value: getGameDuration() },
         { label: t("Com\u00e8tes D\u00e9truites"), value: clickedBonusesCount }
