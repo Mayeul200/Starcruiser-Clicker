@@ -3885,6 +3885,27 @@ body.night-mode .scene-background::after {
     z-index: 3;
 }
 
+/* Ombre portee de l'astronaute : le soleil de la vallee vient de la
+   droite, l'ombre tombe donc a GAUCHE, au sol. Ellipse aplatie
+   (perspective rasante du sol), leger rotation, flou doux, ancree a
+   la base de l'astronaute (il "flotte" legerement au-dessus : l'ombre
+   est plus petite et plus diffuse = distance de rendition). Le z-index
+   2 le garde SOUS l'astronaute (z-index 3) mais au-dessus du sol. */
+.rocket-piece.astronaut::before {
+    content: '';
+    position: absolute;
+    /* Ancree sous les pieds, poussee vers la gauche */
+    bottom: 2px;
+    left: -26px;
+    width: 70%;
+    height: 14px;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 50%;
+    filter: blur(4px);
+    transform: rotate(-4deg) scaleY(0.9);
+    z-index: -1;
+    pointer-events: none;
+}
 .rocket-piece img {
     max-width: 100%; /* Ne dépasse pas la largeur du conteneur */
     max-height: 100%; /* Ne dépasse pas la hauteur du conteneur */
