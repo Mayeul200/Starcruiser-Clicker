@@ -228,15 +228,15 @@ const TROPHIES = [
     { id: "pps-1000", name: "Space Speed", description: "Atteindre 1 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000, type: "pps" },
     { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000, type: "pps" },
     { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.webp", threshold: 100000, type: "pps" },
-    { id: "pps-1000000", name: "Vitesse Nébulaire", description: "Atteindre 1 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000000, type: "pps" },
-    { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000000, type: "pps" },
-    { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 100000000, type: "pps" },
-    { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1000000000, type: "pps" },
-    { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000000000, type: "pps" },
-    { id: "pps-1e11", name: "Moteur Galactique", description: "Atteindre 100 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e11, type: "pps" },
-    { id: "pps-1e12", name: "Cœur d'Étoile à Neutrons", description: "Atteindre 1 000 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e12, type: "pps" },
-    { id: "pps-1e14", name: "Puits de Gravité", description: "Atteindre 100 000 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e14, type: "pps" },
-    { id: "pps-1e16", name: "Usine à Univers", description: "Atteindre 10 000 000 000 000 000 Parts par seconde", icon: "images/parts.webp", threshold: 1e16, type: "pps" },
+    { id: "pps-1000000", name: "Vitesse Nébulaire", description: "Atteindre 1 M Parts par seconde", icon: "images/parts.webp", threshold: 1000000, type: "pps" },
+    { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 M Parts par seconde", icon: "images/parts.webp", threshold: 10000000, type: "pps" },
+    { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 M Parts par seconde", icon: "images/parts.webp", threshold: 100000000, type: "pps" },
+    { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 B Parts par seconde", icon: "images/parts.webp", threshold: 1000000000, type: "pps" },
+    { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 B Parts par seconde", icon: "images/parts.webp", threshold: 10000000000, type: "pps" },
+    { id: "pps-1e11", name: "Moteur Galactique", description: "Atteindre 100 B Parts par seconde", icon: "images/parts.webp", threshold: 1e11, type: "pps" },
+    { id: "pps-1e12", name: "Cœur d'Étoile à Neutrons", description: "Atteindre 1 T Parts par seconde", icon: "images/parts.webp", threshold: 1e12, type: "pps" },
+    { id: "pps-1e14", name: "Puits de Gravité", description: "Atteindre 100 T Parts par seconde", icon: "images/parts.webp", threshold: 1e14, type: "pps" },
+    { id: "pps-1e16", name: "Usine à Univers", description: "Atteindre 10 Qa Parts par seconde", icon: "images/parts.webp", threshold: 1e16, type: "pps" },
 
     // Vitesse de voyage (icône: missile) — vitesse REELLE de la stat
     // "Vitesse", c'est-a-dire les km/s gagnes par la distance atteignable.
@@ -245,8 +245,13 @@ const TROPHIES = [
     { id: "speed-10000", name: "Vitesse Stellaire", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000, type: "speed" },
     { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 100000, type: "speed" },
     { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.webp", threshold: 299792, type: "speed" },
-    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1000000, type: "speed" },
-    { id: "speed-10000000", name: "Sillage Cosmique", description: "Atteindre 10 000 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000000, type: "speed" },
+    { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1000000, type: "speed" },
+    { id: "speed-10000000", name: "Sillage Cosmique", description: "Atteindre 10 M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000000, type: "speed" },
+    { id: "speed-1e8", name: "Fracture Lumineuse", description: "Atteindre 100M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e8, type: "speed" },
+    { id: "speed-1e9", name: "Tunnel de Warp", description: "Atteindre 1B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e9, type: "speed" },
+    { id: "speed-1e10", name: "Nomade Interstellaire", description: "Atteindre 10B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e10, type: "speed" },
+    { id: "speed-1e11", name: "Arpenteur de l'Espace-Temps", description: "Atteindre 100B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e11, type: "speed" },
+    { id: "speed-1e12", name: "Dieu du Voyage", description: "Atteindre 1T km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e12, type: "speed" },
 
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.webp", threshold: 1, type: "planets" },
@@ -303,16 +308,16 @@ const TROPHIES = [
 
     // Score total (icônes: parts et cartes)
     { id: "score-1000", name: "Small Start", description: "Atteindre 1 000 Parts", icon: "images/parts.webp", threshold: 1000, type: "score" },
-    { id: "score-1000000", name: "Millionaire", description: "Atteindre 1 000 000 Parts", icon: "images/cards/collection/earth-card.webp", threshold: 1000000, type: "score" },
-    { id: "score-1000000000", name: "Billionaire", description: "Atteindre 1 000 000 000 Parts", icon: "images/cards/collection/sirius-card.webp", threshold: 1000000000, type: "score" },
-    { id: "score-1000000000000", name: "Trillionaire", description: "Atteindre 1 000 000 000 000 Parts", icon: "images/cards/collection/oort-cloud-card.webp", threshold: 1000000000000, type: "score" },
-    { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 000 000 000 000 000 Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1000000000000000, type: "score" },
-    { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 000 000 000 000 000 Parts", icon: "images/cards/collection/missile-card.webp", threshold: 10000000000000000, type: "score" },
-    { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.webp", threshold: 100000000000000000, type: "score" },
-    { id: "score-1e18", name: "Forgeron de Réalités", description: "Atteindre 1 000 000 000 000 000 000 Parts", icon: "images/planets/virgo-cluster.webp", threshold: 1e18, type: "score" },
-    { id: "score-1e19", name: "Bâtisseur de Multivers", description: "Atteindre 10 000 000 000 000 000 000 Parts", icon: "images/planets/andromeda.webp", threshold: 1e19, type: "score" },
-    { id: "score-1e20", name: "Architecte Cosmique Suprême", description: "Atteindre 100 000 000 000 000 000 000 Parts", icon: "images/planets/milky-way-center.webp", threshold: 1e20, type: "score" },
-    { id: "score-1e21", name: "Au-delà de l'Infini", description: "Atteindre 1 000 000 000 000 000 000 000 Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1e21, type: "score" },
+    { id: "score-1000000", name: "Millionaire", description: "Atteindre 1 M Parts", icon: "images/cards/collection/earth-card.webp", threshold: 1000000, type: "score" },
+    { id: "score-1000000000", name: "Billionaire", description: "Atteindre 1 B Parts", icon: "images/cards/collection/sirius-card.webp", threshold: 1000000000, type: "score" },
+    { id: "score-1000000000000", name: "Trillionaire", description: "Atteindre 1 T Parts", icon: "images/cards/collection/oort-cloud-card.webp", threshold: 1000000000000, type: "score" },
+    { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 Qa Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1000000000000000, type: "score" },
+    { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 Qa Parts", icon: "images/cards/collection/missile-card.webp", threshold: 10000000000000000, type: "score" },
+    { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 Qa Parts", icon: "images/planets/milky-way-center.webp", threshold: 100000000000000000, type: "score" },
+    { id: "score-1e18", name: "Forgeron de Réalités", description: "Atteindre 1 Qi Parts", icon: "images/planets/virgo-cluster.webp", threshold: 1e18, type: "score" },
+    { id: "score-1e19", name: "Bâtisseur de Multivers", description: "Atteindre 10 Qi Parts", icon: "images/planets/andromeda.webp", threshold: 1e19, type: "score" },
+    { id: "score-1e20", name: "Architecte Cosmique Suprême", description: "Atteindre 100 Qi Parts", icon: "images/planets/milky-way-center.webp", threshold: 1e20, type: "score" },
+    { id: "score-1e21", name: "Au-delà de l'Infini", description: "Atteindre 1 Sx Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1e21, type: "score" },
 
     // Bonus cliqués (icônes: comète)
     { id: "first-bonus", name: "First Bonus", description: "Cliquer votre premier bonus aléatoire", icon: "images/effects/comete.webp", threshold: 1, type: "bonus" },
@@ -5466,9 +5471,15 @@ function renderTrophies() {
         trophyElement.style.position = 'relative';
         trophyElement.style.transition = 'all 0.2s';
         // Couleur du palier : uniquement sur le bord du cercle, fond neutre.
+        // L'index est mappe sur la palette selon la taille REELLE de la
+        // famille -- avant, toutes les familles longues ecrasaient leurs
+        // paliers 10+ sur la derniere couleur (jaune).
         const family = trophiesByFamily[trophy.type] || [];
         const familyIndex = family.indexOf(trophy);
-        const tierColor = getUpgradeTierColor(familyIndex);
+        const tierColor = UPGRADE_COLORS[Math.min(
+            Math.round(familyIndex * (UPGRADE_COLORS.length - 1) / Math.max(family.length - 1, 1)),
+            UPGRADE_COLORS.length - 1
+        )];
         if (unlockedTrophies.has(trophy.id)) {
             trophyElement.style.border = '2px solid ' + tierColor;
             trophyElement.style.background = 'var(--secondary-light)';

@@ -1094,9 +1094,11 @@ body {
 }
 
 .building-image {
+    /* Image a PLEINE LARGEUR de sa colonne (28.6cqw), hauteur contrainte
+       par le plafond de la case -- object-fit: contain evite toute
+       deformation si le ratio de l'image depasse la hauteur dispo. */
+    width: 100%;
     height: auto;
-    width: auto;
-    max-width: 100%;
     max-height: 17cqw;
     object-fit: contain;
     margin: 0 auto;
