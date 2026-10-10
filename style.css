@@ -4201,7 +4201,7 @@ body.night-mode .scene-background {
     bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
-    width: min(96%, 468px);
+    width: min(96%, 458px);
     display: flex;
     flex-direction: column;
     padding: 4px 6px;
