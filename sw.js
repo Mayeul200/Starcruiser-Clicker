@@ -9,7 +9,7 @@
 // reste en etat "waiting" ; la page le detecte, affiche le bouton
 // "Recharger", lui envoie SKIP_WAITING au clic, puis recharge la page quand
 // il prend le controle (controllerchange).
-const CACHE_NAME = 'starcruiser-clicker-v0107b0d3';
+const CACHE_NAME = 'starcruiser-clicker-v0108c1e4';
 
 self.addEventListener('install', (event) => {
     // Precache minimal (fallback hors-ligne). Les echecs individuels sont
@@ -57,10 +57,14 @@ self.addEventListener('fetch', (event) => {
     // Hors origine : reseau direct.
     if (url.origin !== self.location.origin) return;
 
-    // NETWORK-FIRST : reseau d'abord, cache seulement si le reseau echoue.
-    // La reponse reseau fraiche remplit le cache au passage.
+    // NETWORK-FIRST + BYPASS DU CACHE HTTP : fetch(request) respectait le
+    // cache HTTP de GitHub Pages (max-age 10 min) -- le SW recevait donc
+    // les VIEUX fichiers meme en network-first, et les changements de
+    // police/taille n'arrivaient jamais sans Ctrl+Shift+R. cache:'no-cache'
+    // force la revalidation reseau a CHAQUE requete : toujours frais.
+    // Le cache SW ne reste qu'un fallback hors-ligne.
     event.respondWith(
-        fetch(request).then(response => {
+        fetch(request, { cache: 'no-cache' }).then(response => {
             if (response && response.ok) {
                 const copy = response.clone();
                 caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
