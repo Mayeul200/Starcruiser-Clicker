@@ -674,7 +674,7 @@ function showToast(message, icon, durationMs, options) {
         container.firstElementChild.remove();
     }
     const toast = document.createElement('div');
-    toast.className = 'toast' + (options && options.failure ? ' failure' : '');
+    toast.className = 'toast' + (options && options.failure ? ' failure' : '') + (options && options.trophy ? ' trophy' : '');
     toast.innerHTML = '';
     if (icon) {
         const iconEl = document.createElement('span');
@@ -5453,7 +5453,7 @@ function checkTrophies() {
                 unlockedTrophies.add(trophy.id);
                 Sounds.trophy();
                 changed = true;
-                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`, trophy.icon, 5000);
+                showToast(`${t("Troph\u00e9e d\u00e9bloqu\u00e9 :")} ${t(trophy.name)}!`, trophy.icon, 5000, { trophy: true });
             }
         }
     });

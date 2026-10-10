@@ -835,7 +835,7 @@ body {
     /* 0.75em : le "0" en Space Grotesk GRAS (compteur PE) est le glyphe
        le plus large du jeu ; a 0.62em puis 0.7em il etait encore rogne
        par l'overflow hidden. 0.75em couvre la vraie largeur du glyphe. */
-    width: 0.75em;
+    width: 0.8em;
     height: var(--cch-h, 1.5em);
     line-height: var(--cch-h, 1.5em);
     vertical-align: bottom;
@@ -1892,6 +1892,22 @@ body {
 }
 /* Toast d'ECHEC de contrat : rouge sombre, secousse a l'apparition —
    impossible a confondre avec une notification normale. */
+/* Notification de trophee debloque : fond dore distingue des toasts
+   neutres -- meme pattern que .failure mais en or de recompense. */
+.toast.trophy {
+    background: linear-gradient(135deg, #78350f, #92400e);
+    border: 1px solid #fbbf24;
+    color: #fef3c7;
+    font-weight: 700;
+    box-shadow: 0 4px 18px rgba(251, 191, 36, 0.35), var(--shadow-lg);
+}
+.toast.trophy .toast-icon { color: #fbbf24; }
+.toast.trophy.active { animation: toast-trophy-glow 0.6s ease-out; }
+@keyframes toast-trophy-glow {
+    0%   { box-shadow: 0 0 0 rgba(251, 191, 36, 0); }
+    50%  { box-shadow: 0 0 26px rgba(251, 191, 36, 0.6); }
+    100% { box-shadow: 0 4px 18px rgba(251, 191, 36, 0.35); }
+}
 .toast.failure {
     background: linear-gradient(135deg, #7f1d1d, #991b1b);
     border: 1px solid #f87171;
