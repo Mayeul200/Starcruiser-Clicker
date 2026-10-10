@@ -832,9 +832,10 @@ body {
     display: inline-flex;
     align-items: flex-start;
     overflow: hidden;
-    /* 0.7em : le "0" en Space Grotesk gras debordait de 0.62em et etait
-       rogne par l'overflow hidden (chiffre coupe dans les compteurs). */
-    width: 0.7em;
+    /* 0.75em : le "0" en Space Grotesk GRAS (compteur PE) est le glyphe
+       le plus large du jeu ; a 0.62em puis 0.7em il etait encore rogne
+       par l'overflow hidden. 0.75em couvre la vraie largeur du glyphe. */
+    width: 0.75em;
     height: var(--cch-h, 1.5em);
     line-height: var(--cch-h, 1.5em);
     vertical-align: bottom;
