@@ -5032,19 +5032,42 @@ function musicKick(t0) {
 
 function musicHat(t0, open) {
     if (!Sound.ctx || !Music.bus) return;
-    const dur = open ? 0.20 : 0.045;
+    // Hi-hat METALLIQUE facon 808 : des oscillateurs carres inharmoniques
+    // (rapports de frequences "faux", comme une cymbale reelle) au lieu du
+    // bruit blanc filtre -- plus doux, plus feutre, plus disco. Le son
+    // decroit exponentiellement : attaque discrete, queue chantante.
+    const dur = open ? 0.28 : 0.06;
+    const t = t0;
+    const g = Sound.ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(open ? 0.085 : 0.065, t + 0.003);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(Music.drumBus || Music.bus);
+    // Groupe metallique : 6 partiels inharmoniques (style CR-78/808).
+    const freqs = [263, 400, 421, 474, 587, 845];
+    freqs.forEach((f, k) => {
+        const osc = Sound.ctx.createOscillator();
+        osc.type = 'square';
+        osc.frequency.value = f * (open ? 1.02 : 1);
+        const og = Sound.ctx.createGain();
+        og.gain.value = (k < 2 ? 0.30 : 0.18) / freqs.length;
+        osc.connect(og); og.connect(g);
+        osc.start(t); osc.stop(t + dur + 0.02);
+    });
+    // Souffle doux par-dessus : la texture feutree, tres discrete.
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * dur), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, open ? 1.5 : 2.6);
+    for (let n = 0; n < data.length; n++) data[n] = (Math.random() * 2 - 1) * Math.pow(1 - n / data.length, open ? 2.2 : 3.5);
     const src = Sound.ctx.createBufferSource();
     src.buffer = buf;
     const f = Sound.ctx.createBiquadFilter();
-    f.type = 'highpass'; f.frequency.value = 8200;
-    const g = Sound.ctx.createGain();
-    g.gain.value = open ? 0.13 : 0.09;
-    src.connect(f); f.connect(g); g.connect(Music.drumBus || Music.bus);
-    src.start(t0);
+    f.type = 'highpass'; f.frequency.value = 9000;
+    const ng = Sound.ctx.createGain();
+    ng.gain.value = open ? 0.05 : 0.035;
+    src.connect(f); f.connect(ng); ng.connect(g);
+    src.start(t);
 }
+
 
 // Clap disco : triple micro-retard de bruit -- l'identite "Oh Joy".
 function musicClap(t0) {
