@@ -6222,15 +6222,21 @@ function refreshStatsLive() {
 }
 
 function updateStatsDynamicValues(container) {
+    // DOIT rester synchronisee, ENTREE POUR ENTREE, avec la liste
+    // globalStats de renderStats() -- les valeurs se mettent a jour par
+    // index : un desynchro (ex : nouvelles stats inserees ici mais pas
+    // la) faisait GLISSER chaque valeur vers la stat voisine.
     const values = [
         formatNumber(score, true),
         formatNumber(totalPartsEarnedThisLaunch),
         formatNumber(totalPartsEarnedAllTime),
         formatNumber(partsPerSecond),
-        'x' + getTotalProductionMultiplier().toFixed(2),
+        formatNumber(maxPartsPerSecond),
+        formatMultiplier(getTotalProductionMultiplier()),
         formatNumber(getClickPower()),
         formatNumber(getTotalBuildingsOwned()),
         formatTravelSpeed(calculateTravelSpeedKmS()),
+        formatTravelSpeed(maxTravelSpeed),
         getGameDuration(),
         String(clickedBonusesCount)
     ];
