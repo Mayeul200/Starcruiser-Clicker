@@ -83,7 +83,9 @@ body {
     height: var(--top-height);
     min-height: 60px; max-height: 80px;
     background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
-    border-bottom: 1px solid var(--border);
+    /* Bordure inferieure restauree : le logo agrandi (68px) debordait
+       visuellement et masquait la ligne de separation. */
+    border-bottom: 2px solid var(--border-light);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -3828,7 +3830,7 @@ body {
        de 150 px. background-size: cover : l'image garde son ratio natif
        SANS étirement -- l'ancien 100% 100% l'écrasait sur ~150 px de
        large d'où la perte de qualité ; le débordement est clippé. */
-    bottom: -5px;
+    bottom: -15px;
     left: -150px;
     right: -12px;
     top: 0;
@@ -6619,5 +6621,16 @@ body.night-mode .scene-background::after {
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
 }
 
-/* Panneau gauche masqué pendant le tuto (avant l'étape Progression Spatiale) : le joueur ne voit pas des stats non expliquées. */
-.left-panel.tutorial-hidden { visibility: hidden; }
+/* Panneau gauche pendant le tuto (avant l'étape Progression Spatiale) : le PANNEAU reste (fond, bordure -- pas de disparition brutale), seuls les éléments pas encore débloqués se fondent. La minimap et les mini-jeux restent visibles : les contrats se débloquent indépendamment du tuto. */
+.left-panel.tutorial-muted .left-panel-scroll > *:not(.mini-games-container) {
+    opacity: 0.15;
+    filter: blur(3px);
+    pointer-events: none;
+    transition: opacity 0.8s ease, filter 0.8s ease;
+}
+.left-panel.tutorial-muted .mini-games-container,
+.left-panel.tutorial-muted .mini-space-map {
+    opacity: 1;
+    filter: none;
+    pointer-events: auto;
+}

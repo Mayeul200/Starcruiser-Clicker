@@ -8255,13 +8255,14 @@ function positionCoachNear(coach, selector, prefer) {
 }
 function renderTutorialStep() {
     const step = TUTORIAL_STEPS[tutorialStep];
-    // Panneau gauche (Progression Spatiale) CACHE tant que l'etape 7
-    // n'est pas passee : le joueur ne voit pas des stats qu'on ne lui
-    // a pas encore expliquees.
+    // Panneau gauche : le PANNEAU reste visible (fond, bordure -- pas de
+    // disparition brutale), seuls les ELEMENTS pas encore debloques se
+    // masquent avec un fondu. Les mini-jeux (contrats, collection) restent
+    // visibles des leur deblocage, independamment du tuto.
     const leftPanel = document.querySelector('.left-panel');
     if (leftPanel) {
         const spaceStatsUnlocked = !tutorialActive || tutorialStep > 6;
-        leftPanel.classList.toggle('tutorial-hidden', !spaceStatsUnlocked);
+        leftPanel.classList.toggle('tutorial-muted', !spaceStatsUnlocked);
     }
     if (!step) { endTutorial(); return; }
     const coach = document.getElementById('tutorial-coach');
@@ -8323,7 +8324,7 @@ function skipTutorial() {
 
 function endTutorial() {
     const lp = document.querySelector('.left-panel');
-    if (lp) lp.classList.remove('tutorial-hidden');
+    if (lp) lp.classList.remove('tutorial-muted');
     tutorialActive = false;
     tutorialSeen = true;
     if (tutorialPollTimer) { clearInterval(tutorialPollTimer); tutorialPollTimer = null; }
