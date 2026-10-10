@@ -3227,6 +3227,18 @@ body {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
+/* Sigle infini (mode suite infinie) : plus grand que la police des valeurs
+   et en orange accentue -- il remplace la valeur numerique de la case
+   Distance a parcourir et doit se distinguer d'un simple chiffre.
+   La classe .stat-value-infinite est posee par le JS uniquement quand la
+   valeur affichee est le sigle. */
+.stat-value-infinite .cch-sep {
+    font-size: 1.6rem;
+    color: var(--accent, #fbbf24);
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.55);
+    line-height: 1;
+    font-weight: 800;
+}
 /* Tuile "Prochaine planete" : nom + barre + % + teaser de l'etape d'apres.
    La barre est le coeur de la motivation : le joueur voit OU il va et
    QU'EST-CE QU'IL Y A APRÈS. */

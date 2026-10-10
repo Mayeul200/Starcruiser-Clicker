@@ -3472,7 +3472,9 @@ function updateSpaceProgress() {
         // valeurs elle est centree par le CSS existant (.stat-value).
         if (gameFinished) {
             rollCounterText(sidebarDistanceNeeded, '\u221E');
+            sidebarDistanceNeeded.classList.add('stat-value-infinite');
         } else {
+            sidebarDistanceNeeded.classList.remove('stat-value-infinite');
             const target = progress.nextPlanet ? progress.nextPlanet : progress.currentPlanet;
             const needed = target ? Math.max(0, target.distanceRequired - reachableDistance) : 0;
             rollCounterText(sidebarDistanceNeeded, formatNumber(needed) + ' ' + t('km'));
