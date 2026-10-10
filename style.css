@@ -30,7 +30,7 @@
     --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
     --glow: 0 0 10px rgba(30, 58, 138, 0.5);
     --radius: 8px;
-    --top-height: 10vh;
+    --top-height: clamp(60px, 10vh, 80px);
     --font-body: 'Space Grotesk', 'Inter', sans-serif;
     --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
 }
@@ -1052,8 +1052,9 @@ body {
     align-items: center;
     cursor: pointer;
     transition: all 0.2s;
-    min-height: 16.1cqw;
-    max-height: 22cqw;
+    min-height: 18.5cqw;
+    max-height: 26cqw;
+    flex: 0 0 auto;
     overflow: hidden;
     position: relative;
 }
@@ -4097,8 +4098,8 @@ body.night-mode .scene-background {
     /* Case d'achat des batiments : elements internes agrandis pour exploiter
        la largeur gagnee par les colonnes laterales a 25%. */
     .building-item {
-        min-height: 18.5cqw;
-        max-height: 25cqw;
+        min-height: 21cqw;
+        max-height: 29cqw;
     }
     /* Polices de reference PC baissees de ~10% (4.6->4.1, 4.2->3.8) */
     .building-name { font-size: 4.1cqw; }
