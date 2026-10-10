@@ -840,6 +840,13 @@ body {
     line-height: var(--cch-h, 1.5em);
     vertical-align: bottom;
 }
+/* Compteurs de Poussiere d'Etoiles (PE) : police Space Grotesk GRASSE,
+   plus large que celle des autres compteurs -- colonne dediee a 1em,
+   le "0" y dispose de toute sa place sans elargir les autres chiffres. */
+#stardust-value .cch,
+#stardust-value-2 .cch {
+    width: 1em;
+}
 .cch-reel {
     display: flex;
     flex-direction: column;
