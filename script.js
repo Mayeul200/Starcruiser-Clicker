@@ -4842,11 +4842,35 @@ const Music = {
     // en croches, une phrase par mesure : A (question) / B (r\u00e9ponse),
     // puis A' (variance) / C (r\u00e9solution descendante). Joyeux et
     // chantant, facon Oh Joy.
+    // Phrases lead en INDICES DE GAMME MAJEURE (0=tonique, 7=octave) :
+    // elles sont TRANSPOSEES sur la fondamentale de l'accord en cours ->
+    // justes sur les 8 accords de la progression (avant : demi-tons
+    // absolus depuis D5, faux sur tous les accords sauf Dmaj7).
+    // A : montee riante 1-2-3-5-6-5-3-2 (motif disco chantant)
+    // B : reponse qui culmine 5-3-6-5-8-7-6-5
+    // A': variante 1-3-5-6-8-7-6-5 puis retombee
+    // C : resolution descendante 8-7-6-5-4-3-2-1 douce
     leadPhrases: [
-        [0, 2, 4, 7, 9, 7, 4, 2],        // A : mont\u00e9e riante puis retomb\u00e9e
-        [4, 7, 9, 12, 11, 9, 7, 4],      // B : r\u00e9ponse qui monte au sommet
-        [0, 2, 4, 7, 9, 11, 12, 14],     // A' : variante qui culmine
-        [12, 11, 9, 7, 4, 2, 0, -2]       // C : r\u00e9solution descendante douce
+        [0, 1, 2, 4, 5, 4, 2, 1],
+        [4, 2, 5, 4, 7, 6, 5, 4],
+        [0, 2, 4, 5, 7, 6, 5, 4],
+        [7, 6, 5, 4, 3, 2, 1, 0]
+    ],
+    // Gammes par accord (demi-tons depuis la fondamentale) -- la melodie
+    // reste DIATONIQUE a D majeur sur tous les accords :
+    // - accords mineurs (Bm7, Em7) : gamme mineure 0 2 3 5 7 8 10 12
+    // - accords majeurs (Dmaj7, Gmaj7) : gamme majeure 0 2 4 5 7 9 11 12
+    // - A7 (dominante) : mixolydien 0 2 4 5 7 9 10 12 (7e mineure)
+    // Table indexee par la position dans la progression (0-7).
+    chordScales: [
+        [0, 2, 4, 5, 7, 9, 11, 12],   // 0 Dmaj7 : majeur
+        [0, 2, 3, 5, 7, 8, 10, 12],   // 1 Bm7 : mineur
+        [0, 2, 4, 5, 7, 9, 11, 12],   // 2 Gmaj7 : majeur
+        [0, 2, 4, 5, 7, 9, 10, 12],   // 3 A7 : mixolydien
+        [0, 2, 3, 5, 7, 8, 10, 12],   // 4 Em7 : mineur
+        [0, 2, 3, 5, 7, 8, 10, 12],   // 5 Bm7 : mineur
+        [0, 2, 4, 5, 7, 9, 11, 12],   // 6 Gmaj7 : majeur
+        [0, 2, 4, 5, 7, 9, 10, 12]    // 7 A7 : mixolydien
     ],
     bus: null,
     delaySend: null,
@@ -4854,6 +4878,7 @@ const Music = {
     drumBus: null,
     sectionLen: 32,
     chordForBar(bar) { return this.chords[Math.floor(bar / 2) % 8]; },
+    chordIndexForBar(bar) { return Math.floor(bar / 2) % 8; },
     section() { return Math.floor(this.bar / this.sectionLen) % 4; },
     isFill() { return (this.bar % this.sectionLen) >= this.sectionLen - 2; }
 };
@@ -5167,8 +5192,13 @@ function musicStep(t0) {
         const phrase = Music.leadPhrases[phraseIdx];
         const noteIdx = Math.floor(s / 2);                 // une note / croche
         if (noteIdx < 8 && s % 2 === 0) {
-            const semis = phrase[noteIdx];
-            const base = 587.33 * Math.pow(2, semis / 12); // D5
+            // Note = fondamentale de l'ACCORD (une octave au-dessus de
+            // sa racine) + le degre de gamme de la phrase : la melodie
+            // suit l'harmonie, juste sur chaque accord.
+            const scaleDeg = phrase[noteIdx];
+            const scale = Music.chordScales[Music.chordIndexForBar(Music.bar)];
+            const semis = scale[scaleDeg];
+            const base = ch.root * 4 * Math.pow(2, semis / 12);
             // Phrase A : les notes longues chantent avec vibrato.
             const isLong = (noteIdx === 0 || noteIdx === 4 || noteIdx === 7);
             if (isLong) {
