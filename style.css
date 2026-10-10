@@ -4942,6 +4942,18 @@ body.night-mode .scene-background {
 .cc-reveal-card.pack {
     width: min(78cqw, 520px, 68cqh);
 }
+/* Titre du recap de booster : "Carte obtenue" / "Cartes obtenues (n)" */
+.cc-reveal-summary-title {
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: clamp(0.9rem, 3.2vh, 1.2rem);
+    font-weight: 700;
+    color: var(--accent-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+}
 /* Recap final : toutes les cartes retournees cote a cote, bien plus
    grandes -- avec 1 carte par booster le recap est la derniere chose
    que le joueur voit, elle doit etre lisible. Meme base que le paquet

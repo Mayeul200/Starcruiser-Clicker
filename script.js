@@ -7075,8 +7075,16 @@ function renderRevealCards(cards) {
     const revealedCards = [];
     const showSummary = function () {
         container.innerHTML = '';
-        const intro = document.getElementById('cc-reveal-intro');
-        if (intro) intro.style.display = 'none';
+        // Titre du recap : distingue clairement le RESUME de la carte
+        // retournee juste avant -- c'etait la confusion "2 cartes ?" :
+        // la meme carte reaparaissait sans explication. Avec le titre,
+        // le joueur comprend qu'il s'agit du bilan de son booster.
+        const title = document.createElement('div');
+        title.className = 'cc-reveal-summary-title';
+        title.textContent = cards.length > 1
+            ? tf('Cartes obtenues ({n})', { n: cards.length })
+            : t('Carte obtenue');
+        container.appendChild(title);
         revealedCards.forEach(function (rc, i) {
             const el = document.createElement('div');
             el.className = 'cc-reveal-card summary rarity-' + rc.card.rarity;
@@ -7094,15 +7102,7 @@ function renderRevealCards(cards) {
         checkAllRevealed();
     };
     const showCard = function () {
-        if (idx >= total) {
-            // Booster d'UNE carte : pas de recap -- re-afficher la meme
-            // carte apres l'envol donnait l'impression d'en avoir gagne
-            // deux (l'album comptait bien x1). Les boutons apparaissent
-            // simplement une fois la carte envolee.
-            if (total > 1) showSummary();
-            else checkAllRevealed();
-            return;
-        }
+        if (idx >= total) { showSummary(); return; }
         const card = cards[idx];
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
