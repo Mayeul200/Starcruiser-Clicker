@@ -3453,6 +3453,10 @@ function updateSpaceProgress() {
     const planetBarFill = document.getElementById('header-planet-fill');
     const pct = Math.min(100, Math.max(0, progress.progressPercent));
     const pctText = pct.toFixed(1);
+    // Pourcentage effectif de la barre : celui du mode infini quand actif,
+    // sinon celui de la planete visee. Sans lui, la barre restait figee a
+    // 100 % en suite infinie (pct venait du dernier objectif planetaire).
+    let barPct = pct;
     if (planetText) {
         if (progress.nextPlanet) {
             planetText.textContent = `${t('Prochaine destination')} : ${t(progress.nextPlanet.name)} — ${pctText}%`;
@@ -3463,6 +3467,7 @@ function updateSpaceProgress() {
             // recule a chaque nouveau record.
             const goalKm = maxDistance > 0 ? maxDistance * 2 : calculateDistance() * 2;
             const pctInf = maxDistance > 0 ? Math.min(100, (calculateDistance() / goalKm) * 100) : 0;
+            barPct = pctInf;
             planetText.textContent = `${t('Prochaine destination')} : ${formatNumber(goalKm)} km — ${pctInf.toFixed(1)}%`;
         } else {
             planetText.textContent = `${t('Prochaine destination')} : ${t(progress.currentPlanet.name)} — 100%`;
@@ -3481,7 +3486,7 @@ function updateSpaceProgress() {
     }
     if (planetDisplay && planetText) planetDisplay.title = planetText.textContent;
     if (planetBarFill) {
-        planetBarFill.style.width = pct + '%';
+        planetBarFill.style.width = barPct + '%';
         // Teinte de la planete visee en RGB pour le fond translucide
         // (ne masque jamais le texte, contrairement a la couleur pleine).
         const tint = (progress.nextPlanet && progress.nextPlanet.color) || '#f59e0b';
