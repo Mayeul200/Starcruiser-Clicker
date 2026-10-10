@@ -1,7 +1,7 @@
 // Service worker Starcruiser Clicker : cache-first sur les ressources
 // statiques pour un chargement quasi instantane en relecture, et un
 // fallback hors-ligne. Les mises a jour passent par un bump de version.
-const CACHE_NAME = 'starcruiser-clicker-v0087f9b3';
+const CACHE_NAME = 'starcruiser-clicker-v0088a1c4';
 const ASSETS = [
     './',
     './index.html',
@@ -54,9 +54,17 @@ self.addEventListener('fetch', (event) => {
     // toujours la derniere version deployee -- fin des pages hybrides
     // (nouveau HTML + ancien CSS) qui cassaient le layout des batiments.
     // Le cache ne sert que si le reseau echoue (mode hors-ligne).
+    // Resolution RELATIVE AU SCOPE du SW (GitHub Pages sert sous un
+    // sous-chemin /Starcruiser-Clicker/) : origin + './style.css' ne
+    // matchait JAMAIS l'URL reelle, le network-first ne s'appliquait pas
+    // et les vieux fichiers partaient du cache (Ctrl+Shift+R obligatoire).
     const CORE = ['./', './index.html', './style.css', './script.js', './i18n.js'];
-    const isCore = CORE.some(path => event.request.url === self.location.origin + path
-        || event.request.url === self.location.origin + path + '?');
+    const scopeUrl = new URL(self.registration.scope);
+    const coreUrls = CORE.map(p => {
+        const abs = new URL(p, scopeUrl);
+        return [abs.href, abs.href + '?'];
+    }).flat();
+    const isCore = coreUrls.includes(event.request.url);
     if (isCore) {
         event.respondWith(
             fetch(event.request).then(response => {
