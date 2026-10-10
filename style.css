@@ -832,7 +832,9 @@ body {
     display: inline-flex;
     align-items: flex-start;
     overflow: hidden;
-    width: 0.62em;
+    /* 0.7em : le "0" en Space Grotesk gras debordait de 0.62em et etait
+       rogne par l'overflow hidden (chiffre coupe dans les compteurs). */
+    width: 0.7em;
     height: var(--cch-h, 1.5em);
     line-height: var(--cch-h, 1.5em);
     vertical-align: bottom;

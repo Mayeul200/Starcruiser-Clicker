@@ -7094,7 +7094,15 @@ function renderRevealCards(cards) {
         checkAllRevealed();
     };
     const showCard = function () {
-        if (idx >= total) { showSummary(); return; }
+        if (idx >= total) {
+            // Booster d'UNE carte : pas de recap -- re-afficher la meme
+            // carte apres l'envol donnait l'impression d'en avoir gagne
+            // deux (l'album comptait bien x1). Les boutons apparaissent
+            // simplement une fois la carte envolee.
+            if (total > 1) showSummary();
+            else checkAllRevealed();
+            return;
+        }
         const card = cards[idx];
         const isNew = (cardCollection[card.id] || 0) <= 1;
         const el = document.createElement('div');
