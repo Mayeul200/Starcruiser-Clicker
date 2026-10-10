@@ -604,9 +604,27 @@ const BUILDING_UPGRADE_COST_DIVISOR = 2;
 function getBuildingUpgradeFixedCost(buildingId, threshold) {
     const building = findBuildingById(buildingId);
     if (!building) return 0;
+    // Cout INDEXE SUR LA PRODUCTION DU BATIMENT : ~30 secondes de ce que
+    // le batiment produit actuellement. S'auto-equilibre a l'infini --
+    // que le batiment produise 10/s ou 1 Qi/s, l'upgrade represente
+    // toujours le meme effort relatif (l'ancienne formule baseCost x
+    // 10^tier devenait negligeable en fin de partie : les paliers 250-500
+    // s'achetaient par dizaines sans rien changer a la courbe).
+    const currentGain = calculateBuildingBaseGain(building);
     const tierIndex = BUILDING_UPGRADE_THRESHOLDS.indexOf(threshold);
     const tier = tierIndex === -1 ? 0 : tierIndex;
-    return Math.floor(building.baseCost * Math.pow(BUILDING_UPGRADE_COST_GROWTH, tier) / BUILDING_UPGRADE_COST_DIVISOR);
+    // Nouveau batiment (count = 0) ou production nulle : retour au plancher
+    // historique -- le premier palier doit rester atteignable.
+    if (currentGain <= 0) {
+        return Math.floor(building.baseCost * Math.pow(BUILDING_UPGRADE_COST_GROWTH, tier) / BUILDING_UPGRADE_COST_DIVISOR);
+    }
+    // 30 s de production, avec un plancher au cout historique (les tout
+    // premiers paliers d'un batiment neuf restent aussi accessibles
+    // qu'avant) et un multiplicateur doux par palier (x1.35) pour garder
+    // une progression dans la journee.
+    const indexed = currentGain * 30 * Math.pow(1.35, tier);
+    const floor = Math.floor(building.baseCost * Math.pow(BUILDING_UPGRADE_COST_GROWTH, tier) / BUILDING_UPGRADE_COST_DIVISOR);
+    return Math.max(Math.ceil(indexed), floor);
 }
 
 // Prix du prochain bâtiment : baseCost × 1.15^(bâtiments possédés)
@@ -1765,6 +1783,29 @@ function formatTravelSpeed(kmS) {
     return (v % 1 === 0 ? v.toString() : v.toFixed(1)) + ' km/s';
 }
 
+// Glow radial de plongee galactique : voile de lumiere plein ecran qui
+// grandit a l'approche d'une galaxie (rel = distance camera).
+let travelGalaxyGlow = null;
+function createTravelGalaxyGlow(hostEl) {
+    const scene = hostEl ? hostEl.parentElement : null;
+    if (!scene) return null;
+    const glow = document.createElement('div');
+    glow.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:40;opacity:0;' +
+        'background:radial-gradient(circle at 50% 55%, rgba(200,210,255,0.85) 0%, rgba(150,160,255,0.4) 22%, rgba(90,100,200,0.18) 40%, transparent 68%);' +
+        'transition:opacity 0.25s linear;';
+    scene.appendChild(glow);
+    return glow;
+}
+function updateTravelGalaxyGlow(rel) {
+    if (!travelGalaxyGlow) return;
+    // rel grand = loin (invisible) ; rel petit = plongee (plein ecran).
+    const closeness = Math.max(0, Math.min(1, 1 - (rel - 1.2) / 3.2));
+    travelGalaxyGlow.style.opacity = (closeness * closeness).toFixed(2);
+}
+function clearTravelGalaxyGlow() {
+    if (travelGalaxyGlow) { travelGalaxyGlow.remove(); travelGalaxyGlow = null; }
+}
+
 function launchRocket() {
     // Tuto etape fusête prête : le joueur a cliqué LANCER -> valider.
     try { markLessonSeen('tutorial-launch-clicked'); } catch (e) {}
@@ -1867,6 +1908,7 @@ function playLaunchSequence(onDone) {
         }
         if (medal) medal.style.pointerEvents = '';
         launchSequenceActive = false;
+        clearTravelGalaxyGlow();
         onDone();
     };
 
@@ -2151,7 +2193,9 @@ function playTravelAnimation(distance, onDone) {
     // correction, la perspective (size = baseSize / rel) les rend meme
     // pas plus grosses qu'une planete. Facteur d'echelle dedie pour
     // qu'elles dominent l'horizon des leur apparition.
-    const GALAXY_SCALE = 6.5;
+    // Galaxies DISCRETES a l'horizon : scale 3 (mysterieuses, pas de
+    // grossissement moche) -- la plongee finale est portee par le glow.
+    const GALAXY_SCALE = 3.0;
     const CAM_START = -0.85;                 // Terre a rel ~0.85 au depart
     const CAM_END = isGalaxyTarget ? zMax : zMax - 1.15;
     // Temps EQUIVALENT par troncon : Terre -> Lune garde sa duree, chaque
@@ -2211,8 +2255,9 @@ function playTravelAnimation(distance, onDone) {
         // Galaxies (Centre Voie lactee, Andromede, Amas de Virgo) :
         // echelle dediee pour qu'elles occupent l'ecran des leur
         // apparition a l'horizon et remplissent tout lors de la plongee.
-        if (GALAXY_IDS.includes(p.id)) scale = GALAXY_SCALE;
-        return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort };
+        const isGalaxy = GALAXY_IDS.includes(p.id);
+        if (isGalaxy) scale = GALAXY_SCALE;
+        return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort, isGalaxy };
     });
 
     // --- Nuage d'Oort : champ volumetrique de debris glaces ---
@@ -2551,6 +2596,14 @@ function playTravelAnimation(distance, onDone) {
             // base 100px posee une fois, on ne fait plus que la scaler.
             const px = Math.max(0.02, pr.size * (b.scale || 1) * (b.distant ? 0.85 : 1) / 300);
             b.el.style.transform = 'translate3d(' + pr.x.toFixed(1) + 'px, ' + pr.y.toFixed(1) + 'px, 0) translate(-50%, -50%) scale(' + px.toFixed(3) + ')';
+            // PLONGEE CINEMATIQUE (galaxies) : un glow radial croissant
+            // enveloppe l'ecran quand la camera s'approche -- on TRAVERSE
+            // la galaxie dans un voile de lumiere au lieu de regarder une
+            // image s'etirer. Le glow est cree une fois, anime ici.
+            if (b.isGalaxy) {
+                if (!travelGalaxyGlow) travelGalaxyGlow = createTravelGalaxyGlow(b.el);
+                updateTravelGalaxyGlow(rel);
+            }
             // Ordre de peinture par profondeur : plus un astre est proche,
             // plus il est peint au-dessus (z eleve). Les astres passes
             // derriere la camera gardent leur ordre naturel.

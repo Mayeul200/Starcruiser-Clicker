@@ -85,7 +85,7 @@ body {
     background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
     /* Bordure inferieure restauree : le logo agrandi (68px) debordait
        visuellement et masquait la ligne de separation. */
-    border-bottom: 2px solid var(--border-light);
+    border-bottom: none;
     display: flex;
     align-items: center;
     justify-content: space-between;
