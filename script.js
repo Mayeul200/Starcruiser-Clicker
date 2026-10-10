@@ -4446,7 +4446,7 @@ function addScore(points, event) {
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const isCrit = Math.random() < getCritChance();
-    const critMult = isCrit ? 3 : 1;
+    const critMult = isCrit ? (getGalacticUpgradeLevel('click8') > 0 ? 5 : 3) : 1;
     if (isCrit) Sounds.critical();
     // clickMultiplier : multiplicateurs temporaires de CLIC (contrats,
     // flares). Il etait calcule et sauvegarde mais jamais applique ici —
@@ -7491,6 +7491,7 @@ const GALACTIC_UPGRADES = [
     { id: 'coll5',  branch: 'collection', tier: 5, name: 'Réseau de contrebande',  desc: '-15% temps d\'attente des boosters.', baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll4'] },
     { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '+1 carte dans tous les boosters.',     baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll5'] },
     { id: 'coll7',  branch: 'collection', tier: 7, name: 'Archives stellaires',      desc: 'Les doublons de cartes comptent double.', baseCost: 1200, costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll6'] },
+    { id: 'coll8',  branch: 'collection', tier: 8, name: 'Sextant stellaire',         desc: 'La chance de rareté supérieure s’applique à tous les boosters.', baseCost: 3000, costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll7'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
     { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x1.5 puissance de clic.',              baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1.5 },
@@ -7500,6 +7501,7 @@ const GALACTIC_UPGRADES = [
     { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x2 puissance de clic.',                baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['click4'] },
     { id: 'click6', branch: 'click', tier: 6, name: 'Appel cosmique',         desc: '5% de chance de d\u00e9clencher une com\u00e8te \u00e0 chaque clic.', baseCost: 400, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click5'] },
     { id: 'click7', branch: 'click', tier: 7, name: 'Horizon des \u00e9v\u00e9nements', desc: 'x2.5 puissance de clic.',            baseCost: 1000, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.5, requires: ['click6'] },
+    { id: 'click8', branch: 'click', tier: 8, name: 'Cœur de supernova',       desc: 'Les coups critiques passent de x3 à x5.', baseCost: 2500, costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['click7'] },
     // === BRANCHE HORS-LIGNE (8) - production pendant l'absence ===
     // 5min gratuit (BASE_OFFLINE_CAP_HOURS), puis 8 paliers de 10min a 6h.
     // Les derniers sont extremement chers : vises pour les chasseurs de records.
@@ -7637,7 +7639,13 @@ function buyBooster(type) {
 }
 
 function drawCard(rarities) {
-    const boost = getRarityBoost();
+    // coll8 (Sextant stellaire) : sans lui, le boost de rarete ne
+    // s'applique qu'au booster Standard ; avec lui, a TOUS les boosters.
+    const isStandard = !rarities.alternative && (rarities.epic || 0) <= 0.15 && !rarities.legendary;
+    let boost = getRarityBoost();
+    if (getGalacticUpgradeLevel('coll8') === 0) {
+        boost = isStandard ? boost : 0;
+    }
     const adjusted = {};
     let total = 0;
     const order = Object.keys(rarities);
