@@ -181,10 +181,10 @@ const CLICK_UPGRADES = [
 ];
 
 // Paliers de 1 a 200 batiments : personne ne depassera 200 exemplaires
-const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200];
+const BUILDING_UPGRADE_THRESHOLDS = [1, 5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500];
 
-function getUpgradeTierColor(tierIndex) {
-    const n = BUILDING_UPGRADE_THRESHOLDS.length;
+function getUpgradeTierColor(tierIndex, tierCount) {
+    const n = tierCount || BUILDING_UPGRADE_THRESHOLDS.length;
     if (n <= 1) return UPGRADE_COLORS[0];
     const pos = Math.round(tierIndex * (UPGRADE_COLORS.length - 1) / (n - 1));
     return UPGRADE_COLORS[Math.min(Math.max(pos, 0), UPGRADE_COLORS.length - 1)];
@@ -3842,6 +3842,7 @@ function createUpgradeElement(color, imgSrc, altText, levelBadgeText) {
     const levelBadge = document.createElement('span');
     levelBadge.className = 'upgrade-level';
     levelBadge.textContent = levelBadgeText;
+    levelBadge.style.background = color;
     el.appendChild(levelBadge);
 
     return el;
@@ -5474,10 +5475,7 @@ function renderTrophies() {
         // paliers 10+ sur la derniere couleur (jaune).
         const family = trophiesByFamily[trophy.type] || [];
         const familyIndex = family.indexOf(trophy);
-        const tierColor = UPGRADE_COLORS[Math.min(
-            Math.round(familyIndex * (UPGRADE_COLORS.length - 1) / Math.max(family.length - 1, 1)),
-            UPGRADE_COLORS.length - 1
-        )];
+        const tierColor = getUpgradeTierColor(familyIndex, family.length);
         if (unlockedTrophies.has(trophy.id)) {
             trophyElement.style.border = '2px solid ' + tierColor;
             trophyElement.style.background = 'var(--secondary-light)';
