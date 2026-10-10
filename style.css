@@ -3201,11 +3201,12 @@ body {
     position: relative;
     cursor: pointer;
 }
+/* Position FIXED posee par le JS (dans le body, coordonnees viewport) :
+   la bulle n'est plus clippee par .left-panel (overflow hidden) qui la
+   rognait aux bords du panneau gauche -- elle s'affiche entiere, centree
+   sous la tuile et clampee a l'ecran. */
 .stat-tile-info {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
+    position: fixed;
     z-index: 1500;
     min-width: min(220px, calc(100vw - 16px));
     max-width: 300px;
@@ -3223,7 +3224,7 @@ body {
     animation: sti-pop 0.18s ease-out;
 }
 @keyframes sti-pop {
-    from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+    from { opacity: 0; transform: translateY(-4px); }
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 .sti-title {

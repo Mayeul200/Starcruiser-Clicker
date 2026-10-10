@@ -3382,22 +3382,24 @@ function toggleStatTileInfo(tile) {
         bubble.appendChild(p);
     });
     bubble.appendChild(closeBtn);
-    tile.appendChild(bubble);
+    // La bulle vit dans le body (position fixed) : elle n'est clippee ni par
+    // .left-panel (overflow hidden) ni par un parent quelconque. Centree
+    // sous la tuile, puis clampee aux bords de l'ecran.
+    document.body.appendChild(bubble);
     statTileInfoBubble = bubble;
-    // Anti-debordement : la bulle centree sur la tuile peut sortir de
-    // l'ecran a gauche (sidebar etroite) ou a droite. On la recentre dans
-    // le viewport en ajustant left apres le premier rendu, ET on le refait
-    // a chaque resize (une bulle ouverte reste visible en retrecissant).
-    const clampStatBubble = () => {
+    const positionStatBubble = () => {
         if (!statTileInfoBubble) return;
-        statTileInfoBubble.style.left = '';
-        statTileInfoBubble.style.right = '';
+        const tileRect = tile.getBoundingClientRect();
+        statTileInfoBubble.style.top = (tileRect.bottom + 6) + 'px';
+        // Centre la bulle sur le milieu de la COLONNE (la tuile), puis la
+        // recale dans le viewport si elle deborde a gauche ou a droite.
         const r = statTileInfoBubble.getBoundingClientRect();
-        if (r.left < 8) statTileInfoBubble.style.left = 'calc(50% + ' + Math.round(8 - r.left) + 'px)';
-        else if (r.right > window.innerWidth - 8) statTileInfoBubble.style.left = 'calc(50% - ' + Math.round(r.right - (window.innerWidth - 8)) + 'px)';
+        let left = tileRect.left + tileRect.width / 2 - r.width / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - r.width - 8));
+        statTileInfoBubble.style.left = left + 'px';
     };
-    requestAnimationFrame(clampStatBubble);
-    window.addEventListener('resize', clampStatBubble);
+    requestAnimationFrame(positionStatBubble);
+    window.addEventListener('resize', positionStatBubble);
 }
 function closeStatTileInfo() {
     if (statTileInfoBubble) {
