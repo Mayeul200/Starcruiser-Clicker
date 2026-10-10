@@ -1,7 +1,7 @@
 // Service worker Starcruiser Clicker : cache-first sur les ressources
 // statiques pour un chargement quasi instantane en relecture, et un
 // fallback hors-ligne. Les mises a jour passent par un bump de version.
-const CACHE_NAME = 'starcruiser-clicker-v0085d7f1';
+const CACHE_NAME = 'starcruiser-clicker-v0086e8a2';
 const ASSETS = [
     './',
     './index.html',
@@ -16,10 +16,22 @@ const ASSETS = [
     './images/backgrounds/valley-night.webp'
 ];
 
+// PAS de skipWaiting ici : le nouveau SW doit rester en "waiting" pour que
+// la page le detecte (reg.waiting) et propose le rechargement. skipWaiting
+// court-circuitait l'etat waiting -> la page ne voyait JAMAIS la mise a
+// jour. C'est la page qui declenche l'activation via SKIP_WAITING (voir
+// le listener message ci-dessous), puis recharge.
 self.addEventListener('install', (event) => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
     );
+});
+
+// Activation demandee par la page (bouton "Recharger") : le SW waiting
+// devient actif immediatement, ses caches sont prets, puis la page se
+// recharge et recoit la nouvelle version.
+self.addEventListener('message', (event) => {
+    if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {

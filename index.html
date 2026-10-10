@@ -578,8 +578,9 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v0085d7f1';
+            var APP_CACHE_VERSION = 'v0086e8a2';
             var updateToastShown = false;
+            var swReg = null;
             function showUpdateToast() {
                 if (updateToastShown) return;
                 updateToastShown = true;
@@ -591,11 +592,33 @@
                 var btn = document.createElement('button');
                 btn.textContent = '\u21BB Recharger';
                 btn.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:11500;background:var(--primary);color:#fff;border:1px solid var(--primary-light);border-radius:10px;padding:10px 22px;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,0.4);pointer-events:all;';
-                btn.onclick = function () { window.location.reload(); };
+                btn.onclick = function () {
+                    // Active le SW en attente (SKIP_WAITING), puis recharge
+                    // la page QUAND il prend le controle (controllerchange) :
+                    // le rechargement est garanti sur la nouvelle version.
+                    var nav = navigator.serviceWorker;
+                    if (nav.controller) {
+                        var reloading = false;
+                        nav.addEventListener('controllerchange', function () {
+                            if (reloading) return;
+                            reloading = true;
+                            window.location.reload();
+                        });
+                    }
+                    if (swReg && swReg.waiting) {
+                        swReg.waiting.postMessage('SKIP_WAITING');
+                        // Filet de securite : si controllerchange ne survient
+                        // pas en 2 s, recharger quand meme.
+                        setTimeout(function () { if (!reloading) { reloading = true; window.location.reload(); } }, 2000);
+                    } else {
+                        window.location.reload();
+                    }
+                };
                 document.body.appendChild(btn);
             }
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+                    swReg = reg;
                     // Verifie un nouveau SW des le chargement, puis toutes les heures.
                     function checkUpdate() { reg.update().catch(() => {}); }
                     checkUpdate();
