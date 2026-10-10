@@ -3803,7 +3803,7 @@ body {
        à top:0/bottom:0 -- le monde suit pour que la fusée repose sur
        la même ligne de sol qu'avant. */
     left: calc(50% + 100px);
-    bottom: 5px;
+    bottom: 15px;
     width: 1024px;
     height: 744px;
     transform-origin: 50% 100%;
@@ -3828,7 +3828,7 @@ body {
        de 150 px. background-size: cover : l'image garde son ratio natif
        SANS étirement -- l'ancien 100% 100% l'écrasait sur ~150 px de
        large d'où la perte de qualité ; le débordement est clippé. */
-    bottom: 0;
+    bottom: -5px;
     left: -150px;
     right: -12px;
     top: 0;
