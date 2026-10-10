@@ -113,7 +113,9 @@ body {
     object-fit: contain;
 }
 .top-logo-text-img {
-    height: 48px;
+    /* Remplit la top bar : ~6 px de marge haut/bas seulement (barre
+       max 80 px) -- le logo domine la barre. */
+    height: 68px;
     width: auto;
     object-fit: contain;
 }
