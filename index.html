@@ -231,7 +231,7 @@
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                 <button class="modal-button" id="music-toggle-btn" onclick="toggleMusic()">🎵 <span id="music-toggle-label" data-i18n="Activer la musique de fond">Activer la musique de fond</span></button>
-                <button class="modal-button" id="clicksound-toggle-btn" onclick="toggleClickSound()">💰 <span data-i18n="Activer le son du clic">Activer le son du clic</span></button>
+                <button class="modal-button" id="clicksound-toggle-btn" onclick="toggleClickSound()">🖱 <span data-i18n="Activer le son du clic">Activer le son du clic</span></button>
             </div>
                 <button class="modal-button" onclick="exportSave()">📤 <span data-i18n="Export">Export</span></button>
                 <textarea id="import-textarea" data-i18n-placeholder="Paste your save here..." placeholder="Paste your save here..."></textarea>
@@ -584,7 +584,7 @@
         //   3. clic -> SKIP_WAITING -> le SW s'active -> controllerchange
         //      -> la page se recharge sur la nouvelle version.
         if ('serviceWorker' in navigator && location.protocol === 'https:') {
-            var APP_CACHE_VERSION = 'v0136a9c2';
+            var APP_CACHE_VERSION = 'v0137b0d3';
             var swReg = null;
             var updateToastShown = false;
             var reloadingViaUpdate = false;

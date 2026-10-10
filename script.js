@@ -4873,6 +4873,38 @@ function musicInit() {
     delay.connect(wetFilter); wetFilter.connect(wet); wet.connect(comp);
     Music.bus.connect(comp);
     comp.connect(Sound.master);
+    // ESPACE : reverb synthetique (impulsion de bruit decroissant 1.8 s)
+    // sur un send dedie -- melodies et drums y passent en partie : tout
+    // sonne comme dans un hangar spatial.
+    try {
+        const irLen = Math.floor(Sound.ctx.sampleRate * 1.8);
+        const ir = Sound.ctx.createBuffer(2, irLen, Sound.ctx.sampleRate);
+        for (let ch = 0; ch < 2; ch++) {
+            const d = ir.getChannelData(ch);
+            for (let i = 0; i < irLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 2.5);
+        }
+        Music.space = Sound.ctx.createConvolver();
+        Music.space.buffer = ir;
+        const spaceOut = Sound.ctx.createGain();
+        spaceOut.gain.value = 0.32;
+        Music.spaceSend = Sound.ctx.createGain();
+        Music.spaceSend.connect(Music.space);
+        Music.space.connect(spaceOut);
+        spaceOut.connect(comp);
+    } catch (e) { Music.spaceSend = null; }
+    // Sous-mix batterie : leur propre bus (drums nets mais assis sous
+    // les melodies), avec une pointe de reverb pour l'espace.
+    try {
+        Music.drumBus = Sound.ctx.createGain();
+        Music.drumBus.gain.value = 0.7;
+        Music.drumBus.connect(Music.bus);
+        if (Music.spaceSend) {
+            const dr = Sound.ctx.createGain();
+            dr.gain.value = 0.12;
+            Music.drumBus.connect(dr);
+            dr.connect(Music.spaceSend);
+        }
+    } catch (e) { Music.drumBus = null; }
 }
 
 // Oscillateur musical enrichi : glide, filtre rEsonant, envolope
@@ -4914,6 +4946,12 @@ function musicTone(freq, freqEnd, dur, type, vol, filter, opts) {
         send.gain.value = opts.echo;
         g.connect(send);
         send.connect(Music.delaySend);
+    }
+    if (opts.space && Music.spaceSend) {
+        const send = Sound.ctx.createGain();
+        send.gain.value = opts.space;
+        g.connect(send);
+        send.connect(Music.spaceSend);
     }
     osc.start(t0);
     osc.stop(t0 + dur + 0.05);
@@ -5071,6 +5109,36 @@ function musicStep(t0) {
     const sec16 = (60 / Music.bpm) / 4;   // duree d'un 16e en secondes
     const fill = Music.isFill();
 
+    // --- Sweep WARP au changement de section : bruit monte filtrE,
+    //     la fusee qui passe en hyperespace entre deux parties.
+    if (Music.bar % Music.sectionLen === 0 && s === 0 && Music.bar > 0) {
+        try {
+            const sweepLen = Math.floor(Sound.ctx.sampleRate * 0.9);
+            const buf2 = Sound.ctx.createBuffer(1, sweepLen, Sound.ctx.sampleRate);
+            const d2 = buf2.getChannelData(0);
+            for (let i = 0; i < sweepLen; i++) d2[i] = (Math.random() * 2 - 1) * Math.pow(i / sweepLen, 1.5);
+            const src2 = Sound.ctx.createBufferSource();
+            src2.buffer = buf2;
+            const f2 = Sound.ctx.createBiquadFilter();
+            f2.type = 'bandpass';
+            f2.Q.value = 1.2;
+            f2.frequency.setValueAtTime(300, t0);
+            f2.frequency.exponentialRampToValueAtTime(5200, t0 + 0.85);
+            const g2 = Sound.ctx.createGain();
+            g2.gain.setValueAtTime(0.0001, t0);
+            g2.gain.linearRampToValueAtTime(0.11, t0 + 0.5);
+            g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.9);
+            src2.connect(f2); f2.connect(g2);
+            const sweepOut = Music.bus;
+            g2.connect(sweepOut);
+            if (Music.spaceSend) {
+                const ss = Sound.ctx.createGain(); ss.gain.value = 0.5;
+                g2.connect(ss); ss.connect(Music.spaceSend);
+            }
+            src2.start(t0); src2.stop(t0 + 0.95);
+        } catch (e) {}
+    }
+
     // --- Batterie ---
     if (sec !== 3) {
         if (s % 4 === 0) musicKick(t0);
@@ -5118,9 +5186,13 @@ function musicStep(t0) {
         const f = ch.notes[arpPat[s]] * 4;
         const detune = (Math.random() - 0.5) * 7;
         musicTone(f, f, 0.09, 'square', 0.05,
-            { type: 'lowpass', freq: 2800, q: 2 }, { at: t0, detune: detune, echo: 0.35 });
-        if (s % 4 === 0) musicTone(f * 2, f * 2, 0.06, 'square', 0.02,
-            { type: 'lowpass', freq: 4600, q: 1 }, { at: t0, detune: -detune, echo: 0.3 });
+            { type: 'lowpass', freq: 2800, q: 2 }, { at: t0, detune: detune, echo: 0.45, space: 0.35 });
+        if (s % 4 === 0) musicTone(f * 2, f * 2, 0.06, 'square', 0.022,
+            { type: 'lowpass', freq: 5600, q: 1 }, { at: t0, detune: -detune, echo: 0.4, space: 0.5 });
+        // Shimmer spatial : une 3e voix, deux octaves plus haut, tres
+        // discrete et reverberEE -- la poussiere d'etoiles de l'arpege.
+        if (s === 0 || s === 8) musicTone(f * 4, f * 4, 0.05, 'square', 0.012,
+            { type: 'highpass', freq: 3000, q: 1 }, { at: t0, echo: 0.5, space: 0.7 });
         if (s === 14 || s === 15) musicTone(ch.notes[2] * 5, ch.notes[2] * 5, 0.08, 'square', 0.03,
             { type: 'lowpass', freq: 3200, q: 2 }, { at: t0, echo: 0.4 });
     }
@@ -5142,16 +5214,21 @@ function musicStep(t0) {
             musicVibrato(base, sec16 * 3.5, 'sawtooth', 0.07,
                 { type: 'lowpass', freq: 2200, q: 2 }, { at: t0, echo: 0.4 });
         } else {
-            musicTone(base, base, 0.14, 'sawtooth', 0.06,
-                { type: 'lowpass', freq: 2600, q: 1.8 }, { at: t0, detune: (Math.random() - 0.5) * 6, echo: 0.4 });
+            // Transmission cosmique : legere montee de pitch a l'attaque
+            // (glide) + reverb large -- le lead 'parle' depuis l'espace.
+            musicTone(base * 0.985, base, 0.14, 'sawtooth', 0.06,
+                { type: 'lowpass', freq: 2600, q: 1.8 }, { at: t0, detune: (Math.random() - 0.5) * 6, echo: 0.45, space: 0.55 });
         }
     }
 
     // --- Nappes ---
     if (sec === 3 && s === 0) {
-        ch.notes.slice(0, 2).forEach((n, i) => {
-            musicVibrato(n, sec16 * 10, 'sawtooth', 0.035,
-                { type: 'lowpass', freq: 900, q: 1 }, { at: t0, vibRate: 0.6 + i * 0.2, attack: 0.9 });
+        // Nappe SPATIALE : accord + quinte ouverte une octave plus haut,
+        // largement reverberEE -- le vide interstellaire qui chante.
+        const padNotes = [ch.notes[0], ch.notes[0] * 1.5, ch.notes[1]];
+        padNotes.forEach((n, i) => {
+            musicVibrato(n, sec16 * 10, 'sawtooth', 0.032,
+                { type: 'lowpass', freq: 1000, q: 1 }, { at: t0, vibRate: 0.4 + i * 0.25, attack: 0.9, space: 0.8, echo: 0.3 });
         });
     }
     if (sec === 2 && s === 0) {
