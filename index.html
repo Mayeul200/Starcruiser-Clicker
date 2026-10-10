@@ -580,7 +580,7 @@
         //   3. clic -> SKIP_WAITING -> le SW s'active -> controllerchange
         //      -> la page se recharge sur la nouvelle version.
         if ('serviceWorker' in navigator && location.protocol === 'https:') {
-            var APP_CACHE_VERSION = 'v0096c9e2';
+            var APP_CACHE_VERSION = 'v0097d0f3';
             var swReg = null;
             var updateToastShown = false;
             var reloadingViaUpdate = false;
@@ -615,12 +615,23 @@
             }
 
             window.addEventListener('load', function () {
-                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                // BUSTE D'URL VERSIONNE : chaque deploiement change
+                // APP_CACHE_VERSION, donc l'URL du script SW change -> le
+                // navigateur est OBLIGE d'aller au reseau la chercher
+                // (une URL jamais vue n'est jamais en cache HTTP). C'est
+                // le correctif imparable contre le cache HTTP de GitHub
+                // Pages (max-age=600) qui servait l'ancien sw.js aux
+                // verifications reg.update() -- le nouveau SW n'etait
+                // JAMAIS detecte et l'ancien (cache-first) continuait de
+                // servir la version precedente au rechargement normal.
+                navigator.serviceWorker.register('./sw.js?v=' + APP_CACHE_VERSION, { updateViaCache: 'none' })
                     .then(function (reg) {
                         swReg = reg;
                         // Un SW attend deja (charge avant ce script) ?
                         if (reg.waiting) showUpdateToast();
-                        // Verifie un nouveau SW au chargement puis toutes les 60 s.
+                        // Verifie un nouveau SW au chargement, 10 s apres,
+                        // puis toutes les 60 s.
+                        setTimeout(function () { reg.update().catch(function () {}); }, 10000);
                         setInterval(function () { reg.update().catch(function () {}); }, 60000);
                         reg.addEventListener('updatefound', function () {
                             var worker = reg.installing;
