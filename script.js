@@ -4963,7 +4963,7 @@ function musicKick(delay) {
     osc.frequency.exponentialRampToValueAtTime(40, t0 + 0.11);
     g.gain.setValueAtTime(0.95, t0);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.24);
-    osc.connect(g); g.connect(Music.bus);
+    osc.connect(g); g.connect(Music.drumBus || Music.bus);
     osc.start(t0); osc.stop(t0 + 0.28);
     // Click d'attaque : bruit tres bref passe-haut.
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.01), Sound.ctx.sampleRate);
@@ -4974,7 +4974,7 @@ function musicKick(delay) {
     const hf = Sound.ctx.createBiquadFilter();
     hf.type = 'highpass'; hf.frequency.value = 4000;
     const hg = Sound.ctx.createGain(); hg.gain.value = 0.25;
-    src.connect(hf); hf.connect(hg); hg.connect(Music.bus);
+    src.connect(hf); hf.connect(hg); hg.connect(Music.drumBus || Music.bus);
     src.start(t0);
 }
 
@@ -4993,7 +4993,7 @@ function musicHat(delay, open) {
     f.type = 'highpass'; f.frequency.value = 8500;
     const g = Sound.ctx.createGain();
     g.gain.value = open ? 0.17 : 0.11;
-    src.connect(f); f.connect(g); g.connect(Music.bus);
+    src.connect(f); f.connect(g); g.connect(Music.drumBus || Music.bus);
     src.start(t0);
 }
 
@@ -5011,7 +5011,7 @@ function musicRide(delay) {
     f.type = 'highpass'; f.frequency.value = 7000;
     const g = Sound.ctx.createGain();
     g.gain.value = 0.06;
-    src.connect(f); f.connect(g); g.connect(Music.bus);
+    src.connect(f); f.connect(g); g.connect(Music.drumBus || Music.bus);
     src.start(t0);
 }
 
@@ -5030,7 +5030,7 @@ function musicSnare(delay) {
     const g = Sound.ctx.createGain();
     g.gain.setValueAtTime(0.3, t0);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.18);
-    src.connect(f); f.connect(g); g.connect(Music.bus);
+    src.connect(f); f.connect(g); g.connect(Music.drumBus || Music.bus);
     src.start(t0);
     // Corps : fondamentale courte.
     musicTone(200, 130, 0.1, 'triangle', 0.22, null, { at: t0 });
@@ -5070,10 +5070,12 @@ function musicStep(t0) {
         // Fill de fin de section : snare roll qui densifie.
         if (fill && s >= 8 && s % 2 === 0) musicSnare(t0);
     } else {
-        // Breakdown : respiration.
-        if (s === 0) musicKick(t0);
-        if (s % 4 === 2) musicHat(t0, false);
+        // Breakdown GATED : plus vivant qu'une nappe figee -- le kick
+        // pulse sur les temps 1 et 3, clap sur le 3e, hats en croches,
+        // l'energie reste pour mieux relancer la suite.
+        if (s % 8 === 0) musicKick(t0);
         if (s === 8) musicSnare(t0);
+        if (s % 2 === 0) musicHat(t0, s === 14);
     }
 
     // --- Basse : motif disco syncopE, 3 couches ---
@@ -5087,10 +5089,19 @@ function musicStep(t0) {
         }
         if (s === 7 || s === 11) musicBass(ch.root, 0.05, t0);
     } else if (s % 8 === 0) {
-        musicBass(ch.root, sec16 * 7, t0);
+        // Pulsation : ronde sur le 1, reprise sur le 3 -- la basse
+        // respire SANS s'endormir.
+        musicBass(ch.root, sec16 * 6, t0);
     }
 
     // --- ArpEge cristallin ---
+    // Arpege : sections montee/pleine a plein volume ; breakdown en
+    // croches discretes (le passage reste melodique, pas vide).
+    if (sec === 3 && s % 2 === 0) {
+        const fB = ch.notes[(s / 2) % 3] * 4;
+        musicTone(fB, fB, 0.1, 'square', 0.028,
+            { type: 'lowpass', freq: 2400, q: 2 }, { at: t0, detune: (Math.random() - 0.5) * 7, echo: 0.3 });
+    }
     if (sec === 1 || sec === 2) {
         const arpPat = [0, 1, 2, 1, 0, 2, 1, 0, 2, 1, 0, 1, 2, 0, 1, 2];
         const f = ch.notes[arpPat[s]] * 4;
@@ -5127,9 +5138,9 @@ function musicStep(t0) {
 
     // --- Nappes ---
     if (sec === 3 && s === 0) {
-        ch.notes.forEach((n, i) => {
-            musicVibrato(n, sec16 * 14, 'sawtooth', 0.045,
-                { type: 'lowpass', freq: 850, q: 1 }, { at: t0, vibRate: 0.6 + i * 0.2, attack: 1.2 });
+        ch.notes.slice(0, 2).forEach((n, i) => {
+            musicVibrato(n, sec16 * 10, 'sawtooth', 0.035,
+                { type: 'lowpass', freq: 900, q: 1 }, { at: t0, vibRate: 0.6 + i * 0.2, attack: 0.9 });
         });
     }
     if (sec === 2 && s === 0) {
