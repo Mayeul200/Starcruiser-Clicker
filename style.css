@@ -3793,7 +3793,9 @@ body {
    transform translateX(-50%) d'applySceneScale s'applique par-dessus. */
 .scene-world {
     position: absolute;
-    left: calc(50% - 150px);
+    /* Pas de tir (~centre du monde) a ~200 px du bord droit :
+       left = largeur - 200px - demi-monde. */
+    left: calc(100% - 712px);
     bottom: 0;
     width: 1024px;
     height: 744px;
@@ -4017,7 +4019,9 @@ body.night-mode .scene-background::after {
    .medal-img (image) : rotation d'inertie du clic */
 .medal {
     position: absolute;
-    right: 10%;
+    /* Inversion demandee : la piece passe a GAUCHE du panneau central. */
+    left: 10%;
+    right: auto;
     top: calc(25% + 50px);
     /* Agrandie : la zone cliquable principale du jeu doit etre
        generreuse. Le right: 10% garde une distance similaire au bord
@@ -5741,7 +5745,7 @@ body.night-mode .scene-background::after {
     /* Fusee et decor : la case d'achat vit desormais en bas (barre pleine
        largeur), plus besoin de degager la colonne droite -- retour au
        centrage naturel. Le translateX(-50%) d'applySceneScale s'applique. */
-    .scene-world { left: calc(50% - 150px) !important; }
+    .scene-world { left: calc(100% - 712px) !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));

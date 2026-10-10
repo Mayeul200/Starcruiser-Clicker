@@ -4939,7 +4939,7 @@ function musicVibrato(freq, dur, type, vol, filter, opts) {
 function musicKick(delay) {
     if (!Sound.ctx || !Music.bus) return;
     // delay peut etre un temps ABSOLU (>= 1000 s) ou un offset relatif.
-    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
+    // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
     osc.type = 'sine';
@@ -4965,7 +4965,7 @@ function musicKick(delay) {
 // Hat : bruit metallique, version ouverte plus longue et brillante.
 function musicHat(delay, open) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
+    // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
     const dur = open ? 0.22 : 0.045;
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * dur), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
@@ -4983,7 +4983,7 @@ function musicHat(delay, open) {
 // Ride : shimmer continu en section pleine (8e notes douces).
 function musicRide(delay) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
+    // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.3), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
@@ -5000,7 +5000,7 @@ function musicRide(delay) {
 // Snare-clap : bruit_filtre + corps tonal, l'identite disco.
 function musicSnare(delay) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
+    // t0 = temps AUDIO ABSOLU fourni par le scheduler (jamais un offset).
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.18), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 1.4);
@@ -5158,6 +5158,24 @@ function startMusic() {
 function stopMusic() {
     if (Music.timer) { clearInterval(Music.timer); Music.timer = null; }
     Music.playing = false;
+    // Coupe IMMEDIATE et totalement le bus musical : les notes deja
+    // planifiees en look-ahead sur l'horloge audio (jusqu'a 200 ms)
+    // sont debris avec le bus -- plus de "drums fantomes" apres la
+    // coupure du son.
+    if (Music.bus && Sound.ctx) {
+        try {
+            Music.bus.gain.cancelScheduledValues(Sound.ctx.currentTime);
+            Music.bus.gain.setValueAtTime(Music.bus.gain.value, Sound.ctx.currentTime);
+            Music.bus.gain.linearRampToValueAtTime(0.0001, Sound.ctx.currentTime + 0.08);
+            setTimeout(() => {
+                if (!Music.playing && Music.bus) {
+                    try { Music.bus.disconnect(); } catch (e) {}
+                    Music.bus = null;
+                    Music.delaySend = null;
+                }
+            }, 150);
+        } catch (e) {}
+    }
 }
 
 const Sounds = {
