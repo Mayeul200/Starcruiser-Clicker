@@ -5722,7 +5722,10 @@ body.night-mode .scene-background::after {
     .top-logo-img { height: calc(34px * var(--mscale, 1)); }
     .top-logo-text-img { height: calc(30px * var(--mscale, 1)); }
     .top-bar-controls { flex-direction: row; gap: calc(4px * var(--mscale, 1)); padding: 0 calc(4px * var(--mscale, 1)); }
-    .control-button { width: calc(40px * var(--mscale, 1)); height: calc(40px * var(--mscale, 1)); font-size: calc(17px * var(--mscale, 1)); }
+    /* Taille d'origine preservEe : 40px fixes (pas de --mscale qui
+       rapetissait a ~34px), cappEe seulement si la barre compacte
+       n'a physiquement pas la place. */
+    .control-button { width: min(40px, calc(48px * var(--mscale, 1))); height: min(40px, calc(48px * var(--mscale, 1))); font-size: min(17px, calc(20px * var(--mscale, 1))); }
 
     /* --- Compteurs --- */
     /* Mobile : la boutique est en bas, le HUD revient centre normalement.
