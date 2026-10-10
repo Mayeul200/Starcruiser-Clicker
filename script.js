@@ -3072,6 +3072,10 @@ function showWelcomeBackModal(gain, seconds, capped) {
         if (capped) cappedEl.textContent = t("Plafonné aux capacités de production hors-ligne. Améliore-les dans l'atelier galactique !");
     }
     modal.classList.add('active');
+    // Plein ecran BLOQUANT : focus sur Continuer, Entree/Espace valide ;
+    // rien d'autre n'est cliquable tant que le joueur n'a pas accepte.
+    const wbBtn = document.getElementById('wb-continue-btn');
+    if (wbBtn) setTimeout(() => wbBtn.focus(), 50);
 }
 
 function closeWelcomeBackModal() {

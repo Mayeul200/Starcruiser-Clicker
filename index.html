@@ -73,16 +73,13 @@
     </div>
 
     <!-- RECONNEXION / GAINS HORS-LIGNE -->
-    <div class="modal new-building-modal" id="welcome-back-modal">
+    <div class="modal welcome-back-modal" id="welcome-back-modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 data-i18n="Bon retour !">Bon retour !</h2>
-                <span class="close-button" onclick="closeWelcomeBackModal()">&times;</span>
-            </div>
-            <div class="modal-body new-building-body">
+            <div class="modal-body new-building-body wb-body">
                 <div class="nb-reveal">
                     <img id="wb-image" src="images/parts.webp" alt="Parts">
                 </div>
+                <h2 class="wb-heading" data-i18n="Bon retour !">Bon retour !</h2>
                 <h3 id="wb-title" data-i18n="Pendant ton absence...">Pendant ton absence...</h3>
                 <div class="nb-stats">
                     <div class="nb-stat">
@@ -95,6 +92,7 @@
                     </div>
                 </div>
                 <p id="wb-capped" class="wb-capped" style="display: none;"></p>
+                <button class="wb-continue-btn" id="wb-continue-btn" onclick="closeWelcomeBackModal()" data-i18n="Continuer">Continuer</button>
             </div>
         </div>
     </div>
@@ -580,7 +578,7 @@
             // actif annonce aussi sa version. Si la page est derriere (ancien
             // cache), un bouton "Recharger" s'affiche : la sauvegarde (localStorage)
             // n'est JAMAIS touchee, seul le cache statique est remplace.
-            var APP_CACHE_VERSION = 'v0077b9d5';
+            var APP_CACHE_VERSION = 'v0078c2e6';
             var updateToastShown = false;
             function showUpdateToast() {
                 if (updateToastShown) return;
