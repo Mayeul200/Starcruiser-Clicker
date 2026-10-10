@@ -3805,7 +3805,7 @@ body {
        à top:0/bottom:0 -- le monde suit pour que la fusée repose sur
        la même ligne de sol qu'avant. */
     left: calc(50% + 100px);
-    bottom: 15px;
+    bottom: 20px;
     width: 1024px;
     height: 744px;
     transform-origin: 50% 100%;
