@@ -3766,9 +3766,11 @@ body {
 /* Monde a taille fixe : repere unique pour le fond ET la fusée.
    Dimensions natives de l'image (1024x744). Le JS applique un
    transform scale() uniforme : jamais de recadrage ni de decalage. */
+/* Decale de 50 px vers la gauche : le monde reste ancre en bas, le
+   transform translateX(-50%) d'applySceneScale s'applique par-dessus. */
 .scene-world {
     position: absolute;
-    left: 50%;
+    left: calc(50% - 50px);
     bottom: 0;
     width: 1024px;
     height: 744px;
@@ -3806,8 +3808,25 @@ body {
 /* Fond de nuit : le joueur explore de nuit (20h-6h heure locale).
    Meme composition que le jour (meme recalage de la dalle), le ciel
    et l'eclairage passent en version nocturne. */
+/* Transition jour <-> nuit : la version nocturne vit dans un calque
+   ::after superpose, dont l'opacite passe de 0 a 1 en 3 s -- un vrai
+   fondu croise au lieu d'un changement brutal d'image. */
 body.night-mode .scene-background {
+    background-image: url('images/backgrounds/valley-day.webp');
+}
+.scene-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
     background-image: url('images/backgrounds/valley-night.webp');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 3s ease-in-out;
+    pointer-events: none;
+}
+body.night-mode .scene-background::after {
+    opacity: 1;
 }
 /* Grille 100x100 (optionnelle) */
 .grid-100x100 {
@@ -5671,7 +5690,7 @@ body.night-mode .scene-background {
     /* Fusee et decor : la case d'achat vit desormais en bas (barre pleine
        largeur), plus besoin de degager la colonne droite -- retour au
        centrage naturel. Le translateX(-50%) d'applySceneScale s'applique. */
-    .scene-world { left: 50% !important; }
+    .scene-world { left: calc(50% - 50px) !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));

@@ -3450,6 +3450,10 @@ function updateSpaceProgress() {
     if (planetText) {
         if (progress.nextPlanet) {
             planetText.textContent = `${t('Prochaine destination')} : ${t(progress.nextPlanet.name)} — ${pctText}%`;
+        } else if (postVirgoStardust > 0) {
+            // Suite infinie (Amas de Virgo depasse) : plus de planete
+            // connue devant -- sigle infini et bonus en cours affiches.
+            planetText.textContent = `${t('Prochaine destination')} : ∞ — +${getInfiniteProductionPercent(postVirgoStardust).toFixed(1)}%`;
         } else {
             planetText.textContent = `${t('Prochaine destination')} : ${t(progress.currentPlanet.name)} — 100%`;
         }
