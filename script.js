@@ -3364,13 +3364,18 @@ function toggleStatTileInfo(tile) {
     statTileInfoBubble = bubble;
     // Anti-debordement : la bulle centree sur la tuile peut sortir de
     // l'ecran a gauche (sidebar etroite) ou a droite. On la recentre dans
-    // le viewport en ajustant left/right apres le premier rendu.
-    requestAnimationFrame(() => {
+    // le viewport en ajustant left apres le premier rendu, ET on le refait
+    // a chaque resize (une bulle ouverte reste visible en retrecissant).
+    const clampStatBubble = () => {
         if (!statTileInfoBubble) return;
+        statTileInfoBubble.style.left = '';
+        statTileInfoBubble.style.right = '';
         const r = statTileInfoBubble.getBoundingClientRect();
         if (r.left < 8) statTileInfoBubble.style.left = 'calc(50% + ' + Math.round(8 - r.left) + 'px)';
         else if (r.right > window.innerWidth - 8) statTileInfoBubble.style.left = 'calc(50% - ' + Math.round(r.right - (window.innerWidth - 8)) + 'px)';
-    });
+    };
+    requestAnimationFrame(clampStatBubble);
+    window.addEventListener('resize', clampStatBubble);
 }
 function closeStatTileInfo() {
     if (statTileInfoBubble) {
@@ -3509,7 +3514,7 @@ function updateMiniSpaceMap(distance) {
     const progress = calculatePlanetProgress(distance);
     
     // Position des planètes dans la mini-map
-    const planetPositions = [15, 50, 85];
+    const planetPositions = [18, 50, 82];
     
     // Déterminer les planètes à afficher
     const planetsToShow = [];

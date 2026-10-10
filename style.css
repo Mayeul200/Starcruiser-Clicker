@@ -3061,15 +3061,18 @@ body {
     object-fit: cover;
     filter: drop-shadow(0 0 3px var(--planet-color));
 }
-/* Elements proportionnels a la hauteur de la mini map : adaptatif partout,
-   memes proportions que la version PC (76px / 127px  soit 60cqh). */
-@supports (width: 1cqh) {
-    .mini-space-map { container-type: size; }
-    /* image + nom + km DOIVENT tenir dans la case : ~58cqh + 2 lignes */
-    .mini-space-map .planet-image { width: max(55cqh, 36px); height: max(55cqh, 36px); }
-    .mini-space-map .planet-name { font-size: max(9.5cqh, 0.58rem); }
-    .mini-space-map .planet-distance { font-size: max(8.5cqh, 0.52rem); }
-    .mini-space-map .spaceship { width: max(17cqh, 14px); height: max(32cqh, 26px); }
+/* Elements proportionnels a la LARGEUR de la mini map (cqw, la hauteur
+   reste un plancher cqh) : quand le panneau lateral se retrecit, planetes,
+   titres et distances reduisent avec lui au lieu d'etre coupees par le bord. */
+@supports (width: 1cqw) {
+    .mini-space-map { container-type: inline-size; }
+    .mini-space-map .planet-image { width: max(min(55cqh, 18cqw), 26px); height: max(min(55cqh, 18cqw), 26px); }
+    .mini-space-map .planet-name { font-size: max(min(9.5cqh, 3.1cqw), 0.44rem); }
+    .mini-space-map .planet-distance { font-size: max(min(8.5cqh, 2.8cqw), 0.40rem); }
+    .mini-space-map .spaceship { width: max(min(17cqh, 5.5cqw), 12px); height: max(min(32cqh, 10.5cqw), 22px); }
+    /* Les planetes des extremites (15% / 85%) restent entierement visibles :
+       leur bloc est recentre vers l'interieur au lieu d'etre coupe. */
+    .mini-space-map .space-planet { max-width: 30cqw; }
 }
 
 /* Planet names in mini map */
