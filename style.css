@@ -3056,6 +3056,16 @@ body {
     filter: drop-shadow(0 0 4px var(--blue-soft-glow));
 }
 
+/* Halo autour de la fusee : double drop-shadow diffise + pulse lumineux
+   doux, la fusee se repere d'un coup d'oeil sur la mini map. */
+@keyframes spaceshipHalo {
+    0%, 100% { filter: drop-shadow(0 0 4px var(--blue-soft-glow)) drop-shadow(0 0 9px rgba(96, 165, 250, 0.5)); }
+    50% { filter: drop-shadow(0 0 5px var(--blue-soft-glow)) drop-shadow(0 0 14px rgba(147, 197, 253, 0.75)); }
+}
+.mini-space-map .spaceship .spaceship-img {
+    animation: spaceshipHalo 2.4s ease-in-out infinite;
+}
+
 /* Planet images in mini map */
 .mini-space-map .planet-image {
     width: 72px;
