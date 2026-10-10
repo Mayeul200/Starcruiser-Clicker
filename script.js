@@ -4711,7 +4711,8 @@ function toggleClickSound() {
     ClickSound.enabled = !ClickSound.enabled;
     localStorage.setItem('starcruiserClickSound', ClickSound.enabled ? '1' : '0');
     const btn = document.getElementById('clicksound-toggle-btn');
-    if (btn) btn.textContent = ClickSound.enabled ? t('Désactiver le son du clic') : t('Activer le son du clic');
+    const btnLbl = btn ? btn.querySelector('span') : null;
+    if (btnLbl) btnLbl.textContent = ClickSound.enabled ? t('Désactiver le son du clic') : t('Activer le son du clic');
 }
 
 const Sound = {
@@ -4836,7 +4837,7 @@ function musicInit() {
     soundResume();
     if (!Sound.ctx) return;
     Music.bus = Sound.ctx.createGain();
-    Music.bus.gain.value = 0.55;
+    Music.bus.gain.value = 0.85;
     // Compresseur cote : pompe disco, la basse et le kick restent
     // ronds sans ecraser les aigus.
     const comp = Sound.ctx.createDynamicsCompressor();
@@ -5170,7 +5171,7 @@ function startMusic() {
     // remet au niveau nominal AVANT de planifier la moindre note.
     try {
         Music.bus.gain.cancelScheduledValues(Sound.ctx.currentTime);
-        Music.bus.gain.setValueAtTime(0.55, Sound.ctx.currentTime);
+        Music.bus.gain.setValueAtTime(0.85, Sound.ctx.currentTime);
     } catch (e) {}
     Music.playing = true;
     Music.step = 0;
@@ -5548,7 +5549,8 @@ function toggleMusic() {
     Music.enabled = !Music.enabled;
     localStorage.setItem('starcruiserMusic', Music.enabled ? '1' : '0');
     const btn = document.getElementById('music-toggle-btn');
-    if (btn) btn.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond');
+    const btnLbl = btn ? btn.querySelector('#music-toggle-label') : null;
+    if (btnLbl) btnLbl.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond');
     if (Music.enabled && Sound.enabled && typeof startMusic === 'function') startMusic();
     else if (typeof stopMusic === 'function') stopMusic();
 }
@@ -8387,9 +8389,9 @@ function init() {
     updateDayNightBackground();
     // Bouton musique des parametres : refleter l'etat persiste.
     const musicBtn0 = document.getElementById('music-toggle-btn');
-    if (musicBtn0) musicBtn0.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond');
+    if (musicBtn0) { const l = musicBtn0.querySelector('#music-toggle-label'); if (l) l.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond'); }
     const clickSndBtn0 = document.getElementById('clicksound-toggle-btn');
-    if (clickSndBtn0) clickSndBtn0.textContent = ClickSound.enabled ? t('Désactiver le son du clic') : t('Activer le son du clic');
+    if (clickSndBtn0) { const l = clickSndBtn0.querySelector('span'); if (l) l.textContent = ClickSound.enabled ? t('Désactiver le son du clic') : t('Activer le son du clic'); }
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) {

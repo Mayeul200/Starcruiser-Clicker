@@ -3139,8 +3139,13 @@ body {
 }
 
 /* Mini Space Map */
+/* Minimap : hauteur FLEXIBLE -- elle partage la colonne avec les
+   stats et les mini-jeux, reduit quand l'ecran perd de la hauteur ou
+   de la largeur, exactement comme les blocs du centre. */
 .mini-space-map {
-    height: clamp(120px, 22vh, 158px);
+    height: clamp(90px, 16vh, 158px);
+    flex: 0 1 auto;
+    min-height: 72px;
     background: radial-gradient(ellipse at center, #0a0a2a 0%, #000000 100%);
     border-radius: var(--radius);
     border: 1px solid var(--border);
@@ -4020,14 +4025,14 @@ body.night-mode .scene-background::after {
 .medal {
     position: absolute;
     /* Inversion demandee : la piece passe a GAUCHE du panneau central. */
-    left: calc(10% - 50px);
+    left: calc(10% - 10px);
     right: auto;
     top: calc(25% + 50px);
     /* Agrandie : la zone cliquable principale du jeu doit etre
        generreuse. Le right: 10% garde une distance similaire au bord
        droit, proportionnellement conservee. */
-    width: 266px;
-    height: 266px;
+    width: 293px;
+    height: 293px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -4051,12 +4056,12 @@ body.night-mode .scene-background::after {
 @supports (width: 1cqh) {
     .center-content { container-type: size; }
     .medal {
-        width: 28.5cqh;
-        height: 28.5cqh;
-        min-width: 150px;
-        min-height: 150px;
-        max-width: 323px;
-        max-height: 323px;
+        width: 31.35cqh;
+        height: 31.35cqh;
+        min-width: 165px;
+        min-height: 165px;
+        max-width: 355px;
+        max-height: 355px;
     }
 }
 /* Wrapper : agrandissement de la pièce + squash & stretch au clic.
@@ -5145,7 +5150,7 @@ body.night-mode .scene-background::after {
    plancher 0.7rem pour rester visible sur les plus petits ecrans. */
 .cc-card-new {
     position: absolute;
-    top: 4cqh;
+    top: -2cqh;
     left: 50%;
     transform: translateX(-50%);
     font-size: max(5cqh, 0.7rem);
