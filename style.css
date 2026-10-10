@@ -3795,7 +3795,7 @@ body {
     position: absolute;
     /* Pas de tir (~centre du monde) a ~200 px du bord droit :
        left = largeur - 200px - demi-monde. */
-    left: calc(50% + 500px);
+    left: calc(50% + 300px);
     bottom: 0;
     width: 1024px;
     height: 744px;
@@ -5745,7 +5745,7 @@ body.night-mode .scene-background::after {
     /* Fusee et decor : la case d'achat vit desormais en bas (barre pleine
        largeur), plus besoin de degager la colonne droite -- retour au
        centrage naturel. Le translateX(-50%) d'applySceneScale s'applique. */
-    .scene-world { left: calc(50% + 500px) !important; }
+    .scene-world { left: calc(50% + 300px) !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));
