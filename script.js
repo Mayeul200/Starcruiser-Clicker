@@ -4783,6 +4783,7 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
 //   - Bus : compresseur + delay-feedback pour l'echo electro
 // ============================================
 const Music = {
+    enabled: (localStorage.getItem('starcruiserMusic') !== '0'),
     playing: false,
     timer: null,
     step: 0,          // 16e dans la mesure (0-15)
@@ -5132,7 +5133,7 @@ function musicStep(t0) {
 }
 
 function startMusic() {
-    if (Music.playing) return;
+    if (Music.playing || !Music.enabled) return;
     musicInit();
     if (!Music.bus || !Sound.ctx) return;
     Music.playing = true;
@@ -5474,6 +5475,15 @@ function travelSoundStop() {
     if (SoundLoops.travelEngine) { SoundLoops.travelEngine.stop(0.6); SoundLoops.travelEngine = null; }
     if (SoundLoops.travelWind) { SoundLoops.travelWind.stop(0.6); SoundLoops.travelWind = null; }
 }
+function toggleMusic() {
+    Music.enabled = !Music.enabled;
+    localStorage.setItem('starcruiserMusic', Music.enabled ? '1' : '0');
+    const btn = document.getElementById('music-toggle-btn');
+    if (btn) btn.textContent = Music.enabled ? '♫ ●' : '♫ ○';
+    if (Music.enabled && Sound.enabled && typeof startMusic === 'function') startMusic();
+    else if (typeof stopMusic === 'function') stopMusic();
+}
+
 function toggleSound() {
     Sound.enabled = !Sound.enabled;
     localStorage.setItem('starcruiserSound', Sound.enabled ? '1' : '0');
@@ -5518,7 +5528,7 @@ function getPartsRainRate() {
     // 0.08 = 0.1 reduit de 20 % : moins de pieces visibles a debit egal.
     // Plafond dur a 100 pieces/s : au-dela, la densite visuelle n'ajoute
     // rien et la lecture du panneau central en souffre.
-    return Math.min(0.08 * Math.sqrt(partsPerSecond), 60);
+    return Math.min(0.16 * Math.sqrt(partsPerSecond), 120);
 }
 function resizeRainCanvas() {
     const canvas = partsRain.canvas;
@@ -5643,7 +5653,7 @@ function tickPartsRain(now) {
     // ne peut vider un stock de pieces d'un seul coup au retour.
     partsRain.spawnDebt = Math.min(partsRain.spawnDebt + (rate * (now - partsRain.lastTick)) / 1000, rate * 0.5);
     partsRain.lastTick = now;
-    while (partsRain.spawnDebt >= 1 && partsRain.parts.length < 240) {
+    while (partsRain.spawnDebt >= 1 && partsRain.parts.length < 480) {
         partsRain.spawnDebt -= 1;
         spawnRainPart();
     }
@@ -8306,6 +8316,9 @@ function init() {
     // polices ne sont pas appliques.
     applySceneScale();
     updateDayNightBackground();
+    // Bouton musique des parametres : refleter l'etat persiste.
+    const musicBtn0 = document.getElementById('music-toggle-btn');
+    if (musicBtn0) musicBtn0.textContent = Music.enabled ? '♫ ●' : '♫ ○';
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) {
