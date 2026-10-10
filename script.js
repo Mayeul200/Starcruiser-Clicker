@@ -380,6 +380,10 @@ let unlockedTrophies = new Set();
 // ROCKET LAUNCH SYSTEM (Prestige)
 // ============================================
 let maxDistance = 0;
+// Records de la partie : vitesse max atteinte et Parts/s max -- suivis
+// en continu, sauvegardes, affiches dans les statistiques.
+let maxTravelSpeed = 0;
+let maxPartsPerSecond = 0;
 let prestigeMultiplier = 1;
 let rocketsLaunched = 0;
 // Multiplicateur de production FIGE au dernier reset : sert de base aux
@@ -767,6 +771,8 @@ function saveGame() {
         clickedBonusesCount: clickedBonusesCount,
         unlockedTrophies: Array.from(unlockedTrophies),
         maxDistance: maxDistance,
+        maxTravelSpeed: maxTravelSpeed,
+        maxPartsPerSecond: maxPartsPerSecond,
         prestigeMultiplier: prestigeMultiplier,
         starDust: starDust,
         totalStardustEarned: totalStardustEarned,
@@ -855,6 +861,8 @@ function loadGame() {
         
         // Charger le système de prestige
         maxDistance = parsed.maxDistance || 0;
+        maxTravelSpeed = parsed.maxTravelSpeed || 0;
+        maxPartsPerSecond = parsed.maxPartsPerSecond || 0;
         prestigeMultiplier = parsed.prestigeMultiplier || 1;
         starDust = parsed.starDust || 0;
         totalStardustEarned = parsed.totalStardustEarned || 0;
@@ -3533,7 +3541,9 @@ function updateSpaceProgress() {
         rollCounterText(sidebarDistanceMax, formatNumber(traveledDistance) + ' ' + t('km'));
     }
     if (sidebarSpeed) {
-        rollCounterText(sidebarSpeed, formatTravelSpeed(calculateTravelSpeedKmS()));
+        const curSpeed = calculateTravelSpeedKmS();
+        rollCounterText(sidebarSpeed, formatTravelSpeed(curSpeed));
+        if (curSpeed > maxTravelSpeed) maxTravelSpeed = curSpeed;
     }
     if (sidebarBonus) {
         const totalBonus = 1 + getTotalPlanetBonus();
@@ -5784,6 +5794,7 @@ function getBuildingGainsSnapshot() {
             totalGain += buildingGain;
         });
         partsPerSecond = totalGain;
+        if (partsPerSecond > maxPartsPerSecond) maxPartsPerSecond = partsPerSecond;
         buildingGainsCache = totalGain;
     }
     return buildingGainsCache;
@@ -6148,6 +6159,8 @@ function renderStats() {
         { label: t("Parts par clic"), value: formatNumber(getClickPower()) },
         { label: t("B\u00e2timents poss\u00e9d\u00e9s au total"), value: formatNumber(getTotalBuildingsOwned()) },
         { label: t("Vitesse de voyage"), value: formatTravelSpeed(calculateTravelSpeedKmS()) },
+        { label: t("Vitesse record"), value: formatTravelSpeed(maxTravelSpeed) },
+        { label: t("Record de parts par seconde"), value: formatNumber(maxPartsPerSecond) },
         { label: t("Partie commenc\u00e9e"), value: getGameDuration() },
         { label: t("Com\u00e8tes D\u00e9truites"), value: clickedBonusesCount }
     ];
