@@ -4934,9 +4934,12 @@ body.night-mode .scene-background {
     animation: cc-reveal 0.5s ease forwards;
     transition: transform 0.2s;
 }
-/* Paquet sequential : une seule carte a la fois, bien plus grande */
+/* Paquet sequential : une seule carte a la fois, bien plus grande.
+   Plafond releve a 520px et proportionnel a la hauteur (68cqh) : sur
+   grand ecran la carte exploite enfin la place, sur petit ecran elle
+   se ressert automatiquement. */
 .cc-reveal-card.pack {
-    width: min(78cqw, 420px, 72cqh);
+    width: min(78cqw, 520px, 68cqh);
 }
 /* Recap final : toutes les cartes retournees cote a cote, bien plus
    grandes -- avec 1 carte par booster le recap est la derniere chose
@@ -4947,7 +4950,7 @@ body.night-mode .scene-background {
 .cc-reveal-card.summary {
     width: min(
         calc((78cqw - (var(--card-count, 1) - 1) * 14px) / var(--card-count, 1)),
-        420px,
+        520px,
         55cqh
     );
     cursor: default;
@@ -5023,16 +5026,19 @@ body.night-mode .scene-background {
     font-weight: 600;
     text-align: center;
 }
+/* Badge NOUVELLE ! proportionnel a la carte : 5cqh suit la taille de
+   la carte (petit ecran -> petit badge, grand ecran -> badge lisible),
+   plancher 0.7rem pour rester visible sur les plus petits ecrans. */
 .cc-card-new {
     position: absolute;
-    top: 8px;
+    top: 4cqh;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.65rem;
+    font-size: max(5cqh, 0.7rem);
     color: #fbbf24;
     font-weight: 700;
     background: rgba(0, 0, 0, 0.7);
-    padding: 3px 8px;
+    padding: 0.4em 0.9em;
     border-radius: 4px;
     z-index: 2;
     white-space: nowrap;
@@ -5938,9 +5944,11 @@ body.night-mode .scene-background {
     .rocket-parts-shop { bottom: 25px; }
 }
 
-/* Écrans larges (>=1920px) : carte d'ouverture de booster 10% plus petite */
+/* Écrans larges (>=1920px) : la carte d'ouverture de booster exploite
+   enfin la place -- l'ancienne regle la RAPETISSAIT a 378px sur les
+   grands ecrans, c'etait l'inverse du but. Plafond releve a 520px. */
 @media (min-width: 1920px) {
-    .cc-reveal-card.pack { width: min(70.2cqw, 378px, 64.8cqh); }
+    .cc-reveal-card.pack { width: min(70.2cqw, 520px, 68cqh); }
 }
 
 /* Desktop : image du reveal doublee (mobile : 210px).
