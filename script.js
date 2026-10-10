@@ -5136,6 +5136,12 @@ function startMusic() {
     if (Music.playing || !Music.enabled) return;
     musicInit();
     if (!Music.bus || !Sound.ctx) return;
+    // Re-amorcage : si le bus a ete fondu a zero par stopMusic, on le
+    // remet au niveau nominal AVANT de planifier la moindre note.
+    try {
+        Music.bus.gain.cancelScheduledValues(Sound.ctx.currentTime);
+        Music.bus.gain.setValueAtTime(0.85, Sound.ctx.currentTime);
+    } catch (e) {}
     Music.playing = true;
     Music.step = 0;
     Music.bar = 0;
@@ -5158,26 +5164,19 @@ function startMusic() {
 function stopMusic() {
     if (Music.timer) { clearInterval(Music.timer); Music.timer = null; }
     Music.playing = false;
-    // Coupe IMMEDIATE et totalement le bus musical : les notes deja
-    // planifiees en look-ahead sur l'horloge audio (jusqu'a 200 ms)
-    // sont debris avec le bus -- plus de "drums fantomes" apres la
-    // coupure du son.
+    // Fondu a zero IMMEDIAT du bus (80 ms) : les notes deja planifiees
+    // en look-ahead sont debris avec lui. Le bus n'est PAS detruit --
+    // startMusic le re-amorcera a 0.85 (l'ancienne destruction async
+    // laissait un bus deconnecte si startMusic etait rappele dans les
+    // 150 ms -> silence total).
     if (Music.bus && Sound.ctx) {
         try {
             Music.bus.gain.cancelScheduledValues(Sound.ctx.currentTime);
             Music.bus.gain.setValueAtTime(Music.bus.gain.value, Sound.ctx.currentTime);
             Music.bus.gain.linearRampToValueAtTime(0.0001, Sound.ctx.currentTime + 0.08);
-            setTimeout(() => {
-                if (!Music.playing && Music.bus) {
-                    try { Music.bus.disconnect(); } catch (e) {}
-                    Music.bus = null;
-                    Music.delaySend = null;
-                }
-            }, 150);
         } catch (e) {}
     }
 }
-
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
@@ -5497,7 +5496,7 @@ function toggleMusic() {
     Music.enabled = !Music.enabled;
     localStorage.setItem('starcruiserMusic', Music.enabled ? '1' : '0');
     const btn = document.getElementById('music-toggle-btn');
-    if (btn) btn.textContent = Music.enabled ? '♫ ●' : '♫ ○';
+    if (btn) btn.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond');
     if (Music.enabled && Sound.enabled && typeof startMusic === 'function') startMusic();
     else if (typeof stopMusic === 'function') stopMusic();
 }
@@ -8336,7 +8335,7 @@ function init() {
     updateDayNightBackground();
     // Bouton musique des parametres : refleter l'etat persiste.
     const musicBtn0 = document.getElementById('music-toggle-btn');
-    if (musicBtn0) musicBtn0.textContent = Music.enabled ? '♫ ●' : '♫ ○';
+    if (musicBtn0) musicBtn0.textContent = Music.enabled ? t('Désactiver la musique de fond') : t('Activer la musique de fond');
     if (shouldAskLanguage()) {
         showLanguagePicker();
     } else if (!tutorialActive && !isTutorialSeen() && showIntroScreen()) {
