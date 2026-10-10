@@ -1016,10 +1016,16 @@ body {
     gap: 8px;
     margin-top: 8px;
     /* SEULE la liste defile : le header au-dessus est hors de ce
-       conteneur et reste fige, aucune case visible au-dessus du titre.
-       container-type RETIRE : combine a overflow-y auto il faussait le
-       calcul des cqw des cases (rendu des images trop grandes). Les
-       .building-item ont leur propre container-type inline-size. */
+       conteneur et reste fige, aucune case visible au-dessus du titre. */
+    /* container-type OBLIGATOIRE : les proprietes cqw de la case ELLE-MEME
+       (padding, min/max-height et surtout grid-template-columns 28.6cqw
+       33.6cqw 1fr) se resolvent contre le plus proche ancetre conteneur
+       de requete -- c'est CETTE liste. Sans lui, les cqw retombent sur
+       le viewport : 28.6cqw = 28.6vw soit des cases geantes ou l'on ne
+       voit que l'image (colonnes texte et bouton chassees hors ecran).
+       Les .building-item ont AUSSI leur propre container-type, mais il
+       ne couvre que leurs descendants, pas leurs propres proprietes. */
+    container-type: inline-size;
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
