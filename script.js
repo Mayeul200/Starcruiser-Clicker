@@ -194,7 +194,9 @@ const UPGRADE_COLORS = [
     '#0066ff', '#4444ff', '#6622ff', '#8800ff', '#aa00dd',
     '#cc00bb', '#ee0099', '#ff0077', '#ff0055', '#ff2233',
     '#ff4411', '#ff6600', '#ff8800', '#ffaa00', '#ffcc00',
-    '#ffee00', '#ffff00'
+    '#ffee00', '#ffff00', '#ccff00', '#88ff44', '#44ff88',
+    '#22ffcc', '#00ffee', '#00ffff', '#66ffee', '#aefcff',
+    '#ffffff'
 ];
 
 const RANDOM_BONUSES = [
