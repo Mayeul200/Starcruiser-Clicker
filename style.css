@@ -4482,7 +4482,7 @@ body.night-mode .scene-background {
     background: #475569;
     cursor: not-allowed;
 }.launch-button-text {
-    font-size: 0.9rem;
+    font-size: 1.35rem;
     letter-spacing: 1px;
 }
 /* Compteurs */
