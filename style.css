@@ -2837,7 +2837,8 @@ body {
     cursor: pointer;
     text-align: center;
     transition: all 0.2s;
-    white-space: nowrap;
+    flex-wrap: wrap;
+    white-space: normal;
     overflow: hidden;
 }
 .galactic-shop-btn:hover {
@@ -3338,7 +3339,7 @@ body {
     flex-direction: row;
     align-items: center;
     gap: 12px;
-    padding: 10px 12px;
+    padding: 12px;
     background: var(--bg-panel);
     border: 1px solid var(--border-light);
     border-radius: var(--radius);
@@ -3346,7 +3347,7 @@ body {
     transition: all 0.3s ease;
     flex: 1;
     /* Hauteur minimale preservee quand l'ecran perd de la hauteur (PC/tablette) */
-    min-height: 84px;
+    min-height: 96px;
 }
 .mini-game-card .game-icon {
     font-size: 2.4rem;
@@ -4585,13 +4586,15 @@ body.night-mode .scene-background {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     margin-left: auto;
     padding: 2px 8px;
     background: rgba(59, 130, 246, 0.12);
     border: 1px solid rgba(59, 130, 246, 0.35);
     border-radius: 999px;
     font-weight: 700;
-    white-space: nowrap;
+    white-space: normal;
     /* Adaptable : le badge peut retrer quand la case rapetisse, sa police
        suit la largeur disponible (clamp) au lieu de deborder. */
     flex-shrink: 1;
@@ -4612,6 +4615,12 @@ body.night-mode .scene-background {
     width: 1px;
     height: 12px;
     background: rgba(59, 130, 246, 0.4);
+}
+
+/* Badge collection sur 2 lignes : quand la largeur manque, le multiplicateur
+   repasse sous le compteur de cartes au lieu de disparaitre hors du badge. */
+.game-cost .cc-collection-badge .ccb-divider {
+    display: none;
 }
 .ccb-mult {
     font-size: 1em;
