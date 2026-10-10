@@ -4203,33 +4203,57 @@ body.night-mode .scene-background {
     padding: 4px 6px;
     z-index: 90;
 }
-/* Carte 3 colonnes sur fond bleu opaque : [image] [titre > nom >
-   bonus > barre de cout/avancement]. La carte entiere est cliquable. */
+/* Case piece de fusee : DEUX parties, comme les cases batiments --
+   DA du jeu : fond var(--secondary), bordure var(--border), hover
+   var(--secondary-light) + glow primaire. A gauche l'image, a droite
+   les informations. Carte entiere cliquable. */
 .rocket-parts-shop .rocket-part-frame {
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
     gap: 1rem;
-    padding: 0.7rem 1rem;
+    padding: 0.6rem 0.9rem;
     cursor: pointer;
-    background: rgba(30, 64, 175, 0.92);
-    border: 1px solid rgba(96, 165, 250, 0.55);
-    box-shadow: 0 4px 16px rgba(30, 64, 175, 0.45);
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
 }
-.rocket-parts-shop .rocket-part-frame:hover {
-    border-color: #93c5fd;
-    box-shadow: 0 0 18px rgba(96, 165, 250, 0.55);
+.rocket-parts-shop .rocket-part-frame:hover:not(.locked) {
+    background: var(--secondary-light);
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-lg), 0 0 12px var(--blue-soft-glow);
 }
-.rocket-parts-shop .rocket-part-frame.locked { cursor: not-allowed; opacity: 0.85; }
-.rocket-part-col { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-.rocket-part-col-img { flex: 0 0 auto; align-items: center; }
-.rocket-part-col-img .rocket-part-icon,
-.rocket-part-col-img .rocket-part-icon-placeholder { width: 3.4rem; height: 3.4rem; }
-.rocket-part-col-main { flex: 1 1 auto; align-items: flex-start; gap: 0.2rem; }
-.rocket-parts-shop .rocket-part-name { font-size: 1.1rem; font-weight: 700; text-align: left; }
-.rocket-parts-shop .rocket-part-mult { font-size: 0.82rem; text-align: left; }
-.rocket-parts-shop .rocket-part-progress { width: 100%; height: 28px; margin-top: 0.3rem; }
-.rocket-parts-shop .rocket-part-progress-label { font-size: 0.92rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.rocket-parts-shop .rocket-part-frame.locked { cursor: not-allowed; opacity: 0.75; }
+/* Partie gauche : l'image de la piece */
+.rocket-parts-shop .rocket-part-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 4rem;
+    height: 4rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.3rem;
+}
+.rocket-parts-shop .rocket-part-img .rocket-part-icon,
+.rocket-parts-shop .rocket-part-img .rocket-part-icon-placeholder { width: 100%; height: 100%; opacity: 0.95; }
+/* Partie droite : les informations */
+.rocket-parts-shop .rocket-part-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0.15rem;
+}
+.rocket-parts-shop .rocket-part-name { font-size: 1.05rem; font-weight: 600; color: var(--text); }
+.rocket-parts-shop .rocket-part-mult { font-size: 0.85rem; font-weight: 600; color: #86efac; }
+.rocket-parts-shop .rocket-part-progress { width: 100%; height: 26px; margin-top: 0.25rem; }
+.rocket-parts-shop .rocket-part-progress-label { font-size: 0.88rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 .rocket-parts-shop .rocket-part-frame.complete { flex-direction: row; }    }
     .rocket-part-frame {
         gap: 0.7rem;

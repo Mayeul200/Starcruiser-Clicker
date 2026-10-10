@@ -8416,12 +8416,11 @@ function renderRocketPartsShop() {
         const imageHtml = imageUrl
             ? '<img src="' + imageUrl + '" class="rocket-part-icon" alt="' + nextPart.name + '">'
             : '<span class="rocket-part-icon-placeholder"></span>';
-        // 3 colonnes : [image] [titre > nom > bonus > barre de cout]
+        // Deux parties : image a gauche, informations a droite.
         container.innerHTML =
             '<div class="rocket-part-frame' + (!isAffordable ? ' locked' : '') + '" onclick="buyRocketPart(' + String.fromCharCode(39) + nextPart.id + String.fromCharCode(39) + ')">' +
-                '<div class="rocket-part-col rocket-part-col-img">' + imageHtml + '</div>' +
-                '<div class="rocket-part-col rocket-part-col-main">' +
-                    '<span class="rocket-part-frame-title">' + t('Prochaine pi\u00e8ce') + '</span>' +
+                '<div class="rocket-part-img">' + imageHtml + '</div>' +
+                '<div class="rocket-part-info">' +
                     '<span class="rocket-part-name">' + t(nextPart.name) + '</span>' +
                     '<span class="rocket-part-mult">\u00d7' + (1 + 0.04 * (purchasedCount + 1)).toFixed(2) + ' ' + t('production') + '</span>' +
                     '<div class="rocket-part-progress">' +
@@ -8435,8 +8434,6 @@ function renderRocketPartsShop() {
         const labelEl = container.querySelector('.rocket-part-progress-label');
         if (fillEl) fillEl.style.width = Math.min(100, (score / cost) * 100) + '%';
         if (labelEl) labelEl.textContent = formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
-        const titleEl = container.querySelector('.rocket-part-frame-title');
-        if (titleEl) titleEl.textContent = t('Prochaine pièce');
         const nameEl = container.querySelector('.rocket-part-name');
         if (nameEl) nameEl.textContent = t(nextPart.name);
         const multEl = container.querySelector('.rocket-part-mult');
