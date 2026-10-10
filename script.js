@@ -506,7 +506,9 @@ function getPlanetProductionBonus() {
 // 400 = +20%, 1 600 = +40%). L'ancienne formule lineaire (+1% par PE)
 // explosait la production des centaines de PE converties d'un seul coup.
 function getInfiniteProductionPercent(total) {
-    return Math.sqrt(total) * 1.0;
+    // Lineaire : 1% de production permanente par PE (retour a la regle
+    // d'origine, plus genereuse que l'ancienne racine carree).
+    return total * 1.0;
 }
 function getInfiniteStardustBonus() {
     return 1 + getInfiniteProductionPercent(postVirgoStardust) / 100;
@@ -7558,6 +7560,41 @@ function showCardReveal() {
 
 function updateBoosterPrices() {
     updateBoosterTimers();
+    updateBoosterOdds();
+}
+
+// Affiche les VRAIES probabilites de chaque booster, ajustees par les
+// upgrades galactiques (Chance de collection + Sextant stellaire) --
+// avant, les pourcentages affiches etaient statiques et faux des qu'un
+// upgrade de rarete etait achete.
+function updateBoosterOdds() {
+    for (const key in BOOSTERS) {
+        const btn = document.querySelector('.cc-booster-btn[data-booster="' + key + '"]');
+        if (!btn) continue;
+        const infoEl = btn.querySelector('.cc-booster-info');
+        if (!infoEl) continue;
+        const rarities = BOOSTERS[key].rarities;
+        const isStandard = key === 'standard';
+        let boost = getRarityBoost();
+        if (getGalacticUpgradeLevel('coll8') === 0) {
+            boost = isStandard ? boost : 0;
+        }
+        const order = Object.keys(rarities);
+        const adjusted = {};
+        let total = 0;
+        for (const r of order) { adjusted[r] = rarities[r]; total += rarities[r]; }
+        if (boost > 0) {
+            const boosted = adjusted['common'] * boost;
+            adjusted['common'] -= boosted;
+            for (let i = 1; i < order.length; i++) {
+                adjusted[order[i]] += boosted / (order.length - 1);
+            }
+        }
+        const names = { common: t('commune'), rare: t('rare'), epic: t('épique'), legendary: t('légendaire'), alternative: t('alternative') };
+        const parts = order.map(r => Math.round((adjusted[r] / total) * 100) + '% ' + names[r]);
+        const nCards = BOOSTERS[key].cardCount + getGalacticUpgradeLevel('coll6');
+        infoEl.textContent = nCards + (nCards > 1 ? ' cartes — ' : ' carte — ') + parts.join(' / ');
+    }
 }
 function updateBoosterTimers() {
     for (const key in BOOSTERS) {
