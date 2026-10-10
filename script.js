@@ -99,7 +99,7 @@ const SAVE_INTERVAL_MS = 30000;
 const DISPLAY_UPDATE_INTERVAL_MS = 250;
 const SLOW_UPDATE_INTERVAL_MS = 1000;
 const TOAST_DURATION_MS = 3000;
-const MAX_BUILDING_DISPLAY = 100;
+
 const BUILDING_UPDATE_INTERVAL_MS = 500;
 const SPACE_UPDATE_INTERVAL_MS = 500;
 
@@ -1398,19 +1398,15 @@ function updateBuildingButton(buildingId, pulseTarget) {
     if (!building) return;
 
     const buildingsToShow = buyMultiplier === 'max' ? calculateMaxAffordable(building) : buyMultiplier;
-    const buildingsToShowLimited = Math.min(buildingsToShow, MAX_BUILDING_DISPLAY);
-    
     let totalCost = 0;
-    for (let i = 0; i < buildingsToShowLimited; i++) {
+    for (let i = 0; i < buildingsToShow; i++) {
         totalCost += calculateBuildingCost({...building, count: building.count + i});
     }
     
     const totalGain = calculateBuildingGain(building);
     const isAffordable = score >= totalCost;
     
-    const displayCost = buyMultiplier === 'max' && calculateMaxAffordable(building) > MAX_BUILDING_DISPLAY
-        ? formatNumber(totalCost) + "+"
-        : formatNumber(totalCost);
+    const displayCost = formatNumber(totalCost);
 
     const notPurchased = building.count === 0;
     if (element.classList.contains('not-purchased') !== notPurchased) {
