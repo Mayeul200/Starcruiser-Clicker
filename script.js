@@ -224,6 +224,7 @@ const TROPHY_COLORS = {
 };
 const TROPHIES = [
     // Parts par seconde (icônes: bâtiments du jeu, du plus humble au plus puissant)
+    // Famille rescalee sur 15 paliers, dernier objectif 100 Qi/s (1e20).
     { id: "pps-1", name: "First Parts", description: "Atteindre 1 Parts par seconde", icon: "images/parts.webp", threshold: 1, type: "pps" },
     { id: "pps-10", name: "Liftoff", description: "Atteindre 10 Parts par seconde", icon: "images/parts.webp", threshold: 10, type: "pps" },
     { id: "pps-100", name: "Orbit Achieved", description: "Atteindre 100 Parts par seconde", icon: "images/parts.webp", threshold: 100, type: "pps" },
@@ -231,29 +232,34 @@ const TROPHIES = [
     { id: "pps-10000", name: "Galactic Speed", description: "Atteindre 10 000 Parts par seconde", icon: "images/parts.webp", threshold: 10000, type: "pps" },
     { id: "pps-100000", name: "Warp Speed", description: "Atteindre 100 000 Parts par seconde", icon: "images/parts.webp", threshold: 100000, type: "pps" },
     { id: "pps-1000000", name: "Vitesse Nébulaire", description: "Atteindre 1 M Parts par seconde", icon: "images/parts.webp", threshold: 1000000, type: "pps" },
-    { id: "pps-10000000", name: "Hyperdrive", description: "Atteindre 10 M Parts par seconde", icon: "images/parts.webp", threshold: 10000000, type: "pps" },
-    { id: "pps-100000000", name: "Star Forge", description: "Atteindre 100 M Parts par seconde", icon: "images/parts.webp", threshold: 100000000, type: "pps" },
-    { id: "pps-1000000000", name: "Cosmic Engine", description: "Atteindre 1 B Parts par seconde", icon: "images/parts.webp", threshold: 1000000000, type: "pps" },
-    { id: "pps-10000000000", name: "Reality Bender", description: "Atteindre 10 B Parts par seconde", icon: "images/parts.webp", threshold: 10000000000, type: "pps" },
-    { id: "pps-1e11", name: "Moteur Galactique", description: "Atteindre 100 B Parts par seconde", icon: "images/parts.webp", threshold: 1e11, type: "pps" },
+    { id: "pps-1e8", name: "Hyperdrive", description: "Atteindre 100 M Parts par seconde", icon: "images/parts.webp", threshold: 1e8, type: "pps" },
+    { id: "pps-1e10", name: "Reality Bender", description: "Atteindre 10 B Parts par seconde", icon: "images/parts.webp", threshold: 1e10, type: "pps" },
     { id: "pps-1e12", name: "Cœur d'Étoile à Neutrons", description: "Atteindre 1 T Parts par seconde", icon: "images/parts.webp", threshold: 1e12, type: "pps" },
     { id: "pps-1e14", name: "Puits de Gravité", description: "Atteindre 100 T Parts par seconde", icon: "images/parts.webp", threshold: 1e14, type: "pps" },
+    { id: "pps-1e15", name: "Moteur Galactique", description: "Atteindre 1 Qa Parts par seconde", icon: "images/parts.webp", threshold: 1e15, type: "pps" },
     { id: "pps-1e16", name: "Usine à Univers", description: "Atteindre 10 Qa Parts par seconde", icon: "images/parts.webp", threshold: 1e16, type: "pps" },
+    { id: "pps-1e18", name: "Forgesseur de Réalités", description: "Atteindre 1 Qi Parts par seconde", icon: "images/parts.webp", threshold: 1e18, type: "pps" },
+    { id: "pps-1e20", name: "Fontaine Cosmique", description: "Atteindre 100 Qi Parts par seconde", icon: "images/parts.webp", threshold: 1e20, type: "pps" },
 
     // Vitesse de voyage (icône: missile) — vitesse REELLE de la stat
     // "Vitesse", c'est-a-dire les km/s gagnes par la distance atteignable.
+    // Famille rescalee sur 15 paliers (max famille = 15 pour l'echelle
+    // de couleurs des niveaux) jusqu'a 100 Sx km/s (1e23).
     { id: "speed-100", name: "Première Accélération", description: "Atteindre 100 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 100, type: "speed" },
     { id: "speed-1000", name: "Propulsion Ionique", description: "Atteindre 1 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1000, type: "speed" },
     { id: "speed-10000", name: "Vitesse Stellaire", description: "Atteindre 10 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000, type: "speed" },
     { id: "speed-100000", name: "Missile Interstellaire", description: "Atteindre 100 000 km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 100000, type: "speed" },
     { id: "speed-299792", name: "Plus Vite que la Lumière", description: "Dépasser la vitesse de la lumière (299 792 km/s)", icon: "images/effects/missile.webp", threshold: 299792, type: "speed" },
     { id: "speed-1000000", name: "Propulsion Warp", description: "Atteindre 1 M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1000000, type: "speed" },
-    { id: "speed-10000000", name: "Sillage Cosmique", description: "Atteindre 10 M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 10000000, type: "speed" },
-    { id: "speed-1e8", name: "Fracture Lumineuse", description: "Atteindre 100M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e8, type: "speed" },
-    { id: "speed-1e9", name: "Tunnel de Warp", description: "Atteindre 1B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e9, type: "speed" },
-    { id: "speed-1e10", name: "Nomade Interstellaire", description: "Atteindre 10B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e10, type: "speed" },
-    { id: "speed-1e11", name: "Arpenteur de l'Espace-Temps", description: "Atteindre 100B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e11, type: "speed" },
-    { id: "speed-1e12", name: "Dieu du Voyage", description: "Atteindre 1T km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e12, type: "speed" },
+    { id: "speed-1e8", name: "Fracture Lumineuse", description: "Atteindre 100 M km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e8, type: "speed" },
+    { id: "speed-1e10", name: "Nomade Interstellaire", description: "Atteindre 10 B km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e10, type: "speed" },
+    { id: "speed-1e12", name: "Dieu du Voyage", description: "Atteindre 1 T km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e12, type: "speed" },
+    { id: "speed-1e14", name: "Trou Noir Portatif", description: "Atteindre 100 T km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e14, type: "speed" },
+    { id: "speed-1e16", name: "Saut Quantique", description: "Atteindre 10 Qa km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e16, type: "speed" },
+    { id: "speed-1e18", name: "Voyageur du Multivers", description: "Atteindre 1 Qi km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e18, type: "speed" },
+    { id: "speed-1e19", name: "Pli Spatial", description: "Atteindre 10 Qi km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e19, type: "speed" },
+    { id: "speed-1e21", name: "Marcheur de Réalités", description: "Atteindre 1 Sx km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e21, type: "speed" },
+    { id: "speed-1e23", name: "Écheveau Brisé", description: "Atteindre 100 Sx km/s de vitesse de voyage", icon: "images/effects/missile.webp", threshold: 1e23, type: "speed" },
 
     // Progression spatiale (icônes: images des planètes)
     { id: "planet-moon", name: "Premier Pas", description: "Atteindre la Lune", icon: "images/planets/moon.webp", threshold: 1, type: "planets" },
