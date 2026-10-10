@@ -4203,22 +4203,33 @@ body.night-mode .scene-background {
     padding: 4px 6px;
     z-index: 90;
 }
-/* Agencement horizontal UX : [icone | nom + bonus] a gauche, [titre
-   "Prochaine piece" + cout sur barre d'avancement de fond] a droite.
-   La carte entiere est cliquable (hover + pointer). */
-.rocket-parts-shop .rocket-part-frame { flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 0.9rem; padding: 0.55rem 0.9rem; cursor: pointer; }
-.rocket-parts-shop .rocket-part-frame:hover { border-color: var(--primary-light); box-shadow: var(--glow); }
-.rocket-parts-shop .rocket-part-frame.locked { cursor: not-allowed; }
-.rocket-parts-shop .rocket-part-left { flex: 0 0 auto; width: 3.2rem; height: 3.2rem; }
-.rocket-parts-shop .rocket-part-icon,
-.rocket-parts-shop .rocket-part-icon-placeholder { width: 3.1rem; height: 3.1rem; }
-.rocket-parts-shop .rocket-part-idcard { display: flex; flex-direction: column; align-items: flex-start; text-align: left; flex: 0 1 auto; min-width: 0; gap: 0.15rem; }
-.rocket-parts-shop .rocket-part-name { font-size: 1.05rem; font-weight: 700; text-align: left; }
+/* Carte 3 colonnes sur fond bleu opaque : [image] [titre > nom >
+   bonus > barre de cout/avancement]. La carte entiere est cliquable. */
+.rocket-parts-shop .rocket-part-frame {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    background: rgba(30, 64, 175, 0.92);
+    border: 1px solid rgba(96, 165, 250, 0.55);
+    box-shadow: 0 4px 16px rgba(30, 64, 175, 0.45);
+}
+.rocket-parts-shop .rocket-part-frame:hover {
+    border-color: #93c5fd;
+    box-shadow: 0 0 18px rgba(96, 165, 250, 0.55);
+}
+.rocket-parts-shop .rocket-part-frame.locked { cursor: not-allowed; opacity: 0.85; }
+.rocket-part-col { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.rocket-part-col-img { flex: 0 0 auto; align-items: center; }
+.rocket-part-col-img .rocket-part-icon,
+.rocket-part-col-img .rocket-part-icon-placeholder { width: 3.4rem; height: 3.4rem; }
+.rocket-part-col-main { flex: 1 1 auto; align-items: flex-start; gap: 0.2rem; }
+.rocket-parts-shop .rocket-part-name { font-size: 1.1rem; font-weight: 700; text-align: left; }
 .rocket-parts-shop .rocket-part-mult { font-size: 0.82rem; text-align: left; }
-.rocket-parts-shop .rocket-part-buybox { display: flex; flex-direction: column; align-items: stretch; flex: 1 1 auto; min-width: 0; gap: 0.25rem; margin-left: auto; }
-.rocket-parts-shop .rocket-part-buybox .rocket-part-frame-title { text-align: left; }
-.rocket-parts-shop .rocket-part-progress { width: 100%; height: 30px; }
-.rocket-parts-shop .rocket-part-progress-label { font-size: 0.95rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.rocket-parts-shop .rocket-part-progress { width: 100%; height: 28px; margin-top: 0.3rem; }
+.rocket-parts-shop .rocket-part-progress-label { font-size: 0.92rem; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
 .rocket-parts-shop .rocket-part-frame.complete { flex-direction: row; }    }
     .rocket-part-frame {
         gap: 0.7rem;
