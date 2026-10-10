@@ -1,7 +1,7 @@
 // Service worker Starcruiser Clicker : cache-first sur les ressources
 // statiques pour un chargement quasi instantane en relecture, et un
 // fallback hors-ligne. Les mises a jour passent par un bump de version.
-const CACHE_NAME = 'starcruiser-clicker-v0060b6ce';
+const CACHE_NAME = 'starcruiser-clicker-v0071a3f2';
 const ASSETS = [
     './',
     './index.html',
@@ -38,6 +38,26 @@ self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
     // Les Google Fonts passent en reseau direct (pas de risque de stale).
     if (event.request.url.includes('fonts.googleapis') || event.request.url.includes('fonts.gstatic')) return;
+    // Fichiers coeur (HTML/JS/CSS) : NETWORK-FIRST. Un simple F5 recupere
+    // toujours la derniere version deployee -- fin des pages hybrides
+    // (nouveau HTML + ancien CSS) qui cassaient le layout des batiments.
+    // Le cache ne sert que si le reseau echoue (mode hors-ligne).
+    const CORE = ['./', './index.html', './style.css', './script.js', './i18n.js'];
+    const isCore = CORE.some(path => event.request.url === self.location.origin + path
+        || event.request.url === self.location.origin + path + '?');
+    if (isCore) {
+        event.respondWith(
+            fetch(event.request).then(response => {
+                if (response.ok) {
+                    const copy = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+                }
+                return response;
+            }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+        );
+        return;
+    }
+    // Le reste (images, manifest) : cache-first, relecture instantanee.
     event.respondWith(
         caches.match(event.request).then(cached => {
             if (cached) return cached;
