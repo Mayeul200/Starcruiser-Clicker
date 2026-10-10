@@ -4713,7 +4713,7 @@ function soundInit() {
     if (!AC) return;
     Sound.ctx = new AC();
     Sound.master = Sound.ctx.createGain();
-    Sound.master.gain.value = 0.22;
+    Sound.master.gain.value = 0.3;
     Sound.master.connect(Sound.ctx.destination);
 }
 function soundResume() {
@@ -4822,7 +4822,7 @@ function musicInit() {
     soundResume();
     if (!Sound.ctx) return;
     Music.bus = Sound.ctx.createGain();
-    Music.bus.gain.value = 0.5;
+    Music.bus.gain.value = 0.85;
     // Compresseur cote : pompe disco, la basse et le kick restent
     // ronds sans ecraser les aigus.
     const comp = Sound.ctx.createDynamicsCompressor();
@@ -4855,7 +4855,8 @@ function musicInit() {
 function musicTone(freq, freqEnd, dur, type, vol, filter, opts) {
     if (!Sound.ctx || !Music.bus) return;
     opts = opts || {};
-    const t0 = Sound.ctx.currentTime + (opts.delay || 0);
+    // opts.at = temps AUDIO ABSOLU (scheduler) ; sinon delay relatif au now.
+    const t0 = opts.at !== undefined ? opts.at + (opts.delay || 0) : Sound.ctx.currentTime + (opts.delay || 0);
     const atk = opts.attack !== undefined ? opts.attack : 0.008;
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
@@ -4896,7 +4897,7 @@ function musicTone(freq, freqEnd, dur, type, vol, filter, opts) {
 function musicVibrato(freq, dur, type, vol, filter, opts) {
     if (!Sound.ctx || !Music.bus) return;
     opts = opts || {};
-    const t0 = Sound.ctx.currentTime + (opts.delay || 0);
+    const t0 = opts.at !== undefined ? opts.at + (opts.delay || 0) : Sound.ctx.currentTime + (opts.delay || 0);
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
     const lfo = Sound.ctx.createOscillator();
@@ -4936,7 +4937,8 @@ function musicVibrato(freq, dur, type, vol, filter, opts) {
 // Kick : deux couches (clic + sub glide) pour un punch rond.
 function musicKick(delay) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = Sound.ctx.currentTime + (delay || 0);
+    // delay peut etre un temps ABSOLU (>= 1000 s) ou un offset relatif.
+    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
     const osc = Sound.ctx.createOscillator();
     const g = Sound.ctx.createGain();
     osc.type = 'sine';
@@ -4962,7 +4964,7 @@ function musicKick(delay) {
 // Hat : bruit metallique, version ouverte plus longue et brillante.
 function musicHat(delay, open) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
     const dur = open ? 0.22 : 0.045;
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * dur), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
@@ -4980,7 +4982,7 @@ function musicHat(delay, open) {
 // Ride : shimmer continu en section pleine (8e notes douces).
 function musicRide(delay) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.3), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
@@ -4997,7 +4999,7 @@ function musicRide(delay) {
 // Snare-clap : bruit_filtre + corps tonal, l'identite disco.
 function musicSnare(delay) {
     if (!Sound.ctx || !Music.bus) return;
-    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const t0 = (delay && delay > 1000) ? delay : Sound.ctx.currentTime + (delay || 0);
     const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.18), Sound.ctx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 1.4);
@@ -5011,138 +5013,145 @@ function musicSnare(delay) {
     src.connect(f); f.connect(g); g.connect(Music.bus);
     src.start(t0);
     // Corps : fondamentale courte.
-    musicTone(200, 130, 0.1, 'triangle', 0.22, null, { delay: delay || 0 });
+    musicTone(200, 130, 0.1, 'triangle', 0.22, null, { at: t0 });
 }
 
 // --- Basse a 3 couches : sub sinus + saw filtree + ghost octave ---
-function musicBass(root, dur, delay) {
+function musicBass(root, dur, at) {
     // Sub : le fond, rond et profond.
-    musicTone(root / 2, root / 2, dur, 'sine', 0.42, null, { delay: delay || 0 });
+    musicTone(root / 2, root / 2, dur, 'sine', 0.42, null, { at: at });
     // Saw : le corps disco, filtre resonnant qui s'ouvre.
     musicTone(root, root, dur * 0.9, 'sawtooth', 0.26,
-        { type: 'lowpass', freq: 380, freqEnd: 700, q: 7 }, { delay: delay || 0 });
+        { type: 'lowpass', freq: 380, freqEnd: 700, q: 7 }, { at: at });
     // Ghost : octave a 10% du volume -- la texture Terje.
     musicTone(root * 2, root * 2, dur * 0.5, 'sawtooth', 0.055,
-        { type: 'lowpass', freq: 900, q: 3 }, { delay: delay || 0 });
+        { type: 'lowpass', freq: 900, q: 3 }, { at: at });
 }
 
 // Un pas du sequenceur : declenche les moteurs selon section/pas.
-function musicStep() {
+// t0 : temps AUDIO ABSOLU de ce pas. Toutes les voix planifient via
+// { at: t0 } (+ offsets internes relatifs) -- la timing depend de
+// l'horloge materielle audio, PAS de JavaScript : zero derive.
+function musicStep(t0) {
+    if (t0 === undefined || !Sound.ctx) t0 = Sound.ctx ? Sound.ctx.currentTime : 0;
     const sec = Music.section();
     const ch = Music.chordForBar(Music.bar);
     const s = Music.step;
-    const sec16 = (60 / Music.bpm) / 4;
+    const sec16 = (60 / Music.bpm) / 4;   // duree d'un 16e en secondes
     const fill = Music.isFill();
-    const d = 0; // pas de delay : le timer est le metronome
 
     // --- Batterie ---
     if (sec !== 3) {
-        if (s % 4 === 0) musicKick(d);
-        if (s === 6 || s === 14) musicKick(d + sec16 * 0.5);
-        if (s % 2 === 1) musicHat(d, s === 15);
-        if (s === 4 || s === 12) musicSnare(d);
-        if (sec === 2 && s % 2 === 0) musicRide(d);
-        // Fill de fin de section : snare roll descendant.
-        if (fill && s >= 8 && s % 2 === 0) musicSnare(d + (s - 8) * 0.01);
+        if (s % 4 === 0) musicKick(t0);
+        if (s === 6 || s === 14) musicKick(t0 + sec16 * 0.5);
+        if (s % 2 === 1) musicHat(t0, s === 15);
+        if (s === 4 || s === 12) musicSnare(t0);
+        if (sec === 2 && s % 2 === 0) musicRide(t0);
+        // Fill de fin de section : snare roll qui densifie.
+        if (fill && s >= 8 && s % 2 === 0) musicSnare(t0);
     } else {
         // Breakdown : respiration.
-        if (s === 0) musicKick(d);
-        if (s % 4 === 2) musicHat(d, false);
-        if (s === 8) musicSnare(d);
+        if (s === 0) musicKick(t0);
+        if (s % 4 === 2) musicHat(t0, false);
+        if (s === 8) musicSnare(t0);
     }
 
-    // --- Basse : motif disco 16e syncopE, fantomes accentuEs ---
+    // --- Basse : motif disco syncopE, 3 couches ---
     if (sec !== 3) {
-        // Motif : 1 . . . 1 1 . . 1 . 1 . 1 1 . . (poids varies)
         const bassPat = [3, 0, 0, 0, 2, 3, 0, 0, 3, 0, 2, 0, 3, 2, 0, 0];
         const w = bassPat[s];
         if (w > 0) {
-            const oct = (s === 9 || s === 13) ? 2 : 1;   // notes hautes
+            const oct = (s === 9 || s === 13) ? 2 : 1;
             const dur = w === 3 ? 0.16 : 0.1;
-            musicBass(ch.root * oct, dur, d);
+            musicBass(ch.root * oct, dur, t0);
         }
-        // Ghost note tres douce entre les impulsions (souplesse).
-        if (s === 7 || s === 11) musicBass(ch.root, 0.05, d);
+        if (s === 7 || s === 11) musicBass(ch.root, 0.05, t0);
     } else if (s % 8 === 0) {
-        // Breakdown : basse ronde qui respire.
-        musicBass(ch.root, sec16 * 7, d);
+        musicBass(ch.root, sec16 * 7, t0);
     }
 
-    // --- ArpEge : doubles croches cristallines, motif 16 pas --
-    //     2 voix entrelacEes (fondamentale alterne le dessus) + echo.
+    // --- ArpEge cristallin ---
     if (sec === 1 || sec === 2) {
         const arpPat = [0, 1, 2, 1, 0, 2, 1, 0, 2, 1, 0, 1, 2, 0, 1, 2];
         const f = ch.notes[arpPat[s]] * 4;
-        const detune = (Math.random() - 0.5) * 7;   // ±3.5 cents humains
+        const detune = (Math.random() - 0.5) * 7;
         musicTone(f, f, 0.09, 'square', 0.05,
-            { type: 'lowpass', freq: 2800, q: 2 }, { delay: d, detune: detune, echo: 0.35 });
-        // Doublage une octave plus haut, sur les temps forts seulement.
+            { type: 'lowpass', freq: 2800, q: 2 }, { at: t0, detune: detune, echo: 0.35 });
         if (s % 4 === 0) musicTone(f * 2, f * 2, 0.06, 'square', 0.02,
-            { type: 'lowpass', freq: 4600, q: 1 }, { delay: d, detune: -detune, echo: 0.3 });
-        // Voix secondaire : sixte ajoutEe sur les fins de mesure.
+            { type: 'lowpass', freq: 4600, q: 1 }, { at: t0, detune: -detune, echo: 0.3 });
         if (s === 14 || s === 15) musicTone(ch.notes[2] * 5, ch.notes[2] * 5, 0.08, 'square', 0.03,
-            { type: 'lowpass', freq: 3200, q: 2 }, { delay: d, echo: 0.4 });
+            { type: 'lowpass', freq: 3200, q: 2 }, { at: t0, echo: 0.4 });
     }
 
-    // --- Stabs d'accords : section pleine, contretemps ---
+    // --- Stabs d'accords : section pleine ---
     if (sec === 2 && (s === 2 || s === 7 || s === 10)) {
         ch.notes.forEach(n => {
             musicTone(n * 2, n * 2, 0.12, 'sawtooth', 0.05,
-                { type: 'bandpass', freq: n * 3, q: 2.5 }, { delay: d, echo: 0.25 });
+                { type: 'bandpass', freq: n * 3, q: 2.5 }, { at: t0, echo: 0.25 });
         });
     }
 
-    // --- Lead mElodique : section pleine (C), phrase 2 mesures ---
-    //     Gamme B mineure naturelle depuis B4 (493.88 Hz).
+    // --- Lead mElodique (section pleine) ---
     if (sec === 2 && s % 2 === 0) {
         const li = ((Music.bar % 2) * 8 + s / 2) % 16;
         const semis = Music.lead[li];
         const base = 493.88 * Math.pow(2, semis / 12);
-        // Notes tenues sur les temps 1 : vibrato, les autres : pluck.
         if (s === 0) {
             musicVibrato(base, sec16 * 3.5, 'sawtooth', 0.07,
-                { type: 'lowpass', freq: 2200, q: 2 }, { delay: d, echo: 0.4 });
+                { type: 'lowpass', freq: 2200, q: 2 }, { at: t0, echo: 0.4 });
         } else {
             musicTone(base, base, 0.14, 'sawtooth', 0.06,
-                { type: 'lowpass', freq: 2600, q: 1.8 }, { delay: d, detune: (Math.random() - 0.5) * 6, echo: 0.4 });
+                { type: 'lowpass', freq: 2600, q: 1.8 }, { at: t0, detune: (Math.random() - 0.5) * 6, echo: 0.4 });
         }
     }
 
-    // --- Nappes : breakdown (D) + fond discret en C ---
+    // --- Nappes ---
     if (sec === 3 && s === 0) {
         ch.notes.forEach((n, i) => {
             musicVibrato(n, sec16 * 14, 'sawtooth', 0.045,
-                { type: 'lowpass', freq: 850, q: 1 }, { delay: d, vibRate: 0.6 + i * 0.2, attack: 1.2 });
+                { type: 'lowpass', freq: 850, q: 1 }, { at: t0, vibRate: 0.6 + i * 0.2, attack: 1.2 });
         });
     }
     if (sec === 2 && s === 0) {
         ch.notes.forEach(n => {
             musicTone(n, n, sec16 * 14, 'sawtooth', 0.02,
-                { type: 'lowpass', freq: 700, q: 1 }, { delay: d, attack: 0.8 });
+                { type: 'lowpass', freq: 700, q: 1 }, { at: t0, attack: 0.8 });
         });
     }
 
-    // --- Toms de relance : fin du breakdown, la reprise arrive ---
+    // --- Toms de relance : fin du breakdown ---
     if (sec === 3 && Music.bar % Music.sectionLen === Music.sectionLen - 1) {
         if (s === 8 || s === 12) {
-            musicTone(180, 90, 0.18, 'sine', 0.3, null, { delay: d });
+            musicTone(180, 90, 0.18, 'sine', 0.3, null, { at: t0 });
         }
     }
 
     // Avance le sequenceur.
     Music.step = (Music.step + 1) % 16;
-    if (Music.step === 0) Music.bar = (Music.bar + 1) % 128;   // boucle 128 mesures ~ 5 min
+    if (Music.step === 0) Music.bar = (Music.bar + 1) % 128;   // boucle ~5 min
 }
 
 function startMusic() {
     if (Music.playing) return;
     musicInit();
-    if (!Music.bus) return;
+    if (!Music.bus || !Sound.ctx) return;
     Music.playing = true;
     Music.step = 0;
     Music.bar = 0;
-    const stepMs = (60 / Music.bpm) / 4 * 1000;
-    Music.timer = setInterval(musicStep, stepMs);
+    // SCHEDULER LOOK-AHEAD : on planifie les pas ~200 ms en avance sur
+    // l'horloge AUDIO (pas JS). Un tick JS (50 ms) verifie s'il faut
+    // planifier le prochain pas ; chaque pas est pose a son temps exact
+    // AudioContext.currentTime + n * stepDur. La derive de setInterval
+    // n'a plus AUCUN effet sur le timing -- le groove est au sample pres.
+    const stepDur = (60 / Music.bpm) / 4;
+    Music.nextTime = Sound.ctx.currentTime + 0.1;
+    Music.timer = setInterval(function () {
+        if (!Sound.ctx) return;
+        while (Music.nextTime < Sound.ctx.currentTime + 0.2) {
+            musicStep(Music.nextTime);
+            Music.nextTime += stepDur;
+        }
+    }, 50);
 }
 
 function stopMusic() {
