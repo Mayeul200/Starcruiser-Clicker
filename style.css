@@ -3992,8 +3992,11 @@ body.night-mode .scene-background::after {
     position: absolute;
     right: 10%;
     top: calc(25% + 50px);
-    width: 230px;
-    height: 230px;
+    /* Agrandie : la zone cliquable principale du jeu doit etre
+       generreuse. Le right: 10% garde une distance similaire au bord
+       droit, proportionnellement conservee. */
+    width: 280px;
+    height: 280px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -4017,12 +4020,12 @@ body.night-mode .scene-background::after {
 @supports (width: 1cqh) {
     .center-content { container-type: size; }
     .medal {
-        width: 24cqh;
-        height: 24cqh;
-        min-width: 130px;
-        min-height: 130px;
-        max-width: 290px;
-        max-height: 290px;
+        width: 30cqh;
+        height: 30cqh;
+        min-width: 150px;
+        min-height: 150px;
+        max-width: 340px;
+        max-height: 340px;
     }
 }
 /* Wrapper : agrandissement de la pièce + squash & stretch au clic.
