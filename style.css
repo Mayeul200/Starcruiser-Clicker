@@ -1822,6 +1822,23 @@ body {
     pointer-events: none;
 }
 
+/* Coup CRITIQUE (x3) : le "+X" devient or eclatant, plus gros, avec
+   un eclat lumineux -- immediatement reconnaissable au clic. */
+.click-effect.crit {
+    color: #fde047;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, rgba(120, 53, 15, 0.92), rgba(146, 64, 14, 0.92));
+    border: 1px solid #fbbf24;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 20px rgba(251, 191, 36, 0.9);
+    box-shadow: 0 0 22px rgba(251, 191, 36, 0.55);
+    animation: clickBurstCrit 1.4s ease-out forwards;
+}
+@keyframes clickBurstCrit {
+    0% { opacity: 0; transform: scale(0.4); }
+    12% { opacity: 1; transform: scale(1.35); }
+    22% { transform: scale(1.05); }
+    100% { opacity: 0; transform: translateY(-70px) scale(1); }
+}
 /* Gros popup de bonus (+X Parts / Production x5) au centre de l'ecran,
    position et angle aleatoires. */
 .bonus-pop {
@@ -3774,7 +3791,7 @@ body {
    transform translateX(-50%) d'applySceneScale s'applique par-dessus. */
 .scene-world {
     position: absolute;
-    left: calc(50% - 100px);
+    left: calc(50% - 150px);
     bottom: 0;
     width: 1024px;
     height: 744px;
@@ -5722,7 +5739,7 @@ body.night-mode .scene-background::after {
     /* Fusee et decor : la case d'achat vit desormais en bas (barre pleine
        largeur), plus besoin de degager la colonne droite -- retour au
        centrage naturel. Le translateX(-50%) d'applySceneScale s'applique. */
-    .scene-world { left: calc(50% - 100px) !important; }
+    .scene-world { left: calc(50% - 150px) !important; }
     .rocket-parts-shop {
         position: fixed;
         bottom: calc(var(--mobile-nav-height) + env(safe-area-inset-bottom, 0px) + calc(10px * var(--mscale, 1)));

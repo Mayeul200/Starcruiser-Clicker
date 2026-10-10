@@ -4426,7 +4426,9 @@ function addScore(points, event) {
     Sounds.click();
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
-    const critMult = (Math.random() < getCritChance()) ? 3 : 1;
+    const isCrit = Math.random() < getCritChance();
+    const critMult = isCrit ? 3 : 1;
+    if (isCrit) Sounds.critical();
     // clickMultiplier : multiplicateurs temporaires de CLIC (contrats,
     // flares). Il etait calcule et sauvegarde mais jamais applique ici —
     // les rewards "Clic x2/3/5" des contrats n'avaient donc AUCUN effet.
@@ -4445,7 +4447,7 @@ function addScore(points, event) {
     // la cible calculee sur le Parts/clic naturel.
     notifyContractClick(basePoints);
 
-    showClickEffect(Math.round(totalPoints), event);
+    showClickEffect(Math.round(totalPoints), event, isCrit);
     spawnShockwave(event);
     spawnFallingCoin(event);
 
@@ -4581,7 +4583,7 @@ function transitionToPostTravelShop(distance) {
         }, 120);
     }, 420);
 }
-function showClickEffect(value, event) {
+function showClickEffect(value, event, isCrit) {
     const container = document.getElementById('click-effects');
 
     const containerRect = container.getBoundingClientRect();
@@ -4599,7 +4601,7 @@ function showClickEffect(value, event) {
     y = y - containerRect.top - 10;
 
     const effect = document.createElement('div');
-    effect.className = 'click-effect';
+    effect.className = 'click-effect' + (isCrit ? ' crit' : '');
     effect.textContent = `+${formatNumber(value)}`;
     const dir = Math.random() * Math.PI * 2;
     const dist = 55 + Math.random() * 45;
@@ -4816,6 +4818,17 @@ const Sounds = {
     // Amélioration (upgrade) : bip cristallin
     upgrade() {
         soundTone(880, 1320, 0.1, 'sine', 0.35);
+    },
+    // Coup critique (x3) : fanfare doree -- accord majeur brillant
+    // monte en arpege (Do-Mi-Sol-Do) avec partiel metallique,
+    // nettement distinct du "coin" standard du clic.
+    critical() {
+        const detune = 1 + (Math.random() - 0.5) * 0.03;
+        soundTone(523 * detune, 523 * detune, 0.09, 'triangle', 0.3, 0);
+        soundTone(659 * detune, 659 * detune, 0.09, 'triangle', 0.3, 0.07);
+        soundTone(784 * detune, 784 * detune, 0.1, 'triangle', 0.3, 0.14);
+        soundTone(1047 * detune, 1047 * detune, 0.22, 'triangle', 0.34, 0.21);
+        soundTone(2093 * detune, 2093 * detune, 0.12, 'square', 0.06, 0.21);
     },
     // Comète : whoosh du missile puis explosion
     missile() {
