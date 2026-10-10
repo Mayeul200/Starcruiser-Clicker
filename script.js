@@ -3458,8 +3458,12 @@ function updateSpaceProgress() {
             planetText.textContent = `${t('Prochaine destination')} : ${t(progress.nextPlanet.name)} — ${pctText}%`;
         } else if (postVirgoStardust > 0) {
             // Suite infinie (Amas de Virgo depasse) : plus de planete
-            // connue devant -- sigle infini et bonus en cours affiches.
-            planetText.textContent = `${t('Prochaine destination')} : ∞ — +${getInfiniteProductionPercent(postVirgoStardust).toFixed(1)}%`;
+            // connue devant -- objectif genere = le DOUBLE du record de
+            // distance. La case reste vivante : un vrai km a viser, qui
+            // recule a chaque nouveau record.
+            const goalKm = maxDistance > 0 ? maxDistance * 2 : calculateDistance() * 2;
+            const pctInf = maxDistance > 0 ? Math.min(100, (calculateDistance() / goalKm) * 100) : 0;
+            planetText.textContent = `${t('Prochaine destination')} : ${formatNumber(goalKm)} km — ${pctInf.toFixed(1)}%`;
         } else {
             planetText.textContent = `${t('Prochaine destination')} : ${t(progress.currentPlanet.name)} — 100%`;
         }

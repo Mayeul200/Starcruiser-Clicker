@@ -2984,6 +2984,9 @@ body {
 .galactic-shop-stardust span {
     color: #c4b5fd;
 }
+/* Largeur FIXE : le preview ne change plus de taille selon la
+   longueur du nombre de PE affiche dedans -- le bouton Atelier
+   Galactique ne "respire" plus a chaque tick de compteur. */
 .galactic-shop-preview {
     position: relative;
     font-size: 0.85rem;
@@ -2992,8 +2995,9 @@ body {
     padding: 1px 8px;
     border-radius: 6px;
     overflow: hidden;
-    min-width: 0;
-    flex: 0 1 auto;
+    flex: 0 0 auto;
+    width: 7.5rem;
+    text-align: center;
     white-space: nowrap;
     text-align: center;
     background: rgba(34, 211, 238, 0.08);
