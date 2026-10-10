@@ -8435,7 +8435,7 @@ function renderRocketPartsShop() {
         const fillEl = container.querySelector('.rocket-part-progress-fill');
         const labelEl = container.querySelector('.rocket-part-progress-label');
         if (fillEl) fillEl.style.width = Math.min(100, (score / cost) * 100) + '%';
-        if (labelEl) labelEl.textContent = formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
+        if (labelEl) labelEl.textContent = t('Construire') + ' \u2014 ' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
         const nameEl = container.querySelector('.rocket-part-name');
         if (nameEl) nameEl.textContent = t(nextPart.name);
         const multEl = container.querySelector('.rocket-part-mult');
@@ -8452,7 +8452,7 @@ function renderRocketPartsShop() {
     const fillEl0 = container.querySelector('.rocket-part-progress-fill');
     const labelEl0 = container.querySelector('.rocket-part-progress-label');
     if (fillEl0) fillEl0.style.width = Math.min(100, (score / cost) * 100) + '%';
-    if (labelEl0) labelEl0.textContent = formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
+    if (labelEl0) labelEl0.textContent = t('Construire') + ' \u2014 ' + formatNumber(Math.floor(score)) + ' / ' + formatNumber(cost) + ' ' + t('Parts');
     const partCard = container.querySelector('.rocket-part-frame');
     if (partCard) {
         if (isAffordable) pulseHint(partCard);
