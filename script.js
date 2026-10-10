@@ -3167,6 +3167,7 @@ function getClickPowerBonus() {
     if (getGalacticUpgradeLevel('click1') > 0) mult *= 1.5;
     if (getGalacticUpgradeLevel('click3') > 0) mult *= 1.75;
     if (getGalacticUpgradeLevel('click5') > 0) mult *= 2;
+    if (getGalacticUpgradeLevel('click7') > 0) mult *= 2.5;
     return mult;
 }
 function getCritChance() {
@@ -4429,6 +4430,7 @@ function getClickComponents() {
 
 function addScore(points, event) {
     Sounds.click();
+    if (Sound.enabled && !Music.playing) startMusic();
     const { baseCpC, buildingBonus, cpsBonus } = getClickComponents();
     const basePoints = baseCpC + buildingBonus + cpsBonus;
     const isCrit = Math.random() < getCritChance();
@@ -4757,6 +4759,217 @@ function soundNoise(dur, vol, freqStart, freqEnd) {
     src.connect(filt); filt.connect(g); g.connect(Sound.master);
     src.start(t0); src.stop(t0 + dur);
 }
+// ============================================
+// MOTEUR MUSICAL -- "STARRCRUISER DYNAMITE"
+// Bande-son electro disco procedurale inspiree de "Delorean Dynamite"
+// (Todd Terje) : arpeggio FM cristallin en doubles croches, basse
+// pulsEE octave (synthwave disco), batterie quatre-quarts (kick
+// pompe, hats off-beat, snare sur 2 et 4), stabs d'accords, et une
+// table de 16 pas par mesure avec evolutions toutes les 4 mesures :
+// intro (basse+batterie) -> montee (arp) -> plein (stabs) -> breakdown
+// -> refrain, en boucle. 100% WebAudio, aucun fichier, mixage sur le
+// bus master du jeu (respecte le toggle son).
+// ============================================
+const Music = {
+    playing: false,
+    timer: null,
+    step: 0,          // 16e de note dans la mesure
+    bar: 0,          // mesure courante
+    bpm: 118,
+    // Gamme B mineur naturelle -- couleur "Delorean".
+    // Accords (fondamentale en Hz) de la progression : Bm - G - D - A.
+    chords: [
+        { root: 123.47, notes: [123.47, 146.83, 185.00] },  // Bm : B D F#
+        { root: 98.00,  notes: [98.00, 123.47, 146.83] },   // G  : G B D
+        { root: 73.42,  notes: [73.42, 92.50, 110.00] },    // D  : D F# A
+        { root: 55.00,  notes: [55.00, 65.41, 82.41] }      // A  : A C# E
+    ],
+    // Sections : combien de mesures durerent et quels moteurs tournent.
+    // Sequence : intro 4, montee 4, plein 4, breakdown 4 -> boucle.
+    sectionBars: [4, 4, 4, 4],
+    bus: null,
+    section() { return Math.floor(this.bar / 4) % 4; },
+    chord() { return this.chords[this.bar % 4]; }
+};
+
+function musicInit() {
+    if (Music.bus) return;
+    soundResume();
+    if (!Sound.ctx) return;
+    Music.bus = Sound.ctx.createGain();
+    Music.bus.gain.value = 0.5;
+    // Compresseur doux sur le bus musical : le kick et la basse
+    // restent pompes sans ecraser l'arpeggio.
+    const comp = Sound.ctx.createDynamicsCompressor();
+    comp.threshold.value = -18;
+    comp.ratio.value = 6;
+    Music.bus.connect(comp);
+    comp.connect(Sound.master);
+}
+
+// Oscillateur musical : freq de depart, freq d'arrivee (glide), duree,
+// forme d'onde, volume, filtre optionnel { type, freq, q }.
+function musicTone(freq, freqEnd, dur, type, vol, filter, delay) {
+    if (!Sound.ctx || !Music.bus) return;
+    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const osc = Sound.ctx.createOscillator();
+    const g = Sound.ctx.createGain();
+    osc.type = type || 'sawtooth';
+    osc.frequency.setValueAtTime(Math.max(20, freq), t0);
+    if (freqEnd && freqEnd !== freq) osc.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    let node = osc;
+    if (filter) {
+        const f = Sound.ctx.createBiquadFilter();
+        f.type = filter.type || 'lowpass';
+        f.frequency.value = filter.freq || 1200;
+        f.Q.value = filter.q || 1;
+        osc.connect(f);
+        node = f;
+    }
+    node.connect(g);
+    g.connect(Music.bus);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.05);
+}
+
+// Kick disco : sinus grave avec glide descendant rapide + click.
+function musicKick(delay) {
+    if (!Sound.ctx || !Music.bus) return;
+    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const osc = Sound.ctx.createOscillator();
+    const g = Sound.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(150, t0);
+    osc.frequency.exponentialRampToValueAtTime(42, t0 + 0.12);
+    g.gain.setValueAtTime(0.9, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+    osc.connect(g); g.connect(Music.bus);
+    osc.start(t0); osc.stop(t0 + 0.25);
+}
+
+// Hat : bruit blanc bref filtre passe-haut.
+function musicHat(delay, open) {
+    if (!Sound.ctx || !Music.bus) return;
+    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const dur = open ? 0.18 : 0.04;
+    const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * dur), Sound.ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    const src = Sound.ctx.createBufferSource();
+    src.buffer = buf;
+    const f = Sound.ctx.createBiquadFilter();
+    f.type = 'highpass'; f.frequency.value = 8000;
+    const g = Sound.ctx.createGain();
+    g.gain.value = open ? 0.16 : 0.10;
+    src.connect(f); f.connect(g); g.connect(Music.bus);
+    src.start(t0);
+}
+
+// Snare : bruit + fondamentale, court.
+function musicSnare(delay) {
+    if (!Sound.ctx || !Music.bus) return;
+    const t0 = Sound.ctx.currentTime + (delay || 0);
+    const buf = Sound.ctx.createBuffer(1, Math.ceil(Sound.ctx.sampleRate * 0.16), Sound.ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+    const src = Sound.ctx.createBufferSource();
+    src.buffer = buf;
+    const g = Sound.ctx.createGain();
+    g.gain.value = 0.28;
+    const f = Sound.ctx.createBiquadFilter();
+    f.type = 'highpass'; f.frequency.value = 1800;
+    src.connect(f); f.connect(g); g.connect(Music.bus);
+    src.start(t0);
+    musicTone(190, 120, 0.09, 'triangle', 0.2, null, delay || 0);
+}
+
+// Un pas de sequenceur (16e de note) : declenche les moteurs selon la
+// section et le pas courant.
+function musicStep() {
+    const sec = Music.section();
+    const ch = Music.chord();
+    const s = Music.step;
+    const t = 0;
+    const sec16 = (60 / Music.bpm) / 4;
+
+    // --- Batterie : quatre-quarts disco, variee par section ---
+    if (sec !== 3) {
+        if (s % 4 === 0) musicKick(t);                    // kick sur chaque temps
+        if (s === 6 || s === 14) musicKick(t + sec16);   // kicks fantomes syncopes
+        if (s % 2 === 1) musicHat(t, s === 15);          // hats off-beat, open en fin
+        if (s === 4 || s === 12) musicSnare(t);          // snare 2 et 4
+    } else {
+        // Breakdown : kick sur le 1er temps, hats seulement, respiration.
+        if (s === 0) musicKick(t);
+        if (s % 4 === 2) musicHat(t, false);
+        if (s === 8) musicSnare(t);
+    }
+
+    // --- Basse : pulsation octave, motif syncop Terje ---
+    if (sec !== 3) {
+        const bassNotes = [ch.root, ch.root, ch.root * 2, ch.root, ch.root, ch.root * 2, ch.root, ch.root * 1.5];
+        const pat = [0, 2, 4, 6, 8, 10, 12, 14];         // doubles croches paires
+        const idx = pat.indexOf(s);
+        if (idx >= 0) {
+            const f = bassNotes[(idx + Music.bar) % bassNotes.length];
+            musicTone(f, f, 0.14, 'sawtooth', 0.30, { type: 'lowpass', freq: 420, q: 6 }, t);
+        }
+    } else if (s % 8 === 0) {
+        // Breakdown : la basse respire en rondes.
+        musicTone(ch.root, ch.root, sec16 * 7, 'sawtooth', 0.22, { type: 'lowpass', freq: 300, q: 4 }, t);
+    }
+
+    // --- Arpeggio FM : le Delorean Dynamite -- cristallin, doubles
+    //     croches continues, motif de 16 pas sur l'accord courant.
+    if (sec === 1 || sec === 2) {
+        const arpNotes = [0, 1, 2, 1, 0, 2, 1, 0, 2, 1, 0, 1, 2, 0, 1, 2];
+        const f = ch.notes[arpNotes[s]] * 4;            // 2 octaves au-dessus
+        musicTone(f, f, 0.09, 'square', 0.055, { type: 'lowpass', freq: 2600, q: 2 }, t);
+        // Doublage FM leger une octave plus haut : brille sans sagir.
+        if (s % 2 === 0) musicTone(f * 2, f * 2, 0.05, 'square', 0.02, { type: 'lowpass', freq: 4200, q: 1 }, t);
+    }
+
+    // --- Stabs d'accords : section pleine seulement, sur les
+    //     contretemps, facon section de cuivres synthetique.
+    if (sec === 2 && (s === 2 || s === 7 || s === 10)) {
+        ch.notes.forEach(n => {
+            musicTone(n * 2, n * 2, 0.12, 'sawtooth', 0.06, { type: 'bandpass', freq: n * 3, q: 2 }, t);
+        });
+    }
+
+    // --- Nappe : breakdown uniquement, accords tenus doux.
+    if (sec === 3 && s === 0) {
+        ch.notes.forEach(n => {
+            musicTone(n, n, sec16 * 14, 'sawtooth', 0.05, { type: 'lowpass', freq: 900, q: 1 }, t);
+        });
+    }
+
+    // Avance le sequenceur.
+    Music.step = (Music.step + 1) % 16;
+    if (Music.step === 0) Music.bar++;
+}
+
+function startMusic() {
+    if (Music.playing) return;
+    musicInit();
+    if (!Music.bus) return;
+    Music.playing = true;
+    Music.step = 0;
+    Music.bar = 0;
+    const stepMs = (60 / Music.bpm) / 4 * 1000;
+    // Timer legerement long et recale sur l'horloge audio pour eviter
+    // la derive : le tempo reste stable sur des heures.
+    Music.timer = setInterval(musicStep, stepMs);
+}
+
+function stopMusic() {
+    if (Music.timer) { clearInterval(Music.timer); Music.timer = null; }
+    Music.playing = false;
+}
+
 const Sounds = {
     // Clic sur la médaille : tick doux, pitch légèrement aléatoire, anti-spam 30 ms
     click() {
@@ -5077,7 +5290,12 @@ function toggleSound() {
     localStorage.setItem('starcruiserSound', Sound.enabled ? '1' : '0');
     const btn = document.getElementById('sound-toggle-btn');
     if (btn) btn.textContent = Sound.enabled ? '🔊' : '🔇';
-    if (Sound.enabled) Sounds.click();
+    if (Sound.enabled) {
+        Sounds.click();
+        if (typeof startMusic === 'function') startMusic();
+    } else if (typeof stopMusic === 'function') {
+        stopMusic();
+    }
 }
 document.addEventListener('visibilitychange', () => {
     if (document.hidden && Sound.ctx && Sound.ctx.state === 'running') Sound.ctx.suspend();
@@ -6912,6 +7130,7 @@ const GALACTIC_UPGRADES = [
     { id: 'coll4',  branch: 'collection', tier: 4, name: 'Boosters renforcés',      desc: '+20% au bonus des cartes possédées.',              baseCost: 80,   costMult: 1.0, maxLevel: 1, effectPerLevel: 0.20, requires: ['coll3'] },
     { id: 'coll5',  branch: 'collection', tier: 5, name: 'Réseau de contrebande',  desc: '-15% temps d\'attente des boosters.', baseCost: 200,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.15, requires: ['coll4'] },
     { id: 'coll6',  branch: 'collection', tier: 6, name: 'Album cosmique',          desc: '+1 carte dans tous les boosters.',     baseCost: 500,  costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll5'] },
+    { id: 'coll7',  branch: 'collection', tier: 7, name: 'Archives stellaires',      desc: 'Les doublons de cartes comptent double.', baseCost: 1200, costMult: 1.0, maxLevel: 1, effectPerLevel: 1, requires: ['coll6'] },
 
     // === BRANCHE CLIC (5) - upgrades uniques ===
     { id: 'click1', branch: 'click', tier: 1, name: 'Gants renforc\u00e9s',      desc: 'x1.5 puissance de clic.',              baseCost: 1,   costMult: 1.0, maxLevel: 1, effectPerLevel: 1.5 },
@@ -6920,6 +7139,7 @@ const GALACTIC_UPGRADES = [
     { id: 'click4', branch: 'click', tier: 4, name: 'Surcharge neuronale',    desc: '+10% chance de coup critique (x3).',    baseCost: 60,  costMult: 1.0, maxLevel: 1, effectPerLevel: 0.10, requires: ['click3'] },
     { id: 'click5', branch: 'click', tier: 5, name: 'Main de l\'univers',      desc: 'x2 puissance de clic.',                baseCost: 150, costMult: 1.0, maxLevel: 1, effectPerLevel: 2, requires: ['click4'] },
     { id: 'click6', branch: 'click', tier: 6, name: 'Appel cosmique',         desc: '5% de chance de d\u00e9clencher une com\u00e8te \u00e0 chaque clic.', baseCost: 400, costMult: 1.0, maxLevel: 1, effectPerLevel: 0.05, requires: ['click5'] },
+    { id: 'click7', branch: 'click', tier: 7, name: 'Horizon des \u00e9v\u00e9nements', desc: 'x2.5 puissance de clic.',            baseCost: 1000, costMult: 1.0, maxLevel: 1, effectPerLevel: 2.5, requires: ['click6'] },
     // === BRANCHE HORS-LIGNE (8) - production pendant l'absence ===
     // 5min gratuit (BASE_OFFLINE_CAP_HOURS), puis 8 paliers de 10min a 6h.
     // Les derniers sont extremement chers : vises pour les chasseurs de records.
@@ -7007,10 +7227,11 @@ function getCollectionBonus() {
     // Les doublons s'additionnent : chaque exemplaire d'une carte ajoute
     // son bonus (bonus par carte reduits en consequence, minimum 1%).
     let bonus = 0;
+    const dbl = getGalacticUpgradeLevel('coll7') > 0;
     for (const card of COLLECTIBLE_CARDS) {
         const count = cardCollection[card.id] || 0;
         if (count > 0) {
-            bonus += CARD_RARITIES[card.rarity].bonusMult * count;
+            bonus += CARD_RARITIES[card.rarity].bonusMult * count * (dbl ? 2 : 1);
         }
     }
     if (isCollectionComplete()) {
