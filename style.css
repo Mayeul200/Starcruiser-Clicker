@@ -2907,7 +2907,11 @@ body {
     flex: 0 0 auto;
 }
 
+/* Police display (Orbitron) : alignee sur les autres titres/boutons
+   structurants du jeu (modales, en-tetes) -- avant, le bouton heritait
+   de la police body (Space Grotesk), incoherent avec le reste. */
 .galactic-shop-btn {
+    font-family: var(--font-display);
     flex: 1 1 100%;
     min-width: 0;
     display: flex;
@@ -4197,7 +4201,7 @@ body.night-mode .scene-background {
     bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
-    width: min(96%, 390px);
+    width: min(96%, 468px);
     display: flex;
     flex-direction: column;
     padding: 4px 6px;
