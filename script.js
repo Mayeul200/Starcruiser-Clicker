@@ -8635,6 +8635,9 @@ function checkNextPlanetNotification() {
     if (nextPlanetNotified) return;
     const allConstructed = ROCKET_PARTS.every(p => p.purchased && constructedParts.has(p.id));
     if (!allConstructed) return;
+    // Suite infinie (Amas de Virgo depasse) : plus d'objectif planetaire,
+    // le pop-up "fusee complete / derniere destination" n'a plus de sens.
+    if (postVirgoStardust > 0) { nextPlanetNotified = true; return; }
     const progress = calculatePlanetProgress(maxDistance);
     const nextPlanet = progress && progress.nextPlanet ? progress.nextPlanet : null;
     const kmReached = !nextPlanet || calculateDistance() >= nextPlanet.distanceRequired;
