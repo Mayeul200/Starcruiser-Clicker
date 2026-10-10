@@ -8079,8 +8079,8 @@ const TUTORIAL_STEPS = [
     {
         img: 'images/parts.webp',
         titleKey: 'Clique sur la pièce',
-        textKey: 'Chaque clic te rapporte des Parts. Clique pour en gagner !',
-        done: () => totalPartsFromClicks >= 1,
+        textKey: 'Chaque clic te rapporte des Parts. Clique 15 fois pour t’entraîner !',
+        done: () => totalPartsFromClicks >= 15,
         target: '#medal',
     },
     {
