@@ -7291,13 +7291,10 @@ function applySceneScale() {
     if (!sceneHeight || !sceneWidth) return;
     const WORLD_WIDTH = 1024;
     const WORLD_HEIGHT = 744;
-    // La barre d'achat des pieces occupe le bas du panneau central : la
-    // scene lui reserve cette hauteur pour que le pas de tir (sol) reste
-    // visible AU-DESSUS de la barre. On ancre donc le monde au-dessus de
-    // la barre au lieu du bas brut du panneau.
-    const shop = document.getElementById('rocket-parts-shop');
-    const shopH = shop && !shop.classList.contains('shop-done') && shop.offsetHeight > 0
-        ? shop.offsetHeight : 0;
+    // Le monde reste TOUJOURS ancre au bas du panneau central (bottom: 0),
+    // comme a l'origine : le decor ne bouge jamais, quelle que soit la
+    // hauteur de la barre d'achat des pieces en dessous. C'est la hauteur
+    // de la barre qu'on gerera pour ne pas cacher le pas de tir.
     // Sommet de la fusée dans le repere monde (piece la plus haute : pas de tir).
     const ROCKET_TOP_Y = 205;
     const rocketAboveGround = WORLD_HEIGHT - ROCKET_TOP_Y;
@@ -7310,9 +7307,6 @@ function applySceneScale() {
     scale = Math.min(scale, (sceneHeight - MARGIN) / rocketAboveGround);
     world.style.transformOrigin = '50% 100%';
     world.style.transform = 'translateX(-50%) scale(' + scale + ')';
-    // Remonte le monde au-dessus de la barre d'achat : le sol du pas de tir
-    // reste visible, la barre ne le recouvre plus.
-    world.style.bottom = shopH + 'px';
     // Prolongation du sol : le decor a sa ligne de sol vers y=480 (sur 744).
     // On aligne le remplissage sur cette ligne pour une jonction invisible.
     const GROUND_LINE_Y = 480;
@@ -8388,9 +8382,6 @@ function renderRocketPartsShop() {
     const container = document.getElementById('rocket-parts-shop');
     if (!container) return;
     updateLaunchButtonVisibility();
-    // La hauteur de la barre peut changer (nouvelle piece, wrap) : recaler
-    // la scene pour garder le sol du pas de tir visible au-dessus.
-    if (typeof applySceneScale === 'function') applySceneScale();
     const nextPart = ROCKET_PARTS.find(p => !p.purchased);
     if (!nextPart) {
         // Toutes les pieces sont achetees : eteindre tout pulse residuel
