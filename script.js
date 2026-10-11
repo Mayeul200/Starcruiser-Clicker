@@ -2507,7 +2507,7 @@ function playTravelAnimation(distance, onDone) {
     // coeur, gaz, Sagittarius A*) -- remplace le simple sprite galaxie.
     let galacticCore = null;
     if (target.id === 'milky-way-center') {
-        galacticCore = createGalacticCore(travelOverlay);
+        galacticCore = createGalacticCore(overlay);
     }
     // Index du Nuage d'Oort dans l'itineraire (calcule AVANT bodies :
     // sert a rendre la planete suivante plus discrete en sortie de nuage).
@@ -2540,7 +2540,8 @@ function playTravelAnimation(distance, onDone) {
         if (isGalaxy && !(isProceduralGalaxy && p.id === 'milky-way-center')) scale = GALAXY_SCALE;
         // Centre Voie lactee procedurale : le sprite de la cible est
         // masque (la scene animee le remplace) -- il ne grossit pas.
-        const hidden = !!(isProceduralGalaxy && p.id === 'milky-way-center' && p.id === target.id);
+        const hidden = !!((isProceduralGalaxy && p.id === 'milky-way-center' && p.id === target.id)
+            || (target.id === 'virgo-cluster' && p.id === target.id));
         return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort, isGalaxy, hidden };
     });
 
@@ -2690,35 +2691,36 @@ function playTravelAnimation(distance, onDone) {
                 spin: rand(-12, 12)   // les galaxies tournent doucement
             });
         };
-        // Couche 1 -- tres loin : galaxies-points, l'immensite de l'amas.
-        for (let i = 0; i < 90; i++) {
+        // Couche 1 -- tres loin : galaxies-points, l'immensite de l'amas
+        // (densifiee x2.5 : l'amas doit EVINCRER la population).
+        for (let i = 0; i < 220; i++) {
             addVirgoObj(0, pick(VIRGO_MODELS),
-                rand(4, 9), rand(0.25, 0.5),
+                rand(5, 13), rand(0.25, 0.55),
                 rand(-1.15, 1.15) * W, rand(-0.85, 0.85) * H,
                 rand(VZ0, VZ1));
         }
         // Couche 2 -- distance moyenne : galaxies discibles, elles
-        // habillent la profondeur de l'amas (spirales et eliptiques).
-        for (let i = 0; i < 55; i++) {
+        // habillent la profondeur de l'amas (densifiee, tailles x1.6).
+        for (let i = 0; i < 140; i++) {
             addVirgoObj(1, pick(VIRGO_MODELS),
-                rand(14, 38), rand(0.45, 0.8),
+                rand(22, 60), rand(0.45, 0.85),
                 rand(-1.05, 1.05) * W, rand(-0.75, 0.75) * H,
                 rand(VZ0 + 0.5, VZ1 - 0.5));
         }
         // Couche 3 -- fly-by proches : galaxies entieres qui traversent
-        // le champ, enormes a cette echelle -- la camera est DANS l'amas.
-        for (let i = 0; i < 22; i++) {
+        // le champ, enormes a cette echelle (densifiee, tailles x1.5).
+        for (let i = 0; i < 55; i++) {
             addVirgoObj(2, pick(VIRGO_MODELS),
-                rand(35, 95), rand(0.6, 0.9),
+                rand(50, 140), rand(0.6, 0.92),
                 (Math.random() < 0.5 ? -1 : 1) * rand(0.16, 0.46) * W,
                 rand(-0.26, 0.26) * H,
                 rand(VZ0 + 1.5, VZ1 - 1.5));
         }
         // Couche 4 -- autour de la camera : galaxies geantes derivees
-        // sur les bords, la camera est AU COEUR de l'amas.
-        for (let i = 0; i < 14; i++) {
+        // sur les bords, la camera est AU COEUR de l'amas (densifiee).
+        for (let i = 0; i < 36; i++) {
             addVirgoObj(2, pick(VIRGO_MODELS),
-                rand(40, 120), rand(0.5, 0.85),
+                rand(55, 160), rand(0.5, 0.88),
                 (Math.random() < 0.5 ? -1 : 1) * rand(0.55, 1.15) * W,
                 rand(-0.7, 0.7) * H,
                 rand(VZ0 + 0.3, VZ1 - 0.3));
