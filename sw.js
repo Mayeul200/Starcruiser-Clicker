@@ -9,7 +9,7 @@
 // reste en etat "waiting" ; la page le detecte, affiche le bouton
 // "Recharger", lui envoie SKIP_WAITING au clic, puis recharge la page quand
 // il prend le controle (controllerchange).
-const CACHE_NAME = 'starcruiser-clicker-v0160a3c6';
+const CACHE_NAME = 'starcruiser-clicker-v0161b4d7';
 
 self.addEventListener('install', (event) => {
     // Precache minimal (fallback hors-ligne). Les echecs individuels sont

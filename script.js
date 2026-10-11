@@ -271,7 +271,7 @@ const TROPHIES = [
     { id: "planet-oort", name: "Le Grand Nuage", description: "Atteindre le Nuage d'Oort", icon: "images/planets/oort-cloud.webp", threshold: 7, type: "planets" },
     { id: "planet-milky", name: "Cœur de la Galaxie", description: "Atteindre le Centre de la Voie lactée", icon: "images/planets/milky-way-center.webp", threshold: 8, type: "planets" },
     { id: "planet-andromeda", name: "Galaxie Voisine", description: "Atteindre Andromède", icon: "images/planets/andromeda.webp", threshold: 9, type: "planets" },
-    { id: "planet-virgo", name: "Conquérant de l'Univers", description: "Atteindre l'Amas de Virgo", icon: "images/planets/virgo-cluster.webp", threshold: 10, type: "planets" },
+    { id: "planet-virgo", name: "Conquérant de l'Univers", description: "Atteindre l'Amas de Virgo", icon: "images/planets/virgo-cluster2.png", threshold: 10, type: "planets" },
 
     // Lancements de fusée (icônes: pièces de fusée)
     { id: "launch-1", name: "Décollage !", description: "Réaliser votre premier lancement", icon: "images/rocket/engines.webp", threshold: 1, type: "launches" },
@@ -322,7 +322,7 @@ const TROPHIES = [
     { id: "score-1000000000000000", name: "Quadrillionaire", description: "Atteindre 1 Qa Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1000000000000000, type: "score" },
     { id: "score-10000000000000000", name: "Maître de l'Univers", description: "Atteindre 10 Qa Parts", icon: "images/cards/collection/missile-card.webp", threshold: 10000000000000000, type: "score" },
     { id: "score-100000000000000000", name: "Au-delà de l'Univers", description: "Atteindre 100 Qa Parts", icon: "images/planets/milky-way-center.webp", threshold: 100000000000000000, type: "score" },
-    { id: "score-1e18", name: "Forgeron de Réalités", description: "Atteindre 1 Qi Parts", icon: "images/planets/virgo-cluster.webp", threshold: 1e18, type: "score" },
+    { id: "score-1e18", name: "Forgeron de Réalités", description: "Atteindre 1 Qi Parts", icon: "images/planets/virgo-cluster2.png", threshold: 1e18, type: "score" },
     { id: "score-1e19", name: "Bâtisseur de Multivers", description: "Atteindre 10 Qi Parts", icon: "images/planets/andromeda.webp", threshold: 1e19, type: "score" },
     { id: "score-1e20", name: "Architecte Cosmique Suprême", description: "Atteindre 100 Qi Parts", icon: "images/planets/milky-way-center.webp", threshold: 1e20, type: "score" },
     { id: "score-1e21", name: "Au-delà de l'Infini", description: "Atteindre 1 Sx Parts", icon: "images/cards/collection/milky-way-center-card.webp", threshold: 1e21, type: "score" },
