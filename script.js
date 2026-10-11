@@ -2961,9 +2961,10 @@ function playTravelAnimation(distance, onDone) {
             // d'entree que Proxima (smoothstep sur l'opacite des
             // premieres unites de profondeur apres l'entree en fenetre),
             // puis croissance perspective purement monotone.
-            // Proxima post-Oort : fenetre elargie (14 au lieu de 9) --
-            // elle se reveille des la fin du nuage au lieu d'attendre.
-            const lookahead = b.distant ? 14 : TRAVEL_LOOKAHEAD;
+            // Proxima post-Oort : fenetre resserree -- elle n'apparait
+            // qu'a la fin du Nuage d'Oort (mystere preserve), mais se
+            // rapproche ensuite NORMALEMENT, taille pleine.
+            const lookahead = b.distant ? 9 : TRAVEL_LOOKAHEAD;
             if (b.z - cameraZ > lookahead) {
                 b.el.style.display = 'none';
                 return;
@@ -2982,7 +2983,7 @@ function playTravelAnimation(distance, onDone) {
             b.el.style.opacity = (fadeIn * fadeIn * (3 - 2 * fadeIn)).toFixed(2);
             // Perspective par scale compositE : la planete a une largeur de
             // base 100px posee une fois, on ne fait plus que la scaler.
-            const px = Math.max(0.02, pr.size * (b.scale || 1) * (b.distant ? 0.85 : 1) / 300);
+            const px = Math.max(0.02, pr.size * (b.scale || 1) / 300);
             b.el.style.transform = 'translate3d(' + pr.x.toFixed(1) + 'px, ' + pr.y.toFixed(1) + 'px, 0) translate(-50%, -50%) scale(' + px.toFixed(3) + ')';
             // PLONGEE CINEMATIQUE (galaxies) : un glow radial croissant
             // enveloppe l'ecran quand la camera s'approche -- on TRAVERSE
