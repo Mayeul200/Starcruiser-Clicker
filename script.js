@@ -460,7 +460,7 @@ const PLANETS = [
     { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#a8c8e8', imgPath: 'images/planets/sirius.webp' },
     { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#e8c898', imgPath: 'images/planets/milky-way-center.webp' },
     { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#b89a9a', imgPath: 'images/planets/andromeda.webp' },
-    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/virgo-cluster.webp' }
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/cluster6.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -2232,6 +2232,7 @@ function playTravelAnimation(distance, onDone) {
     // Index du Nuage d'Oort dans l'itineraire (calcule AVANT bodies :
     // sert a rendre la planete suivante plus discrete en sortie de nuage).
     const oortIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
+    const virgoClusterIdx = itinerary.findIndex(p => p.id === 'virgo-cluster');
     const bodies = itinerary.map((p, i) => {
         if (p.id === 'oort-cloud') {
             return { el: null, z: i * DEPTH_STEP, lat: 0, scale: 1, hidden: true };
@@ -2354,6 +2355,86 @@ function playTravelAnimation(distance, onDone) {
                 (Math.random() < 0.5 ? -1 : 1) * rand(0.55, 1.15) * W,
                 rand(-0.7, 0.7) * H,
                 rand(FIELD_Z0 + 0.3, FIELD_Z1 - 0.3));
+        }
+    }
+
+    // --- AMAS DE VIRGO : champ volumetrique de galaxies ---
+    // Meme architecture que le Nuage d'Oort mais avec les 6 galaxies
+    // de l'utilisateur : la camera traverse une POPULATION galactique
+    // (pas un seul sprite) avant d'atteindre la cible. Densite
+    // croissante vers la cible : on entre dans l'amas, il s'epaissit,
+    // puis la plongee finale (glow) prend le relais.
+    let virgoDensity = () => 0;
+    const virgoField = [];
+    if (virgoClusterIdx >= 0) {
+        const vz = virgoClusterIdx * DEPTH_STEP;
+        const VZ0 = vz - 7.5;      // premiers galaxies en approche
+        const VZ1 = vz + 0.5;      // la population s'arrete a la cible
+        virgoDensity = (cam) => {
+            if (cam <= VZ0 || cam >= VZ1) return 0;
+            return Math.min(smooth01((cam - VZ0) / 5.5), smooth01((VZ1 - cam) / 1.6));
+        };
+        // Les 6 galaxies de l'utilisateur (PNG, ratios varies).
+        const VIRGO_MODELS = [
+            { cls: 'virgo-g1', img: 'images/planets/cluster1.png', ar: 1 },
+            { cls: 'virgo-g2', img: 'images/planets/cluster2.png', ar: 1 },
+            { cls: 'virgo-g3', img: 'images/planets/cluster3.png', ar: 1 },
+            { cls: 'virgo-g4', img: 'images/planets/cluster4.png', ar: 1 },
+            { cls: 'virgo-g5', img: 'images/planets/cluster5.png', ar: 1 },
+            { cls: 'virgo-g6', img: 'images/planets/cluster6.png', ar: 1 }
+        ];
+        const addVirgoObj = (layer, model, size, op, ox, oy, z) => {
+            const el = document.createElement('div');
+            el.className = 'travel-oort ' + model.cls;
+            const img = document.createElement('img');
+            img.src = model.img;
+            img.alt = '';
+            img.draggable = false;
+            el.appendChild(img);
+            el.style.width = '100px';
+            el.style.height = '100px';
+            el.style.display = 'none';
+            deepEl.appendChild(el);
+            virgoField.push({
+                el, layer, z, ox, oy, size, op, on: false, ar: model.ar,
+                gate: layer === 0 ? 0.02 : (layer === 1 ? 0.14 : 0.30),
+                stag: Math.random(),
+                rot: rand(0, 360),
+                spin: rand(-12, 12)   // les galaxies tournent doucement
+            });
+        };
+        // Couche 1 -- tres loin : galaxies-points, l'immensite de l'amas.
+        for (let i = 0; i < 90; i++) {
+            addVirgoObj(0, pick(VIRGO_MODELS),
+                rand(4, 9), rand(0.25, 0.5),
+                rand(-1.15, 1.15) * W, rand(-0.85, 0.85) * H,
+                rand(VZ0, VZ1));
+        }
+        // Couche 2 -- distance moyenne : galaxies discibles, elles
+        // habillent la profondeur de l'amas (spirales et eliptiques).
+        for (let i = 0; i < 55; i++) {
+            addVirgoObj(1, pick(VIRGO_MODELS),
+                rand(14, 38), rand(0.45, 0.8),
+                rand(-1.05, 1.05) * W, rand(-0.75, 0.75) * H,
+                rand(VZ0 + 0.5, VZ1 - 0.5));
+        }
+        // Couche 3 -- fly-by proches : galaxies entieres qui traversent
+        // le champ, enormes a cette echelle -- la camera est DANS l'amas.
+        for (let i = 0; i < 22; i++) {
+            addVirgoObj(2, pick(VIRGO_MODELS),
+                rand(35, 95), rand(0.6, 0.9),
+                (Math.random() < 0.5 ? -1 : 1) * rand(0.16, 0.46) * W,
+                rand(-0.26, 0.26) * H,
+                rand(VZ0 + 1.5, VZ1 - 1.5));
+        }
+        // Couche 4 -- autour de la camera : galaxies geantes derivees
+        // sur les bords, la camera est AU COEUR de l'amas.
+        for (let i = 0; i < 14; i++) {
+            addVirgoObj(2, pick(VIRGO_MODELS),
+                rand(40, 120), rand(0.5, 0.85),
+                (Math.random() < 0.5 ? -1 : 1) * rand(0.55, 1.15) * W,
+                rand(-0.7, 0.7) * H,
+                rand(VZ0 + 0.3, VZ1 - 0.3));
         }
     }
 
@@ -2628,6 +2709,33 @@ function playTravelAnimation(distance, onDone) {
         // Chaque objet n'apparait que si la densite locale depasse son
         // seuil (reparti par couche + alea de staging) -> montee douce,
         // jamais un mur de rochers d'un coup.
+        if (virgoField.length > 0) {
+            const vDensity = virgoDensity(cameraZ);
+            virgoField.forEach(o => {
+                const rel = o.z - cameraZ;
+                if (vDensity <= 0 || rel <= 0.05 || rel > TRAVEL_LOOKAHEAD * 1.6) {
+                    if (o.on) { o.el.style.display = 'none'; o.on = false; }
+                    return;
+                }
+                const local = Math.max(0, Math.min(1, (vDensity - o.gate * 0.55) / (1 - o.gate * 0.55)));
+                const appear = smooth01(local - o.stag * 0.85);
+                if (appear <= 0.01) {
+                    if (o.on) { o.el.style.display = 'none'; o.on = false; }
+                    return;
+                }
+                const inv = 1 / Math.max(0.12, rel);
+                const sx = W / 2 + o.ox * inv;
+                const sy = horizonY + pitchK * inv + o.oy * inv;
+                const size = Math.max(1.5, o.size * inv);
+                const op = o.op * appear * Math.min(1, rel * 2.2);
+                if (!o.on) { o.el.style.display = ''; o.on = true; }
+                o.el.style.opacity = op.toFixed(2);
+                // Les galaxies tournent DOUCEMENT (spin reduit), pas comme
+                // les cailloux du nuage : ce sont des objets massifs lointains.
+                o.el.style.transform = 'translate3d(' + sx.toFixed(1) + 'px, ' + sy.toFixed(1) + 'px, 0) translate(-50%, -50%) rotate(' + (o.rot + o.spin * (o.layer === 2 ? 0.8 : 0.2)) + 'deg) scale(' + (size / 100).toFixed(3) + ')';
+                o.el.style.zIndex = String(Math.min(30, Math.round(inv * 10) + 1));
+            });
+        }
         if (oortField.length > 0) {
             const density = oortDensity(cameraZ);
             oortField.forEach(o => {
