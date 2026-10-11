@@ -83,9 +83,9 @@ body {
     height: var(--top-height);
     min-height: 60px; max-height: 80px;
     background: linear-gradient(135deg, var(--secondary-light), var(--secondary));
-    /* Bordure inferieure restauree : le logo agrandi (68px) debordait
-       visuellement et masquait la ligne de separation. */
-    border-bottom: none;
+    /* Espace de 4 px avec le contenu : bande sombre discrete au lieu
+       d'une ligne dure. */
+    border-bottom: 4px solid #0a0f1e;
     display: flex;
     align-items: center;
     justify-content: space-between;
