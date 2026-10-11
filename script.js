@@ -1181,7 +1181,12 @@ function importSave() {
     if (!importText) { showToast("\u274c " + t("Rien à importer.")); return; }
     try {
         const testParse = JSON.parse(importText);
-        if (testParse.version !== SAVE_VERSION) {
+        // Versions differentes : ACCEPTEES (loadGame migre avec un
+        // simple warning). Avant, l'import refusait toute sauvegarde
+        // dont la version ne correspondait pas exactement -- des
+        // sauvegardes valides d'une autre version du jeu etaient
+        // rejetees comme "incompatibles".
+        if (!testParse.version) {
             showToast("\u274c " + t("Version de sauvegarde incompatible."));
             return;
         }
@@ -2483,9 +2488,15 @@ function playTravelAnimation(distance, onDone) {
     // etire la duree de ces segments (poids total -> animMs).
     const OORT_LEG_WEIGHT = 4.5;
     const legWeights = [];
+    // Traversee de l'Amas de Virgo : le dernier troncon (arrivee dans
+    // l'amas) dure VIRGO_LEG_WEIGHT fois la duree standard -- la
+    // population galactique dense se deguste.
+    const virgoLegIdx = itinerary.findIndex(p => p.id === 'virgo-cluster');
+    const VIRGO_LEG_WEIGHT = 3.5;
     for (let i = 0; i < legs; i++) {
         let w = 1;
         if (oortLegIdx > 0 && (i === oortLegIdx - 1 || i === oortLegIdx)) w = OORT_LEG_WEIGHT;
+        if (virgoLegIdx > 0 && i === virgoLegIdx - 1) w = VIRGO_LEG_WEIGHT;
         legWeights.push(w);
     }
     const totalWeight = legWeights.reduce((a, b) => a + b, 0);
@@ -2950,7 +2961,9 @@ function playTravelAnimation(distance, onDone) {
             // d'entree que Proxima (smoothstep sur l'opacite des
             // premieres unites de profondeur apres l'entree en fenetre),
             // puis croissance perspective purement monotone.
-            const lookahead = b.distant ? 9 : TRAVEL_LOOKAHEAD;
+            // Proxima post-Oort : fenetre elargie (14 au lieu de 9) --
+            // elle se reveille des la fin du nuage au lieu d'attendre.
+            const lookahead = b.distant ? 14 : TRAVEL_LOOKAHEAD;
             if (b.z - cameraZ > lookahead) {
                 b.el.style.display = 'none';
                 return;
@@ -3001,7 +3014,10 @@ function playTravelAnimation(distance, onDone) {
         // restante (plein a ~1.6 unites, avant le voile de plongee).
         if (galacticCore) {
             const relT2 = zMax - cameraZ;
-            const closeness = Math.max(0, Math.min(1, 1 - (relT2 - 0.1) / 6.5));
+            // Approche ETENDUE : la scene monte sur ~20 unites (4 legs)
+            // au lieu de 6.5 -- l'immersion dans le centre galactique
+            // commence des la sortie du Nuage d'Oort.
+            const closeness = Math.max(0, Math.min(1, 1 - (relT2 - 0.1) / 20));
             galacticCore.update(closeness);
         }
 
