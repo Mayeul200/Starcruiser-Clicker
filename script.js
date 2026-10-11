@@ -460,7 +460,7 @@ const PLANETS = [
     { id: 'sirius', name: 'Sirius', emoji: '\u2609', distanceRequired: 891000000000, bonusPercent: 55, color: '#a8c8e8', imgPath: 'images/planets/sirius.webp' },
     { id: 'milky-way-center', name: 'Centre Voie lactée', emoji: '\uD83C\uDF0C', distanceRequired: 12800000000000, bonusPercent: 60, color: '#e8c898', imgPath: 'images/planets/milky-way-center.webp' },
     { id: 'andromeda', name: 'Andromède', emoji: '\uD83C\uDF0C', distanceRequired: 156000000000000, bonusPercent: 70, color: '#b89a9a', imgPath: 'images/planets/andromeda.webp' },
-    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/cluster6.png' }
+    { id: 'virgo-cluster', name: 'Amas de Virgo', emoji: '\u2728', distanceRequired: 2010000000000000, bonusPercent: 85, color: '#a89aa8', imgPath: 'images/planets/virgo-cluster2.png' }
 ];
 
 let unlockedPlanets = new Set(['earth']);
@@ -2544,6 +2544,12 @@ function playTravelAnimation(distance, onDone) {
         return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort, isGalaxy, hidden };
     });
 
+    // Helpers aleatoires PARTAGES par le Nuage d'Oort et l'Amas de
+    // Virgo (avant : definis dans le bloc Oort seulement, le champ
+    // Virgo levait ReferenceError quand l'itineraire n'a pas de nuage).
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
     // --- Nuage d'Oort : champ volumetrique de debris glaces ---
     // La camera traverse un VOLUME 3D d'objets : les 5 images dediees
     // de l'utilisateur (images/effects/) remplacee les modeles proceduraux.
@@ -2569,8 +2575,6 @@ function playTravelAnimation(distance, onDone) {
             if (cam <= FIELD_Z0 || cam >= FIELD_Z1) return 0;
             return Math.min(smooth01((cam - FIELD_Z0) / 5.5), smooth01((FIELD_Z1 - cam) / 1.6));
         };
-        const rand = (a, b) => a + Math.random() * (b - a);
-        const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
         // Les 5 modeles d'objets du nuage (images dediees, tailles
         // natives heterogenes -- les tailles ecran sont fixees par couche).
         const OORT_MODELS = [
