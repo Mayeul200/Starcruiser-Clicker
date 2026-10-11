@@ -2134,7 +2134,7 @@ function createGalacticCore(hostEl) {
     if (!hostEl) return null;
     const root = document.createElement('div');
     root.className = 'galactic-core';
-    root.style.cssText = 'position:absolute;inset:0;pointer-events:none;opacity:0;overflow:hidden;';
+    root.style.cssText = 'position:absolute;inset:0;pointer-events:none;opacity:0;overflow:hidden;z-index:2;';
 
     const W = hostEl.clientWidth || 1280;
     const H = hostEl.clientHeight || 720;
@@ -2479,7 +2479,9 @@ function playTravelAnimation(distance, onDone) {
     // Traversee du Nuage d'Oort plus longue : les troncons qui y arrivent
     // et qui en repartent durent OORT_LEG_WEIGHT fois la duree standard.
     const oortLegIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
-    const OORT_LEG_WEIGHT = 2.2;
+    // Traversee du Nuage d'Oort encore plus longue : le poids par troncon
+    // etire la duree de ces segments (poids total -> animMs).
+    const OORT_LEG_WEIGHT = 4.5;
     const legWeights = [];
     for (let i = 0; i < legs; i++) {
         let w = 1;
@@ -2936,7 +2938,10 @@ function playTravelAnimation(distance, onDone) {
 
         // ---- Astres : projection perspective + fondu de depassement ----
         bodies.forEach(b => {
-            if (b.hidden) return;
+            if (b.hidden) {
+                if (b.el) b.el.style.display = 'none';
+                return;
+            }
             // Fenetre de visibilite : on ne montre pas toute la ligne de
             // planetes, seulement les deux prochaines (la 2e en micro-point).
             // La planete qui suit le Nuage d'Oort apparait PLUS TARD et
