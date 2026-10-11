@@ -2106,6 +2106,276 @@ function buildTravelRocketInto(holder, targetH) {
 // Projection d'un astre (decalage lateral lat, profondeur z) sur
 // l'ecran pour une camera a la profondeur cameraZ. Tous les astres
 // restent proches de l'axe central (composition mobile).
+// ============================================
+// CENTRE GALACTIQUE PROCEDURAL — « Sagittarius A* »
+// Passage au centre de la Voie lactee recree par animation (pas de
+// sprite) : a mesure que la camera approche, quatre systemes montent
+// en intensite, composes d'apres la structure reelle observee par la
+// NASA (region infrarouge du centre galactique) :
+//   1. DENSIFICATION STELLAIRE : le fond, presque noir, se remplit de
+//      petites etoiles (blanches, jaune pale, orangees, rougees,
+//      bleutees) de plus en plus nombreuses et lumineuses.
+//   2. FILAMENTS DE POUSSIERE : longues veines sombres ramifiees, aux
+//      contours soulignes de rouge sombre / cuivre, qui traversent le
+//      champ d'etoiles comme des dechirures.
+//   3. COEUR DIFFUS : zone ovale etendue, blanc creme / or pale /
+//      ambre / orange, dont la luminosite se dissipe progressivement
+//      entre les etoiles — jamais une boule nette.
+//   4. VOLUTES DE GAZ : filaments fins de gaz rouge sombre, cuivre et
+//      magenta, secondaires, bien places pour la profondeur.
+// Et en toute fin : SAGITTARIUS A* — le disque d'accretion du trou
+// noir supermassif, un anneau chaud qui ressort du coeur.
+// ============================================
+
+// Cree le calque du centre galactique dans le conteneur de voyage.
+// Renvoie un objet { el, update(closeness) } — closeness 0 (loin) a 1
+// (plongee finale). Retourne null si le DOM n'est pas pret.
+function createGalacticCore(hostEl) {
+    if (!hostEl) return null;
+    const root = document.createElement('div');
+    root.className = 'galactic-core';
+    root.style.cssText = 'position:absolute;inset:0;pointer-events:none;opacity:0;overflow:hidden;';
+
+    const W = hostEl.clientWidth || 1280;
+    const H = hostEl.clientHeight || 720;
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // Palette d'etoiles du centre galactique (infrarouge NASA).
+    const STAR_COLORS = ['#ffffff', '#fff5e0', '#ffe9c4', '#ffd9a0', '#ffc078', '#ff9d5c', '#ff7a4d', '#cfe0ff', '#b8d4ff'];
+
+    // ---- 1. CHAMP D'ETOILES : 3 vagues de densification ----
+    // Chaque etoile : point div, taille 1-3px, twinkle par animation
+    // CSS, opacite individuelle modulee par le closeness global.
+    const starField = document.createElement('div');
+    starField.className = 'gc-stars';
+    starField.style.cssText = 'position:absolute;inset:0;';
+    const stars = [];
+    // Vague 1 : etoiles eparses (visibles des le debut de l'approche).
+    // Vague 2 : population dense (mi-approche).
+    // Vague 3 : concentration extreme (plongee) — le centre abrite
+    // des MILLIONS d'etoiles, c'est la region la plus dense de la
+    // galaxie.
+    const waves = [
+        { n: 90, wave: 0 },    // vague 1
+        { n: 160, wave: 1 },   // vague 2
+        { n: 240, wave: 2 }    // vague 3
+    ];
+    waves.forEach(({ n, wave }) => {
+        for (let i = 0; i < n; i++) {
+            const st = document.createElement('div');
+            const size = rand(1, wave === 2 ? 3.2 : 2.4);
+            const col = pick(STAR_COLORS);
+            const x = rand(-5, 105);
+            const y = rand(-5, 105);
+            st.style.cssText =
+                'position:absolute;left:' + x.toFixed(2) + '%;top:' + y.toFixed(2) + '%;' +
+                'width:' + size.toFixed(1) + 'px;height:' + size.toFixed(1) + 'px;border-radius:50%;' +
+                'background:' + col + ';box-shadow:0 0 ' + (size * rand(1.5, 4)).toFixed(1) + 'px ' + col + ' ;' +
+                'animation:gc-twinkle ' + rand(1.6, 5.5).toFixed(2) + 's ease-in-out ' + rand(0, 5).toFixed(2) + 's infinite;';
+            st.dataset.wave = String(wave);
+            starField.appendChild(st);
+            stars.push(st);
+        }
+    });
+    root.appendChild(starField);
+
+    // ---- 2. FILAMENTS DE POUSSIERE : veines sombres ramifiees ----
+    // Dessines en SVG : longues courbes quasi-noires (#0a0503,
+    // brun tres fonce), contours internes cuivre/rouge sombre. Elles
+    // traversent le champ en diagonales, comme les rubans de fumee
+    // cosmique des images infrarouges.
+    const dustSvgNS = 'http://www.w3.org/2000/svg';
+    const dust = document.createElementNS(dustSvgNS, 'svg');
+    dust.setAttribute('viewBox', '0 0 100 60');
+    dust.setAttribute('preserveAspectRatio', 'none');
+    dust.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+    // 7 filaments principaux, chaque avec 2-3 branches secondaires.
+    for (let f = 0; f < 7; f++) {
+        const y0 = rand(2, 58);
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const main = document.createElementNS(dustSvgNS, 'path');
+        // Courbe lente traversant l'ecran avec ondulation.
+        let d = 'M -5 ' + y0.toFixed(1);
+        const segs = 5;
+        let cy = y0;
+        for (let seg = 1; seg <= segs; seg++) {
+            const x = -5 + (110 / segs) * seg;
+            cy += rand(-6, 6) * dir;
+            const cx1 = x - 110 / segs / 2 - rand(0, 6);
+            const cx2 = x - 110 / segs / 2 + rand(0, 6);
+            d += ' C ' + cx1.toFixed(1) + ' ' + (cy - rand(2, 5) * dir).toFixed(1) +
+                 ', ' + cx2.toFixed(1) + ' ' + (cy + rand(2, 5) * dir).toFixed(1) +
+                 ', ' + x.toFixed(1) + ' ' + cy.toFixed(1);
+        }
+        main.setAttribute('d', d);
+        main.setAttribute('fill', 'none');
+        main.setAttribute('stroke', '#0a0503');
+        main.setAttribute('stroke-width', (rand(1.6, 4.2)).toFixed(2));
+        main.setAttribute('stroke-linecap', 'round');
+        main.setAttribute('opacity', '0');
+        dust.appendChild(main);
+        // Lueur cuivree le long du filament : plus fine, en dessous.
+        const glow = document.createElementNS(dustSvgNS, 'path');
+        glow.setAttribute('d', d);
+        glow.setAttribute('fill', 'none');
+        glow.setAttribute('stroke', 'rgba(120, 60, 30, 0.55)');
+        glow.setAttribute('stroke-width', (rand(0.3, 0.7)).toFixed(2));
+        glow.setAttribute('stroke-linecap', 'round');
+        glow.setAttribute('opacity', '0');
+        dust.appendChild(glow);
+        // Branches secondaires courtes.
+        const nBr = Math.floor(rand(1, 3));
+        for (let b = 0; b < nBr; b++) {
+            const br = document.createElementNS(dustSvgNS, 'path');
+            const bx = rand(10, 90);
+            const by = cy + rand(-4, 4);
+            br.setAttribute('d', 'M ' + bx.toFixed(1) + ' ' + by.toFixed(1) +
+                ' q ' + rand(4, 10).toFixed(1) + ' ' + (rand(-5, 5) * dir).toFixed(1) +
+                ', ' + rand(8, 16).toFixed(1) + ' ' + (rand(-8, 8) * dir).toFixed(1));
+            br.setAttribute('fill', 'none');
+            br.setAttribute('stroke', '#0a0503');
+            br.setAttribute('stroke-width', (rand(0.6, 1.6)).toFixed(2));
+            br.setAttribute('stroke-linecap', 'round');
+            br.setAttribute('opacity', '0');
+            dust.appendChild(br);
+        }
+    }
+    root.appendChild(dust);
+    const dustPaths = dust.querySelectorAll('path');
+
+    // ---- 3. COEUR DIFFUS : luminosite ovale or/ambre ----
+    // Plusieurs calques radial-gradient emboites, tailles et couleurs
+    // differentes, pour une dissipation progressive non uniforme —
+    // la luminosite se fond entre les etoiles.
+    const coreWrap = document.createElement('div');
+    coreWrap.style.cssText = 'position:absolute;inset:0;';
+    const coreLayers = [];
+    const coreDefs = [
+        // halo externe tres large, ambre fonce
+        { size: 120, color: 'rgba(140, 80, 30, 0.32)', top: '42%' },
+        // halo moyen or
+        { size: 74, color: 'rgba(212, 155, 70, 0.45)', top: '48%' },
+        // coeur blanc creme
+        { size: 38, color: 'rgba(250, 235, 205, 0.6)', top: '52%' },
+        // point chaud quasi blanc
+        { size: 14, color: 'rgba(255, 248, 235, 0.8)', top: '54%' }
+    ];
+    coreDefs.forEach(def => {
+        const c = document.createElement('div');
+        c.style.cssText =
+            'position:absolute;left:50%;top:' + def.top + ';transform:translate(-50%,-50%);' +
+            'width:' + def.size + 'vmin;height:' + (def.size * 0.78).toFixed(1) + 'vmin;' +
+            'border-radius:50%;' +
+            'background:radial-gradient(ellipse at center, ' + def.color + ' 0%, transparent 70%);' +
+            'filter:blur(6px);opacity:0;';
+        coreWrap.appendChild(c);
+        coreLayers.push(c);
+    });
+    root.appendChild(coreWrap);
+
+    // ---- 4. VOLUTES DE GAZ : filaments rouges/cuivre/magenta ----
+    const gasSvgNS = 'http://www.w3.org/2000/svg';
+    const gas = document.createElementNS(gasSvgNS, 'svg');
+    gas.setAttribute('viewBox', '0 0 100 60');
+    gas.setAttribute('preserveAspectRatio', 'none');
+    gas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;';
+    const GAS_COLORS = ['rgba(180, 40, 50, 0.5)', 'rgba(190, 100, 45, 0.45)', 'rgba(170, 45, 110, 0.4)'];
+    // 5 volutes fines, irregulieres, autour du coeur (secondaires).
+    for (let g = 0; g < 5; g++) {
+        const gp = document.createElementNS(gasSvgNS, 'path');
+        const ang = rand(0, Math.PI * 2);
+        const r0 = rand(6, 16);
+        const cx = 50 + Math.cos(ang) * r0;
+        const cy = 30 + Math.sin(ang) * r0 * 0.6;
+        let gd = 'M ' + cx.toFixed(1) + ' ' + cy.toFixed(1);
+        for (let seg = 0; seg < 3; seg++) {
+            gd += ' q ' + rand(-8, 8).toFixed(1) + ' ' + rand(-6, 6).toFixed(1) +
+                  ', ' + rand(-12, 12).toFixed(1) + ' ' + rand(-9, 9).toFixed(1);
+        }
+        gp.setAttribute('d', gd);
+        gp.setAttribute('fill', 'none');
+        gp.setAttribute('stroke', pick(GAS_COLORS));
+        gp.setAttribute('stroke-width', (rand(0.4, 1.1)).toFixed(2));
+        gp.setAttribute('stroke-linecap', 'round');
+        gp.setAttribute('opacity', '0');
+        gas.appendChild(gp);
+    }
+    root.appendChild(gas);
+    const gasPaths = gas.querySelectorAll('path');
+
+    // ---- SAGITTARIUS A* : l'anneau final du trou noir ----
+    // En toute fin de plongee (closeness > 0.75) : un anneau chaud
+    // orange/blanc ressort du coeur diffuse — le disque d'accretion.
+    const sgrA = document.createElement('div');
+    sgrA.style.cssText =
+        'position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);' +
+        'width:20vmin;height:20vmin;border-radius:50%;' +
+        'background:radial-gradient(circle, #050300 0%, #050300 34%, ' +
+        'rgba(255,140,50,0.0) 36%, rgba(255,150,60,0.75) 43%, rgba(255,220,150,0.95) 50%, ' +
+        'rgba(255,150,60,0.55) 58%, transparent 72%);' +
+        'filter:blur(1.5px);opacity:0;transform:translate(-50%,-50%) scale(0.6);' +
+        'transition:opacity 0.6s ease;';
+    root.appendChild(sgrA);
+
+    hostEl.appendChild(root);
+
+    // Twinkle keyframes injectes une fois.
+    if (!document.getElementById('gc-twinkle-style')) {
+        const st = document.createElement('style');
+        st.id = 'gc-twinkle-style';
+        st.textContent = '@keyframes gc-twinkle{0%,100%{opacity:1;}50%{opacity:0.55;}}';
+        document.head.appendChild(st);
+    }
+
+    // ---- UPDATE : pilote tout par le closeness (0 loin -> 1 plongee)
+    function update(closeness) {
+        const c = Math.max(0, Math.min(1, closeness));
+        root.style.opacity = c > 0.01 ? '1' : '0';
+        if (c <= 0.01) return;
+
+        // 1. Etoiles : chaque vague s'allume a son seuil, densite
+        //    croissante. Les etoiles de vague haute brulent plus.
+        stars.forEach(st => {
+            const w = parseInt(st.dataset.wave, 10);
+            const th = [0.02, 0.35, 0.62][w];
+            const k = Math.max(0, Math.min(1, (c - th) / 0.28));
+            st.style.display = k > 0.02 ? '' : 'none';
+            st.style.setProperty('opacity', k.toFixed(2));
+        });
+
+        // 2. Filaments de poussiere : apparaissent des mi-approche,
+        //    opacite pleine a la plongee.
+        const dustK = Math.max(0, Math.min(1, (c - 0.25) / 0.45));
+        dustPaths.forEach((p, idx) => {
+            // La moitie des filaments arrive plus tot que l'autre.
+            const th = (idx % 2 === 0) ? 0 : 0.12;
+            const k = Math.max(0, Math.min(1, (dustK - th) / (1 - th)));
+            p.setAttribute('opacity', (k * 0.85).toFixed(2));
+        });
+
+        // 3. Coeur : monte en intensite sur la seconde moitie.
+        coreLayers.forEach((l, i) => {
+            const th = 0.3 + i * 0.12;
+            const k = Math.max(0, Math.min(1, (c - th) / 0.3));
+            l.style.opacity = k.toFixed(2);
+        });
+
+        // 4. Gaz : secondaire, arrive tard.
+        gasPaths.forEach((p) => {
+            const k = Math.max(0, Math.min(1, (c - 0.55) / 0.3));
+            p.setAttribute('opacity', (k * 0.8).toFixed(2));
+        });
+
+        // Sagittarius A* : uniquement en toute fin.
+        const sgrK = Math.max(0, Math.min(1, (c - 0.75) / 0.25));
+        sgrA.style.opacity = (sgrK * sgrK).toFixed(2);
+        sgrA.style.transform = 'translate(-50%,-50%) scale(' + (0.6 + sgrK * 0.9).toFixed(2) + ')';
+    }
+
+    return { el: root, update };
+}
+
 function travelProject(lat, z, cameraZ, W, horizonY, pitchK, baseSize) {
     const rel = z - cameraZ;                 // profondeur relative
     if (rel <= 0.08) return { visible: false };
@@ -2188,6 +2458,10 @@ function playTravelAnimation(distance, onDone) {
     // au centre du corps (CAM_END = zMax, rel -> 0 : la galaxie grossit
     // jusqu'a remplir l'ecran, comme si on la traversait).
     const GALAXY_IDS = ['milky-way-center', 'andromeda', 'virgo-cluster'];
+    // Le Centre Voie lactee est rendu par le calque PROCEDURAL : son
+    // sprite est masque (il resterait une image plate au milieu de la
+    // scene animee). Andromede et Virgo gardent leurs sprites.
+    const isProceduralGalaxy = target.id === 'milky-way-center';
     const isGalaxyTarget = GALAXY_IDS.includes(target.id);
     // Les galaxies sont des objets IMMENSES vus de tres loin : sans
     // correction, la perspective (size = baseSize / rel) les rend meme
@@ -2229,6 +2503,12 @@ function playTravelAnimation(distance, onDone) {
     // volumetrique procedural (oortField) -- troncon, timing et km
     // inchanges, uniquement la representation visuelle.
     deepEl.innerHTML = '';
+    // CENTRE VOIE LACTEE : calque procedurale dedie (etoiles, poussiere,
+    // coeur, gaz, Sagittarius A*) -- remplace le simple sprite galaxie.
+    let galacticCore = null;
+    if (target.id === 'milky-way-center') {
+        galacticCore = createGalacticCore(travelOverlay);
+    }
     // Index du Nuage d'Oort dans l'itineraire (calcule AVANT bodies :
     // sert a rendre la planete suivante plus discrete en sortie de nuage).
     const oortIdx = itinerary.findIndex(p => p.id === 'oort-cloud');
@@ -2257,8 +2537,11 @@ function playTravelAnimation(distance, onDone) {
         // echelle dediee pour qu'elles occupent l'ecran des leur
         // apparition a l'horizon et remplissent tout lors de la plongee.
         const isGalaxy = GALAXY_IDS.includes(p.id);
-        if (isGalaxy) scale = GALAXY_SCALE;
-        return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort, isGalaxy };
+        if (isGalaxy && !(isProceduralGalaxy && p.id === 'milky-way-center')) scale = GALAXY_SCALE;
+        // Centre Voie lactee procedurale : le sprite de la cible est
+        // masque (la scene animee le remplace) -- il ne grossit pas.
+        const hidden = !!(isProceduralGalaxy && p.id === 'milky-way-center' && p.id === target.id);
+        return { el, z: i * DEPTH_STEP, lat, scale, distant: afterOort, isGalaxy, hidden };
     });
 
     // --- Nuage d'Oort : champ volumetrique de debris glaces ---
@@ -2702,6 +2985,13 @@ function playTravelAnimation(distance, onDone) {
             const relT = zMax - cameraZ;
             const veilOp = relT <= 0.08 ? 1 : Math.max(0, Math.min(1, (1.6 - relT) / 1.35));
             throughVeil.style.opacity = (veilOp * 0.92).toFixed(2);
+        }
+        // Centre galactique procedurale : closeness depuis la distance
+        // restante (plein a ~1.6 unites, avant le voile de plongee).
+        if (galacticCore) {
+            const relT2 = zMax - cameraZ;
+            const closeness = Math.max(0, Math.min(1, 1 - (relT2 - 0.1) / 6.5));
+            galacticCore.update(closeness);
         }
 
         // ---- Nuage d'Oort : traverssee volumetrique ----
