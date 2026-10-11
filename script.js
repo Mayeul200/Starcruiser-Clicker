@@ -275,13 +275,13 @@ const TROPHIES = [
 
     // Lancements de fusée (icônes: pièces de fusée)
     { id: "launch-1", name: "Décollage !", description: "Réaliser votre premier lancement", icon: "images/rocket/engines.webp", threshold: 1, type: "launches" },
-    { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 5 lancements", icon: "images/rocket/cockpit.webp", threshold: 5, type: "launches" },
-    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 8 lancements", icon: "images/rocket/boosters-left.webp", threshold: 8, type: "launches" },
-    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 12 lancements", icon: "images/rocket/astronaut.webp", threshold: 12, type: "launches" },
-    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 20 lancements", icon: "images/rocket/astronaut.webp", threshold: 20, type: "launches" },
-    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 30 lancements", icon: "images/rocket/astronaut.webp", threshold: 30, type: "launches" },
-    { id: "launch-50real", name: "Commandant de Flotte", description: "Réaliser 50 lancements", icon: "images/rocket/launch-pad.webp", threshold: 50, type: "launches" },
-    { id: "launch-100real", name: "Amiral de l'Infini", description: "Réaliser 100 lancements", icon: "images/rocket/astronaut.webp", threshold: 100, type: "launches" },
+    { id: "launch-5", name: "Pilote Confirmé", description: "Réaliser 2 lancements", icon: "images/rocket/cockpit.webp", threshold: 2, type: "launches" },
+    { id: "launch-15", name: "Escadron Spatial", description: "Réaliser 3 lancements", icon: "images/rocket/boosters-left.webp", threshold: 3, type: "launches" },
+    { id: "launch-30", name: "Flotte Interstellaire", description: "Réaliser 5 lancements", icon: "images/rocket/astronaut.webp", threshold: 5, type: "launches" },
+    { id: "launch-50", name: "Vétéran des Étoiles", description: "Réaliser 7 lancements", icon: "images/rocket/astronaut.webp", threshold: 7, type: "launches" },
+    { id: "launch-100", name: "Légende Cosmique", description: "Réaliser 9 lancements", icon: "images/rocket/astronaut.webp", threshold: 9, type: "launches" },
+    { id: "launch-50real", name: "Commandant de Flotte", description: "Réaliser 12 lancements", icon: "images/rocket/launch-pad.webp", threshold: 12, type: "launches" },
+    { id: "launch-100real", name: "Amiral de l'Infini", description: "Réaliser 15 lancements", icon: "images/rocket/astronaut.webp", threshold: 15, type: "launches" },
 
     // Poussière d'étoiles (icônes: cartes du jeu)
     { id: "dust-1", name: "Première Poussière", description: "Gagner 1 Poussière d'Étoiles", icon: "images/cards/collection/comet-card.webp", threshold: 1, type: "stardust" },
